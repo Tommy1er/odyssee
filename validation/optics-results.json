@@ -1,0 +1,26 @@
+{
+  "passed": 21,
+  "checks": [
+    "Schwarzschild impact 2 Rs: capture",
+    "Schwarzschild impact 2.4 Rs: capture",
+    "Schwarzschild impact 2.55 Rs: capture",
+    "Schwarzschild impact 2.65 Rs: escape",
+    "Schwarzschild impact 3 Rs: escape",
+    "Schwarzschild impact 5 Rs: escape",
+    "Galactocentric invertible 0,0,0",
+    "Galactocentric invertible 1000,-27000,50000",
+    "Galactocentric invertible -1475.5334857808737,-23563.292199988864,-13091.145008374298",
+    "Aberration reversible",
+    "Retarded photon light cone 0",
+    "Retarded emission is past 0",
+    "Retarded photon light cone 0.5",
+    "Retarded emission is past 0.5",
+    "Retarded photon light cone 0.99",
+    "Retarded emission is past 0.99",
+    "S2 Kepler periapsis",
+    "S2 periodic closure",
+    "CIE derived thermal table finite",
+    "Observed expansion coordinate integrity",
+    "Internal IDs unique"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "3D geometry scene starts with Local Group",
+    "Virgo cluster and supercluster are distinct",
+    "Cosmic web level exposes Bootes, Hercules and Shapley",
+    "Immersion changes camera and enables free motion",
+    "Return to overview leaves immersion",
+    "Clean view restores controls",
+    "Mobile cosmic map has no overflow",
+    "Cosmic destination is available in real cockpit",
+    "Passage reaches cosmic structure at actual coordinates",
+    "No runtime or shader errors"
+  ],
+  "errors": []
+}

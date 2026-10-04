@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Visible final approach entered",
+    "Moving exoplanet reached by real intercept and visibly resolved",
+    "Exterior orbit camera releases target tracking",
+    "Visible final approach entered",
+    "Extended nebula reached and local controls available",
+    "Final mobile build has no horizontal overflow",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}

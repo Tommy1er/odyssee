@@ -1,0 +1,20 @@
+{
+  "checks": [
+    "Visible final approach entered",
+    "Earth reached by flight, stopped, visible in external camera",
+    "Arrival persists after toast disappears",
+    "Local approach changes actual distance and keeps object visible",
+    "Contour manoeuvre returns to visible target",
+    "Cockpit target also in field",
+    "Manual steering releases tracking",
+    "Find target restores view",
+    "Return starts with explicit initial braking",
+    "Selecting another catalogue object preserves committed Earth route",
+    "Return after outgoing momentum ends at Earth, not selected Saturn",
+    "Visible final approach entered",
+    "Second real destination Saturn resolved locally",
+    "Mobile has visible arrival feedback and no overflow",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}

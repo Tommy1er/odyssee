@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "Default cockpit relativistic, uncapped and separate craft",
+    "Schwarzschild lens and all-sky optical pass run",
+    "Voyager visit independent of Odyssee",
+    "Hazard threshold pauses with shield off",
+    "High gamma finite and below c represented",
+    "Limiter engages brake without velocity discontinuity",
+    "Mobile no horizontal overflow",
+    "Mobile destination and local rendering",
+    "Mobile galactic map works",
+    "Version guide renders trip table",
+    "No WebGL, shader or browser errors"
+  ],
+  "errors": []
+}

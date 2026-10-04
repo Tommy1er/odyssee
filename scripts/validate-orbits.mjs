@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {createOrbit,advanceOrbit,orbitalElements,G} from '../src/orbits.js';
+import {norm} from '../src/physics.js';
+const mu=G*5.9722e24,r=6371e3*5,v=Math.sqrt(mu/r),period=2*Math.PI*r/v;
+const a=createOrbit('earth',[r,0,0],[0,v,0],mu,6371e3);const initial=orbitalElements(a.r,a.v,mu);
+for(let i=0;i<1000;i++)advanceOrbit(a,period/1000);
+assert.ok(Math.abs(norm(a.r)/r-1)<1e-4,'circular radius');assert.ok(Math.abs(orbitalElements(a.r,a.v,mu).energy/initial.energy-1)<1e-6,'orbital energy conserved');assert.ok(Math.hypot(a.r[0]-r,a.r[1],a.r[2])/r<1e-3,'one full revolution');
+const b=createOrbit('earth',[r,0,0],[0,v*2,0],mu,6371e3);for(let i=0;i<200;i++)advanceOrbit(b,period/200);assert.ok(!orbitalElements(b.r,b.v,mu).bound,'unbound flyby not magically captured');
+const c=createOrbit('earth',[r,0,0],[0,0,0],mu,6371e3);c.assist=true;c.normal=[0,0,1];for(let i=0;i<10000&&c.assist&&!c.stopped;i++)advanceOrbit(c,10);const el=orbitalElements(c.r,c.v,mu);assert.ok(!c.assist&&!c.stopped&&el.ecc<.01,'finite thrust insertion');
+const d=createOrbit('earth',[r,0,0],[0,0,0],mu,6371e3);for(let i=0;i<10000&&!d.stopped;i++)advanceOrbit(d,10);assert.ok(d.stopped&&d.stopReason==='Surface atteinte','radial fall reaches surface');
+console.log('PASS orbit period, energy conservation, unbound flyby, finite-thrust circularization and surface boundary.');

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import * as P from '../src/physics.js';
+import {stoppingPoint,journeyEstimate,destinationRoute} from '../src/navigation.js';
+import {positionAt} from '../src/ephemeris.js';
+const earth={id:'earth',name:'Terre',xyz:[P.AU,0,0],baseXYZ:[P.AU,0,0],motion:[0,0,0],radiusKm:6371};
+const pos=[20,0,0],u=[10,0,0],goal={object:earth,end:earth.xyz,name:'Terre'};
+const stop=stoppingPoint(pos,u),integrated=P.integrateProper(pos,u,stop.t,[-P.G1,0,0]);
+assert.ok(P.norm(P.sub(stop.pos,integrated.pos))<1e-12);assert.ok(stop.pos[0]>pos[0]);
+const trip=journeyEstimate(goal,pos,u,0);assert.ok(trip.route.end[0]<stop.pos[0]);assert.ok(trip.t>stop.t+P.plan(P.norm(P.sub(earth.xyz,pos))).t);
+const arrival=P.sample(trip.route.plan,trip.route.plan.t);assert.equal(arrival.u,0);
+const moving={...earth,motion:[.0001,.00005,0]},offset=[0,0,1e-8],local={object:moving,offset,end:P.add(moving.xyz,offset)};
+const route=destinationRoute(local,[.001,0,0],100);assert.ok(P.norm(P.sub(route.end,P.add(positionAt(moving,100+route.plan.t),offset)))<1e-12);
+console.log('PASS: outward braking prediction, complete ETA, rest arrival and moving local target');

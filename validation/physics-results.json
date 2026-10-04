@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "date": "2026-10-01",
+  "checks": [
+    "Lorentz factor at 0.99c",
+    "Rest-to-rest route at 0, 1e-10, 1e-5, 4.246, 100, 10000 light years",
+    "Inertial momentum and proper time",
+    "Exact integration split-step consistency",
+    "0.99c governor",
+    "Stopping distance and zero final momentum",
+    "Aberration normalization and angular identity",
+    "Forward and rear Doppler ratios",
+    "Galactic/equatorial inverse rotation",
+    "Ecliptic norm preservation",
+    "Schwarzschild reference radius and stationary clock"
+  ]
+}

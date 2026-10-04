@@ -1,0 +1,14 @@
+{
+  "name": "stellar-atlas",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "python3 -m http.server 3000 --bind 0.0.0.0 --directory public",
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "esbuild": "^0.25.10",
+    "three": "^0.180.0"
+  },
+  "type": "module"
+}

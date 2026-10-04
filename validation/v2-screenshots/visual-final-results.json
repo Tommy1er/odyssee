@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "Visit rendered saturn",
+    "Visit rendered magnetar",
+    "Visit rendered cluster",
+    "Visit rendered pillars"
+  ],
+  "errors": [],
+  "completed": false,
+  "scopeNote": "Session interrupted after four updated render checks; final smoke run covers the last shader changes and UI checks."
+}

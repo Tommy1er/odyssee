@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Final NASA Voyager mesh shown on mobile",
+    "Mobile control bounding boxes do not overlap",
+    "Nebular volume visible at the Pillars",
+    "Schwarzschild ray render active at Sagittarius A*",
+    "Exterior waypoint faces the galactic centre",
+    "Milky Way light visible from outside disk",
+    "No JavaScript or WebGL console errors"
+  ],
+  "errors": []
+}

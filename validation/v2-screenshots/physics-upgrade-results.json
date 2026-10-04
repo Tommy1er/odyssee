@@ -1,0 +1,19 @@
+{
+  "checks": [
+    "Stable passage changes position and confirms Earth arrival",
+    "Passage exits comparison and preserves mission clocks and odometer",
+    "Unstable passage fails explicitly without displacement",
+    "Stabilizing an unstable passage allows a new successful jump",
+    "Ship has dedicated supersampled render",
+    "Engine animation responds to actual thrust",
+    "Engine is off during coast",
+    "External retarded-light comparison still renders",
+    "Black-hole passage completed",
+    "Static gravity experiment integrates a slower proper clock",
+    "Radial free fall changes position and local speed",
+    "Manual control exits GR and preserves local momentum",
+    "Mobile clean view fits screen",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}

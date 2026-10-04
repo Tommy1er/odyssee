@@ -1,0 +1,3 @@
+import * as T from 'three';
+// Circular analytic point-spread functions, with no raster point texture.
+export function mapPoints(size=2,opacity=.65){return new T.ShaderMaterial({transparent:true,depthWrite:false,blending:T.AdditiveBlending,uniforms:{size:{value:size},opacity:{value:opacity}},vertexShader:'attribute vec3 color;varying vec3 tint;uniform float size;void main(){tint=color;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);gl_PointSize=size;}',fragmentShader:'varying vec3 tint;uniform float opacity;void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;gl_FragColor=vec4(tint,(1.-smoothstep(.2,1.,r))*opacity);}'});}

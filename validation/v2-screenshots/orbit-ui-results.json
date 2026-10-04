@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "Earth rotates during paused observation without advancing mission clocks",
+    "Mission-linked rotation stops when paused",
+    "Finite-thrust insertion actually moves the craft",
+    "Insertion ends in a bound near-circular orbit",
+    "Manual takeover preserves gravitational orbit",
+    "Andromeda is a reachable resolved galaxy",
+    "Local Group scale selectable",
+    "Visible animation of star while mission paused",
+    "Visible animation of pulsar while mission paused",
+    "Mobile no overflow",
+    "No shader or browser errors"
+  ],
+  "errors": []
+}

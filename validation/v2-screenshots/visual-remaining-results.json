@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "Visit rendered saturn",
+    "Visit rendered magnetar",
+    "Visit rendered pillars",
+    "Visit rendered orion",
+    "Visit rendered blackhole-dark",
+    "Visit rendered blackhole-disk",
+    "Relativistic comparison remains functional",
+    "Mobile clean view has no horizontal overflow",
+    "All maps loaded without error",
+    "No browser or shader errors"
+  ],
+  "errors": [],
+  "completed": true,
+  "scopeNote": "Completed complementary object-family and UI pass before the last star PSF and disk cosmetic updates."
+}

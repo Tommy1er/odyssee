@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "Mobile jump returns to visible cockpit",
+    "Mobile Earth arrival is confirmed",
+    "Latest UI has no overflow or rendering errors"
+  ],
+  "errors": []
+}

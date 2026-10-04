@@ -1,0 +1,10 @@
+{
+  "checks": [
+    "Earth rotates during paused observation without advancing mission clocks",
+    "Mission-linked rotation stops when paused",
+    "Finite-thrust insertion actually moves the craft",
+    "Insertion ends in a bound near-circular orbit",
+    "Orbital map rendered without errors"
+  ],
+  "errors": []
+}

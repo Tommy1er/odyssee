@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "Real Earth arrival auto-collapses panel",
+    "Arrival details can be reopened",
+    "Clean view hides overlays and preserves 3D",
+    "Visit rendered mercury",
+    "Visit rendered venus",
+    "Visit rendered moon",
+    "Visit rendered mars",
+    "Visit rendered jupiter",
+    "Visit rendered saturn",
+    "Visit rendered uranus",
+    "Visit rendered neptune",
+    "Visit rendered exoplanet",
+    "Visit rendered star",
+    "Visit rendered pulsar"
+  ],
+  "errors": [],
+  "completed": false,
+  "scopeNote": "Initial visual pass: Earth arrival and first surface families passed; dense-scene timeout led to the background capture optimization. Covered remaining cases in subsequent runs."
+}

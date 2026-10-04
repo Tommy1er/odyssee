@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.tar.gz
+validation/screenshots/
+
+validation/v2-screenshots/*.png

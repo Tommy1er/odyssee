@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "Visit rendered cluster",
+    "Visit rendered blackhole-disk",
+    "Relativistic comparison remains functional",
+    "Mobile clean view has no horizontal overflow",
+    "All maps loaded without error",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}
