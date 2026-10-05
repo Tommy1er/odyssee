@@ -6,9 +6,8 @@
     "Complete lunar map sampled",
     "No texture load failure",
     "Paused lunar orientation remains locked toward Earth",
-    "Unobstructed view works"
+    "Unobstructed view works",
+    "No browser or shader errors"
   ],
-  "errors": [
-    "Failed to load resource: the server responded with a status of 404 (Not Found)"
-  ]
+  "errors": []
 }
