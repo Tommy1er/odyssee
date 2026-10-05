@@ -1,6 +1,7 @@
 import * as T from 'three';
 import {norm,sub} from './physics.js';
 import {radiusLy} from './body-data.js';
+import {schwarzschildR} from './gravity-field.js'; // positions are isotropic coordinates; optics uses Schwarzschild r
 // Null geodesics in a Schwarzschild spacetime, u = Rs/r: u'' = 1.5 u² - u.
 // Static local observer, numerical RK4 in the photon orbital plane. Not Kerr.
 const fragment=`precision highp float;uniform samplerCube sky;uniform mat3 cameraRotation;uniform vec3 radial;uniform vec3 diskNormal;uniform float observerRadius,aspect,tanFov,disk,band,time;varying vec2 uvp;
@@ -12,18 +13,18 @@ for(int i=0;i<320;i++){float h=.024;vec2 next=rk4(s,h);float nextPhi=phi+h;if(ne
 vec3 background=captured?vec3(0):textureCube(sky,normalize(er*cos(phi)+et*sin(phi))).rgb;gl_FragColor=vec4(background*(1.-opacity)+light*2.,1.);}`;
 export class BlackHoleLens{
  constructor(){this.target=new T.WebGLCubeRenderTarget(192,{generateMipmaps:false,minFilter:T.LinearFilter});this.cube=new T.CubeCamera(.01,2500,this.target);this.scene=new T.Scene();this.camera=new T.OrthographicCamera(-1,1,1,-1,0,1);this.material=new T.ShaderMaterial({vertexShader:'varying vec2 uvp;void main(){uvp=position.xy;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:fragment,uniforms:{sky:{value:this.target.texture},cameraRotation:{value:new T.Matrix3()},radial:{value:new T.Vector3()},diskNormal:{value:new T.Vector3(.18,.84,.51).normalize()},observerRadius:{value:15},aspect:{value:1},tanFov:{value:Math.tan(35*Math.PI/180)},disk:{value:0},band:{value:1},time:{value:0}},depthTest:false,depthWrite:false});this.scene.add(new T.Mesh(new T.PlaneGeometry(2,2),this.material));this.last=-10;this.active=false;}
- isNear(s){const o=s.target,rr=o?.type==='blackhole'?norm(sub(s.pos,o.lightXYZ||o.xyz))/radiusLy(o):Infinity;this.active=!!s.lensing&&rr<150&&rr>1.02;return this.active;}
+ isNear(s){const o=s.target,rr=o?.type==='blackhole'?schwarzschildR(norm(sub(s.pos,o.lightXYZ||o.xyz))/radiusLy(o),.5):Infinity;this.active=!!s.lensing&&rr<150&&rr>1.02;return this.active;}
  renderInto(renderer,target,scene,s,localGroup){
  if(!this.output){this.output=new T.WebGLCubeRenderTarget(128,{type:T.HalfFloatType,minFilter:T.LinearFilter,generateMipmaps:false});this.outputCamera=new T.CubeCamera(.001,2500,this.output);}
  const key=[s.target.id,...s.pos,s.t,s.band,s.galaxyLight,s.retarded].join('|');if(key===this.outputKey)return this.output.texture;
  const vp=new T.Vector4(),sc=new T.Vector4();renderer.getViewport(vp);renderer.getScissor(sc);const st=renderer.getScissorTest(),rt=renderer.getRenderTarget();renderer.setScissorTest(false);
  const visible=localGroup.visible;localGroup.visible=false;this.cube.update(renderer,scene);localGroup.visible=visible;
- this.outputCamera.coordinateSystem=renderer.coordinateSystem;this.outputCamera.updateCoordinateSystem();this.outputCamera.updateMatrixWorld(true);const o=s.target,rr=norm(sub(s.pos,o.lightXYZ||o.xyz))/radiusLy(o),u=this.material.uniforms;u.radial.value.set(...sub(s.pos,o.lightXYZ||o.xyz)).normalize();u.observerRadius.value=rr;u.aspect.value=1;u.tanFov.value=-1;u.disk.value=+!!o.accretion;u.band.value=s.band;u.time.value=s.t*365.25;
+ this.outputCamera.coordinateSystem=renderer.coordinateSystem;this.outputCamera.updateCoordinateSystem();this.outputCamera.updateMatrixWorld(true);const o=s.target,rr=schwarzschildR(norm(sub(s.pos,o.lightXYZ||o.xyz))/radiusLy(o),.5),u=this.material.uniforms;u.radial.value.set(...sub(s.pos,o.lightXYZ||o.xyz)).normalize();u.observerRadius.value=rr;u.aspect.value=1;u.tanFov.value=-1;u.disk.value=+!!o.accretion;u.band.value=s.band;u.time.value=s.t*365.25;
  for(let face=0;face<6;face++){u.cameraRotation.value.setFromMatrix4(this.outputCamera.children[face].matrixWorld);renderer.setRenderTarget(this.output,face);renderer.render(this.scene,this.camera);}
  renderer.setRenderTarget(rt);renderer.setViewport(vp);renderer.setScissor(sc);renderer.setScissorTest(st);this.outputKey=key;return this.output.texture;
  }
 
- render(renderer,scene,camera,s,localGroup){const o=s.target,rr=o?.type==='blackhole'?norm(sub(s.pos,o.xyz))/radiusLy(o):Infinity;this.active=!!s.lensing&&rr<150&&rr>1.02;if(!this.active)return false;
+ render(renderer,scene,camera,s,localGroup){const o=s.target,rr=o?.type==='blackhole'?schwarzschildR(norm(sub(s.pos,o.xyz))/radiusLy(o),.5):Infinity;this.active=!!s.lensing&&rr<150&&rr>1.02;if(!this.active)return false;
  if(s.wall-this.last>1||this.lastId!==o.id||this.lastBand!==s.band||Math.abs(this.lastBeta-(s.opticalLab?s.labBeta:s.speedValue))>.03){const visible=localGroup.visible;localGroup.visible=false;this.cube.update(renderer,scene);localGroup.visible=visible;this.last=s.wall;this.lastId=o.id;this.lastBand=s.band;this.lastBeta=s.opticalLab?s.labBeta:s.speedValue;}
  camera.updateMatrixWorld();this.material.uniforms.cameraRotation.value.setFromMatrix4(camera.matrixWorld);this.material.uniforms.radial.value.set(...sub(s.pos,o.xyz)).normalize();this.material.uniforms.observerRadius.value=rr;this.material.uniforms.aspect.value=camera.aspect;this.material.uniforms.tanFov.value=Math.tan(camera.fov/2*Math.PI/180);this.material.uniforms.disk.value=+!!o.accretion;this.material.uniforms.band.value=s.band;this.material.uniforms.time.value=s.t*365.25;renderer.render(this.scene,this.camera);return true;
  }
