@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "Continuous gravity on; solar source; initial orbital speed",
+    "Readout describes hovering, not felt free-fall acceleration",
+    "Short solar orbital arc keeps its radius",
+    "Orbital proper clock runs slower",
+    "Local-gravity option is not falsely described as disabled",
+    "Both gravity options off gives inertial motion",
+    "Strong-field source and static lapse at black-hole arrival",
+    "Free flight falls without radial experiment or local-orbit mode",
+    "Strong-field ship clock integrated",
+    "Cockpit help states model and autopilot limits",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}
