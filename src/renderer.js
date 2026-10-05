@@ -10,6 +10,7 @@ import {createGalaxySphere,makePopulation,GAL_CENTER} from './galaxy.js';
 import {createStarlight} from './stellar-light.js';
 import {SkyOptics} from './sky-optics.js';
 import {SpacecraftView} from './spacecraft.js';
+import {ShipLighting} from './ship-lighting.js';
 import {EnvironmentLayer,GalacticOrbit} from './environments.js';
 import {BlackHoleLens} from './black-hole.js';
 
@@ -34,7 +35,7 @@ export class SpaceRenderer{
  constructor(canvas,stars,onPick,objects=stars,lut=[]){
   this.cosmicFlight=new CosmicScene({map:false});this.cosmicView=new T.Scene();this.cosmicView.add(this.cosmicFlight.root);this.canvas=canvas;this.onPick=onPick;this.stars=stars;this.objects=objects;this.nearCheck=0;this.mapMode=false;this.mapScale=1;this.localId=null;this.track=[];
   this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});this.renderer.setPixelRatio(Math.min(devicePixelRatio,2));this.renderer.setClearColor(0x000000);this.renderer.outputColorSpace=T.SRGBColorSpace;
-  this.flight=new T.Scene();this.camera=new T.PerspectiveCamera(70,1,.001,3000);this.galaxy=createGalaxySphere();this.flight.add(this.galaxy);this.passageView=new PassageView();this.spacecraft=new SpacecraftView(canvas);this.skyOptics=new SkyOptics(lut,objects);this.lens=new BlackHoleLens();this.environments=new EnvironmentLayer(this.flight,objects);this.orbit=new GalacticOrbit(this.flight,GAL_CENTER);
+  this.flight=new T.Scene();this.camera=new T.PerspectiveCamera(70,1,.001,3000);this.galaxy=createGalaxySphere();this.flight.add(this.galaxy);this.passageView=new PassageView();this.spacecraft=new SpacecraftView(canvas,lut);this.shipLighting=new ShipLighting(objects);this.shipLight=[];this.skyOptics=new SkyOptics(lut,objects);this.lens=new BlackHoleLens();this.environments=new EnvironmentLayer(this.flight,objects);this.orbit=new GalacticOrbit(this.flight,GAL_CENTER);
   const positions=[],colors=[],sizes=[];for(const s of stars){positions.push(...s.xyz);colors.push(...stellarColor(s).toArray());sizes.push(Math.max(2,Math.min(7,5-(s.mag||5)*.3)));}
   const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('tint',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('pointSize',new T.Float32BufferAttribute(sizes,1));
   this.starMaterial=new T.ShaderMaterial({vertexShader:starVertex,fragmentShader:starFragment,uniforms:{ship:{value:new T.Vector3()},speed:{value:new T.Vector3()},optics:{value:0},shift:{value:1}},transparent:true,depthWrite:false,blending:T.AdditiveBlending});
@@ -116,7 +117,7 @@ export class SpaceRenderer{
     // Schwarzschild is a separate local stationary optical model. Its cube now supplies HDR sky.
     this.skyOptics.render(this.renderer,this.camera,s,half&&!betaOptics?[0,0,0]:visualU,skyOptics);
     if(s.target?.type==='cosmic'||norm(s.pos)>10000000){const c=this.cosmicFlight;this.cosmicView.add(c.root);c.root.scale.setScalar(1);c.root.position.set(...s.pos.map(x=>-x/1e6));c.update(3,s.target?.id?.replace('cosmic:','')||'',1000,{envelopes:false,filaments:false,boost:1});c.sun.visible=false;c.material.uniforms.optics.value=+skyOptics;c.material.uniforms.momentum.value.set(...visualU);const clear=this.renderer.autoClear;this.renderer.autoClear=false;this.renderer.clearDepth();this.renderer.render(this.cosmicView,this.camera);this.renderer.autoClear=clear;}
-    if(s.external)this.spacecraft.render(this.renderer,{...s,opticalLab:s.opticalLab&&!!betaOptics,labBeta:betaOptics?s.labBeta:0,speedValue:half&&!betaOptics?0:norm(physicalV),gammaValue:half&&!betaOptics?1:gammaU(s.u),velocityVector:physicalV},half?w/2/h:w/h);
+    if(s.external)this.spacecraft.render(this.renderer,{...s,shipLightSources:this.shipLight=this.shipLighting.update(s),opticalLab:s.opticalLab&&!!betaOptics,labBeta:betaOptics?s.labBeta:0,speedValue:half&&!betaOptics?0:norm(physicalV),gammaValue:half&&!betaOptics?1:gammaU(s.u),velocityVector:physicalV},half?w/2/h:w/h);
    };
    if(s.opticalLab){this.renderer.setScissorTest(true);this.renderer.setViewport(0,0,w/2,h);this.renderer.setScissor(0,0,w/2,h);draw(0,true);this.renderer.setViewport(w/2,0,w/2,h);this.renderer.setScissor(w/2,0,w/2,h);draw(1,true);this.renderer.setScissorTest(false);this.renderer.setViewport(0,0,w,h);}else draw(+s.relativistic,false);if(s.passage)this.passageView.render(this.renderer,s.passage.progress,s.passage.unstable,performance.now()/1000,w/h);
   }

@@ -2,11 +2,15 @@ import * as T from 'three';
 import {sub,norm,unit,YEAR} from './physics.js';
 import {radiusLy,hash} from './body-data.js';
 import {temperature} from './stellar-light.js';
+import {limbDarkening,blackbodyRGB} from './stellar-physics.js';
+import {EPOCH} from './ephemeris.js';
+import {yearToJD} from './solar-ephemeris.js';
+import {bodyFrame,hasIAU} from './iau-rotation.js';
 // The local object is intersected per display pixel, AFTER inverse aberration.
 // No intermediary cubemap quantizes its silhouette or surface texture.
 export const closeupGLSL=`
 uniform vec3 bodyCenter,bodyLight,bodyTint;uniform mat3 bodyRotation;
-uniform float bodyKind,bodyStyle,bodySeed,bodyTime,bodyMapReady,bodyCloudReady,bodyRing,bodyAtmosphere,bodyPhase,activityTime;
+uniform float bodyKind,bodyStyle,bodySeed,bodyTime,bodyMapReady,bodyCloudReady,bodyRing,bodyAtmosphere,bodyPhase,activityTime;uniform float bodyLimb,bodyGranule,bodyConvective,bodySpots;
 uniform sampler2D bodyMap,cloudMap,nightMap,ringMap;uniform float ringReady;uniform float nightReady;
 float noiseHash(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7))+bodySeed)*43758.5453);}
 float noise3(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(mix(noiseHash(i),noiseHash(i+vec3(1,0,0)),f.x),mix(noiseHash(i+vec3(0,1,0)),noiseHash(i+vec3(1,1,0)),f.x),f.y),mix(mix(noiseHash(i+vec3(0,0,1)),noiseHash(i+vec3(1,0,1)),f.x),mix(noiseHash(i+vec3(0,1,1)),noiseHash(i+vec3(1,1,1)),f.x),f.y),f.z);}
@@ -20,7 +24,8 @@ vec3 terrainColor(vec3 p){float n=terrain(p*9.),fine=noise3(p*180.);vec3 c=bodyT
  return c*(.97+.06*fine);}
 vec3 shadeSurface(vec3 normal,vec3 ray){vec3 p=normalize(bodyRotation*normal);vec2 uv=sphereUV(p);float mu=dot(normal,bodyLight),day=max(0.,mu),limb=max(0.,dot(normal,-ray));
  vec3 albedo=bodyMapReady>.5?texture2D(bodyMap,uv).rgb:terrainColor(p);
- if(bodyKind==2.){float grain=noise3(p*250.+activityTime*.8),cells=terrain(p*42.+activityTime*.15);float spot=smoothstep(.65,.76,terrain(p*11.));return bodyTint*(.55+.9*grain+.55*cells)*(1.-.8*spot)*(.35+.65*pow(limb,.45))*1.8;}
+ if(bodyKind==2.){// Linear limb darkening I(mu)=1-u(1-mu); granulation scale shrinks with the star (few giant cells on supergiants); radiative envelopes of hot stars carry neither granulation nor spots.
+ float grain=noise3(p*bodyGranule+activityTime*.8),cells=terrain(p*bodyGranule*.17+activityTime*.15);float spot=bodySpots*smoothstep(.65,.76,terrain(p*11.));float ld=1.-bodyLimb*(1.-limb);return bodyTint*(1.+bodyConvective*(.9*(grain-.5)+.55*(cells-.5)))*(1.-.8*spot)*ld*1.2;}
  if(bodyKind==3.||bodyKind==4.){vec3 pole=normalize(vec3(.58,.76,.28));float hot=pow(abs(dot(p,pole)),26.);float cracks=pow(1.-smoothstep(.0,.045,abs(terrain(p*22.)-.46)),2.);return mix(vec3(.13,.24,.36),vec3(.8,1.6,2.2),hot)*(.4+.6*limb)+cracks*(bodyKind==4.?vec3(.7,.18,.055):vec3(.04,.12,.2));}
  // Diffuse + view-dependent ocean reflection; low fill is an inspection aid.
  vec3 col=albedo*(.012+1.5*day);
@@ -47,13 +52,16 @@ vec3 localRadiance(vec3 ray,vec3 background){if(bodyKind<.5)return background;
  return col;
 }
 `;
-const textureNames={'solar:Terre':'earth','solar:Mercure':'mercury','solar:Vénus':'venus','solar:Mars':'mars','solar:Jupiter':'jupiter','solar:Saturne':'saturn','solar:Uranus':'uranus','solar:Neptune':'neptune','moon:Lune':'moon'};
-const periods={earth:86164,mercury:5067030,venus:-20996798,mars:88643,jupiter:35730,saturn:38362,uranus:-62064,neptune:57996,moon:2360591};
+// moon.jpg is truncated at its source (≈20 % of the map decodes; see docs) — the Moon uses the reconstituted
+// surface until the original Solar System Scope file is restored.
+const textureNames={'solar:Terre':'earth','solar:Mercure':'mercury','solar:Vénus':'venus','solar:Mars':'mars','solar:Jupiter':'jupiter','solar:Saturne':'saturn','solar:Uranus':'uranus','solar:Neptune':'neptune'};
 export class CloseupModel{
- constructor(uniforms,objects){this.u=uniforms;this.objects=objects;this.cache=new Map();this.errors=[];this.id=null;this.family='';this.ready=false;
+ constructor(uniforms,objects,lut=[]){this.lut=lut;this.u=uniforms;this.objects=objects;this.cache=new Map();this.errors=[];this.id=null;this.family='';this.ready=false;
  const pixel=new T.DataTexture(new Uint8Array([180,180,180,255]),1,1);pixel.needsUpdate=true;this.placeholder=pixel;
- Object.assign(uniforms,{bodyCenter:{value:new T.Vector3()},bodyLight:{value:new T.Vector3(-.8,.4,1).normalize()},bodyTint:{value:new T.Color(.6,.5,.4)},bodyRotation:{value:new T.Matrix3()},bodyKind:{value:0},bodyStyle:{value:0},bodySeed:{value:0},bodyTime:{value:0},bodyMapReady:{value:0},bodyCloudReady:{value:0},bodyRing:{value:0},bodyAtmosphere:{value:0},bodyPhase:{value:0},activityTime:{value:0},bodyMap:{value:pixel},cloudMap:{value:pixel},nightMap:{value:pixel},nightReady:{value:0},ringMap:{value:pixel},ringReady:{value:0}});}
+ Object.assign(uniforms,{bodyLimb:{value:.6},bodyGranule:{value:250},bodyConvective:{value:1},bodySpots:{value:1},bodyCenter:{value:new T.Vector3()},bodyLight:{value:new T.Vector3(-.8,.4,1).normalize()},bodyTint:{value:new T.Color(.6,.5,.4)},bodyRotation:{value:new T.Matrix3()},bodyKind:{value:0},bodyStyle:{value:0},bodySeed:{value:0},bodyTime:{value:0},bodyMapReady:{value:0},bodyCloudReady:{value:0},bodyRing:{value:0},bodyAtmosphere:{value:0},bodyPhase:{value:0},activityTime:{value:0},bodyMap:{value:pixel},cloudMap:{value:pixel},nightMap:{value:pixel},nightReady:{value:0},ringMap:{value:pixel},ringReady:{value:0}});}
  texture(name){if(this.cache.has(name))return this.cache.get(name);const entry={ready:false,texture:this.placeholder};this.cache.set(name,entry);new T.TextureLoader().load('./assets/textures/'+name+(name==='saturn-ring'?'.png':'.jpg'),tex=>{tex.colorSpace=name==='earth-clouds'?T.NoColorSpace:T.SRGBColorSpace;tex.wrapS=T.RepeatWrapping;tex.minFilter=T.LinearMipmapLinearFilter;tex.magFilter=T.LinearFilter;tex.anisotropy=name==='saturn-ring'?1:8;entry.texture=tex;entry.ready=true;},undefined,()=>{entry.failed=true;this.errors.push(name);});return entry;}
+ // Surface colour from the same CIE-derived black-body table as the sky (chromaticity normalised to its maximum).
+ blackbody(temp){return new T.Color(...blackbodyRGB(this.lut,temp));}
  update(o,s){const u=this.u;u.bodyKind.value=0;this.ready=false;this.family='';this.id=o?.id;if(!o||!['planet','moon','star','pulsar'].includes(o.type))return false;
  const ratio=norm(sub(o.lightXYZ||o.xyz,s.pos))/radiusLy(o);if(ratio>160)return false;
  const star=o.type==='star',magnetar=/magn[eé]tar/i.test(o.kind||'');u.bodyKind.value=star?2:o.type==='pulsar'?(magnetar?4:3):1;
@@ -61,12 +69,17 @@ export class CloseupModel{
  if(!o.skin&&o.type==='planet'){const name=o.name.toLowerCase();if(/55 cnc|55 cancri|corot-7|kepler-10 b/.test(name))style=4;else if(o.planet?.radiusEarth>1.5&&o.planet?.radiusEarth<3)style=3;}
  if(o.type==='moon'&&o.id!=='moon:Lune')style=o.name==='Titan'?2:o.name==='Io'?4:5;
  u.bodyStyle.value=style;u.bodyRing.value=o.skin==='saturn'?1:0;u.bodyAtmosphere.value=o.skin==='earth'?.025:style===2?.018:style===3?.035:0;
- const tint=star? new T.Color(temperature(o)<4000?0xff7851:temperature(o)>10000?0xaacbff:0xffd9a0):new T.Color(magnetar?0xff9462:o.type==='pulsar'?0x89c8ff:style===3?0x759b82:style===4?0x63504a:style===5?0xb2ced5:0xa69178);if(o.name==='Titan')tint.set(0xd7a85d);if(o.name==='Io')tint.set(0xcabd6d);if(o.name==='Ganymède')tint.set(0x8c8580);u.bodyTint.value.copy(tint);
+ if(star){const Teff=temperature(o),R=o.radiusSolar||1;u.bodyLimb.value=limbDarkening(Teff);u.bodyGranule.value=Math.max(6,Math.min(250,250/Math.sqrt(R)));u.bodyConvective.value=Teff<6500?1:Teff<8000?(8000-Teff)/1500*.6:0;u.bodySpots.value=Teff<6500&&R<3?1:0;}
+ const tint=star? this.blackbody(temperature(o)):new T.Color(magnetar?0xff9462:o.type==='pulsar'?0x89c8ff:style===3?0x759b82:style===4?0x63504a:style===5?0xb2ced5:0xa69178);if(o.name==='Titan')tint.set(0xd7a85d);if(o.name==='Io')tint.set(0xcabd6d);if(o.name==='Ganymède')tint.set(0x8c8580);if(o.id==='moon:Lune')tint.set(0x9b968f);u.bodyTint.value.copy(tint);
  u.bodyCenter.value.set(...sub(o.lightXYZ||o.xyz,s.pos)).divideScalar(radiusLy(o));u.bodySeed.value=hash(o.id)%1000;u.bodyTime.value=s.animateBodies?s.observationTime:s.t*YEAR;u.activityTime.value=s.animateBodies?s.visualWall:s.t*YEAR;
- // Solar day lengths rotate the mapped surface with mission time. Unknown axes/phases are illustrative.
- const name=textureNames[o.id],seconds=s.animateBodies?s.observationTime:s.t*YEAR,phase=name?(seconds/(periods[name]||86400)%1)*Math.PI*2+.7:o.type==='pulsar'?(s.animateBodies?s.visualWall*.8:seconds*2*Math.PI/(o.periodSeconds||1)):seconds*2*Math.PI/(star?2160000:86400);this.phase=phase;
- const north=name==='earth'?new T.Vector3(0,0,1):new T.Vector3(0,-.39778,.91748);if(name==='saturn')north.applyAxisAngle(new T.Vector3(1,0,0),.466);if(name==='uranus')north.applyAxisAngle(new T.Vector3(1,0,0),1.707);const q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),north);q.multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),phase));u.bodyRotation.value.setFromMatrix4(new T.Matrix4().makeRotationFromQuaternion(q)).transpose();
- const host=this.objects.find(x=>x.id===o.parent)||this.objects.find(x=>x.id==='h0');let light=host?sub(host.xyz,o.xyz):[-.8,.4,1];if(star||norm(light)<1e-15)light=[-.8,.4,1];u.bodyLight.value.set(...unit(light));
+ // Solar-system bodies: IAU pole and prime meridian at the mission date (TDB); the optional observation clock
+ // adds pedagogical spin only to the surface, never to the body centre. Other bodies: illustrative axes.
+ const name=textureNames[o.id],seconds=s.animateBodies?s.observationTime:s.t*YEAR,key=o.ephemeris||(o.id==='h0'?'Soleil':null);let phase;
+ if(key&&hasIAU(key)){const jd=yearToJD(EPOCH+s.t)+(s.animateBodies?s.observationTime/86400:0),earth=key==='Lune'&&this.objects.find(x=>x.id==='solar:Terre'),f=bodyFrame(key,jd,earth?sub(earth.xyz,o.xyz):null);u.bodyRotation.value.set(...f[0],...f[1],...f[2]);phase=Math.atan2(f[0][1],f[0][0]);}
+ else{phase=o.type==='pulsar'?(s.animateBodies?s.visualWall*.8:seconds*2*Math.PI/(o.periodSeconds||1)):seconds*2*Math.PI/(star?2160000:86400);const north=new T.Vector3(0,-.39778,.91748);const q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),north);q.multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),phase));u.bodyRotation.value.setFromMatrix4(new T.Matrix4().makeRotationFromQuaternion(q)).transpose();}
+ this.phase=phase;
+ // Illumination comes from the star of the system: climb the parent chain (moon → planet → star).
+ let host=this.objects.find(x=>x.id===o.parent);for(let k=0;host&&host.type!=='star'&&k<4;k++)host=this.objects.find(x=>x.id===host.parent);host=host||this.objects.find(x=>x.id==='h0');let light=host?sub(host.xyz,o.xyz):[-.8,.4,1];if(star||norm(light)<1e-15)light=[-.8,.4,1];u.bodyLight.value.set(...unit(light));
  u.bodyMapReady.value=0;u.bodyCloudReady.value=0;u.nightReady.value=0;u.ringReady.value=0;if(name==='saturn'){const ring=this.texture('saturn-ring');u.ringMap.value=ring.texture;u.ringReady.value=+ring.ready;}
  if(name){const entry=this.texture(name);u.bodyMap.value=entry.texture;u.bodyMapReady.value=+entry.ready;this.ready=entry.ready;
   if(name==='earth'){const clouds=this.texture('earth-clouds'),night=this.texture('earth-night');u.cloudMap.value=clouds.texture;u.bodyCloudReady.value=+clouds.ready;u.nightMap.value=night.texture;u.nightReady.value=+night.ready;}

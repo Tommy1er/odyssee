@@ -56,6 +56,8 @@ Modifier les modules de `src/`, puis reconstruire `public/cockpit.js` et `public
 
 ## Vérifier selon ce qui change
 
+Après une modification de `public/catalogue.json`, régénérer les propriétés stellaires : `python scripts/build-stellar-physics.py` (écrit `public/stellar-physics.json`).
+
 ```sh
 node scripts/validate-physics.mjs
 node scripts/validate-navigation.mjs
@@ -63,6 +65,10 @@ node scripts/validate-evolution.mjs
 node scripts/validate-optics.mjs
 node scripts/validate-gravity.mjs
 node scripts/validate-orbits.mjs
+node scripts/validate-ephemeris.mjs   # planètes/Lune vs JPL Horizons, statuts de validité
+node scripts/validate-stellar.mjs     # rayons, températures, provenance
+node scripts/validate-lighting.mjs    # éclairage du vaisseau : flux, source dominante, Doppler
+python scripts/validate-reference-data.py
 npm run build
 ```
 
