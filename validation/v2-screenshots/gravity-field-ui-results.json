@@ -9,8 +9,10 @@
     "Strong-field source and static lapse at black-hole arrival",
     "Free flight falls without radial experiment or local-orbit mode",
     "Strong-field ship clock integrated",
-    "Cockpit help states model and autopilot limits",
-    "No browser or shader errors"
+    "Cockpit help states model and autopilot limits"
   ],
-  "errors": []
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "No browser or shader errors"
+  ]
 }
