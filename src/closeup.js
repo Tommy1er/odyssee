@@ -52,9 +52,8 @@ vec3 localRadiance(vec3 ray,vec3 background){if(bodyKind<.5)return background;
  return col;
 }
 `;
-// moon.jpg is truncated at its source (≈20 % of the map decodes; see docs) — the Moon uses the reconstituted
-// surface until the original Solar System Scope file is restored.
-const textureNames={'solar:Terre':'earth','solar:Mercure':'mercury','solar:Vénus':'venus','solar:Mars':'mars','solar:Jupiter':'jupiter','solar:Saturne':'saturn','solar:Uranus':'uranus','solar:Neptune':'neptune'};
+// Planetary maps are decoded and checked by scripts/validate-textures.py.
+const textureNames={'moon:Lune':'moon','solar:Terre':'earth','solar:Mercure':'mercury','solar:Vénus':'venus','solar:Mars':'mars','solar:Jupiter':'jupiter','solar:Saturne':'saturn','solar:Uranus':'uranus','solar:Neptune':'neptune'};
 export class CloseupModel{
  constructor(uniforms,objects,lut=[]){this.lut=lut;this.u=uniforms;this.objects=objects;this.cache=new Map();this.errors=[];this.id=null;this.family='';this.ready=false;
  const pixel=new T.DataTexture(new Uint8Array([180,180,180,255]),1,1);pixel.needsUpdate=true;this.placeholder=pixel;

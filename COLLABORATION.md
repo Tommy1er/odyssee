@@ -69,6 +69,7 @@ node scripts/validate-ephemeris.mjs   # planètes/Lune vs JPL Horizons, statuts 
 node scripts/validate-stellar.mjs     # rayons, températures, provenance
 node scripts/validate-lighting.mjs    # éclairage du vaisseau : flux, source dominante, Doppler
 python scripts/validate-reference-data.py
+python scripts/validate-textures.py   # Pillow : décodage complet, tailles et hashes
 npm run build
 ```
 

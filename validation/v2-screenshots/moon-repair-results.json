@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "Ship defaults to astrophysical lighting",
+    "Inspection lighting explicitly labelled",
+    "Lunar destination reached",
+    "Complete lunar map sampled",
+    "No texture load failure",
+    "Paused lunar orientation remains locked toward Earth",
+    "Unobstructed view works",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}

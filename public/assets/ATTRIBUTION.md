@@ -14,3 +14,5 @@ The Milky Way, nebula density fields, cluster member populations and multi-band 
 
 ## Planetary maps — October 2026
 Earth (8K day/clouds, 2K night), Mercury, Venus atmosphere, Mars, Jupiter, Saturn, Uranus, Neptune and Moon: Solar System Scope / INOVE, CC BY 4.0. https://www.solarsystemscope.com/textures/ — https://creativecommons.org/licenses/by/4.0/ . NASA-derived imagery with publisher colour adjustments and gap filling; these maps are not simultaneous photographs. Original files renamed for use in the simulator, unmodified. Sources and asset hashes: textures/sources.json.
+
+Moon map restored 5 October 2026 from the [Wikimedia Commons mirror](https://commons.wikimedia.org/wiki/File:Solarsystemscope_texture_2k_moon.jpg) of Solar System Scope’s original 2K map (CC BY 4.0). Complete JPEG, renamed only; pixels unchanged.

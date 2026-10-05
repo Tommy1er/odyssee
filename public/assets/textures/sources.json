@@ -103,15 +103,19 @@
       "width": 2048,
       "height": 1024,
       "mode": "RGB",
-      "bytes": 122880,
-      "sha256": "bf6c603d97f085a3253edd52f2459fa300ea9b6329e69f18722c3454088e07b7",
+      "bytes": 1053869,
+      "sha256": "2764ba6535ea0481a062846ee033cc7a909dae05b31a8fd13f3e98f3a7fd92bd",
       "asset_url": "https://www.solarsystemscope.com/textures/download/2k_moon.jpg",
       "source_page": "https://www.solarsystemscope.com/textures/",
       "creator": "Solar System Scope / INOVE",
       "license": "CC BY 4.0",
       "license_url": "https://creativecommons.org/licenses/by/4.0/",
       "changes": "Original asset renamed; pixels unchanged.",
-      "source_filename": "moon-2k.jpg"
+      "source_filename": "moon-2k.jpg",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/2/26/Solarsystemscope_texture_2k_moon.jpg",
+      "mirror_page": "https://commons.wikimedia.org/wiki/File:Solarsystemscope_texture_2k_moon.jpg",
+      "retrieved": "2026-10-05",
+      "repair_note": "Complete original obtained from Wikimedia Commons mirror; replaces truncated 122880-byte transfer. JPEG fully decoded; pixels unchanged."
     },
     {
       "name": "neptune.jpg",
