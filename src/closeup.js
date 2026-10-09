@@ -85,7 +85,7 @@ export class CloseupModel{
  texture(name){if(this.cache.has(name))return this.cache.get(name);const entry={ready:false,texture:this.placeholder};this.cache.set(name,entry);new T.TextureLoader().load('./assets/textures/'+name+(name==='saturn-ring'?'.png':'.jpg'),tex=>{tex.colorSpace=name==='earth-clouds'?T.NoColorSpace:T.SRGBColorSpace;tex.wrapS=T.RepeatWrapping;tex.minFilter=T.LinearMipmapLinearFilter;tex.magFilter=T.LinearFilter;tex.anisotropy=name==='saturn-ring'?1:8;entry.texture=tex;entry.ready=true;},undefined,()=>{entry.failed=true;this.errors.push(name);});return entry;}
  // Surface colour from the same CIE-derived black-body table as the sky (chromaticity normalised to its maximum).
  blackbody(temp){return new T.Color(...blackbodyRGB(this.lut,temp));}
- update(o,s){const u=this.u;u.bodyKind.value=0;this.body=null;this.ready=false;this.family='';this.id=o?.id;if(!o||!['planet','moon','star','pulsar'].includes(o.type))return false;
+ update(o,s){const u=this.u;u.bodyKind.value=0;this.body=null;this.ready=false;this.family='';this.id=o?.id;if(!o||!['planet','moon','star','pulsar','comet'].includes(o.type))return false;
  const ratio=norm(sub(o.lightXYZ||o.xyz,s.pos))/radiusLy(o);if(ratio>160)return false;
  const star=o.type==='star',magnetar=/magn[eé]tar/i.test(o.kind||'');u.bodyKind.value=star?2:o.type==='pulsar'?(magnetar?4:3):1;
  let style=o.skin==='earth'?1: ['gas','saturn','ice','venus'].includes(o.skin)||o.planet?.radiusEarth>3?2:0;
@@ -95,7 +95,7 @@ export class CloseupModel{
  // Neutron stars: compactness u = Rs/R for light bending and redshift; beam display averaged when the spin is too fast.
  const ns=o.type==='pulsar';u.bodyCompactness.value=ns?Math.min(.6,2.95325*(o.massSolar||1.4)/(o.radiusKm||12)):0;u.bodyBeamBlend.value=ns?beamBlend(o.periodSeconds||1,s.animateBodies?(s.observationRate||1):(s.paused?0:(s.rate||0)*YEAR)):1;u.bodyRing.value=o.skin==='saturn'?1:0;u.bodyAtmosphere.value=o.skin==='earth'?.025:style===2?.018:style===3?.035:0;
  if(star){const Teff=temperature(o),R=o.radiusSolar||1;u.bodyLimb.value=limbDarkening(Teff);u.bodyGranule.value=Math.max(6,Math.min(250,250/Math.sqrt(R)));u.bodyConvective.value=Teff<6500?1:Teff<8000?(8000-Teff)/1500*.6:0;u.bodySpots.value=Teff<6500&&R<3?1:0;}
- const tint=star? this.blackbody(temperature(o)):new T.Color(magnetar?0xff9462:o.type==='pulsar'?0x89c8ff:style===3?0x759b82:style===4?0x63504a:style===5?0xb2ced5:0xa69178);if(o.name==='Titan')tint.set(0xd7a85d);if(o.name==='Io')tint.set(0xcabd6d);if(o.name==='Ganymède')tint.set(0x8c8580);if(o.id==='moon:Lune')tint.set(0x9b968f);u.bodyTint.value.copy(tint);
+ const tint=star? this.blackbody(temperature(o)):new T.Color(magnetar?0xff9462:o.type==='pulsar'?0x89c8ff:style===3?0x759b82:style===4?0x63504a:style===5?0xb2ced5:0xa69178);if(o.name==='Titan')tint.set(0xd7a85d);if(o.name==='Io')tint.set(0xcabd6d);if(o.name==='Ganymède')tint.set(0x8c8580);if(o.id==='moon:Lune')tint.set(0x9b968f);if(o.type==='comet')tint.setRGB(.045,.042,.04);u.bodyTint.value.copy(tint);
  u.bodyCenter.value.set(...sub(o.lightXYZ||o.xyz,s.pos)).divideScalar(radiusLy(o));u.bodySeed.value=hash(o.id)%1000;u.bodyTime.value=s.animateBodies?s.observationTime:s.t*YEAR;u.activityTime.value=s.animateBodies?s.visualWall:s.t*YEAR;
  // Solar-system bodies: IAU pole and prime meridian at the mission date (TDB); the optional observation clock
  // adds pedagogical spin only to the surface, never to the body centre. Other bodies: illustrative axes.

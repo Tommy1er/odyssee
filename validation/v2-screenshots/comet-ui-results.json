@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "Comets filter lists Halley, Hale-Bopp and 3I/ATLAS",
+    "Dark Halley selectable as a target at 35 au",
+    "Info sheet: inactive nucleus, magnitude and 2061 perihelion",
+    "Perihelia listed with eclipses, eclipse of 2027-02-06 still first",
+    "Encke active at perihelion (0.34 au), coma and tails in the shader",
+    "Jump logged as a discontinuity",
+    "HUD region at Encke: planetary region of the Solar System",
+    "Long exposure (×300) set for the comet and stated",
+    "Halley 2061: active and in the brightest comet slot",
+    "Solar-system map (100 au) labels comets on their orbits",
+    "Oort map (3.5 ly) labelled as hypothetical",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}

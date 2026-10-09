@@ -7,7 +7,12 @@ export const GAL_CENTER=[R0*Math.cos(dec)*Math.cos(ra),R0*Math.cos(dec)*Math.sin
 export const GC_GAL=galactic(GAL_CENTER);
 export function galactocentric(p){let g=galactic(p);return [GC_GAL[0]-g[0],g[1]-GC_GAL[1],g[2]-GC_GAL[2]];}
 export function fromGalactocentric(p){return equatorial([GC_GAL[0]-p[0],GC_GAL[1]+p[1],GC_GAL[2]+p[2]]);}
-export function region(p){let [x,y,z]=galactocentric(p),r=Math.hypot(x,y);if(norm(p)>10000000)return 'Grandes structures · espace intergalactique';if(norm(p)>1000000)return 'Groupe local · espace intergalactique';if(norm(p)>300000)return 'Périphérie du Groupe local';return Math.abs(z)>5000?'Halo galactique':r>50000?'Extérieur du disque':r<800?'Région nucléaire':r<7000?'Bulbe et barre centrale':Math.abs(z)>1200?'Disque épais':r>35000?'Disque externe':Math.hypot(x-R0,y)<5000?'Bras local · Orion':'Disque et bras spiraux';}
+// Heliocentric zones, from the Sun's distance (the Sun stays at the catalogue origin). The Oort cloud has never been
+// observed directly: its extent (≈ 2 000 – 100 000 au) is inferred from the orbits of long-period comets.
+const AU_LY=1/63241.077;
+export function helioRegion(p){const r=norm(p)/AU_LY;if(r<30)return 'Système solaire · région des planètes';if(r<55)return 'Ceinture de Kuiper';if(r<2000)return 'Disque épars · au-delà de l’héliopause (≈ 120 ua)';if(r<20000)return 'Nuage d’Oort interne (hypothétique)';if(r<100000)return 'Nuage d’Oort externe (hypothétique)';if(r<200000)return 'Confins de l’attraction solaire (≈ 1,6 – 3 al)';return '';}
+export function region(p){const h=helioRegion(p),g=galacticRegion(p);return h?h+' · '+g:g;}
+function galacticRegion(p){let [x,y,z]=galactocentric(p),r=Math.hypot(x,y);if(norm(p)>10000000)return 'Grandes structures · espace intergalactique';if(norm(p)>1000000)return 'Groupe local · espace intergalactique';if(norm(p)>300000)return 'Périphérie du Groupe local';return Math.abs(z)>5000?'Halo galactique':r>50000?'Extérieur du disque':r<800?'Région nucléaire':r<7000?'Bulbe et barre centrale':Math.abs(z)>1200?'Disque épais':r>35000?'Disque externe':Math.hypot(x-R0,y)<5000?'Bras local · Orion':'Disque et bras spiraux';}
 export const densityGLSL=`
 uniform float modelTime;
 float spiral(vec3 p){float r=length(p.xy);float a=atan(p.y,p.x);float phase=4.*(a-log(max(r,2.)/8.)/tan(.21));return pow(.5+.5*cos(phase),7.)*smoothstep(3.,8.,r);}

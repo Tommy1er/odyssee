@@ -130,7 +130,7 @@ export class SystemBodies {
     const scored = [];
     let reach = Infinity;
     for (const o of this.objects) {
-      if (o === primary || !["planet", "moon", "star"].includes(o.type)) continue;
+      if (o === primary || !["planet", "moon", "star", "comet"].includes(o.type)) continue;
       const p = o.lightXYZ || o.xyz,
         dx = p[0] - s.pos[0], dy = p[1] - s.pos[1], dz = p[2] - s.pos[2],
         d = Math.sqrt(dx * dx + dy * dy + dz * dz),
@@ -164,7 +164,7 @@ export class SystemBodies {
     this.select(s, primary, pixelAngle);
     u.pixelAngle.value = pixelAngle;
     const ls = (p) => [(p[0] - s.pos[0]) * YEAR, (p[1] - s.pos[1]) * YEAR, (p[2] - s.pos[2]) * YEAR];
-    const primaryBody = primary && ["planet", "moon", "star", "pulsar"].includes(primary.type) && u.bodyKind.value > 0.5 ? primary : null;
+    const primaryBody = primary && ["planet", "moon", "star", "pulsar", "comet"].includes(primary.type) && u.bodyKind.value > 0.5 ? primary : null;
     // Light source: the star of the primary's system, else of the first secondary, else none.
     const ref = primaryBody || this.list.find((o) => o.type !== "star");
     const star = ref ? (ref.type === "star" ? ref : this.host(ref)) : null;
@@ -178,7 +178,7 @@ export class SystemBodies {
     if (primaryBody) {
       u.primaryPos.value.set(...ls(primaryBody.lightXYZ || primaryBody.xyz));
       u.primaryRadiusLs.value = radiusLy(primaryBody) * YEAR;
-      u.primaryOccluder.value = ["planet", "moon"].includes(primaryBody.type) ? 1 : 0;
+      u.primaryOccluder.value = ["planet", "moon", "comet"].includes(primaryBody.type) ? 1 : 0;
       u.primaryAtm.value = primaryBody.id === "solar:Terre" ? 1 : 0;
       // Keep the primary's terminator consistent with the shadow geometry (same light position, same epoch).
       if (u.lightOn.value && primaryBody !== star) u.bodyLight.value.set(...unit(sub(ls(star.lightXYZ || star.xyz), ls(primaryBody.lightXYZ || primaryBody.xyz))));
@@ -194,7 +194,7 @@ export class SystemBodies {
       const isStar = o.type === "star";
       u.secKind.value[k] = isStar ? 2 : o.skin === "saturn" ? 3 : 1;
       u.secAtm.value[k] = o.id === "solar:Terre" ? 1 : 0;
-      const c = isStar ? blackbodyRGB(this.closeup.lut, temperature(o)) : MEAN_COLOR[o.id] || (o.planet?.radiusEarth > 3 ? [0.55, 0.5, 0.42] : [0.38, 0.33, 0.28]);
+      const c = isStar ? blackbodyRGB(this.closeup.lut, temperature(o)) : MEAN_COLOR[o.id] || (o.type === "comet" ? [0.04, 0.04, 0.04] : o.planet?.radiusEarth > 3 ? [0.55, 0.5, 0.42] : [0.38, 0.33, 0.28]);
       u.secColor.value[k].set(...c);
       const key = o.ephemeris;
       if (key && hasIAU(key)) {

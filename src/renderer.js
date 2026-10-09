@@ -13,6 +13,7 @@ import {SpacecraftView} from './spacecraft.js';
 import {ShipLighting} from './ship-lighting.js';
 import {EnvironmentLayer,GalacticOrbit} from './environments.js';
 import {BlackHoleLens} from './black-hole.js';
+import {SolarMapLayer} from './solar-map.js';
 
 const vec=a=>new T.Vector3(...a);
 function stellarColor(o){const s=o.spect||'';return new T.Color(o.type==='blackhole'?0xbda0e7:o.type==='nebula'||o.type==='pillars'?0x99e7d0:s.startsWith('M')?0xff9772:s.startsWith('K')?0xffc08b:s.startsWith('O')||s.startsWith('B')?0x9fbfff:s.startsWith('A')?0xc9ddff:0xffe6bd);}
@@ -49,7 +50,7 @@ export class SpaceRenderer{
   this.destination=new T.Mesh(new T.SphereGeometry(.15,12,10),new T.MeshBasicMaterial({color:0xb897ff,wireframe:true}));this.map.add(this.destination);this.destLine=line([[0,0,0],[0,0,0]],0xa6a1d9,.55);this.pathLine=line([[0,0,0]],0x95eac4);this.map.add(this.destLine,this.pathLine);this.axes=new T.Group();this.map.add(this.axes);
   for(const [i,name] of ['Xg · l 0°','Yg · l 90°','Zg · pôle N'].entries()){const axis=EQ_TO_GAL[i];this.axes.add(line([axis.map(v=>-v*22),axis.map(v=>v*22)],i===2?0x84699f:0x506778,.5));const l=label(name);l.position.copy(vec(axis).multiplyScalar(23));this.axes.add(l);}
   this.predictedOrbit=new T.Line(new T.BufferGeometry(),new T.LineDashedMaterial({color:0x689db2,dashSize:.22,gapSize:.16,transparent:true,opacity:.7}));this.map.add(this.predictedOrbit);this.predictedOrbit.visible=false;this.orbitalBody=new T.Mesh(new T.SphereGeometry(1,64,40),new T.MeshBasicMaterial({color:0x547f99}));this.map.add(this.orbitalBody);this.orbitalLabel=label('');this.map.add(this.orbitalLabel);this.orbitalBody.visible=this.orbitalLabel.visible=false;
-  this.milkyLabel=label('VOIE LACTÉE','#e9c48e');this.map.add(this.milkyLabel);this.localGroupLayer=new LocalGroupLayer(this.skyOptics.material.uniforms,objects,this.mapWorld,label,this.map);
+  this.milkyLabel=label('VOIE LACTÉE','#e9c48e');this.map.add(this.milkyLabel);this.localGroupLayer=new LocalGroupLayer(this.skyOptics.material.uniforms,objects,this.mapWorld,label,this.map);this.solarMap=new SolarMapLayer(this.mapWorld,this.map,label);this.byId=new Map(objects.map(o=>[o.id,o]));
   new ResizeObserver(()=>this.resize()).observe(canvas);this.resize();let down;canvas.addEventListener('pointerdown',e=>down=[e.clientX,e.clientY]);canvas.addEventListener('pointerup',e=>{if(this.mapMode&&down&&Math.hypot(e.clientX-down[0],e.clientY-down[1])<4)this.pick(e);});
  }
  makePlane(normal,color){const group=new T.Group();const n=vec(normal).normalize();group.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),n);const grid=new T.GridHelper(50,10,color,color);grid.material.transparent=true;grid.material.opacity=.19;group.add(grid);const circle=[];for(let i=0;i<=180;i++)circle.push([25*Math.cos(i*Math.PI/90),0,25*Math.sin(i*Math.PI/90)]);group.add(line(circle,color,.6));return group;}
@@ -77,7 +78,7 @@ export class SpaceRenderer{
    if(o.type==='pulsar'){for(let side of [-1,1]){const jet=new T.Mesh(new T.ConeGeometry(.4,7,32,1,true),new T.MeshBasicMaterial({color:0x79c4ff,transparent:true,opacity:.12,side:T.DoubleSide}));jet.position.y=side*4;jet.rotation.z=side>0?Math.PI:0;group.add(jet);}}
   }
  }
- render(s,dt){this.localGroupLayer.update(s,this.mapScale,s.map);this.milkyLabel.visible=s.map&&this.mapScale<.0001;this.milkyLabel.position.set(...GAL_CENTER.map(x=>x*this.mapScale));this.milkyLabel.position.x+=2;this.sunLabel.visible=!this.milkyLabel.visible;
+ render(s,dt){this.localGroupLayer.update(s,this.mapScale,s.map);this.solarMap.update(s,this.mapScale,s.map,this.byId);this.milkyLabel.visible=s.map&&this.mapScale<.0001;this.milkyLabel.position.set(...GAL_CENTER.map(x=>x*this.mapScale));this.milkyLabel.position.x+=2;this.sunLabel.visible=!this.milkyLabel.visible;
   const physicalV=velocity(s.u);let v=s.opticalLab?unit(physicalV.some(x=>x)?physicalV:new T.Vector3(0,0,-1).applyQuaternion(s.q).toArray()).map(x=>x*s.labBeta):physicalV;const forward=new T.Vector3(0,0,-1).applyQuaternion(s.q);this.starMaterial.uniforms.ship.value.set(...s.pos);this.starMaterial.uniforms.speed.value.set(...v);this.starMaterial.uniforms.optics.value=0;this.starMaterial.uniforms.shift.value=0;this.spacecraft.controls.enabled=s.external&&!s.map;if(s.trackTarget&&!s.opticalLab&&s.target){
    const target=s.target.lookAt?this.objects.find(o=>o.id===s.target.lookAt):s.target;
    let n=unit(sub(target.lightXYZ||target.xyz,s.pos));if(s.relativistic&&(!s.external||s.shipFrame==='comoving'))n=aberrateU(n,s.u);
