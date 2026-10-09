@@ -17,6 +17,8 @@ const ELEMENTS = {
   Lune: [269.9949, 0.0031, 66.5392, 0.013, 38.3213, 13.17635815],
 };
 export const hasIAU = (key) => key in ELEMENTS;
+// TT − UT1 for 2026–2028 (IERS ≈ 69 s). Earth's prime meridian follows UT1, not TT: W uses d(UT1) = d(TT) − ΔT.
+export const DELTA_T_SECONDS = 69.2;
 const radec = (a, d) => [Math.cos(d) * Math.cos(a), Math.cos(d) * Math.sin(a), Math.sin(d)];
 const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 const unit = (a) => { const n = Math.hypot(...a); return a.map((x) => x / n); };
@@ -40,7 +42,7 @@ export function bodyFrame(key, jd, towardParent = null) {
       along = t[0] * n[0] + t[1] * n[1] + t[2] * n[2];
     x = unit(t.map((v, i) => v - n[i] * along));
   } else {
-    const W = (e[4] + e[5] * d) * DEG;
+    const W = (e[4] + e[5] * (key === "Terre" ? d - DELTA_T_SECONDS / 86400 : d)) * DEG;
     x = node.map((v, i) => Math.cos(W) * v + Math.sin(W) * q[i]);
   }
   return [x, n, cross(x, n)];

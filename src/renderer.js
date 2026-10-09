@@ -81,7 +81,7 @@ export class SpaceRenderer{
   const physicalV=velocity(s.u);let v=s.opticalLab?unit(physicalV.some(x=>x)?physicalV:new T.Vector3(0,0,-1).applyQuaternion(s.q).toArray()).map(x=>x*s.labBeta):physicalV;const forward=new T.Vector3(0,0,-1).applyQuaternion(s.q);this.starMaterial.uniforms.ship.value.set(...s.pos);this.starMaterial.uniforms.speed.value.set(...v);this.starMaterial.uniforms.optics.value=0;this.starMaterial.uniforms.shift.value=0;this.spacecraft.controls.enabled=s.external&&!s.map;if(s.trackTarget&&!s.opticalLab&&s.target){
    const target=s.target.lookAt?this.objects.find(o=>o.id===s.target.lookAt):s.target;
    let n=unit(sub(target.lightXYZ||target.xyz,s.pos));if(s.relativistic&&(!s.external||s.shipFrame==='comoving'))n=aberrateU(n,s.u);
-   const direction=vec(n),up=Math.abs(n[1])>.95?new T.Vector3(0,0,1):new T.Vector3(0,1,0);
+   const direction=vec(n),up=Math.abs(n[2])>.95?new T.Vector3(0,1,0):new T.Vector3(0,0,1);
    if(s.external){const right=new T.Vector3().crossVectors(direction,up).normalize();this.spacecraft.controls.target.set(0,0,0);this.spacecraft.camera.position.copy(direction).multiplyScalar(-32).addScaledVector(right,8).addScaledVector(up,3);this.spacecraft.camera.up.copy(up);this.spacecraft.camera.lookAt(0,0,0);}
    else{this.camera.up.copy(up);this.camera.lookAt(direction);}
   }else if(!s.external)this.camera.quaternion.copy(s.q);

@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "Upcoming eclipses listed from the mission date",
+    "Date jump to 8 min before NASA greatest eclipse (±10 min)",
+    "Ship clock not advanced by the fictitious jump",
+    "Jump logged as a discontinuity",
+    "Moon and Sun disc drawn with the Earth",
+    "Lunar eclipse: Moon targeted, Earth among the occluders",
+    "Past eclipses no longer offered after the jump",
+    "Cockpit help describes eclipses and the fictitious date jump",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}
