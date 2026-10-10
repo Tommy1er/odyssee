@@ -16,3 +16,7 @@ The Milky Way, nebula density fields, cluster member populations and multi-band 
 Earth (8K day/clouds, 2K night), Mercury, Venus atmosphere, Mars, Jupiter, Saturn, Uranus, Neptune and Moon: Solar System Scope / INOVE, CC BY 4.0. https://www.solarsystemscope.com/textures/ — https://creativecommons.org/licenses/by/4.0/ . NASA-derived imagery with publisher colour adjustments and gap filling; these maps are not simultaneous photographs. Original files renamed for use in the simulator, unmodified. Sources and asset hashes: textures/sources.json.
 
 Moon map restored 5 October 2026 from the [Wikimedia Commons mirror](https://commons.wikimedia.org/wiki/File:Solarsystemscope_texture_2k_moon.jpg) of Solar System Scope’s original 2K map (CC BY 4.0). Complete JPEG, renamed only; pixels unchanged.
+
+## Carte extragalactique · 10 octobre 2026
+
+Exports sans fusion des catalogues VizieR : McConnachie 2012 (J/AJ/144/4, 101/102 entrées positionnables), Karachentsev et al. 2013 (UNGC, J/AJ/145/101, 869 entrées), Tully et al. 2023 (CF4, J/ApJ/944/94/table2, 55 877 entrées). Les fichiers d’origine, URLs et SHA-256 sont dans `data/references-2026-10-04/MANIFEST.json`. Les JSON de carte contiennent leurs champs, hash d’entrée et exclusions. Les erreurs des modules CF4 sont conservées ; pas de fusion de doublons entre relevés, de catalogue inventé ou de frontière mesurée de Laniakea. Les symboles sont des marqueurs de données.

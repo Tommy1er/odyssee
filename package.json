@@ -10,5 +10,8 @@
     "esbuild": "^0.25.10",
     "three": "^0.180.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  }
 }

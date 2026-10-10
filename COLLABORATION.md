@@ -73,6 +73,9 @@ node scripts/validate-compact.mjs     # disques, décalage g, Beloborodov, faisc
 node scripts/validate-eclipses.mjs    # éclipses 2026–2028 vs NASA, ombres, rotation terrestre, corps secondaires
 node scripts/validate-comets.mjs      # comètes vs JPL Horizons, Kepler, éclat, flux chevelure/queues, nuage d'Oort
 node scripts/validate-nebulae.mjs     # nébuleuses : raies → couleurs CIE, rapports de raies, poussière, flux, brillance de surface
+python scripts/build-extragalactic.py   # régénération hors ligne des 3 catalogues de carte
+node scripts/validate-extragalactic.mjs # données, incertitudes, plan supergalactique, sélection
+node scripts/validate-catalogue-ui.mjs  # intégration DOM sans rendu WebGL
 python scripts/validate-reference-data.py
 python scripts/validate-textures.py   # Pillow : décodage complet, tailles et hashes
 npm run build
@@ -105,3 +108,7 @@ Les scripts UI utilisent leurs propres serveurs locaux et écrivent dans `valida
 ## Message de départ pour Claude
 
 « Reprends Odyssée. Lis CLAUDE.md, COLLABORATION.md et public/physics-v2.html. Construis et lance le projet, puis examine le rendu 3D et les limites physiques. Travaille sur la branche commune `main`, à ton tour après récupération de sa dernière version, conserve la navigation destination + vol libre et les deux référentiels. Distingue explicitement données, approximations et fiction. Propose une amélioration ciblée, teste les interactions concernées puis enregistre et envoie un commit sur `main` en expliquant les changements, validations et limites. L’hébergement reste sur ChatGPT Sites ; Codex assurera la publication. Ne remplace pas le projet par une démonstration simplifiée. »
+
+## Dernier relais
+
+Phase C : lire `docs/RELAIS-CODEX-2026-10-10-LANIAKEA.md`. La carte des galaxies observées est distincte des populations synthétiques et des futures visites cockpit. `jsdom` est utilisé uniquement pour tester les contrôles de carte dans Node, pas pour valider les shaders.

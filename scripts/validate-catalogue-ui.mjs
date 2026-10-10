@@ -1,0 +1,36 @@
+// Node DOM integration test. No WebGL render or browser screenshot is claimed.
+import {JSDOM} from 'jsdom';
+import {build} from 'esbuild';
+import * as Three from 'three';
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const html=fs.readFileSync('public/cosmos.html','utf8'),dom=new JSDOM(html,{url:'http://localhost/cosmos.html',runScripts:'outside-only'}),w=dom.window;
+let raf;const errors=[];w.addEventListener('error',e=>errors.push(e.error?.message||e.message));
+w.__T=Three;w.devicePixelRatio=1;w.ResizeObserver=class{observe(){}};w.requestAnimationFrame=f=>{raf=f;};w.fetch=async url=>({ok:true,json:async()=>JSON.parse(fs.readFileSync('public/'+url.replace(/^\.\//,''),'utf8'))});
+const viewport=w.document.querySelector('.universe');viewport.getBoundingClientRect=()=>({width:1000,height:800,left:0,top:0});
+const canvas=w.document.getElementById('cosmos');canvas.getBoundingClientRect=viewport.getBoundingClientRect;Object.defineProperty(canvas,'clientWidth',{value:1000});Object.defineProperty(canvas,'clientHeight',{value:800});
+const threeStub=Object.keys(Three).filter(k=>k!=='WebGLRenderer').map(k=>`export const ${k}=window.__T.${k};`).join('\n')+`\nexport class WebGLRenderer{constructor(){this.domElement=document.getElementById('cosmos');}setPixelRatio(){}setClearColor(){}setSize(){}render(){}getDrawingBufferSize(v){return v.set(1000,800);}}`;
+const bundle=await build({entryPoints:['src/cosmos.js'],bundle:true,write:false,format:'iife',plugins:[{name:'node-dom-render-stubs',setup(b){b.onResolve({filter:/^three$/},()=>({path:'three',namespace:'stub'}));b.onResolve({filter:/^three\/addons\/controls\/OrbitControls.js$/},()=>({path:'controls',namespace:'stub'}));b.onLoad({filter:/.*/,namespace:'stub'},a=>({contents:a.path==='three'?threeStub:`export class OrbitControls{constructor(camera){this.camera=camera;this.target=new window.__T.Vector3();}update(){this.camera.lookAt(this.target);this.camera.updateMatrixWorld();}}`,loader:'js'}));}}]});
+w.eval(bundle.outputFiles[0].text);
+const $=id=>w.document.getElementById(id),wait=async pred=>{for(let i=0;i<100;i++){if(pred())return;await new Promise(r=>setTimeout(r,10));}throw Error('DOM condition timed out');};
+let n=0;const check=(label,fn)=>{fn();n++;console.log('PASS '+label);};
+await wait(()=>w.cosmicSnapshot?.().survey.ready);
+check('Initial scale loads historical nearby catalogue without synthetic overlay',()=>{assert.equal(w.cosmicSnapshot().survey.total,101);assert(!$('synthetic').checked);});
+$('survey-search').value='Andromeda';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>$('survey-results').querySelector('button')?.textContent.startsWith('Andromeda'));
+$('survey-results').querySelector('button').click();
+check('Selecting a catalogue galaxy fills provenance and hides unsupported cockpit transfer',()=>{assert.equal($('name').textContent,'Andromeda');assert($('flight').hidden);assert($('extent').textContent.includes('aucune taille physique'));});
+w.document.querySelector('[data-level="2"]').click();await wait(()=>w.cosmicSnapshot().survey.ready&&w.cosmicSnapshot().survey.key==='cf4');
+$('survey-search').value='PGC 2';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>w.cosmicSnapshot().survey.shown===1);$('survey-results').querySelector('button').click();
+check('CF4 selection exposes distance error and methods',()=>{assert.equal($('name').textContent,'PGC 2');assert($('summary').textContent.includes('34,535'));assert($('relation').textContent.includes('Tully–Fisher'));assert($('extent').textContent.includes('4 726'));});
+$('survey-radius').value='5';$('survey-radius').dispatchEvent(new w.Event('change'));
+check('Filtering away selection restores structure details',()=>{assert.equal(w.cosmicSnapshot().survey.shown,0);assert.equal(w.cosmicSnapshot().selected,'laniakea');assert(!$('flight').hidden);});
+$('survey-search').value='';$('survey-radius').value='Infinity';$('survey-error').value='0.2';$('survey-error').dispatchEvent(new w.Event('change'));
+check('Error filter changes count; list remains capped at 60',()=>{assert(w.cosmicSnapshot().survey.shown>0&&w.cosmicSnapshot().survey.shown<55877);assert.equal($('survey-results').querySelectorAll('button').length,60);});
+$('survey-top').click();raf(2000);
+check('Supergalactic view and animation loop execute without DOM errors',()=>{assert(w.cosmicSnapshot().camera.every(Number.isFinite));assert.deepEqual(errors,[]);});
+// Force a failed uncached load, then retry. No fake observed population on error.
+const original=w.fetch;w.fetch=async()=>({ok:false,status:503});$('survey-catalogue').value='ungc';$('survey-catalogue').dispatchEvent(new w.Event('change'));await wait(()=>!$('survey-retry').hidden);
+check('Download failure keeps map usable and exposes retry',()=>{assert(!w.cosmicSnapshot().survey.ready);assert.equal(w.cosmicSnapshot().survey.shown,0);assert($('survey-status').textContent.includes('indisponible'));});
+w.fetch=original;$('survey-retry').click();await wait(()=>w.cosmicSnapshot().survey.ready);
+check('Retry loads UNGC; source change clears incompatible CF4-only filter',()=>{assert.equal(w.cosmicSnapshot().survey.total,869);assert.equal(w.cosmicSnapshot().survey.shown,869);assert($('survey-error-label').hidden);});
+w.close();console.log(JSON.stringify({passed:n,mode:'DOM integration; GPU not tested'}));
