@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "M 42: calibrated per-pixel cloud, long-exposure gain ×10",
+    "M 42 rendered: teal [O III] core, pink envelope (R and B above G)",
+    "Eye: physical surface brightness (gain 1), dimmer and greyer",
+    "Info sheet: Balmer decrement, [O III] line, foreground extinction, references",
+    "M 57 rendered: teal centre ([O III] above red)",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}

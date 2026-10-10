@@ -33,7 +33,7 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
   check('Encke active at perihelion (0.34 au), coma and tails in the shader',encke.r>0.32&&encke.r<0.36&&encke.activity>0.95&&encke.J>0);
   check('Jump logged as a discontinuity',s.events.some(e=>e.startsWith('SAUT DE DATE FICTIF')));
   check('HUD region at Encke: planetary region of the Solar System',/Système solaire/.test(s.environment));
-  check('Long exposure (×300) set for the comet and stated',(await page.inputValue('#exposure'))==='2.5'&&(await page.locator('#eclipse-status').textContent()).includes('pose longue'));
+  check('Exposure untouched; long-exposure gain of the diffuse light stated',(await page.inputValue('#exposure'))==='0.3'&&(await page.locator('#eclipse-status').textContent()).includes('pose longue'));
   await shot('comet-encke-2027.png');
   await jump('Périhélie de Halley');
   await page.waitForFunction(()=>window.flightSnapshot().target==='comet:1P'&&window.flightSnapshot().comets.some(c=>c.id==='comet:1P'&&c.r<0.6));s=await snap();

@@ -1,24 +1,23 @@
 import * as T from 'three';
 import {sub,norm,AU,add,mul,galactic} from './physics.js';
 import {radiusLy,hash} from './body-data.js';
+import {nebulaGLSL,calibration,applyCalibration} from './nebulae.js';
+import {diffuseGain} from './photometry.js';
 const vertex=`varying vec3 localPoint;void main(){localPoint=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
-const fragment=`precision highp float;varying vec3 localPoint;uniform vec3 eye;uniform float shape,band,exposure,seed;
-float h(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7))+seed)*43758.5453);}float noise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(mix(h(i),h(i+vec3(1,0,0)),f.x),mix(h(i+vec3(0,1,0)),h(i+vec3(1,1,0)),f.x),f.y),mix(mix(h(i+vec3(0,0,1)),h(i+vec3(1,0,1)),f.x),mix(h(i+vec3(0,1,1)),h(i+vec3(1,1,1)),f.x),f.y),f.z);}
-float fbm(vec3 p){return .55*noise(p)+.27*noise(p*2.)+.13*noise(p*4.)+.05*noise(p*8.);}
-float density(vec3 p){float n=fbm(p*7.),r=length(p);if(shape<.5)return exp(-r*r*3.)*smoothstep(.36,.7,n)*3.;if(shape<1.5){float d=0.;for(int i=0;i<3;i++){float k=float(i),height=1.45-k*.22;float t=clamp((p.y+.8)/height,0.,1.);vec3 c=vec3((k-1.)*.43+.09*sin(t*5.+k),-.8+t*height,0);float w=.075+.09*(1.-t)+.012*sin(t*16.+k);float rough=(fbm(p*24.)-.48)*.14;d=max(d,1.-smoothstep(w*.64,w+.012,length(p-c)+rough));}return d*(.12+5.*n*n);}
-if(shape<2.5)return exp(-pow((r-(.69+.12*n))/.075,2.))*smoothstep(.3,.65,n)*4.;if(shape<3.5){vec3 q=p;q.y=abs(q.y)-.42;return exp(-pow((length(q/vec3(.32,.51,.32))-.85)/.13,2.))*(.3+n);}
-if(shape<4.5)return exp(-pow((length(p.xy)-.65)/.13,2.))*exp(-p.z*p.z*35.)*(.4+n);return exp(-r*r*2.)*smoothstep(.3,.72,n)*5.;}
-void main(){vec3 dir=normalize(localPoint-eye);float b=dot(eye,dir),c=dot(eye,eye)-1.21,disc=b*b-c;if(disc<0.)discard;float lo=max(0.,-b-sqrt(disc)),hi=-b+sqrt(disc),ds=(hi-lo)/56.;if(hi<=lo)discard;vec3 light=vec3(0);float trans=1.;for(int i=0;i<56;i++){vec3 p=eye+dir*(lo+(float(i)+.5)*ds);float den=density(p);float optical=den*ds*(band==2.?.5:2.8);float a=1.-exp(-optical);vec3 color=vec3(.8,.20,.23);float edge=clamp(length(p)*.8+fbm(p*14.)*.5,0.,1.);if(band==1.||band==6.)color=mix(vec3(.17,.40,.46),vec3(1.,.63,.30),edge);if(band==2.)color=mix(vec3(.26,.08,.42),vec3(1.,.51,.13),edge);if(band==3.)color=vec3(.16,.68,.62);if(band==4.)color=vec3(.48,.21,1.);if(band==5.)color=vec3(.8,.18,.53);float gain=band==0.?.018:band==1.?.48:band==2.?.7:.5;if(shape>4.5&&band<2.)gain*=.02;if(band==4.&&shape<1.5)gain*=.025;if(band==5.&&shape<1.5)gain*=.005;light+=color*a*trans*gain*exposure;trans*=exp(-optical);if(trans<.008)break;}float alpha=clamp(1.-trans,0.,.96);if(band==0.)light=vec3(dot(light,vec3(.21,.72,.07)));gl_FragColor=vec4(light,alpha);}`;
+// Nebula volume (visible bands: physical emission-line model of nebulae.js; other bands: qualitative model). Output is
+// premultiplied: radiance + background × (1 − alpha), alpha from the luminance-weighted dust transmission.
+const fragment=`precision highp float;varying vec3 localPoint;uniform vec3 eye;uniform float band;${nebulaGLSL(24)}
+void main(){vec3 dir=normalize(localPoint-eye);vec3 T;vec3 L=nebulaMarch(eye,dir,vec3(0.),T);gl_FragColor=vec4(L,clamp(1.-dot(T,vec3(.2126,.7152,.0722)),0.,1.));}`;
 function random(seed){return()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return (seed+.5)/4294967296;};}
 export class EnvironmentLayer{
  constructor(scene,objects){this.scene=scene;this.objects=objects.filter(o=>['nebula','pillars','cluster'].includes(o.type));this.cache=new Map();this.active=[];this.lastUpdate=-1;}
  create(o){const group=new T.Group(),r=radiusLy(o);let cloud,stars;if(o.type==='cluster'){
  const rnd=random(hash(o.id)),n=o.clusterModel==='globular'?16000:o.clusterModel==='massive'?9500:Math.min(5000,Math.max(200,(o.members||250)*2)),p=[],c=[];for(let i=0;i<n;i++){const u=rnd(),rad=Math.min(1.2,.18/Math.sqrt(Math.pow(u,-2/3)-1)),az=rnd()*6.283,z=rnd()*2-1;p.push(rad*Math.sqrt(1-z*z)*Math.cos(az),rad*z,rad*Math.sqrt(1-z*z)*Math.sin(az));const red=rnd()<.2;c.push(red?1:.7,red?.57:.79,red?.22:1);}
  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('color',new T.Float32BufferAttribute(c,3));const m=new T.PointsMaterial({vertexColors:true,size:.013,sizeAttenuation:true,transparent:true,opacity:.85,depthWrite:false,blending:T.AdditiveBlending});m.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\nfloat psfRadius=length(gl_PointCoord-vec2(.5))*2.;if(psfRadius>1.)discard;').replace('#include <opaque_fragment>', 'diffuseColor.a*=exp(-4.*psfRadius*psfRadius);\n#include <opaque_fragment>');};stars=new T.Points(g,m);group.add(stars);
- }else{let shape=o.type==='pillars'?1:['crab','vela-remnant','sgrae'].includes(o.id)?2:o.id==='eta-car'?3:['ring','helix'].includes(o.id)?4:o.id==='sgrb2'?5:0;const m=new T.ShaderMaterial({vertexShader:vertex,fragmentShader:fragment.replaceAll('56','18'),uniforms:{eye:{value:new T.Vector3()},shape:{value:shape},band:{value:1},exposure:{value:1},seed:{value:hash(o.id)%1000}},transparent:true,depthWrite:false,side:T.BackSide});cloud=new T.Mesh(new T.SphereGeometry(1.1,40,28),m);group.add(cloud);}
+ }else{const m=new T.ShaderMaterial({vertexShader:vertex,fragmentShader:fragment,uniforms:{eye:{value:new T.Vector3()},band:{value:1},...nebulaUniforms()},transparent:true,premultipliedAlpha:true,depthWrite:false,side:T.BackSide});applyCalibration(m.uniforms,calibration(o),1);cloud=new T.Mesh(new T.SphereGeometry(1.1,40,28),m);group.add(cloud);}
  group.renderOrder=2;this.scene.add(group);const entry={group,cloud,stars,o,r};this.cache.set(o.id,entry);return entry;}
  update(s){if(s.wall>this.lastUpdate+.5||this.lastTarget!==s.target?.id||!this.lastPos||norm(sub(s.pos,this.lastPos))>.01){this.lastPos=[...s.pos];this.lastUpdate=s.wall;this.lastTarget=s.target?.id;this.active=this.objects.map(o=>({o,score:norm(sub(o.lightXYZ||o.xyz,s.pos))/radiusLy(o)})).filter(x=>x.score<600).sort((a,b)=>a.score-b.score).slice(0,7).map(x=>x.o);for(const e of this.cache.values())e.group.visible=false;}
- for(const o of this.active){const e=this.cache.get(o.id)||this.create(o),rel=sub(o.lightXYZ||o.xyz,s.pos);e.group.visible=true;e.group.position.set(...rel.map(x=>x/e.r));if(!e.group.userData.oriented){const toward=new T.Vector3(...o.xyz).normalize();e.group.quaternion.setFromUnitVectors(new T.Vector3(0,0,-1),toward);e.group.userData.oriented=true;}if(e.cloud){const eye=e.group.position.clone().negate().applyQuaternion(e.group.quaternion.clone().invert());e.cloud.material.uniforms.eye.value.copy(eye);e.cloud.material.uniforms.band.value=s.band??1;e.cloud.material.uniforms.exposure.value=1;}if(e.stars){e.stars.material.opacity=s.band>=3?.10:.85;e.stars.material.size=(s.band===0?.002:.008)*1;}}
+ for(const o of this.active){const e=this.cache.get(o.id)||this.create(o),rel=sub(o.lightXYZ||o.xyz,s.pos);e.group.visible=true;e.group.position.set(...rel.map(x=>x/e.r));if(!e.group.userData.oriented){const toward=new T.Vector3(...o.xyz).normalize();e.group.quaternion.setFromUnitVectors(new T.Vector3(0,0,-1),toward);e.group.userData.oriented=true;}if(e.cloud){const eye=e.group.position.clone().negate().applyQuaternion(e.group.quaternion.clone().invert());e.cloud.material.uniforms.eye.value.copy(eye);e.cloud.material.uniforms.band.value=s.band??1;e.cloud.material.uniforms.nebGain.value=diffuseGain(s.band??1);}if(e.stars){e.stars.material.opacity=s.band>=3?.10:.85;e.stars.material.size=(s.band===0?.002:.008)*1;}}
  // Keep a small bounded cache while the observer travels through thousands of catalogued objects.
  if(this.cache.size>16){for(const [id,e] of this.cache){if(!e.group.visible){e.group.traverse(x=>{x.geometry?.dispose();x.material?.dispose();});this.scene.remove(e.group);this.cache.delete(id);if(this.cache.size<=12)break;}}}
  }
@@ -30,12 +29,6 @@ export class GalacticOrbit{
 }
 
 // Selected clouds integrate their volume per screen ray, without a low-resolution capture.
-export const cloudGLSL=fragment
- .replace(/precision highp float;[\s\S]*?uniform float shape,band,exposure,seed;/,'uniform vec3 cloudCenter;uniform mat3 cloudRotation;uniform float cloudActive,shape,seed;')
- .replace('void main(){vec3 dir=normalize(localPoint-eye);','vec3 cloudRadiance(vec3 ray,vec3 background){if(cloudActive<.5)return background;vec3 eye=cloudRotation*(-cloudCenter);vec3 dir=cloudRotation*ray;')
- .replace('if(disc<0.)discard;','if(disc<0.)return background;')
- .replace('if(hi<=lo)discard;','if(hi<=lo)return background;')
- .replaceAll('56','96')
- .replace('gain*exposure','gain')
- .replace('light+=color*a*trans*gain;', 'if(shape>.5&&shape<1.5)color*=.18+2.6*clamp(den-density(p+vec3(-.035,.045,.025)),0.,1.);light+=color*a*trans*gain;')
- .replace('gl_FragColor=vec4(light,alpha);','return light+background*trans;');
+export const cloudGLSL=`uniform vec3 cloudCenter;uniform mat3 cloudRotation;uniform float cloudActive;${nebulaGLSL(72)}
+vec3 cloudRadiance(vec3 ray,vec3 background){if(cloudActive<.5)return background;vec3 eye=cloudRotation*(-cloudCenter),dir=cloudRotation*ray,T;return nebulaMarch(eye,dir,background,T);}`;
+export function nebulaUniforms(){return {shape:{value:0},seed:{value:0},nebKl:{value:0},nebKc:{value:0},nebTau:{value:0},nebGain:{value:1},nebContShape:{value:0},nebHi:{value:new T.Vector3(1,1,1)},nebLo:{value:new T.Vector3(1,1,1)},nebCont:{value:new T.Vector3(1,1,1)},nebZone:{value:new T.Vector4()}};}

@@ -1,8 +1,9 @@
 // Coma and tails of active comets, optically thin emission added to the sky (per screen pixel, after the bodies).
 // Model (order of magnitude, labelled as such): emission is normalised so that its integral over the volume equals the
-// comet's total brightness from the standard law m = M1 + 5 log Δ + k1 log r, on the same radiance scale as the
-// sunlit planets of system-bodies.js (Φ ≈ 1e-6·10^(−0.4 m), radiance × steradian). Surface brightness is therefore
-// conserved with distance and the coma never glows brighter than physics allows; raise the exposure to see faint comets.
+// comet's total brightness from the standard law m = M1 + 5 log Δ + k1 log r, on the photometric scale of the point
+// stars (photometry.js: Φ = fluxFromMag(m), radiance × steradian). Surface brightness is therefore conserved with
+// distance and the coma never glows brighter than physics allows. "Visible · pose longue" multiplies it by the
+// long-exposure gain (cometGain), as on an astrophotograph.
 //  - coma: j ∝ e^(−r/Rc)/r² (Haser-like); column through the whole coma ∝ e^(−ρ/Rc)/ρ, normalised to Jc/(2πRc), times
 //    (1/2 + atan(b/ρ)/π) for the part in front of an observer inside it;
 //  - ion tail (CO⁺, blue): straight, anti-solar, Gaussian tube widening slowly;
@@ -12,12 +13,13 @@ import * as T from "three";
 import { sub, norm, unit, YEAR, dot, mul } from "./physics.js";
 import { cometScales } from "./comets.js";
 import { velocityAt } from "./ephemeris.js";
+import { fluxFromMag, diffuseGain } from "./photometry.js";
 
 export const COMET_SLOTS = 2;
 const LS_KM = 299792.458, AU_LS = 149597870.7 / LS_KM;
 export const cometGLSL = `
 #define COMN ${COMET_SLOTS}
-uniform float cometCount;uniform vec3 cometPos[COMN],cometAnti[COMN],cometLag[COMN];uniform vec4 cometScale[COMN];uniform vec3 cometMix[COMN];
+uniform float cometCount,cometGain;uniform vec3 cometPos[COMN],cometAnti[COMN],cometLag[COMN];uniform vec4 cometScale[COMN];uniform vec3 cometMix[COMN];
 // Column of a Gaussian tube around the curve c(s) = C + a·s + lag·κs² (s ≥ 0 from the nucleus), width w(s) = w0 + g·s,
 // density n(s) = N·e^(−s/L)/(πw²L·|c′(s)|) (per unit arc length) so that its volume integral is N, seen along the ray from the origin. The closest
 // approach of the ray to the curve is found by Newton steps on the local tangent; no clamping inside the tail (clamping
@@ -46,7 +48,7 @@ vec3 cometRadiance(vec3 ray){vec3 total=vec3(0.);
   // Dust tail: curved toward −v (grains lag behind the orbital motion), κ = 0.25/L, widening fan.
   if(Ld>0.)total+=tubeColumn(ray,C,a,lag,.25/Ld,Rc*.3,.12,Ld,Jd)*vec3(1.,.88,.7);
  }
- return total;}
+ return total*cometGain;}
 `;
 export class CometLayer {
   constructor(uniforms, objects) {
@@ -56,6 +58,7 @@ export class CometLayer {
     this.active = [];
     Object.assign(uniforms, {
       cometCount: { value: 0 },
+      cometGain: { value: 1 },
       cometPos: { value: Array.from({ length: COMET_SLOTS }, () => new T.Vector3()) },
       cometAnti: { value: Array.from({ length: COMET_SLOTS }, () => new T.Vector3()) },
       cometLag: { value: Array.from({ length: COMET_SLOTS }, () => new T.Vector3()) },
@@ -67,8 +70,8 @@ export class CometLayer {
   static state(o, sun, t) {
     const rel = sub(o.xyz, sun.xyz), r = (norm(rel) * 63241.077), sc = cometScales(o.comet, r),
       H = o.comet.M1 + o.comet.k1 * Math.log10(r);
-    // ∫ j dV = Φ(Δ = 1 au) · (1 au)²  with Φ = 1e-6·10^(−0.4 H): radiance·ls².
-    const J = sc.active ? sc.activity * 1e-6 * Math.pow(10, -0.4 * H) * AU_LS * AU_LS : 0;
+    // ∫ j dV = Φ(Δ = 1 au) · (1 au)²  with Φ = fluxFromMag(H): radiance·ls².
+    const J = sc.active ? sc.activity * fluxFromMag(H) * AU_LS * AU_LS : 0;
     return { r, H, J, sc, anti: unit(rel) };
   }
   update(s) {
@@ -92,6 +95,7 @@ export class CometLayer {
       u.cometScale.value[k].set(st.sc.comaKm / LS_KM, st.sc.ionKm / LS_KM, st.sc.dustKm / LS_KM, st.J);
     });
     u.cometCount.value = this.active.length;
+    u.cometGain.value = diffuseGain(s.band ?? 1);
   }
 }
 // JavaScript twins of the shader formulas (same expressions), used by scripts/validate-comets.mjs.
