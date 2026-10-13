@@ -100,7 +100,7 @@ Les scripts UI utilisent leurs propres serveurs locaux et écrivent dans `valida
 - Séparer données observées, modèles simplifiés et fiction. Sources et hypothèses dans les fiches et le manuel.
 - Le cockpit conserve ses horloges et sa navigation physique ; la caméra libre de la carte cosmique n’est pas un déplacement du vaisseau. Le passage entre ces deux pages recharge l’application : la mission n’est actuellement pas sauvegardée.
 - Les voyages cosmiques restent une extrapolation de relativité restreinte en espace plat : pas d’expansion FLRW, pas de propagation cosmologique complète ni de simulation de l’évolution future des structures.
-- Les galaxies des amas sont des géométries synthétiques, pas un catalogue mesuré de leurs membres. Les enveloppes, filaments et centres de cadrage des grandes régions sont schématiques. Le mode « Tailles du modèle ×1 » enlève l’amplification cartographique, sans rendre les tailles illustratives plus précises.
+- Dans le cockpit, les populations synthétiques des amas sont retirées (13 octobre) et remplacées par des repères CF4 explicitement instrumentaux, sans attribution automatique de membres. La carte cosmique conserve son option illustrative désactivée par défaut. Les enveloppes, filaments et centres de cadrage des grandes régions sont schématiques. Le mode « Tailles du modèle ×1 » enlève l’amplification cartographique, sans rendre les tailles illustratives plus précises.
 - L’amas de la Vierge, son superamas historique et Laniakea sont des notions différentes. Les amas voisins et les vides ne sont pas des couches obligatoires à traverser dans un ordre linéaire.
 - La gravité locale est limitée aux régimes documentés ; pas de capture automatique artificielle d’un survol non lié. Les trous de ver sont des transitions fictives, pas une solution physique validée.
 - La nouvelle géométrie cosmique applique une aberration approchée et un gain comprimé, pas un transfert spectral complet. Ne pas présenter le rendu comme une photographie scientifiquement exacte.
@@ -114,3 +114,5 @@ Les scripts UI utilisent leurs propres serveurs locaux et écrivent dans `valida
 ## Dernier relais
 
 Phase C : lire `docs/RELAIS-CODEX-2026-10-10-LANIAKEA.md`. La carte des galaxies observées est distincte des populations synthétiques et des futures visites cockpit. `jsdom` est utilisé uniquement pour tester les contrôles de carte dans Node, pas pour valider les shaders.
+
+Relais du 13 octobre : `docs/RELAIS-CODEX-2026-10-13-CIEL-CF4.md`. Test ciblé : `node scripts/validate-catalogue-sky.mjs`.
