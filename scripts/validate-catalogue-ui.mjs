@@ -18,7 +18,7 @@ await wait(()=>w.cosmicSnapshot?.().survey.ready);
 check('Initial scale loads historical nearby catalogue without synthetic overlay',()=>{assert.equal(w.cosmicSnapshot().survey.total,101);assert(!$('synthetic').checked);});
 $('survey-search').value='Andromeda';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>$('survey-results').querySelector('button')?.textContent.startsWith('Andromeda'));
 $('survey-results').querySelector('button').click();
-check('Selecting a catalogue galaxy fills provenance and hides unsupported cockpit transfer',()=>{assert.equal($('name').textContent,'Andromeda');assert($('flight').hidden);assert($('extent').textContent.includes('aucune taille physique'));});
+check('Selecting a catalogue galaxy fills provenance and offers a labelled cockpit visit',()=>{assert.equal($('name').textContent,'Andromeda');assert(!$('flight').hidden&&$('flight').getAttribute('href').includes('target=mcconnachie%3AAndromeda')&&$('flight').textContent.includes('pas une image'));assert($('extent').textContent.includes('aucune taille physique'));});
 w.document.querySelector('[data-level="2"]').click();await wait(()=>w.cosmicSnapshot().survey.ready&&w.cosmicSnapshot().survey.key==='cf4');
 $('survey-search').value='PGC 2';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>w.cosmicSnapshot().survey.shown===1);$('survey-results').querySelector('button').click();
 check('CF4 selection exposes distance error and methods',()=>{assert.equal($('name').textContent,'PGC 2');assert($('summary').textContent.includes('34,535'));assert($('relation').textContent.includes('Tully–Fisher'));assert($('extent').textContent.includes('4 726'));});

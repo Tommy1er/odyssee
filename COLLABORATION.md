@@ -73,6 +73,7 @@ node scripts/validate-compact.mjs     # disques, décalage g, Beloborodov, faisc
 node scripts/validate-eclipses.mjs    # éclipses 2026–2028 vs NASA, ombres, rotation terrestre, corps secondaires
 node scripts/validate-comets.mjs      # comètes vs JPL Horizons, Kepler, éclat, flux chevelure/queues, nuage d'Oort
 node scripts/validate-nebulae.mjs     # nébuleuses : raies → couleurs CIE, rapports de raies, poussière, flux, brillance de surface
+node scripts/validate-catalogue-galaxies.mjs  # galaxies cataloguées dans le cockpit : classes, tailles, doublons, positions, voisines
 python scripts/build-extragalactic.py   # régénération hors ligne des 3 catalogues de carte
 node scripts/validate-extragalactic.mjs # données, incertitudes, plan supergalactique, sélection
 node scripts/validate-catalogue-ui.mjs  # intégration DOM sans rendu WebGL
@@ -89,6 +90,7 @@ npx playwright install chromium
 node scripts/validate-cosmos.cjs
 node scripts/validate-comet-ui.cjs   # filtre Comètes, fiche, saut au périhélie, cartes 100 ua et Oort
 node scripts/validate-nebula-ui.cjs  # couleurs rendues d'Orion et M 57, œil / pose longue, fiche, Nuages de Magellan
+node scripts/validate-galaxy-ui.cjs  # visites M81 (UNGC) et M87 (CF4), liens de la carte, voisines, fiches
 ```
 
 Les scripts UI utilisent leurs propres serveurs locaux et écrivent dans `validation/v2-screenshots/`. Créer ce dossier s’il manque. La variable facultative `CHROMIUM_PATH` permet d’utiliser un Chromium déjà installé. Les tests de navigation, d’orbites et de rendu ont leurs scripts dédiés ; les lancer séquentiellement car certains utilisent le même port. Le rendu logiciel peut être lent. Les comptes rendus JSON inclus sont des résultats de sessions précédentes, pas une preuve que des modifications futures passent.

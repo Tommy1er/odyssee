@@ -4,9 +4,11 @@ import {SG_AXES,CATALOGUES,MPC_MLY} from './extragalactic-data.js';
 export class ObservedGalaxies {
  constructor(scene){
   this.rows=[];this.root=new T.Group();scene.add(this.root);
-  this.material=new T.ShaderMaterial({uniforms:{tint:{value:new T.Color()},size:{value:4}},transparent:true,depthWrite:false,
+  // Additive, semi-transparent symbols: overlapping entries add up, so dense regions (Virgo, Perseus–Pisces, Coma) stand
+  // out instead of saturating into a uniform carpet. Brightness here only counts catalogue entries, not light.
+  this.material=new T.ShaderMaterial({uniforms:{tint:{value:new T.Color()},size:{value:3}},transparent:true,depthWrite:false,blending:T.AdditiveBlending,
    vertexShader:'uniform float size;void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);gl_PointSize=size;}',
-   fragmentShader:'uniform vec3 tint;void main(){float r=length(gl_PointCoord-vec2(.5));float a=1.-smoothstep(.22,.5,r);if(a<.01)discard;gl_FragColor=vec4(tint,a*.8);}' });
+   fragmentShader:'uniform vec3 tint;void main(){float r=length(gl_PointCoord-vec2(.5));float a=1.-smoothstep(.22,.5,r);if(a<.01)discard;gl_FragColor=vec4(tint,a*.5);}' });
   this.points=new T.Points(new T.BufferGeometry(),this.material);this.points.frustumCulled=false;this.root.add(this.points);
   this.errorLine=new T.Line(new T.BufferGeometry(),new T.LineBasicMaterial({color:0xffb878,transparent:true,opacity:.75}));scene.add(this.errorLine);this.errorLine.visible=false;
   this.plane=new T.Group();scene.add(this.plane);const [x,y,z]=SG_AXES.map(a=>new T.Vector3(...a));

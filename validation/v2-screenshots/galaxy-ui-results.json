@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "UNGC and McConnachie galaxies loaded after start-up, duplicates merged",
+    "Search by usual name: « M81 » finds UNGC MESSIER081 shown as M81",
+    "M81 group rendered in the catalogue slots (M81, M82)",
+    "Info sheet: Hubble type and UNGC diameter, illustrative orientation",
+    "Map link to a McConnachie duplicate lands on the existing M31",
+    "Map link to a CF4 entry loads Cosmicflows-4 on demand",
+    "CF4 sheet: distance modulus, class from the distance method, typical size labelled",
+    "At M87: its nearest CF4 neighbours are rendered",
+    "Search « PGC 41156 » finds the CF4 entry",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}
