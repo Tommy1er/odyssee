@@ -9,11 +9,18 @@
 // Normalisation: seen from the Earth (parallel rays along −z), ∫∫ L dx dy / (d/R)² = Φ(V − A_fg), the integrated
 // magnitude corrected for foreground extinction. Internal dust is included in that emergent flux.
 import { fluxFromMag } from "./photometry.js";
+import { CIE_1931, CIE_START, CIE_END } from "./cie-1931.js";
 
 // ── Spectra → colour ────────────────────────────────────────────────────────────────────────────────────────────
-// CIE 1931 2° colour matching functions, multi-lobe Gaussian fit of Wyman, Sloan & Shirley (2013, JCGT 2, 1).
+// CIE 1931 2° colour matching functions: official CIE table (cie-1931.js, 1 nm steps, linear interpolation).
+export const cmf = (l) => {
+  if (!(l >= CIE_START && l <= CIE_END)) return [0, 0, 0];
+  const i = Math.min(CIE_END - CIE_START - 1, Math.floor(l - CIE_START)), f = l - CIE_START - i;
+  return [0, 1, 2].map((k) => CIE_1931[3 * i + k] * (1 - f) + CIE_1931[3 * (i + 1) + k] * f);
+};
+// Analytic multi-lobe fit of Wyman, Sloan & Shirley (2013, JCGT 2, 1), kept only to cross-check the table in the tests.
 const g = (l, mu, s1, s2) => Math.exp(-0.5 * ((l - mu) / (l < mu ? s1 : s2)) ** 2);
-export const cmf = (l) => [
+export const cmfWyman = (l) => [
   1.056 * g(l, 599.8, 37.9, 31.0) + 0.362 * g(l, 442.0, 16.0, 26.7) - 0.065 * g(l, 501.1, 20.4, 26.2),
   0.821 * g(l, 568.8, 46.9, 40.5) + 0.286 * g(l, 530.9, 16.3, 31.1),
   1.217 * g(l, 437.0, 11.8, 36.0) + 0.681 * g(l, 459.0, 26.0, 13.8),

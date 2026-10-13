@@ -13,6 +13,11 @@ const f2 = (c) => c.map((x) => x.toFixed(2)).join(" / ");
 const load = (f) => { const d = JSON.parse(fs.readFileSync(new URL("../public/" + f, import.meta.url))); return (Array.isArray(d) ? d : d.objects || Object.values(d).flat()).filter((o) => o && ["nebula", "pillars"].includes(o.type)); };
 const nebulae = [...load("catalogue.json"), ...load("galaxy-catalogue.json")], byId = (id) => nebulae.find((o) => o.id === id);
 
+// 0 · Colour-matching functions: official CIE table, cross-checked against the analytic fit of Wyman et al. (2013).
+{ const { cmf, cmfWyman } = await import("../src/nebulae.js"); let worst = 0;
+  for (let l = 400; l <= 700; l += 0.5) { const a = cmf(l), b = cmfWyman(l); worst = Math.max(worst, ...a.map((v, k) => Math.abs(v - b[k]))); }
+  const y555 = cmf(555)[1];
+  check("Table CIE 1931 officielle : ȳ(555 nm) ≈ 1 et accord avec l'ajustement de Wyman", Math.abs(y555 - 1) < 0.005 && worst < 0.05, `ȳ(555) = ${y555.toFixed(4)}, écart max ${worst.toFixed(3)}`); }
 // 1 · Colours of pure lines and of a white continuum.
 { const ha = spectrumColor([[LINES.Ha, 1]]), o3 = spectrumColor([[LINES.O3, 1]]), hb = spectrumColor([[LINES.Hb, 1]]);
   check("Hα 656 nm : rouge pur", ha[0] > 0 && ha[1] === 0 && ha[2] === 0, f2(ha));
