@@ -1,0 +1,97 @@
+{
+  "retrieved_utc": "2026-10-13",
+  "source_index": "https://projets.ip2i.in2p3.fr/cosmicflows/",
+  "scope": "Published alternative reconstructions from 2023; NOT Valade et al. 2024 or Hoffman et al. 2024",
+  "citations": [
+    "https://doi.org/10.1051/0004-6361/202346802",
+    "https://arxiv.org/abs/2211.16390"
+  ],
+  "files": [
+    {
+      "file": "CF4_new_128-z008_BoA.fits.gz",
+      "raw_bytes": 16781760,
+      "raw_sha256": "cc7cbb218dc6fcbe1b9ea5cbf46d7dd191a07b059c5b3cd14cd5d1ae6475a706",
+      "gzip_bytes": 72389,
+      "gzip_sha256": "6576ffe6168d0e825a04fb9125c090275e7d97cfb6e7ade96e5fecace1a6f83d",
+      "shape_numpy": [
+        128,
+        128,
+        128
+      ],
+      "bitpix": -64,
+      "min": 0.0,
+      "max": 9.0,
+      "source_url": "https://projets.ip2i.in2p3.fr//cosmicflows/CF4_new_128-z008_watersheds-fits.zip",
+      "zip_member": "CF4_new_128-z008_BoA.fits",
+      "archive_member_crc_verified": true,
+      "labels": {
+        "0": 1006242,
+        "1": 4079,
+        "2": 19972,
+        "3": 6595,
+        "4": 16959,
+        "5": 10067,
+        "6": 16589,
+        "7": 387498,
+        "8": 356023,
+        "9": 273128
+      }
+    },
+    {
+      "file": "CF4_new_64-z008_velocity.fits.gz",
+      "raw_bytes": 3150720,
+      "raw_sha256": "3c536f327dc844d97a3dceeafded1d26f4ffb1b7f9b995d93146bd3add576948",
+      "gzip_bytes": 2904700,
+      "gzip_sha256": "9fb730c897b167971b5455c7d387a755ea981487123de7841730429aea837005",
+      "shape_numpy": [
+        3,
+        64,
+        64,
+        64
+      ],
+      "bitpix": -32,
+      "min": -30.426250457763672,
+      "max": 50.097633361816406,
+      "source_url": "https://projets.ip2i.in2p3.fr//cosmicflows/CF4_new_64-z008_velocity.fits"
+    },
+    {
+      "file": "CF4_new_64-z008_delta.fits.gz",
+      "raw_bytes": 1054080,
+      "raw_sha256": "f6fe90b44f653da4255a5777fe5f7c8ecd38e84062d52354207ef5be740576b9",
+      "gzip_bytes": 974413,
+      "gzip_sha256": "871b1288650f7aa4525a59b1d09ce2573283add15cf2be6ee34848a3b5ca00da",
+      "shape_numpy": [
+        64,
+        64,
+        64
+      ],
+      "bitpix": -32,
+      "min": -3.1796936988830566,
+      "max": 3.143476963043213,
+      "source_url": "https://projets.ip2i.in2p3.fr//cosmicflows/CF4_new_64-z008_delta.fits"
+    },
+    {
+      "file": "CF4_new_64-z008_velocity_cube_error.fits.gz",
+      "raw_bytes": 2102400,
+      "raw_sha256": "5f7082e028a234445401e3f7b858533f352478a63d93818100f0acdf07a619f5",
+      "gzip_bytes": 1961170,
+      "gzip_sha256": "44874eeab05a71f388b2b7f5b2c95659a553bcae8a2c4a5f6c2c5748f350eb1a",
+      "shape_numpy": [
+        64,
+        64,
+        64
+      ],
+      "bitpix": -64,
+      "min": 0.334707167013065,
+      "max": 6.88481071185307,
+      "source_url": "https://projets.ip2i.in2p3.fr//cosmicflows/CF4_new_64-z008_velocity_cube_error.fits"
+    }
+  ],
+  "notes": [
+    "Raw FITS unchanged; deterministic gzip added only for repository size.",
+    "Velocity values and velocity errors require multiplication by 52 per source page; component order and coordinate registration must be validated before application integration.",
+    "Basin grid 128^3, field grid 64^3: not index-aligned.",
+    "No WCS, axis labels or physical units in downloaded FITS headers.",
+    "Source link labelled delta_error actually links to velocity_cube_error; no density-error file acquired."
+  ]
+}
