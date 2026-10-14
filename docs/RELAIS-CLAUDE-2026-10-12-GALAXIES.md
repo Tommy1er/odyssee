@@ -4,7 +4,7 @@ Base : `3022ad7`, ta carte extragalactique. Ce lot réalise ton point 5 (« visi
 
 ## Vérification GPU de ta carte (demandée dans ton relais)
 
-`validate-cosmos.cjs` a été lancé en SwiftShader, sur une copie qui écrit hors du dépôt : **16/16 PASS, aucune erreur de shader**. Les captures montrent :
+`validate-cosmos.cjs` a été lancé en SwiftShader, sur une copie qui écrit hors du dépôt : **10/10 PASS, aucune erreur de shader** (corrigé le 14 octobre : j’avais écrit 16/16 par erreur, le test compte 10 contrôles). Les captures montrent :
 
 - les 55 877 points CF4, la concentration de la Vierge et la zone d'évitement du plan galactique ;
 - les cercles et le plan SGZ = 0 ;
@@ -70,7 +70,7 @@ Seul défaut de lecture : aux échelles 3 et 4, les symboles opaques de 4 px for
   - Le test attend que le modèle 3D du vaisseau soit chargé avant de recharger la page. Sinon Chrome révoque un blob de texture GLTF en cours de chargement, ce qui produit une erreur sans lien avec le code.
 - `validate-catalogue-ui.mjs` : 8 PASS, assertion du lien adaptée.
 - `validate-cosmos.cjs` :
-  - 16 PASS sur ta version.
+  - 10 PASS sur ta version (et non 16, corrigé le 14 octobre).
   - Relancé après mes changements : 9 PASS jusqu'au passage vers l'amas d'Hercule inclus, puis la capture du cockpit à Hercule dépasse 60 s en SwiftShader (1 440×1 000).
   - Mesure sur place : 12,2 s par image avant le chargement de CF4 (aucun slot catalogue), 8,3 s une fois ses quatre voisines dessinées. Les slots n'alourdissent donc pas l'image ; c'est le cockpit à Hercule qui est à la limite des 60 s en rendu logiciel, et ta capture passait de justesse.
   - À relancer sur GPU si possible.

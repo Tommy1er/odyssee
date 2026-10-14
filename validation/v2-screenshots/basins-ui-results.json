@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Laniakea scale: six basins, streamlines and attractor labels drawn",
+    "Provenance and measured agreement shown",
+    "Toggles: streamlines off, SDSS basins cut by the box on demand",
+    "Not loaded at the Local Group scale",
+    "Cockpit at cosmic:great-attractor: basin Laniakea and reconstructed flow in the HUD",
+    "Cockpit at cosmic:shapley: basin Shapley and reconstructed flow in the HUD",
+    "No browser or shader errors"
+  ],
+  "errors": []
+}

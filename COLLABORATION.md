@@ -74,10 +74,12 @@ node scripts/validate-eclipses.mjs    # éclipses 2026–2028 vs NASA, ombres, r
 node scripts/validate-comets.mjs      # comètes vs JPL Horizons, Kepler, éclat, flux chevelure/queues, nuage d'Oort
 node scripts/validate-nebulae.mjs     # nébuleuses : raies → couleurs CIE, rapports de raies, poussière, flux, brillance de surface
 node scripts/validate-catalogue-galaxies.mjs  # galaxies cataloguées dans le cockpit : classes, tailles, doublons, positions, voisines
+node scripts/validate-cf4-basins.mjs  # bassins d'attraction CF4 2023 : décodage, conventions, attracteurs, volumes, dipôle du Groupe local
 python scripts/build-extragalactic.py   # régénération hors ligne des 3 catalogues de carte
 node scripts/validate-extragalactic.mjs # données, incertitudes, plan supergalactique, sélection
 node scripts/validate-catalogue-ui.mjs  # intégration DOM sans rendu WebGL
 python scripts/validate-reference-data.py
+python scripts/build-cf4-basins.py   # régénère public/cf4-basins-2023.{json,bin} (NumPy, SciPy, scikit-image) et vérifie les conventions
 python scripts/validate-textures.py   # Pillow : décodage complet, tailles et hashes
 npm run build
 ```
@@ -91,6 +93,7 @@ node scripts/validate-cosmos.cjs
 node scripts/validate-comet-ui.cjs   # filtre Comètes, fiche, saut au périhélie, cartes 100 ua et Oort
 node scripts/validate-nebula-ui.cjs  # couleurs rendues d'Orion et M 57, œil / pose longue, fiche, Nuages de Magellan
 node scripts/validate-galaxy-ui.cjs  # visites M81 (UNGC) et M87 (CF4), liens de la carte, voisines, fiches
+node scripts/validate-basins-ui.cjs  # bassins sur la carte (surfaces, lignes, étiquettes, options) et bandeau du cockpit
 ```
 
 Les scripts UI utilisent leurs propres serveurs locaux et écrivent dans `validation/v2-screenshots/`. Créer ce dossier s’il manque. La variable facultative `CHROMIUM_PATH` permet d’utiliser un Chromium déjà installé. Les tests de navigation, d’orbites et de rendu ont leurs scripts dédiés ; les lancer séquentiellement car certains utilisent le même port. Le rendu logiciel peut être lent. Les comptes rendus JSON inclus sont des résultats de sessions précédentes, pas une preuve que des modifications futures passent.
