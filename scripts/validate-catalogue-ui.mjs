@@ -4,9 +4,10 @@ import {build} from 'esbuild';
 import * as Three from 'three';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import {BasinData,BasinLayer} from '../src/cf4-basins.js';
 const html=fs.readFileSync('public/cosmos.html','utf8'),dom=new JSDOM(html,{url:'http://localhost/cosmos.html',runScripts:'outside-only'}),w=dom.window;
 let raf;const errors=[];w.addEventListener('error',e=>errors.push(e.error?.message||e.message));
-w.__T=Three;w.devicePixelRatio=1;w.ResizeObserver=class{observe(){}};w.requestAnimationFrame=f=>{raf=f;};w.fetch=async url=>({ok:true,json:async()=>JSON.parse(fs.readFileSync('public/'+url.replace(/^\.\//,''),'utf8'))});
+w.__T=Three;w.devicePixelRatio=1;w.ResizeObserver=class{observe(){}};w.requestAnimationFrame=f=>{raf=f;};w.fetch=async url=>({ok:true,json:async()=>JSON.parse(fs.readFileSync('public/'+url.replace(/^\.\//,''),'utf8')),arrayBuffer:async()=>{const b=fs.readFileSync('public/'+url.replace(/^\.\//,''));return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);}});
 const viewport=w.document.querySelector('.universe');viewport.getBoundingClientRect=()=>({width:1000,height:800,left:0,top:0});
 const canvas=w.document.getElementById('cosmos');canvas.setPointerCapture=()=>{};canvas.releasePointerCapture=()=>{};canvas.getBoundingClientRect=viewport.getBoundingClientRect;Object.defineProperty(canvas,'clientWidth',{value:1000});Object.defineProperty(canvas,'clientHeight',{value:800});
 const threeStub=Object.keys(Three).filter(k=>k!=='WebGLRenderer').map(k=>`export const ${k}=window.__T.${k};`).join('\n')+`\nexport class WebGLRenderer{constructor(){this.domElement=document.getElementById('cosmos');}setPixelRatio(){}setClearColor(){}setSize(){}render(scene,camera){scene.updateMatrixWorld();camera.updateMatrixWorld();}getDrawingBufferSize(v){return v.set(1000,800);}}`;
@@ -70,5 +71,35 @@ canvas.dispatchEvent(new w.MouseEvent('pointerup',{clientX:px,clientY:py,button:
 check('Clicking a plotted catalogue point recenters the zoom target',()=>{assert.equal(w.cosmicSnapshot().selected,galaxyId);assert(w.cosmicSnapshot().target.every((v,i)=>Math.abs(v-galaxyPosition[i])<1e-9));});
 before=radius();$('survey-marker').click();tick();
 check('Selected catalogue label is clickable and approaches its position',()=>assert(radius()<before));
+check('Selected local catalogue galaxy has a volume, source notes and a size-based framing',()=>{const p=w.cosmicSnapshot().preview;assert(p.visible);assert.equal(p.id,galaxyId);assert(radius()<p.radiusMly*6);assert($('extent').textContent.includes('Taille :'));});
+// All fixed structure types retain useful focus, a second approach, and a valid visit link.
+for(const [id,expectedLevel] of [['milky-way',0],['local-group',0],['virgo-cluster',1],['virgo-supercluster',1],['great-attractor',2],['laniakea',2],['bootes-void',3]]){
+ w.document.querySelector('#results [data-object="'+id+'"]').click();tick();const d=radius();$('approach').click();tick();
+ check('Structure '+id+' frames and approaches at its own scale',()=>{assert.equal(w.cosmicSnapshot().selected,id);assert.equal(w.cosmicSnapshot().level,expectedLevel);assert(radius()<d);assert(!w.cosmicSnapshot().preview.visible);assert(!$('quick-flight').hidden);});
+}
+await wait(()=>w.cosmicSnapshot().survey.ready&&w.cosmicSnapshot().survey.key==='cf4');
+$('survey-search').value='PGC 41361';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>w.cosmicSnapshot().survey.shown===1);$('survey-results').querySelector('button').click();tick();
+check('CF4 M87 previews as an elliptical with disclosed assumed size and without a duplicate',()=>{const s=w.cosmicSnapshot();assert(s.preview.visible);assert.equal(s.preview.shape,3);assert.equal(s.preview.duplicate,'m87');assert(!s.visible.includes('m87'));assert($('extent').textContent.includes('supposée'));});
+$('survey-catalogue').value='ungc';$('survey-catalogue').dispatchEvent(new w.Event('change'));await wait(()=>w.cosmicSnapshot().survey.key==='ungc'&&w.cosmicSnapshot().survey.ready);
+$('survey-search').value='MESSIER081';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>w.cosmicSnapshot().survey.shown===1);$('survey-results').querySelector('button').click();tick();
+check('UNGC M81 previews as a spiral with its catalogue diameter',()=>{const p=w.cosmicSnapshot().preview;assert(p.visible);assert.equal(p.shape,0);assert($('extent').textContent.includes('diamètre UNGC'));});
+$('enter').click();tick();check('Observing a catalogue galaxy keeps an exterior view of its model',()=>{assert(!w.cosmicSnapshot().immersion);assert(radius()>w.cosmicSnapshot().preview.radiusMly);});
+// Basins use real metadata/binary geometry. All nine published names are selectable.
+$('survey-catalogue').value='auto';w.document.querySelector('[data-level="2"]').click();tick();await wait(()=>w.cosmicSnapshot().basins.status==='ready');tick();
+$('basins-sdss').checked=true;$('basins-sdss').dispatchEvent(new w.Event('change'));
+for(let i=1;i<=9;i++){
+ const b=w.document.querySelector('[data-basin="cf4-basin:'+i+'"]');assert(b);b.click();tick();const d=radius();$('approach').click();tick();
+ check('Reconstructed basin '+i+' is selectable and approachable without a fictitious cockpit link',()=>{assert.equal(w.cosmicSnapshot().selected,'cf4-basin:'+i);assert(radius()<d);assert($('quick-flight').hidden);assert($('flight').hidden);assert($('kind').textContent.includes('reconstruit'));});
+}
+const apus=[...w.document.querySelectorAll('.basin-label')].find(b=>b.textContent.includes('Apus'));apus.click();tick();before=radius();wheel(apus,-20,true);tick();
+check('Basin label supports the same click and trackpad gesture',()=>{assert.equal(w.cosmicSnapshot().selected,'cf4-basin:2');assert(radius()<before);});
+// Ray-pick a real published basin surface with catalogue symbols filtered away.
+$('envelopes').checked=false;$('survey-search').value='no such galaxy';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>w.cosmicSnapshot().survey.shown===0);tick();
+const buf=fs.readFileSync('public/cf4-basins-2023.bin'),bd=new BasinData(JSON.parse(fs.readFileSync('public/cf4-basins-2023.json')),buf.buffer.slice(buf.byteOffset,buf.byteOffset+buf.byteLength)),bs=new Three.Scene(),bl=new BasinLayer(bs);bl.build(bd);bs.updateMatrixWorld();
+const sc=w.cosmicSnapshot(),bc=new Three.PerspectiveCamera(48,1000/800,.00001,10000);bc.up.set(...sc.up);bc.position.set(...sc.camera);bc.lookAt(...sc.target);bc.updateMatrixWorld();
+const vertices=bl.entries.find(e=>e.basin.label===2).mesh.geometry.attributes.position;let surfacePixel;
+for(let i=0;i<vertices.count;i++){const p=new Three.Vector3().fromBufferAttribute(vertices,i).project(bc);if(p.z>-1&&p.z<1&&Math.abs(p.x)<.8&&Math.abs(p.y)<.8){surfacePixel=[(p.x+1)*500,(1-p.y)*400];break;}}
+assert(surfacePixel);const oldSelection=w.cosmicSnapshot().selected,oldRadius=radius();canvas.dispatchEvent(new w.MouseEvent('pointerdown',{clientX:surfacePixel[0],clientY:surfacePixel[1],button:0}));canvas.dispatchEvent(new w.MouseEvent('pointerup',{clientX:surfacePixel[0],clientY:surfacePixel[1],button:0}));tick();
+check('Clicking a visible basin surface selects its reconstructed region',()=>{assert(w.cosmicSnapshot().selected.startsWith('cf4-basin:'));assert(w.cosmicSnapshot().selected!==oldSelection||radius()<oldRadius);});
 check('Interaction sequence has no DOM errors',()=>assert.deepEqual(errors,[]));
 w.close();console.log(JSON.stringify({passed:n,mode:'DOM integration with real OrbitControls; GPU not tested'}));
