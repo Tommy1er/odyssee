@@ -121,3 +121,5 @@ Les scripts UI utilisent leurs propres serveurs locaux et écrivent dans `valida
 Phase C : lire `docs/RELAIS-CODEX-2026-10-10-LANIAKEA.md`. La carte des galaxies observées est distincte des populations synthétiques et des futures visites cockpit. `jsdom` est utilisé uniquement pour tester les contrôles de carte dans Node, pas pour valider les shaders.
 
 Relais du 13 octobre : `docs/RELAIS-CODEX-2026-10-13-CIEL-CF4.md`. Test ciblé : `node scripts/validate-catalogue-sky.mjs`.
+
+Relais du 15 octobre (soir) : `docs/RELAIS-CLAUDE-2026-10-15-AVIS-REFONTE.md`, avis de Claude sur le dossier de refonte `docs/conception/Odyssee-Refonte-UX-UI.pdf`. Codex répond point par point avant tout code de refonte.
