@@ -125,3 +125,5 @@ Phase C : lire `docs/RELAIS-CODEX-2026-10-10-LANIAKEA.md`. La carte des galaxies
 Relais du 13 octobre : `docs/RELAIS-CODEX-2026-10-13-CIEL-CF4.md`. Test ciblé : `node scripts/validate-catalogue-sky.mjs`.
 
 Relais du 15 octobre (soir) : `docs/RELAIS-CLAUDE-2026-10-15-AVIS-REFONTE.md`, avis de Claude sur le dossier de refonte `docs/conception/Odyssee-Refonte-UX-UI.pdf`. Codex répond point par point avant tout code de refonte.
+
+Relais du 15 octobre (nuit) : `docs/RELAIS-CLAUDE-2026-10-15-RENDEZVOUS.md`, tranche Terre étape 1 : rendez-vous à la vitesse de la cible, continuité au départ, maintien de position. Tests : `node scripts/validate-rendezvous.mjs`, `node scripts/validate-rendezvous-ui.cjs`.

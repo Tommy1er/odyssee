@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "Sélectionner ne lance pas le vaisseau · vitesse initiale 21.06 km/s (orbite héliocentrique de départ)",
+    "Engager : la vitesse de départ est conservée (pas de remise à zéro)",
+    "Engager : trajet calculé dans le référentiel de la Terre · 29.80 km/s",
+    "Rendez-vous Terre : à la vitesse de la Terre · 1.05e-3 m/s ; vitesse catalogue 29.80 km/s",
+    "Rendez-vous Terre : 5 rayons du centre, en pause · rapport 5.0002",
+    "Maintien actif et annoncé · 0.0401 g",
+    "Un jour simulé plus tard : toujours à 5 rayons, vitesse de la Terre · rapport 5.0002 après 1.00 j",
+    "Départ vers la Lune : vitesse conservée, mise à la vitesse de la Lune simulée · vitesse au départ 29.81 km/s",
+    "Rendez-vous Lune : 5 rayons, vitesse de la Lune, maintien actif · 9.62e-4 m/s",
+    "Couper le maintien : chute libre annoncée",
+    "Aucune erreur navigateur ni shader"
+  ],
+  "errors": []
+}

@@ -142,7 +142,9 @@ function stepSize(x, p, t, sources, thrust) {
   }
   if (thrust?.mag > 0) h = Math.min(h, (0.01 * gamma) / thrust.mag);
   // Braking to rest: approach u = 0 geometrically instead of overshooting through it.
-  if (thrust?.brake) h = Math.min(h, Math.max((0.5 * norm(p)) / f.B / thrust.mag, 1e-12));
+  // thrust.rest (spatial 4-velocity of the frame to stop in, default the catalogue frame) lets the rendezvous autopilot
+  // stop relative to its target instead of the Sun.
+  if (thrust?.brake) h = Math.min(h, Math.max(norm(sub(mul(p, 1 / f.B), thrust.rest || [0, 0, 0])) * 0.5 / thrust.mag, 1e-12));
   return h;
 }
 // Distance to each source's centre, and the events: surface contact or Schwarzschild r < 1.05 Rs for compact objects.
@@ -195,7 +197,8 @@ export function advance(state, dt, sources, t, thrust = null, opts = {}) {
     steps++;
     if (thrust?.brake) {
       const fb = field(x, now, sources);
-      if (fb && norm(p) / fb.B < 1e-9) { p = [0, 0, 0]; event = { kind: "stopped" }; break; }
+      const rest = thrust.rest || [0, 0, 0];
+      if (fb && norm(sub(mul(p, 1 / fb.B), rest)) < (thrust.tolerance ?? 1e-9)) { p = mul(rest, fb.B); event = { kind: "stopped" }; break; }
     }
     const c = contact(x, now, sources);
     if (c) { event = c; break; }

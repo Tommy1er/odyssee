@@ -25,3 +25,11 @@ export const schwarzschildRadiusKm=m=>2*6.67430e-11*m*1.98847e30/(C*C)/1000;
 export const gravitationalRate=rOverRs=>Math.sqrt(1-1/rOverRs);
 export const energyPerKg=u=>gammaMinusOne(u)*C*C;
 export function environmentRisk(u,density=.1,grainMg=1){const g=gammaU(u),m=norm(u),ek=energyPerKg(u),D=g+m;return {grainJ:ek*grainMg*1e-6,grainTNT:ek*grainMg*1e-6/4.184e9,protonMeV:gammaMinusOne(u)*938.272088,gasFlux:density*1e6*m*C,gasPower:density*1e6*m*C*1.67262192369e-27*ek,cmbFrontK:2.7255*D,forwardD:D,rearD:1/D};}
+// Inertial frame F moving at constant 3-velocity b (c=1) relative to the catalogue axes, with its origin at the catalogue
+// event (t0, x0). Exact Lorentz boost of events and of spatial 4-velocities u = γv. (γ−1)/b² is written γ²/(γ+1) so that
+// b → 0 stays exact. Used by the rendezvous autopilot: a rest-to-rest plan in the target's frame ends at the target's speed.
+export function frame(t0,x0,b){const b2=dot(b,b),g=1/Math.sqrt(1-b2);return {t0,x0:[...x0],b:[...b],g,k:g*g/(g+1),u:mul(b,g)};}
+export function toFrame(F,t,x){const dt=t-F.t0,dx=sub(x,F.x0),bx=dot(F.b,dx);return {t:F.g*(dt-bx),x:add(dx,mul(F.b,F.k*bx-F.g*dt))};}
+export function fromFrame(F,t,x){const bx=dot(F.b,x);return {t:F.t0+F.g*(t+bx),x:add(F.x0,add(x,mul(F.b,F.k*bx+F.g*t)))};}
+export function uToFrame(F,u){const bu=dot(F.b,u);return add(u,mul(F.b,F.k*bu-F.g*gammaU(u)));}
+export function uFromFrame(F,u){const bu=dot(F.b,u);return add(u,mul(F.b,F.k*bu+F.g*gammaU(u)));}
