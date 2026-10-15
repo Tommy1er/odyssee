@@ -3,6 +3,7 @@
 import * as T from 'three';
 import {aberrateU} from './physics.js';
 import {findDuplicate} from './catalogue-galaxies.js';
+import {galaxyVelocity,receivedLinear,C_KMS} from './cosmic-motion.js';
 export class CatalogueSky {
  constructor(){
   this.rows=[];this.status='idle';this.error='';this.revision=0;this.hidden=new Set();this.matches=new Map();
@@ -32,13 +33,23 @@ export class CatalogueSky {
   this.points.geometry.setAttribute('position',new T.BufferAttribute(new Float32Array(rows.length*3),3));
   this.points.geometry.setAttribute('shown',new T.BufferAttribute(new Float32Array(rows.length),1));
   this.mapPoints.geometry.dispose();this.mapPoints.geometry=new T.BufferGeometry();this.mapPoints.geometry.setAttribute('position',new T.Float32BufferAttribute(rows.flatMap(r=>r.p),3));
-  this.revision++;this.key=null;
+  this.revision++;this.key=null;this.base=null;this.vel=null;
  }
- update(pos,volumes=[]){
+ // Worldlines of the markers (cosmic-motion.js): measured CF4 redshift radially, reconstructed flow transversally (model).
+ // The marker is then drawn where its light reaching the ship was emitted (or at its present position without retarded light).
+ setMotion(field){
+  if(this.status!=='ready')return;const n=this.rows.length;this.base=new Float64Array(3*n);this.vel=new Float64Array(3*n);
+  for(let i=0;i<n;i++){const r=this.rows[i],xyz=r.p.map(x=>x*1e6),d=r.d*1e6,m=galaxyVelocity({id:r.id,xyz,catalogue:'cf4',catalogueRow:r},field);
+   for(let k=0;k<3;k++){const v=m.v[k]/C_KMS;this.vel[3*i+k]=v;this.base[3*i+k]=xyz[k]+v*d;}}
+  this.key=null;
+ }
+ update(pos,volumes=[],t=0,retarded=true){
   if(this.status!=='ready')return;
-  const ids=new Set(volumes.map(o=>o.id)),key=[...pos,Array.from(ids).sort().join(',')].join('|');if(key===this.key)return;this.key=key;
-  this.hidden.clear();const p=this.points.geometry.attributes.position,a=this.points.geometry.attributes.shown;
-  for(let i=0;i<this.rows.length;i++){const r=this.rows[i],x=r.p[0]*1e6-pos[0],y=r.p[1]*1e6-pos[1],z=r.p[2]*1e6-pos[2],d=Math.hypot(x,y,z);
+  const ids=new Set(volumes.map(o=>o.id)),key=[...pos,this.base?t:0,retarded,Array.from(ids).sort().join(',')].join('|');if(key===this.key)return;this.key=key;
+  this.hidden.clear();const p=this.points.geometry.attributes.position,a=this.points.geometry.attributes.shown,q=[0,0,0],b=[0,0,0],v=[0,0,0];
+  for(let i=0;i<this.rows.length;i++){const r=this.rows[i];
+   if(this.base){for(let k=0;k<3;k++){b[k]=this.base[3*i+k];v[k]=this.vel[3*i+k];}if(retarded)receivedLinear(b,v,pos,t,q);else for(let k=0;k<3;k++)q[k]=b[k]+v[k]*t;}else for(let k=0;k<3;k++)q[k]=r.p[k]*1e6;
+   const x=q[0]-pos[0],y=q[1]-pos[1],z=q[2]-pos[2],d=Math.hypot(x,y,z);
    const hide=d<1||ids.has(r.id)||ids.has(this.matches.get(r.id));if(hide)this.hidden.add(r.id);
    const scale=d?100/d:0;p.setXYZ(i,x*scale,y*scale,d?z*scale:-100);a.setX(i,hide?0:1);
   }

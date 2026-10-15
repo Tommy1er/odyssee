@@ -23,6 +23,9 @@ const CLASSES = {
   Sm: { shape: 1, params: [0, 1, 0.06, 0.7], label: "irrégulière magellanique (Sm/Im)", radiusKpc: 4 },
   Ir: { shape: 2, params: [0, 1, 0.08, 0.5], label: "irrégulière", radiusKpc: 2 },
   unknown: { shape: 0, params: [1.2, 0.3, 0.12, 0.8], label: "classe inconnue (forme générique)", radiusKpc: 12 },
+  // Local Volume entries of unknown morphology are dwarfs in practice (a 12 kpc generic disc made Canis Major, 7 kpc
+  // away, a 60° glow): faint spheroid of 1 kpc.
+  dwarfUnknown: { shape: 4, params: [1, 0, 0.8, 0.03], label: "naine de classe inconnue", radiusKpc: 1 },
 };
 // Hubble T-type (UNGC) → class.
 export function classFromT(T, morph = "") {
@@ -107,6 +110,8 @@ export function galaxyObject(row, extra = {}) {
     const m = classFromMethods(row.methods); cls = m.cls; clsWhy = "déduite de la méthode de distance : " + m.why;
   }
   if (extra.ungc) { cls = extra.ungc.cls; clsWhy = extra.ungc.clsWhy + " (même galaxie dans UNGC)"; radiusKpc = extra.ungc.radiusKpc; sizeWhy = extra.ungc.sizeWhy; }
+  if (cls === "unknown" && row.d < 10) { cls = "dwarfUnknown"; clsWhy += " ; dans le Volume local, traitée comme une naine"; }
+  if (/^canis major$/i.test(row.name)) clsWhy += ". Nature discutée : galaxie naine ou surdensité du disque galactique ; invisible à l’œil";
   const C = CLASSES[cls];
   if (!radiusKpc) { radiusKpc = C.radiusKpc; sizeWhy = "taille typique supposée pour une galaxie " + C.label + " (non mesurée dans ce catalogue)"; }
   const id = key === "cf4" ? "cf4:" + r[0] : key + ":" + r[0], tf = key === "cf4" && (row.methods || []).includes("Tully–Fisher");

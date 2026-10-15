@@ -31,6 +31,7 @@ export function initEphemeris(objects,motion){const byId=new Map(objects.map(o=>
   o.orbitSeconds=o.planet?.periodDays?o.planet.periodDays*86400:(m&&a>0?2*Math.PI*Math.sqrt(a*a*a/(G*m)):0);o.motionStatus=o.orbitSeconds?(o.type==='moon'?'Orbite circulaire dans le plan équatorial de la planète ; période calculée, phase illustrative (pas une éphéméride)':'Orbite circulaire animée ; période de référence, plan et phase illustratifs'):'Translation du système parent ; période orbitale inconnue';}}
 }
 let lastObjects,lastKey,lastLabelYear;
+export function invalidateEphemeris(){lastKey=null;}
 export function updateEphemeris(objects,s){const key=[s.t,...s.pos,s.retarded].join("|");if(lastObjects===objects&&lastKey===key)return;lastObjects=objects;lastKey=key;const year=EPOCH+s.t,labels=Math.abs(year-(lastLabelYear??-1e9))>0.5;if(labels)lastLabelYear=year;
  for(const o of objects){o.xyz=positionAt(o,s.t);o.d=norm(o.xyz);const light=received(o,s.pos,s.t);o.lightXYZ=s.retarded?light.xyz:o.xyz;o.lightDelay=light.delay;if(o.ephemeris&&labels){const l=ephemerisLabel(o.ephemeris,year);o.motionStatus=l.label;o.ephemerisIllustrative=!!l.illustrative;}if(o.comet&&labels){const l=cometQuality(yearToJD(year));o.motionStatus=l.label;o.ephemerisIllustrative=!!l.illustrative;}}}
 export function intercept(o,pos,t,makePlan,standOff){let end=positionAt(o,t),p;for(let k=0;k<12;k++){const r=sub(pos,end),l=norm(r)||1;end=add(positionAt(o,t+(p?.t||0)),mul(r,standOff/l));p=makePlan(norm(sub(end,pos)));}return {end,plan:p};}
