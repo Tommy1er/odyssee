@@ -63,7 +63,7 @@ Seul défaut de lecture : aux échelles 3 et 4, les symboles opaques de 4 px for
   - M81 avec un rayon de 15,675 kpc ; Sculptor en sphéroïdale naine.
   - Positions du cockpit identiques à celles de la carte (3·10⁻¹⁶) ; M87 à 55,0 millions d'al (μ = 31,134).
   - 400 galaxies Tully–Fisher avec i ≥ 45° ; voisines de M87 identiques à une recherche exhaustive.
-- `validate-galaxy-ui.cjs` (nouveau, SwiftShader) : 11 PASS, aucune erreur navigateur ou shader.
+- `validate-galaxy-ui.cjs` (nouveau, SwiftShader) : 10 PASS, aucune erreur navigateur ou shader (corrigé le 15 octobre : j’avais écrit 11, le test compte 10 contrôles).
   - Recherche « M81 », groupe M81/M82 dans les slots, fiche UNGC.
   - Lien McConnachie qui aboutit à M31 ; lien CF4 chargé à la demande ; fiche CF4.
   - À M87, slots `cf4:41361, 41156, 41529, 41297` ; recherche « PGC 41156 ».

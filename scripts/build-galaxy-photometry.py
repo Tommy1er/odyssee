@@ -90,6 +90,23 @@ for r in rows('cosmicflows4-galaxies.tsv.gz'):
     cf4.append(dict(id='cf4:' + r['PGC'], ra=ra, dec=de, mpc=10 ** ((dm - 25) / 5), dsrc='cf4', vh=None, vcmb=num(r['Vcmb'])))
 # 2. 2MRS photometry; match to CF4 within 15".
 mrs = rows('2mrs-2012.tsv.gz')
+# Empirical correction of the K route. 2MASS "total" magnitudes miss the faint outer light of large galaxies, early types
+# most (Schombert & Smith 2012). Calibrated here on the galaxies having both a UNGC total B magnitude and a 2MRS K_t
+# (|E(B−V)| < 0.15): median of V(K route) − V(B route) per type bin, shrunk toward the overall median with weight 10
+# (bins of a few galaxies). M87, absent from this sample, serves as an independent check in the tests.
+def type_bin(T):
+    return None if T is None else 0 if T <= -2.5 else 1 if T <= 0.5 else 2 if T <= 4.5 else 3 if T <= 8 else 4
+mrs_tree = cKDTree([unit(float(r['RAJ2000']), float(r['DEJ2000'])) for r in mrs]); offs = {k: [] for k in range(5)}
+for r in rows('ungc-2013.tsv.gz'):
+    B, T = num(r['Bmag']), num(r['TT'])
+    if B is None or T is None: continue
+    d, i = mrs_tree.query(unit(sex(r['RAJ2000'], True), sex(r['DEJ2000'], False)))
+    x = mrs[i]; K = num(x['Ktmag']); ebv = num(x['E(B-V)']) or 0
+    if d > 2 * math.sin(math.radians(60 / 3600) / 2) or K is None or ebv >= 0.15: continue
+    bv, vk = colours(T); offs[type_bin(T)].append(K + vk + 3.1 * ebv - (B - bv))
+glob = float(np.median([v for b in offs.values() for v in b]))
+K_CORR = {b: (len(v) * float(np.median(v)) + 10 * glob) / (len(v) + 10) if v else glob for b, v in offs.items()}
+K_CORR_N = {b: len(v) for b, v in offs.items()}
 cf4_xyz = np.array([unit(o['ra'], o['dec']) for o in cf4]); tree = cKDTree(cf4_xyz)
 mrs_xyz = np.array([unit(float(r['RAJ2000']), float(r['DEJ2000'])) for r in mrs])
 dist, idx = tree.query(mrs_xyz, distance_upper_bound=2 * math.sin(math.radians(15 / 3600) / 2))
@@ -103,7 +120,7 @@ matched = 0
 for r, d, i in zip(mrs, dist, idx):
     T = mrs_type(r['type']); bv, vk = colours(T); K = num(r['Ktmag']); ebv = min(3.0, num(r['E(B-V)']) or 0)
     riso = num(r['Riso']); q = num(r['b/a']); cz = num(r['cz'])
-    phot = dict(V=K + vk + 3.1 * ebv if K is not None else None, vsrc='2mrs-K', av=3.1 * ebv, T=T, q=q,
+    phot = dict(V=K + vk + 3.1 * ebv - K_CORR[type_bin(T) if T is not None else 2] if K is not None else None, vsrc='2mrs-K', av=3.1 * ebv, T=T, q=q,
                 rArcsec=1.7 * 10 ** riso if riso is not None else None, pa=None, mrs=r['ID'], name=r['CAT'].replace('_', ' ') if r['CAT'] else '2MASX J' + r['ID'])
     if np.isfinite(d):
         o = cf4[i]
@@ -172,6 +189,7 @@ meta = {
     'binarySHA256': hashlib.sha256(buf).hexdigest(), 'H0': H0,
     'flagsDoc': {'distance (flags % 8)': {'1': 'McConnachie', '2': 'UNGC', '3': 'Cosmicflows-4', '4': 'distance de Hubble cz_CMB/H0 (modèle)'},
                  'V (flags / 8)': {'0': 'pas de magnitude', '1': 'McConnachie V', '2': 'UNGC B − (B−V) typique du type', '3': '2MRS K_t + (V−K) typique du type + extinction d’avant-plan'}},
+    'kRouteCorrection': {'byTypeBin(E,S0,Sa-Sb,Sc-Sd,Irr)': [round(K_CORR[b], 3) for b in range(5)], 'galaxies': [K_CORR_N[b] for b in range(5)], 'overallMedian': round(glob, 3), 'note': 'V(K) = K_t + (V−K)type + 3.1 E(B−V) − correction ; calibrée sur UNGC ∩ 2MRS'},
     'ids': [o['id'] for o in out], 'names': [o.get('name', '') for o in out], 'alt': {o['id']: o['alt'] for o in out if o.get('alt')},
     'sources': ['Huchra et al. 2012, ApJS 199, 26 (2MRS)', 'Tully et al. 2023, ApJ 944, 94 (Cosmicflows-4)', 'Karachentsev et al. 2013, AJ 145, 101 (UNGC)', 'McConnachie 2012, AJ 144, 4'],
     'stats': {'cf4': len(cf4), 'cf4With2MRS': sum(1 for o in cf4 if o.get('V') is not None), '2mrsHubble': sum(1 for o in out if o['dsrc'] == 'hubble'),

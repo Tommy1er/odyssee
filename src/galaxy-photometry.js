@@ -53,13 +53,19 @@ export function enrichGalaxy(o, data, ids = [o.id]) {
   return i;
 }
 
-const vertexShader = `attribute float vmag,dcat,rad,temp,shown,avfg;uniform float pix,avScale,band,gain;uniform sampler2D lut;varying vec3 light;varying float soft;
+const vertexShader = `attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship;uniform float pix,avScale,band,gain;uniform sampler2D lut;varying vec3 light;varying float soft;
 vec4 thermal(float T){return texture2D(lut,vec2(clamp(log(max(100.,T)/100.)/log(10000.),0.,1.),.5));}
-void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));if(band>=3.)flux*=.005;
- float size=clamp(2.*rad/d/pix,1.25,48.);soft=smoothstep(2.,5.,size);flux*=mix(1.,gain,soft);vec4 col=thermal(temp);light=col.rgb*flux/(size*size*.08);
+void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));vec4 seen=thermal(temp*dship),cat=thermal(temp*dsun);flux*=exp(clamp(seen.a-cat.a,-60.,60.))*(dsun*dsun)/(dship*dship);if(band>=3.)flux*=.005;
+ float size=clamp(2.*rad/d/pix,1.25,48.);soft=smoothstep(2.,5.,size);flux*=mix(1.,gain,soft);light=seen.rgb*flux/(size*size*.08);
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
  gl_Position=projectionMatrix*viewMatrix*vec4(n*1000.,1.);gl_PointSize=size;if(shown<.5){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}}`;
 const fragmentShader = `varying vec3 light;varying float soft;void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;float psf=mix(exp(-12.*r*r)*(1.-smoothstep(.7,1.,r)),exp(-4.*r*r)*(1.-smoothstep(.8,1.,r))*.33,soft);gl_FragColor=vec4(min(max(light,vec3(0)),vec3(5000))*psf,1.);}`;
+// Doppler factor of light emitted by a source of velocity v (units of c) toward unit direction k (source → observer):
+// D = 1 / (γ (1 − v·k)). The catalogue magnitude is what the Sun receives (factor D☉); seen from the ship (factor D),
+// the black-body proxy of the galaxy's light is shifted to T·D and its flux multiplied by L_V(T·D) / L_V(T·D☉) × (D☉/D)²,
+// the same transformation as the ship's own motion (stellar-light.js). Cosmological redshift ≈ this Doppler effect at
+// first order in z (the flat, linear model of cosmic-motion.js).
+export function doppler(v, k) { const b2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2]; return Math.sqrt(1 - b2) / (1 - (v[0] * k[0] + v[1] * k[1] + v[2] * k[2])); }
 // Galaxy colour temperature by Hubble type (old red populations to young blue ones), on the black-body table of the stars.
 const typeTemp = (T) => (!Number.isFinite(T) ? 5200 : T <= -2 ? 4500 : T <= 2 ? 4900 : T <= 5 ? 5600 : 6800);
 
@@ -86,6 +92,8 @@ export class GalaxyLightLayer {
     g.setAttribute('rad', new T.Float32BufferAttribute(rows.map((r) => r.rad), 1));
     g.setAttribute('temp', new T.Float32BufferAttribute(rows.map((r) => typeTemp(r.T)), 1));
     g.setAttribute('avfg', new T.Float32BufferAttribute(rows.map((r) => r.av), 1));
+    g.setAttribute('dsun', new T.BufferAttribute(new Float32Array(n).fill(1), 1));
+    g.setAttribute('dship', new T.BufferAttribute(new Float32Array(n).fill(1), 1));
     g.setAttribute('shown', new T.BufferAttribute(new Float32Array(n).fill(1), 1));
     this.points.geometry.dispose(); this.points.geometry = g; this.status = 'ready'; this.points.visible = true;
     this.setMotion(field);
@@ -94,7 +102,9 @@ export class GalaxyLightLayer {
   setMotion(field) {
     const n = this.rows.length; this.base = new Float64Array(3 * n); this.vel = new Float64Array(3 * n);
     for (let k = 0; k < n; k++) { const r = this.rows[k], m = galaxyVelocity({ id: r.id, xyz: r.xyz, vHelio: r.vh }, field);
-      for (let j = 0; j < 3; j++) { const v = m.v[j] / C_KMS; this.vel[3 * k + j] = v; this.base[3 * k + j] = r.xyz[j] + v * r.d; } }
+      for (let j = 0; j < 3; j++) { const v = m.v[j] / C_KMS; this.vel[3 * k + j] = v; this.base[3 * k + j] = r.xyz[j] + v * r.d; }
+      this.points.geometry.attributes.dsun?.setX(k, doppler(this.vel.subarray(3 * k, 3 * k + 3), r.xyz.map((x) => -x / r.d))); }
+    if (this.points.geometry.attributes.dsun) this.points.geometry.attributes.dsun.needsUpdate = true;
     this.key = '';
   }
   // Light-cone positions relative to the ship (doubles, then float32), at most 4 times per second of real time unless the
@@ -105,13 +115,14 @@ export class GalaxyLightLayer {
     const moved = !this.lastPos || Math.hypot(...s.pos.map((x, k) => x - this.lastPos[k])) > 0.01 * Math.max(far, 1e5);
     if (key === this.key && !moved && now < this.next) return false;
     this.key = key; this.next = now + 0.25; this.lastPos = [...s.pos];
-    const p = this.points.geometry.attributes.position, sh = this.points.geometry.attributes.shown, q = [0, 0, 0], b = [0, 0, 0], v = [0, 0, 0];
+    const p = this.points.geometry.attributes.position, sh = this.points.geometry.attributes.shown, ds = this.points.geometry.attributes.dship, q = [0, 0, 0], b = [0, 0, 0], v = [0, 0, 0];
     for (let k = 0; k < this.rows.length; k++) {
       for (let j = 0; j < 3; j++) { b[j] = this.base[3 * k + j]; v[j] = this.vel[3 * k + j]; }
       if (s.retarded) receivedLinear(b, v, s.pos, s.t, q); else for (let j = 0; j < 3; j++) q[j] = b[j] + v[j] * s.t;
-      p.setXYZ(k, q[0] - s.pos[0], q[1] - s.pos[1], q[2] - s.pos[2]); sh.setX(k, hidden.has(this.rows[k].id) ? 0 : 1);
+      const rx = q[0] - s.pos[0], ry = q[1] - s.pos[1], rz = q[2] - s.pos[2], rd = Math.hypot(rx, ry, rz) || 1;
+      p.setXYZ(k, rx, ry, rz); sh.setX(k, hidden.has(this.rows[k].id) ? 0 : 1); ds.setX(k, doppler(v, [-rx / rd, -ry / rd, -rz / rd]));
     }
-    p.needsUpdate = sh.needsUpdate = true;
+    p.needsUpdate = sh.needsUpdate = ds.needsUpdate = true;
     // Foreground extinction of the Milky Way (included in the catalogue magnitudes) removed progressively when leaving
     // the Galaxy: full within 3 000 ly of the Sun, none beyond 150 000 ly (logarithmic in between; approximation).
     this.material.uniforms.avScale.value = far < 3e3 ? 1 : far > 1.5e5 ? 0 : 1 - Math.log(far / 3e3) / Math.log(50);

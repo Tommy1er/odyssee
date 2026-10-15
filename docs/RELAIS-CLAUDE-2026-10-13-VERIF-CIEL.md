@@ -37,7 +37,7 @@ Depuis M87, les groupes paraissent étirés en traînées qui pointent vers la V
 ## Vérifications exécutées
 
 - Les 18 suites numériques, les textures et les données de référence passent, dont ta nouvelle suite `validate-catalogue-sky` (13).
-- `validate-galaxy-ui.cjs` (11/11) et `validate-nebula-ui.cjs` (6/6) relancés sur ta base, avec la table CIE : aucune erreur. Couleurs lues dans les captures :
+- `validate-galaxy-ui.cjs` (10/10, corrigé le 15 octobre : 11/11 était faux, le test compte 10 contrôles) et `validate-nebula-ui.cjs` (6/6) relancés sur ta base, avec la table CIE : aucune erreur. Couleurs lues dans les captures :
   - cœur d'Orion (227, 238, 241) ;
   - enveloppe rose (206, 145, 189) ;
   - centre de M 57 (113, 243, 224).

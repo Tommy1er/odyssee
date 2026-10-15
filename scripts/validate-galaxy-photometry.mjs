@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import crypto from "node:crypto";
 import * as T from "three";
-import { photometryFrom, enrichGalaxy, GalaxyLightLayer, TYPICAL_MV } from "../src/galaxy-photometry.js";
+import { photometryFrom, enrichGalaxy, GalaxyLightLayer, TYPICAL_MV, doppler } from "../src/galaxy-photometry.js";
 import { localGroupObjects, galaxyOrientation, groupLuminosity, groupRayRadiance, calibratedGain } from "../src/local-group.js";
 import { galaxyObject } from "../src/catalogue-galaxies.js";
 import { decodeCatalogue } from "../src/extragalactic-data.js";
@@ -35,7 +35,9 @@ check("Doublons : Andromeda (McConnachie) fusionnée avec M31 (UNGC) ; angle de 
 // 3 · Enrichment of cockpit objects.
 const cf4 = decodeCatalogue("cf4", JSON.parse(fs.readFileSync(new URL("../public/cf4-map.json", import.meta.url))));
 { const m87 = galaxyObject(cf4.find((r) => r.raw[0] === 41361)); enrichGalaxy(m87, data);
-  check("M87 (CF4) : type 2MRS elliptique au lieu de la classe déduite de la méthode, magnitude 2MRS", m87.galaxyClass === "E" && /2MRS/.test(m87.classSource) && Math.abs(m87.Vmag - 8.6) < 0.6, `${m87.galaxyClass}, V = ${m87.Vmag.toFixed(2)} (V_T mesurée 8,63)`); }
+  check("M87 (CF4) : type 2MRS elliptique au lieu de la classe déduite de la méthode", m87.galaxyClass === "E" && /2MRS/.test(m87.classSource), m87.classSource);
+  check("M87, hors de l’échantillon de calibration : V par la voie K corrigée = V_T mesurée 8,63 à 0,15 mag près (9,13 avant correction)", Math.abs(m87.Vmag - 8.63) < 0.15 && !meta.ids.some((id) => /^ungc:(MESSIER087|NGC4486)$/.test(id)), `V = ${m87.Vmag.toFixed(2)}`); }
+{ const k = meta.kRouteCorrection; check("Correction empirique de la voie K publiée dans le fichier : elliptiques > spirales Sa–Sb, effectifs donnés", k["byTypeBin(E,S0,Sa-Sb,Sc-Sd,Irr)"][0] > k["byTypeBin(E,S0,Sa-Sb,Sc-Sd,Irr)"][2] && k.galaxies.reduce((a, b) => a + b) > 100, JSON.stringify(k["byTypeBin(E,S0,Sa-Sb,Sc-Sd,Irr)"])); }
 { const tf = cf4.find((r) => r.methods.includes("Tully–Fisher") && Number.isFinite(c.q[at("cf4:" + r.raw[0])]) && c.T[at("cf4:" + r.raw[0])] >= 3), o = galaxyObject(tf); enrichGalaxy(o, data);
   check("Spirale Tully–Fisher : inclinaison tirée du rapport d’axes mesuré, plus d’orientation tirée au hasard", /mesuré/.test(o.incSource) && o.inc > 0 && o.inc <= 90, `${o.name} : i = ${o.inc.toFixed(1)}°`); }
 { const o = { id: "x", galaxyClass: "Sbc", xyz: [0, 0, 32.6156 * 1e5] }; enrichGalaxy(o, null);
@@ -59,4 +61,13 @@ const cf4 = decodeCatalogue("cf4", JSON.parse(fs.readFileSync(new URL("../public
   check("Galaxies en lumière : toutes celles qui ont une magnitude ; vue du Soleil, position = catalogue ; galaxie déjà en volume masquée", layer.rows.length === meta.stats.withV && off / r.d < 1e-6 && sh.getX(k) === 0, `${layer.rows.length} galaxies`);
   layer.update({ pos: [0, 0, 2e5], t: 0, retarded: true, band: 1 }, new Set(), 10);
   check("Extinction d’avant-plan de la Voie lactée retirée hors de la Galaxie", layer.material.uniforms.avScale.value === 0); }
+// 6 · Redshift of the galaxies' own light (Doppler factor of their worldline).
+{ const layer = new GalaxyLightLayer(JSON.parse(fs.readFileSync(new URL("../public/assets/blackbody-lut.json", import.meta.url))));
+  layer.setData(data, null); const dsun = layer.points.geometry.attributes.dsun, k = layer.rows.findIndex((r) => r.id === "cf4:41361");
+  layer.update({ pos: [0, 0, 0], t: 0, retarded: true, band: 1 }, new Set(), 0);
+  const dship = layer.points.geometry.attributes.dship, far = layer.rows.reduce((b, r, i) => (r.d > layer.rows[b].d ? i : b), 0), z = 1 / dsun.getX(far) - 1;
+  check("Vu du Soleil : décalage spectral propre = celui du catalogue (flux inchangé) ; M87 D☉ ≈ 1 − 1 280/c", Math.abs(dship.getX(k) - dsun.getX(k)) < 1e-6 && Math.abs(dsun.getX(k) - (1 - 1280 / 299792.458)) < 2e-4, `D☉ = ${dsun.getX(k).toFixed(5)}`);
+  check("Galaxie la plus lointaine décalée vers le rouge au premier ordre (z ≈ cz/c)", z > 0.05 && z < 0.2, `z = ${z.toFixed(3)} à ${(layer.rows[far].d / 1e6).toFixed(0)} millions d’al`);
+  const v = [0, 0, -0.01], from = doppler(v, [0, 0, -1]), behind = doppler(v, [0, 0, 1]);
+  check("Doppler : une source qui s’approche est décalée vers le bleu, qui s’éloigne vers le rouge (1 % de c)", from > 1.0099 && behind < 0.9901, `${from.toFixed(4)} / ${behind.toFixed(4)}`); }
 console.log(JSON.stringify({ passed: n }));

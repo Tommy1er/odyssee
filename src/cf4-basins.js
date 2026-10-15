@@ -105,3 +105,29 @@ export class BasinLayer {
     this.lines.visible = lines; this.lines.material.uniforms.time.value = time;
   }
 }
+
+// Cockpit overlay (optional, off by default): the same surfaces and streamlines seen from the ship, as a reconstructed
+// scientific overlay drawn over the sky, NOT light. Units: millions of ly relative to the ship (float32 after a JS-double
+// subtraction of the ship position); directions are aberrated by the ship's velocity like the CF4 navigation symbols, so
+// the overlay stays on the galaxies it describes at relativistic speed.
+const ABERR = `vec3 aberr(vec3 n,vec3 m){float u=length(m),g=sqrt(1.+u*u);if(u<1.e-8)return n;vec3 e=m/u;float mu=clamp(dot(n,e),-1.,1.);vec3 perp=n-e*mu;float plus=mu<0.?dot(perp,perp)/(1.-mu):1.+mu;float inv=1./(g+u),D=g*plus-mu*inv;return normalize((perp+e*(g*plus-inv))/max(1.e-30,D));}`;
+const placeGLSL = `uniform vec3 ship,momentum;${ABERR}vec4 place(vec3 p){vec3 r=p-ship;float d=max(length(r),1.e-6);vec3 n=aberr(r/d,momentum);return projectionMatrix*viewMatrix*vec4(n*min(d,2000.),1.);}`;
+export class CockpitBasinOverlay {
+  constructor() { this.scene = new T.Scene(); this.ready = false; this.group = new T.Group(); this.scene.add(this.group); this.shipU = { value: new T.Vector3() }; this.momU = { value: new T.Vector3() }; this.timeU = { value: 0 }; }
+  build(d) {
+    if (this.ready) return; const layer = new BasinLayer(new T.Scene()); layer.build(d);
+    const shellV = `${placeGLSL}varying vec3 vN;varying vec3 vV;void main(){vN=normal;vV=normalize(ship-position);gl_Position=place(position);}`;
+    const lineV = `${placeGLSL}attribute float phase;attribute vec3 color;varying float vPhase;varying vec3 vColor;void main(){vPhase=phase;vColor=color;gl_Position=place(position);}`;
+    for (const e of layer.entries) {
+      const m = e.mesh.material, mat = new T.ShaderMaterial({ vertexShader: shellV, fragmentShader: shellFragment, uniforms: { color: m.uniforms.color, strength: { value: m.uniforms.strength.value * 0.6 }, ship: this.shipU, momentum: this.momU }, transparent: true, depthWrite: false, depthTest: false, side: T.DoubleSide, blending: T.CustomBlending, blendSrc: T.OneFactor, blendDst: T.OneMinusSrcAlphaFactor });
+      const mesh = new T.Mesh(e.mesh.geometry, mat); mesh.frustumCulled = false; mesh.userData.label = e.basin.label; this.group.add(mesh);
+    }
+    this.lines = new T.LineSegments(layer.lines.geometry, new T.ShaderMaterial({ vertexShader: lineV, fragmentShader: lineFragment, uniforms: { time: this.timeU, opacity: { value: 0.35 }, ship: this.shipU, momentum: this.momU }, transparent: true, depthWrite: false, depthTest: false, blending: T.AdditiveBlending }));
+    this.lines.frustumCulled = false; this.group.add(this.lines); this.ready = true;
+  }
+  render(renderer, camera, shipLy, momentum, time, sdss = false) {
+    if (!this.ready) return; this.shipU.value.set(...shipLy.map((x) => x / 1e6)); this.momU.value.set(...momentum); this.timeU.value = time;
+    for (const m of this.group.children) if (m.userData.label) m.visible = sdss || m.userData.label <= 6;
+    const clear = renderer.autoClear; renderer.autoClear = false; renderer.render(this.scene, camera); renderer.autoClear = clear;
+  }
+}

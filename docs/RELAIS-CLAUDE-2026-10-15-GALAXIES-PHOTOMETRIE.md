@@ -54,7 +54,7 @@ L'éclat des galaxies en volume était « qualitatif » : un gain de 1. Calibré
   - convergence de la grille de calibration (0,5 %) ;
   - couche de lumière : positions au Soleil, masquage, extinction.
 - **Les autres suites numériques passent**, dont `validate-immersion.mjs` (26).
-- **`validate-galaxy-ui.cjs`** : 11/11, aucune erreur. L'assertion de la fiche CF4 a été mise à jour : M87 est maintenant elliptique T = −4 d'après 2MRS, avec rayon 2MASS et magnitude K.
+- **`validate-galaxy-ui.cjs`** : 10/10, aucune erreur (corrigé le soir même : j’vais écrit 11/11, le test compte 10 contrôles). L'assertion de la fiche CF4 a été mise à jour : M87 est maintenant elliptique T = −4 d'après 2MRS, avec rayon 2MASS et magnitude K.
 - **`validate-basins-ui.cjs`** : 7/7.
 - **Captures SwiftShader** (hors dépôt) :
   - Andromède depuis le Soleil : petite tache pâle, comme en réalité ;

@@ -9,6 +9,7 @@ import {sub,norm,unit,velocity,aberrate,aberrateU,gammaU,gamma,mul,EQ_TO_GAL,AU}
 import {radiusLy,hash} from './body-data.js';
 import {createGalaxySphere,makePopulation,GAL_CENTER} from './galaxy.js';
 import {GalaxyLightLayer} from './galaxy-photometry.js';
+import {CockpitBasinOverlay} from './cf4-basins.js';
 import {createStarlight} from './stellar-light.js';
 import {SkyOptics} from './sky-optics.js';
 import {SpacecraftView} from './spacecraft.js';
@@ -42,7 +43,7 @@ export class SpaceRenderer{
   const positions=[],colors=[],sizes=[];for(const s of stars){positions.push(...s.xyz);colors.push(...stellarColor(s).toArray());sizes.push(Math.max(2,Math.min(7,5-(s.mag||5)*.3)));}
   const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('tint',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('pointSize',new T.Float32BufferAttribute(sizes,1));
   this.starMaterial=new T.ShaderMaterial({vertexShader:starVertex,fragmentShader:starFragment,uniforms:{ship:{value:new T.Vector3()},speed:{value:new T.Vector3()},optics:{value:0},shift:{value:1}},transparent:true,depthWrite:false,blending:T.AdditiveBlending});
-  this.galaxyLight=new GalaxyLightLayer(lut);this.flight.add(this.galaxyLight.points);this.galaxyAliases=new Map();this.sky=createStarlight(stars.filter(s=>s.type==='star'&&s.id!=='s2'),lut);this.starMaterial=this.sky.material;this.sky.frustumCulled=false;this.flight.add(this.sky);this.localGroup=new T.Group();this.flight.add(this.localGroup);
+  this.galaxyLight=new GalaxyLightLayer(lut);this.basinOverlay=new CockpitBasinOverlay();this.flight.add(this.galaxyLight.points);this.galaxyAliases=new Map();this.sky=createStarlight(stars.filter(s=>s.type==='star'&&s.id!=='s2'),lut);this.starMaterial=this.sky.material;this.sky.frustumCulled=false;this.flight.add(this.sky);this.localGroup=new T.Group();this.flight.add(this.localGroup);
   this.map=new T.Scene();this.mapCamera=new T.PerspectiveCamera(50,1,.001,1000000);this.mapCamera.up.set(...EQ_TO_GAL[2]);this.mapCamera.position.set(14,13,18);
   this.controls=new OrbitControls(this.mapCamera,canvas);this.controls.enabled=false;this.controls.enableDamping=true;this.controls.dampingFactor=.1;this.controls.maxDistance=500000;this.controls.minDistance=.002;
   this.mapWorld=new T.Group();this.map.add(this.mapWorld);this.mapWorld.add(this.catalogueSky.mapPoints);const mg=new T.BufferGeometry();mg.setAttribute('position',new T.Float32BufferAttribute(positions,3));mg.setAttribute('color',new T.Float32BufferAttribute(colors,3));this.mapStars=new T.Points(mg,mapPoints(2,.75));this.mapWorld.add(this.mapStars);this.population=makePopulation();this.mapWorld.add(this.population);this.centerLabel=label('SAGITTARIUS A*','#e8b581');this.map.add(this.centerLabel);this.centerLabel.renderOrder=5;
@@ -125,6 +126,7 @@ export class SpaceRenderer{
     this.skyOptics.render(this.renderer,this.camera,s,half&&!betaOptics?[0,0,0]:visualU,skyOptics);
     // Navigation symbols, not light: hidden in the clean view so that only the photometric sky remains.
     if(s.catalogueMarkers!==false&&!s.cleanView&&(s.target?.type==='cosmic'||norm(s.pos)>1e7))this.catalogueSky.render(this.renderer,this.camera,skyOptics?visualU:[0,0,0]);
+    if(s.basinOverlay&&!s.cleanView)this.basinOverlay.render(this.renderer,this.camera,s.pos,skyOptics?visualU:[0,0,0],s.wall);
     if(s.external)this.spacecraft.render(this.renderer,{...s,shipLightSources:this.shipLight=this.shipLighting.update(s),opticalLab:s.opticalLab&&!!betaOptics,labBeta:betaOptics?s.labBeta:0,speedValue:half&&!betaOptics?0:norm(physicalV),gammaValue:half&&!betaOptics?1:gammaU(s.u),velocityVector:physicalV},half?w/2/h:w/h);
    };
    if(s.opticalLab){this.renderer.setScissorTest(true);this.renderer.setViewport(0,0,w/2,h);this.renderer.setScissor(0,0,w/2,h);draw(0,true);this.renderer.setViewport(w/2,0,w/2,h);this.renderer.setScissor(w/2,0,w/2,h);draw(1,true);this.renderer.setScissorTest(false);this.renderer.setViewport(0,0,w,h);}else draw(+s.relativistic,false);if(s.passage)this.passageView.render(this.renderer,s.passage.progress,s.passage.unstable,performance.now()/1000,w/h);
