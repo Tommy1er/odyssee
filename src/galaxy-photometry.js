@@ -1,0 +1,121 @@
+// Galaxies as light (scripts/build-galaxy-photometry.py → public/galaxy-photometry.{json,bin}): 2MRS, Cosmicflows-4, UNGC
+// and McConnachie merged, one row per galaxy, with an apparent V magnitude whose provenance is kept (measured V, B or K with
+// a typical colour of the Hubble type). Two uses:
+// 1. enrichGalaxy: the cockpit's galaxy objects receive their magnitude (calibrating the volumetric models of
+//    local-group.js), their measured inclination and position angle where published, and for Cosmicflows-4 entries the
+//    2MRS morphological type and size instead of the class guessed from the distance method;
+// 2. GalaxyLightLayer: every galaxy with a magnitude drawn on the photometric scale of the stars, at its light-cone position
+//    seen from the ship (cosmic-motion.js), as a point or a small blob of its angular size. Not an image of the galaxy.
+import * as T from 'three';
+import { galaxyVelocity, receivedLinear, C_KMS } from './cosmic-motion.js';
+import { classFromT, CLASSES, LY_PER_KPC } from './catalogue-galaxies.js';
+import { diffuseGain } from './photometry.js';
+
+// Typical absolute V magnitudes by model class, used only when no magnitude is published (flagged as an estimate).
+export const TYPICAL_MV = { E: -21, S0: -20.5, dE: -16, dSph: -10, dwarfUnknown: -11, Sab: -21, Sbc: -20.5, Scd: -19.5, Sm: -18, Ir: -16, unknown: -19.5 };
+const TYPES = { f32: Float32Array };
+export async function loadGalaxyPhotometry(base = './', fetcher = fetch) {
+  const [meta, buf] = await Promise.all([
+    fetcher(base + 'galaxy-photometry.json').then((r) => { if (!r.ok) throw Error('galaxy-photometry.json indisponible'); return r.json(); }),
+    fetcher(base + 'galaxy-photometry.bin').then((r) => { if (!r.ok) throw Error('galaxy-photometry.bin indisponible'); return r.arrayBuffer(); }),
+  ]);
+  return photometryFrom(meta, buf);
+}
+export function photometryFrom(meta, buf) {
+  if (meta.schema !== 1 || buf.byteLength !== meta.binaryBytes) throw Error('Photométrie des galaxies incohérente');
+  const col = {}; for (const [k, d] of Object.entries(meta.columns)) col[k] = new TYPES[d.type](buf, d.offset, d.count);
+  const index = new Map(); meta.ids.forEach((id, i) => index.set(id, i));
+  for (const [id, alts] of Object.entries(meta.alt || {})) for (const a of alts) index.set(a, index.get(id));
+  return { meta, col, index, count: meta.count };
+}
+const VSRC = ['', 'V mesurée (McConnachie 2012)', 'B totale UNGC − (B−V) typique du type', 'K totale 2MRS + (V−K) typique du type + extinction galactique'];
+const DSRC = ['', 'McConnachie 2012', 'UNGC', 'Cosmicflows-4', 'distance de Hubble cz/H₀ (modèle)'];
+export const vSource = (flags) => VSRC[Math.floor(flags / 8)] || '';
+export const dSource = (flags) => DSRC[flags % 8] || '';
+// Magnitude, orientation and (CF4) morphology from the photometric list. Returns the row used, or −1.
+export function enrichGalaxy(o, data, ids = [o.id]) {
+  const i = data ? ids.map((id) => data.index.get(id)).find((x) => x != null) ?? -1 : -1, c = data?.col;
+  if (i >= 0) {
+    const f = c.flags[i], V = c.V[i], q = c.q[i], pa = c.pa[i], T0 = c.T[i], rk = c.radiusKpc[i];
+    if (Number.isFinite(V) && (o.Vmag == null || /^estimée/.test(o.vmagSource || ''))) { o.Vmag = V; o.vmagSource = vSource(f); }
+    if (o.catalogue === 'cf4' && Number.isFinite(T0)) {
+      const cls = classFromT(T0), C = CLASSES[cls];
+      Object.assign(o, { galaxyClass: cls, shapeCode: C.shape, shapeParams: C.params, classSource: 'type morphologique T = ' + T0 + ' (2MRS, Huchra et al. 2012)', kind: 'Galaxie ' + C.label + ' · Cosmicflows-4' });
+      if (Number.isFinite(rk) && rk > 0) { o.radiusLy = rk * LY_PER_KPC; o.sizeSource = 'rayon isophotal 2MASS K × 1,7 (≈ optique)'; }
+    }
+    if (Number.isFinite(q) && o.shapeCode === 0) { const q0 = 0.2, cosI = Math.sqrt(Math.max(0, (Math.min(1, q) ** 2 - q0 * q0) / (1 - q0 * q0))); o.inc = Math.acos(cosI) * 180 / Math.PI; o.incSource = 'déduite du rapport d’axes mesuré b/a = ' + q.toFixed(2); }
+    if (Number.isFinite(pa)) { o.pa = pa; o.paSource = 'angle de position mesuré (McConnachie 2012)'; }
+  }
+  if (o.Vmag == null && o.galaxyClass && TYPICAL_MV[o.galaxyClass] != null) {
+    o.Vmag = TYPICAL_MV[o.galaxyClass] + 5 * Math.log10(Math.hypot(...(o.catalogueXYZ || o.xyz)) / 32.6156);
+    o.vmagSource = 'estimée : luminosité typique d’une galaxie ' + o.galaxyClass + ' (aucune magnitude publiée)';
+  }
+  return i;
+}
+
+const vertexShader = `attribute float vmag,dcat,rad,temp,shown,avfg;uniform float pix,avScale,band,gain;uniform sampler2D lut;varying vec3 light;varying float soft;
+vec4 thermal(float T){return texture2D(lut,vec2(clamp(log(max(100.,T)/100.)/log(10000.),0.,1.),.5));}
+void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));if(band>=3.)flux*=.005;
+ float size=clamp(2.*rad/d/pix,1.25,48.);soft=smoothstep(2.,5.,size);flux*=mix(1.,gain,soft);vec4 col=thermal(temp);light=col.rgb*flux/(size*size*.08);
+ if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
+ gl_Position=projectionMatrix*viewMatrix*vec4(n*1000.,1.);gl_PointSize=size;if(shown<.5){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}}`;
+const fragmentShader = `varying vec3 light;varying float soft;void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;float psf=mix(exp(-12.*r*r)*(1.-smoothstep(.7,1.,r)),exp(-4.*r*r)*(1.-smoothstep(.8,1.,r))*.33,soft);gl_FragColor=vec4(min(max(light,vec3(0)),vec3(5000))*psf,1.);}`;
+// Galaxy colour temperature by Hubble type (old red populations to young blue ones), on the black-body table of the stars.
+const typeTemp = (T) => (!Number.isFinite(T) ? 5200 : T <= -2 ? 4500 : T <= 2 ? 4900 : T <= 5 ? 5600 : 6800);
+
+export class GalaxyLightLayer {
+  constructor(lut) {
+    const tex = new T.DataTexture(new Float32Array(lut), 512, 1, T.RGBAFormat, T.FloatType); tex.minFilter = tex.magFilter = T.LinearFilter; tex.needsUpdate = true;
+    this.material = new T.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { pix: { value: (Math.PI / 2) / 1024 }, avScale: { value: 1 }, band: { value: 1 }, gain: { value: 1 }, lut: { value: tex } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending });
+    this.points = new T.Points(new T.BufferGeometry(), this.material); this.points.frustumCulled = false; this.points.visible = false;
+    this.rows = []; this.status = 'idle'; this.next = 0; this.key = '';
+  }
+  // Rows with a magnitude; positions and worldlines in ly (catalogue frame).
+  setData(data, field = null) {
+    const c = data.col, rows = [];
+    for (let i = 0; i < data.count; i++) {
+      if (!Number.isFinite(c.V[i])) continue;
+      const ra = c.ra[i] * Math.PI / 180, de = c.dec[i] * Math.PI / 180, d = c.mly[i] * 1e6, xyz = [d * Math.cos(de) * Math.cos(ra), d * Math.cos(de) * Math.sin(ra), d * Math.sin(de)];
+      rows.push({ i, id: data.meta.ids[i], xyz, d, V: c.V[i], av: c.av[i] || 0, rad: (Number.isFinite(c.radiusKpc[i]) ? c.radiusKpc[i] : 5) * LY_PER_KPC, T: c.T[i], vh: c.vh[i] });
+    }
+    this.rows = rows; this.data = data;
+    const n = rows.length, g = new T.BufferGeometry();
+    g.setAttribute('position', new T.BufferAttribute(new Float32Array(3 * n), 3));
+    g.setAttribute('vmag', new T.Float32BufferAttribute(rows.map((r) => r.V), 1));
+    g.setAttribute('dcat', new T.Float32BufferAttribute(rows.map((r) => r.d), 1));
+    g.setAttribute('rad', new T.Float32BufferAttribute(rows.map((r) => r.rad), 1));
+    g.setAttribute('temp', new T.Float32BufferAttribute(rows.map((r) => typeTemp(r.T)), 1));
+    g.setAttribute('avfg', new T.Float32BufferAttribute(rows.map((r) => r.av), 1));
+    g.setAttribute('shown', new T.BufferAttribute(new Float32Array(n).fill(1), 1));
+    this.points.geometry.dispose(); this.points.geometry = g; this.status = 'ready'; this.points.visible = true;
+    this.setMotion(field);
+  }
+  // Worldlines: measured heliocentric radial velocity, reconstructed transverse flow beyond 10 million ly (cosmic-motion.js).
+  setMotion(field) {
+    const n = this.rows.length; this.base = new Float64Array(3 * n); this.vel = new Float64Array(3 * n);
+    for (let k = 0; k < n; k++) { const r = this.rows[k], m = galaxyVelocity({ id: r.id, xyz: r.xyz, vHelio: r.vh }, field);
+      for (let j = 0; j < 3; j++) { const v = m.v[j] / C_KMS; this.vel[3 * k + j] = v; this.base[3 * k + j] = r.xyz[j] + v * r.d; } }
+    this.key = '';
+  }
+  // Light-cone positions relative to the ship (doubles, then float32), at most 4 times per second of real time unless the
+  // ship jumped; galaxies drawn in volume (hidden ids) are not duplicated as points.
+  update(s, hidden = new Set(), now = performance.now() / 1000) {
+    if (this.status !== 'ready') return false;
+    const key = [...hidden].sort().join(',') + '|' + s.retarded, far = Math.hypot(...s.pos);
+    const moved = !this.lastPos || Math.hypot(...s.pos.map((x, k) => x - this.lastPos[k])) > 0.01 * Math.max(far, 1e5);
+    if (key === this.key && !moved && now < this.next) return false;
+    this.key = key; this.next = now + 0.25; this.lastPos = [...s.pos];
+    const p = this.points.geometry.attributes.position, sh = this.points.geometry.attributes.shown, q = [0, 0, 0], b = [0, 0, 0], v = [0, 0, 0];
+    for (let k = 0; k < this.rows.length; k++) {
+      for (let j = 0; j < 3; j++) { b[j] = this.base[3 * k + j]; v[j] = this.vel[3 * k + j]; }
+      if (s.retarded) receivedLinear(b, v, s.pos, s.t, q); else for (let j = 0; j < 3; j++) q[j] = b[j] + v[j] * s.t;
+      p.setXYZ(k, q[0] - s.pos[0], q[1] - s.pos[1], q[2] - s.pos[2]); sh.setX(k, hidden.has(this.rows[k].id) ? 0 : 1);
+    }
+    p.needsUpdate = sh.needsUpdate = true;
+    // Foreground extinction of the Milky Way (included in the catalogue magnitudes) removed progressively when leaving
+    // the Galaxy: full within 3 000 ly of the Sun, none beyond 150 000 ly (logarithmic in between; approximation).
+    this.material.uniforms.avScale.value = far < 3e3 ? 1 : far > 1.5e5 ? 0 : 1 - Math.log(far / 3e3) / Math.log(50);
+    this.material.uniforms.band.value = s.band ?? 1; this.material.uniforms.gain.value = diffuseGain(s.band ?? 1);
+    return true;
+  }
+}

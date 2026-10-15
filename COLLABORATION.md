@@ -77,6 +77,8 @@ node scripts/validate-catalogue-galaxies.mjs  # galaxies cataloguées dans le co
 node scripts/validate-cf4-basins.mjs  # bassins d'attraction CF4 2023 : décodage, conventions, attracteurs, volumes, dipôle du Groupe local
 node scripts/validate-immersion.mjs   # fond de la Voie lactée calibré, amas photométriques, lignes d'univers des galaxies, CMB relativiste, approche visible
 python scripts/build-galaxy-catalogue.py  # régénère public/galaxy-catalogue.json (âges des amas ouverts, [Fe/H] des globulaires)
+python scripts/build-galaxy-photometry.py  # régénère public/galaxy-photometry.{json,bin} : 2MRS + CF4 + UNGC + McConnachie, magnitudes, formes, distances
+node scripts/validate-galaxy-photometry.mjs  # magnitudes de référence, doublons, enrichissement, calibration des volumes, couche de lumière
 python scripts/build-extragalactic.py   # régénération hors ligne des 3 catalogues de carte
 node scripts/validate-extragalactic.mjs # données, incertitudes, plan supergalactique, sélection
 node scripts/validate-catalogue-ui.mjs  # intégration DOM sans rendu WebGL

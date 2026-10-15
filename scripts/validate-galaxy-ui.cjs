@@ -32,7 +32,7 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
   check('Map link to a McConnachie duplicate lands on the existing M31',(await snap()).target==='m31');
   await page.waitForFunction(()=>window.flightSnapshot().shipReady);await page.goto('http://127.0.0.1:3034/cockpit.html?target=cf4%3A41361');await page.waitForFunction(()=>window.flightSnapshot?.().target==='cf4:41361');
   check('Map link to a CF4 entry loads Cosmicflows-4 on demand',(await snap()).galaxies.cf4);
-  const m87=await sheet();check('CF4 sheet: distance modulus, class from the distance method, typical size labelled',m87.includes('μ = 31,134')&&m87.includes('fluctuations de brillance de surface')&&m87.includes('taille typique supposée'));
+  await page.waitForFunction(()=>window.flightSnapshot().galaxyLight.status==='ready');const m87=await sheet();check('CF4 sheet: distance modulus, 2MRS morphological type and size, V magnitude with its provenance (15 Oct: replaces the class guessed from the distance method)',m87.includes('μ = 31,134')&&m87.includes('type morphologique T = -4 (2MRS')&&m87.includes('rayon isophotal 2MASS')&&m87.includes('K totale 2MRS'));
   await jump('cf4:41361');await page.waitForFunction(()=>window.flightSnapshot().galaxies.slots.filter(x=>x.startsWith('cf4:')).length>=3);s=await snap();
   check('At M87: its nearest CF4 neighbours are rendered',s.galaxies.slots[0]==='cf4:41361'&&s.galaxies.slots.filter(x=>x.startsWith('cf4:')).length>=3);console.log('   slots',s.galaxies.slots.join(', '));
   await shot('galaxy-m87.png');

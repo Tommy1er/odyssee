@@ -12,7 +12,7 @@ export const LY_PER_KPC = 3261.5638;
 const MLY = 1e6;
 // Rendering classes understood by local-group.js: 0 spiral/lenticular disc, 1 Magellanic irregular (bar), 2 irregular,
 // 3 elliptical, 4 dwarf spheroidal. params = [bulge, arms, disc thickness, relative surface brightness].
-const CLASSES = {
+export const CLASSES = {
   E: { shape: 3, params: [1, 0, 0.7, 1], label: "elliptique", radiusKpc: 20 },
   S0: { shape: 0, params: [1.6, 0, 0.06, 0.9], label: "lenticulaire (S0)", radiusKpc: 12 },
   dE: { shape: 3, params: [0.5, 0, 0.75, 0.2], label: "elliptique naine", radiusKpc: 2 },
@@ -122,7 +122,7 @@ export function galaxyObject(row, extra = {}) {
     kind: "Galaxie " + C.label + " · " + meta.name, classSource: clsWhy, sizeSource: sizeWhy,
     aliases: [row.name, key === "ungc" || key === "mcconnachie" ? r[8] || "" : "PGC" + r[0], ...nameVariants(row.name)].filter(Boolean), planets: [],
     motion: [0, 0, 0], motionStatus: "Position nominale du catalogue ; pas de mouvement propre, de vitesse particulière ni d’expansion appliqués",
-    note: "Entrée de catalogue placée à sa distance nominale. La forme 3D est un modèle de classe (" + C.label + "), pas une image de cette galaxie ; orientation illustrative.",
+    note: "Entrée de catalogue placée à sa distance nominale. La forme 3D est un modèle de classe (" + C.label + "), pas une image de cette galaxie ; orientation mesurée quand elle est publiée, sinon illustrative.",
     links: [["Catalogue · CDS/VizieR", meta.url], ["SIMBAD", "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=" + encodeURIComponent(key === "cf4" ? "PGC " + r[0] : r[8] || r[0])]],
   };
   o.baseXYZ = [...o.xyz];

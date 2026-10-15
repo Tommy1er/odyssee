@@ -32,6 +32,7 @@ export function galaxyVelocity(o, field = null) {
   if (LOCAL_GROUP_VR[o.id] != null) { vr = LOCAL_GROUP_VR[o.id]; radial = "mesurée (héliocentrique, littérature)"; }
   else if (o.catalogue === "ungc" && Number.isFinite(row?.raw?.[4])) { vr = row.raw[4]; radial = "mesurée (UNGC, héliocentrique)"; }
   else if (o.catalogue === "cf4" && Number.isFinite(row?.vCmb)) { vr = row.vCmb - dot(SUN_CMB, n); radial = "mesurée (décalage spectral CF4, ramené au Soleil)"; }
+  else if (Number.isFinite(o.vHelio)) { vr = o.vHelio; radial = "mesurée (vitesse héliocentrique du catalogue)"; }
   const pec = dMly >= 10 && field ? field(o.xyz) : null;
   if (vr == null && dMly >= 10) { vr = (H0 * d) / MPC_LY + (pec ? dot(pec, n) : 0) - dot(SUN_CMB, n); radial = pec ? "modèle : expansion H0·d + flux reconstruit CF4" : "modèle : expansion H0·d"; }
   let vt = [0, 0, 0], transverse = "inconnue (0)";
