@@ -10,6 +10,7 @@ import * as T from 'three';
 import { galaxyVelocity, receivedLinear, C_KMS } from './cosmic-motion.js';
 import { classFromT, CLASSES, LY_PER_KPC } from './catalogue-galaxies.js';
 import { diffuseGain } from './photometry.js';
+import {galaxySpectra,spectralClassFromT} from './galaxy-spectral.js';
 
 // Typical absolute V magnitudes by model class, used only when no magnitude is published (flagged as an estimate).
 export const TYPICAL_MV = { E: -21, S0: -20.5, dE: -16, dSph: -10, dwarfUnknown: -11, Sab: -21, Sbc: -20.5, Scd: -19.5, Sm: -18, Ir: -16, unknown: -19.5 };
@@ -55,9 +56,13 @@ export function enrichGalaxy(o, data, ids = [o.id]) {
   return i;
 }
 
-const vertexShader = `attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship;uniform float pix,avScale,band,gain;uniform sampler2D lut;varying vec3 light;varying float soft;
+const vertexShader = `attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship,sclass;uniform float pix,avScale,band,gain;uniform sampler2D lut,sedLut;varying vec3 light;varying float soft;
 vec4 thermal(float T){return texture2D(lut,vec2(clamp(log(max(100.,T)/100.)/log(10000.),0.,1.),.5));}
-void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));vec4 seen=thermal(temp*dship),cat=thermal(temp*dsun);flux*=exp(clamp(seen.a-cat.a,-60.,60.))*(dsun*dsun)/(dship*dship);flux*=shown;if(band>=3.)flux*=.005;
+vec4 galaxySED(float cls,float D){float u=(.5+clamp((D-.72)/.37,0.,1.)*256.)/257.;return texture2D(sedLut,vec2(u,(cls+.5)/8.));}
+void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));bool sedValid=(dsun>=.72&&dsun<=1.09&&dship>=.72&&dship<=1.09);
+ vec4 seen=sedValid?galaxySED(sclass,dship):thermal(temp*dship),cat=sedValid?galaxySED(sclass,dsun):thermal(temp*dsun);
+ flux*=(sedValid?(seen.a/max(cat.a,1.e-12)):exp(clamp(seen.a-cat.a,-60.,60.)))*(dsun*dsun)/(dship*dship);
+ flux*=shown;if(band>=3.)flux*=.005;
  float size=clamp(2.*rad/d/pix,1.25,48.);soft=smoothstep(2.,5.,size);flux*=mix(1.,gain,soft);light=seen.rgb*flux/(size*size*.08);
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
  gl_Position=projectionMatrix*viewMatrix*vec4(n*1000.,1.);gl_PointSize=size;if(shown<.001){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}}`;
@@ -89,7 +94,9 @@ export function sourceTint(lut, T, Dsun, D, avFg = 0, fg = 1) {
 export class GalaxyLightLayer {
   constructor(lut) {
     const tex = new T.DataTexture(new Float32Array(lut), 512, 1, T.RGBAFormat, T.FloatType); tex.minFilter = tex.magFilter = T.LinearFilter; tex.needsUpdate = true;
-    this.material = new T.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { pix: { value: (Math.PI / 2) / 1024 }, avScale: { value: 1 }, band: { value: 1 }, gain: { value: 1 }, lut: { value: tex } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending });
+    const sedTex=new T.DataTexture(galaxySpectra.data,galaxySpectra.samples,galaxySpectra.ids.length,T.RGBAFormat,T.FloatType);
+    sedTex.minFilter=sedTex.magFilter=T.LinearFilter;sedTex.needsUpdate=true;
+    this.material = new T.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { sedLut:{value:sedTex}, pix: { value: (Math.PI / 2) / 1024 }, avScale: { value: 1 }, band: { value: 1 }, gain: { value: 1 }, lut: { value: tex } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending });
     this.points = new T.Points(new T.BufferGeometry(), this.material); this.points.frustumCulled = false; this.points.visible = false;
     this.rows = []; this.status = 'idle'; this.next = 0; this.key = '';
   }
@@ -99,7 +106,7 @@ export class GalaxyLightLayer {
     for (let i = 0; i < data.count; i++) {
       if (!Number.isFinite(c.V[i])) continue;
       const ra = c.ra[i] * Math.PI / 180, de = c.dec[i] * Math.PI / 180, d = c.mly[i] * 1e6, xyz = [d * Math.cos(de) * Math.cos(ra), d * Math.cos(de) * Math.sin(ra), d * Math.sin(de)];
-      rows.push({ i, id: data.meta.ids[i], xyz, d, V: c.V[i], av: c.av[i] || 0, rad: (Number.isFinite(c.radiusKpc[i]) ? c.radiusKpc[i] : 5) * LY_PER_KPC, T: c.T[i], vh: c.vh[i] });
+      rows.push({ i, id: data.meta.ids[i], xyz, d, V: c.V[i], av: c.av[i] || 0, rad: (Number.isFinite(c.radiusKpc[i]) ? c.radiusKpc[i] : 5) * LY_PER_KPC, T: c.T[i], sclass: spectralClassFromT(c.T[i]), vh: c.vh[i] });
     }
     this.rows = rows; this.data = data;
     const n = rows.length, g = new T.BufferGeometry();
@@ -108,6 +115,7 @@ export class GalaxyLightLayer {
     g.setAttribute('dcat', new T.Float32BufferAttribute(rows.map((r) => r.d), 1));
     g.setAttribute('rad', new T.Float32BufferAttribute(rows.map((r) => r.rad), 1));
     g.setAttribute('temp', new T.Float32BufferAttribute(rows.map((r) => typeTemp(r.T)), 1));
+    g.setAttribute('sclass',new T.Float32BufferAttribute(rows.map((r)=>r.sclass),1));
     g.setAttribute('avfg', new T.Float32BufferAttribute(rows.map((r) => r.av), 1));
     g.setAttribute('dsun', new T.BufferAttribute(new Float32Array(n).fill(1), 1));
     g.setAttribute('dship', new T.BufferAttribute(new Float32Array(n).fill(1), 1));
