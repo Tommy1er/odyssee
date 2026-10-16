@@ -10,6 +10,7 @@ import { applyGalaxyMotion } from "../src/cosmic-motion.js";
 import { BasinData } from "../src/cf4-basins.js";
 import { received } from "../src/ephemeris.js";
 import { sourceTint, objectTemp, foregroundScale } from "../src/galaxy-photometry.js";
+import {spectralSourceTint,spectralClassFromObject} from "../src/galaxy-spectral.js";
 import { galaxyObject } from "../src/catalogue-galaxies.js";
 import { decodeCatalogue } from "../src/extragalactic-data.js";
 import { fluxFromMag } from "../src/photometry.js";
@@ -81,7 +82,11 @@ const cf4 = decodeCatalogue("cf4", JSON.parse(fs.readFileSync(new URL("../public
   layer.setLut(lut); layer.calibrateFixed(); const Y = (t) => 0.2126 * t.x + 0.7152 * t.y + 0.0722 * t.z;
   for (const o of fixed) { const r = received(o, [0, 0, 0], 0); o.lightXYZ = r.xyz; }
   layer.update({ pos: [0, 0, 0], t: 0, pixelAngle: 1.2e-3 }, 1, false);
-  check("1 · Vu du Soleil : facteur spectral des quatre volumes du Groupe local = 1 (magnitude et couleur de référence conservées)", layer.u.groupTint.value.slice(0, 4).every((t) => Math.abs(t.x - 1) < 1e-6 && Math.abs(t.y - 1) < 1e-6 && Math.abs(t.z - 1) < 1e-6), layer.u.groupTint.value.slice(0, 4).map((t) => t.x.toFixed(4)).join(", "));
+  check("1 · Vu du Soleil : luminosité V calibrée (Y = 1), couleur spectrale égale à celle des points", fixed.every((o,i) => {
+    const t=layer.u.groupTint.value[i], p=o.lightXYZ||o.xyz, v=o.motion||[0,0,0], dc=Math.hypot(...(o.catalogueXYZ||o.xyz)),cat=o.catalogueXYZ||o.xyz,dr=Math.hypot(...p),Dsun=doppler(v,cat.map(x=>-x/dc)),D=doppler(v,p.map(x=>-x/dr));
+    const expect=spectralSourceTint(spectralClassFromObject(o),Dsun,D,o.avFg||0,1);
+    return !!expect && Math.abs(Y(t)-1)<1e-4 && expect.every((z,j)=>Math.abs(z-[t.x,t.y,t.z][j])<1e-5);
+  }), layer.u.groupTint.value.slice(0, 4).map((t) => Y(t).toFixed(4)).join(", "));
   // M87 approached along the line of sight: point share + volume share = the model's light, through the hand-over.
   const m87 = applyGalaxyMotion(galaxyObject(cf4.find((r) => r.raw[0] === 41361)), field); enrichGalaxy(m87, data); layer.setCatalogue([m87]);
   const cat = m87.catalogueXYZ, dc = Math.hypot(...cat), u = cat.map((x) => x / dc), rows = [];
@@ -95,7 +100,7 @@ const cf4 = decodeCatalogue("cf4", JSON.parse(fs.readFileSync(new URL("../public
     for (let a = 0; a < N; a++) for (let b = 0; b < N; b++) { const x = (-1 + (a + 0.5) * 2 / N) * half, y = (-1 + (b + 0.5) * 2 / N) * half; F += groupRayRadiance(layer.u.groupShapes.value[i], [Pm.x, Pm.y, Pm.z, 1], layer.u.groupSeeds.value[i], eye, axis.clone().addScaledVector(e1, x).addScaledVector(e2, y).normalize().applyMatrix3(R).toArray()) * (2 * half / N) ** 2; }
     const volume = F * Pm.w * Y(layer.u.groupTint.value[i]);
     // Point light, formula of the point shader: catalogue flux, distance, own Doppler + foreground (sourceTint), share.
-    const v = m87.motion, Dsun = doppler(v, cat.map((x) => -x / dc)), Dship = doppler(v, rel.map((x) => -x / d)), own = sourceTint(lut, objectTemp(m87), Dsun, Dship, m87.avFg || 0, foregroundScale(Math.hypot(...P)));
+    const v = m87.motion, Dsun = doppler(v, cat.map((x) => -x / dc)), Dship = doppler(v, rel.map((x) => -x / d)), own = spectralSourceTint(spectralClassFromObject(m87),Dsun,Dship,m87.avFg||0,foregroundScale(Math.hypot(...P))) || sourceTint(lut,objectTemp(m87),Dsun,Dship,m87.avFg||0,foregroundScale(Math.hypot(...P)));
     const k = data.index.get("cf4:41361"), dcat = data.col.mly[k] * 1e6, point = fluxFromMag(m87.Vmag) * (dcat / d) ** 2 * Y({ x: own[0], y: own[1], z: own[2] }) * h.aniso * (1 - h.w);
     rows.push({ dPix, w: h.w, total: point + volume });
   }
