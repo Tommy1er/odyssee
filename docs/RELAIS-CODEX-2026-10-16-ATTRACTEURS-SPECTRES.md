@@ -10,11 +10,12 @@ Date : 16 octobre 2026 · Base de travail : `c4622ed` · Branche : `codex/attrac
 ## Étiquettes des attracteurs : ce qui est implémenté
 
 - Six puits d'écoulement CF4 2023 non groupés : Laniakea, Apus, Hercule, Lepus, Persée–Poissons, Shapley, aux coordonnées `attractorMpch` dans `public/cf4-basins-2023.json`.
+- En plus, un **repère régional explicitement distinct** « Grand Attracteur · région de Norma », provenant du repère approximatif documenté de `src/cosmic-data.js` (≈ 220 Mly), est affiché. Il ne prétend pas être un septième puits CF4.
 - Même conversion supergalactique → équatoriale que les surfaces et courants. Position relative au vaisseau en millions d'al calculée en double précision avant projection ; correction d'aberration via `aberrateU` déjà utilisée par la navigation.
 - La couche est un **repère scientifique reconstruit, pas de la lumière** : étiquettes 3D en sprites, affichées au-dessus du rendu, cachées avec « Vue dégagée » et la désactivation des bassins ; aucune émission lumineuse, Doppler spectral ni vitesse gravitationnelle réelle attribués.
-- Labels visuellement limités pour éviter les collisions ; Laniakea et Shapley ont priorité sur les autres noms ; ils ne deviennent pas des cibles de navigation supplémentaires.
+- Labels visuellement limités pour éviter les collisions ; Laniakea, le repère régional du Grand Attracteur et Shapley ont priorité sur les autres noms ; ils ne deviennent pas des cibles de navigation supplémentaires.
 - Les bassins SDSS-1a, SDSS-2a et SDSS-2b sont **tronqués par le bord de grille**. Le cockpit ne leur attribue aucune étiquette par défaut.
-- **Nuance terminologique** : `Attracteur CF4 · Laniakea` est un puits de vitesse reconstruit à environ 322 Mly, selon Dupuy & Courtois (2023). Ce n'est pas le même objet géométrique que le repère illustratif « Grand Attracteur » de la carte cosmique (centre apparent vers Norma, `src/cosmic-data.js`). Ne pas les confondre ou rebaptiser le puits CF4 « Grand Attracteur ».
+- **Nuance terminologique** : `Attracteur CF4 · Laniakea` est un puits de vitesse reconstruit à environ 322 Mly, selon Dupuy & Courtois (2023). Ce n'est pas le même objet géométrique que le repère illustratif « Grand Attracteur » de la carte cosmique (centre apparent vers Norma, `src/cosmic-data.js`). Ne pas les confondre ou rebaptiser le puits CF4 « Grand Attracteur ». Le repère de Norma est fondé sur https://science.nasa.gov/missions/hubble/hubble-focuses-on-the-great-attractor/ .
 
 ### Validation requise sur la branche
 1. `node scripts/validate-cf4-basins.mjs` : tests initiaux et trois tests complémentaires de directions (vaisseau au Soleil, déplacement, aberration à 0,99 c) + inventaire des bassins.
