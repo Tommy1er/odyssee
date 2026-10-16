@@ -3,6 +3,7 @@ import * as T from 'three';
 import {norm,sub,unit} from './physics.js';
 import {fluxFromMag} from './photometry.js';
 import {doppler,sourceTint,objectTemp,foregroundScale} from './galaxy-photometry.js';
+import {spectralSourceTint,spectralClassFromObject} from './galaxy-spectral.js';
 import {hash} from './body-data.js';
 // Representative Local Group members, not an exhaustive galaxy catalogue.
 const rows=[
@@ -44,7 +45,9 @@ vec3 groupRadiance(vec3 ray){vec3 total=vec3(0);for(int j=0;j<${8};j++){float sh
    else{bulge=P.x*exp(-rho*rho/.12)*edge;tint=vec3(.95,.82,.62);}}
   float dust=disk*(.4+arms)*rough;trans*=exp(-dust*ds*6.);
   light+=(disk*(.25+arms)*mix(vec3(.32,.49,.8),vec3(.8,.62,.4),rough*.5)+bulge*tint)*ds*trans*6.*P.w;if(trans<.01)break;}
- total+=light*groupTint[j];}return total;}`;
+ // The galaxy-integrated SED sets a common chromaticity at every apparent size.
+  // Uncalibrated per-voxel colours would produce a false colour jump at the 3–8 px handoff.
+  total+=dot(light,vec3(.2126,.7152,.0722))*groupTint[j];}return total;}`;
 // JS twin of groupRadiance for the photometric calibration (V band ≈ luminance). A distant observer sees the galaxy along
 // unit direction dir (galaxy frame); rays are parallel, the sphere of radius 1 (model units) is sampled on a grid. Returns
 // E = ∫ radiance dA with w = 1, so that the flux at distance D (in radii) is w E / D² in sky units (radiance × sr).
@@ -93,7 +96,8 @@ export class LocalGroupLayer{
  updateTints(s){const fg=foregroundScale(norm(s.pos)),list=[...this.objects,...this.slots];for(let i=0;i<8;i++){const o=i<4?this.objects[i]:this.slots[i-4],t=this.u.groupTint.value[i];if(!o||!this.lut){t.set(1,1,1);continue;}
   const v=o.motion||[0,0,0],cat=o.catalogueXYZ||o.xyz,dc=norm(cat),p=o.lightXYZ||o.xyz,rel=sub(s.pos,p),dr=norm(rel)||1,Dsun=doppler(v,cat.map(x=>-x/dc)),D=doppler(v,rel.map(x=>x/dr));
   const dPix=2*o.radiusLy/dr/(s.pixelAngle||1.2e-3),w=volumeWeight(dPix);this.handoff.set(o.id,{w,aniso:w<1?this.anisotropy(o,i,rel):1});
-  t.set(...sourceTint(this.lut,objectTemp(o),Dsun,D,o.avFg||0,fg).map(x=>x*w));}void list;}
+  const spectral=spectralSourceTint(spectralClassFromObject(o),Dsun,D,o.avFg||0,fg);
+   t.set(...(spectral||sourceTint(this.lut,objectTemp(o),Dsun,D,o.avFg||0,fg)).map(x=>x*w));}void list;}
  // Light seen from the ship's direction relative to the light seen from the Sun (the calibration direction): the volume is
  // brighter face-on than edge-on (projection, dust). Points of handed-over galaxies receive the same factor. Cached until
  // the direction turns by more than 3°.
