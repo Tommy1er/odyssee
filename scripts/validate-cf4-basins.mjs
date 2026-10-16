@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import crypto from "node:crypto";
-import { BasinData, sgToEq, eqToSg, view } from "../src/cf4-basins.js";
+import { BasinData, sgToEq, eqToSg, view, cockpitAttractorDirection } from "../src/cf4-basins.js";
 import { MPC_MLY, SG_AXES } from "../src/extragalactic-data.js";
 
 let n = 0;
@@ -58,4 +58,27 @@ check("Lignes de courant aboutissant dans leur bassin publié : ≥ 85 % pour 5 
   check("Lignes de courant : la grande majorité se rapprochent de l’attracteur de leur bassin", closer / total > 0.85, `${closer}/${total}`); }
 // 8 · Cockpit lookups away from the box return nothing rather than an extrapolation.
 check("Hors de la boîte : pas de bassin ni de vitesse extrapolés", d.basinAt([0, 0, 3000]) === null && d.velocityEqAt([0, 0, 3000]) === null);
+// 9 · Cockpit attractor labels use exactly the published CF4 sinks, not the illustrative
+// Great Attractor marker. Direction is relative to the moving observer and aberrated once.
+check("Six CF4 attractor anchors are published and distinct from clipped SDSS regions",
+  meta.basins.filter((b) => b.label <= 6).length === 6 &&
+  meta.basins.filter((b) => b.label > 6).every((b) => b.truncatedByBox));
+{
+  const a = sgToEq(TABLE.Laniakea, d.h), z = [0, 0, 0], n = a.map((x) => x / Math.hypot(...a));
+  const atSun = cockpitAttractorDirection(a, z, z);
+  check("Attractor overlay: zero velocity gives geometric direction with no bias",
+    atSun !== null && Math.hypot(...atSun.map((x, i) => x - n[i])) < 1e-12);
+  const shifted = cockpitAttractorDirection(a, a.map((x) => x * 5e5), z);
+  check("Attractor overlay: ship displacement is applied in millions of light years",
+    shifted !== null && Math.hypot(...shifted.map((x, i) => x - n[i])) < 1e-12 &&
+    cockpitAttractorDirection(a, a.map((x) => x * 1e6), z) === null);
+}
+{
+  const u99 = 0.99 / Math.sqrt(1 - 0.99 ** 2);
+  const side = cockpitAttractorDirection([0, 0, 100], [0, 0, 0], [u99, 0, 0]);
+  const rest = cockpitAttractorDirection([0, 0, 100], [0, 0, 0], [0, 0, 0]);
+  check("Attractor overlay: comoving 0.99 c aberration shifts a lateral sink forward",
+    rest[0] === 0 && side[0] > 0.98 && side[2] > 0 &&
+    Math.abs(Math.hypot(...side) - 1) < 1e-12);
+}
 console.log(JSON.stringify({ passed: n }));
