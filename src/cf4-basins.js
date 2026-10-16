@@ -7,6 +7,7 @@
 // the frame of the cosmic map (cosmos.js) and, ×1e6, of the cockpit.
 import * as T from "three";
 import { SG_AXES, MPC_MLY } from "./extragalactic-data.js";
+import { aberrateU } from "./physics.js";
 
 export const BASIN_COLORS = { 1: 0xffc46b, 2: 0x7fb7ff, 3: 0xff7f9e, 4: 0x8fe39a, 5: 0xc49bff, 6: 0x6fe0e0, 7: 0x8a8f99, 8: 0x7f8794, 9: 0x8b8693 };
 const TYPES = { u8: Uint8Array, u16: Uint16Array, u32: Uint32Array, i16: Int16Array, f32: Float32Array };
@@ -106,6 +107,29 @@ export class BasinLayer {
   }
 }
 
+// The published CF4 sinks are NOT interchangeable with independently drawn regional landmarks
+// such as the Great Attractor (placed approximately near Norma in the illustrative map).
+// This direction is evaluated from the ship's current position and aberrated exactly once:
+// the scientific overlay is not captured into SkyOptics's Doppler/aberration pass.
+export function cockpitAttractorDirection(attractorMly, shipLy, momentum = [0, 0, 0]) {
+  const r = attractorMly.map((x, i) => x - shipLy[i] / 1e6);
+  const d = Math.hypot(...r);
+  return Number.isFinite(d) && d > 1e-6 ? aberrateU(r.map((x) => x / d), momentum) : null;
+}
+function attractorSprite(b) {
+  const canvas = document.createElement("canvas"); canvas.width = 768; canvas.height = 72;
+  const g = canvas.getContext("2d");
+  g.fillStyle = "rgba(5,18,30,.78)"; g.fillRect(3, 6, 762, 60);
+  g.fillStyle = "#" + BASIN_COLORS[b.label].toString(16).padStart(6, "0"); g.fillRect(5, 9, 6, 54);
+  g.font = "600 25px system-ui, sans-serif"; g.fillStyle = "#eaf1f5";
+  g.fillText("Attracteur CF4 · " + b.name, 27, 46, 725);
+  const texture = new T.CanvasTexture(canvas); texture.colorSpace = T.SRGBColorSpace;
+  const material = new T.SpriteMaterial({ map: texture, transparent: true, depthTest: false, depthWrite: false, toneMapped: false });
+  const sprite = new T.Sprite(material); sprite.renderOrder = 10;
+  sprite.userData.label = b.label; sprite.userData.name = b.name; sprite.visible = false;
+  return sprite;
+}
+
 // Cockpit overlay (optional, off by default): the same surfaces and streamlines seen from the ship, as a reconstructed
 // scientific overlay drawn over the sky, NOT light. Units: millions of ly relative to the ship (float32 after a JS-double
 // subtraction of the ship position); directions are aberrated by the ship's velocity like the CF4 navigation symbols, so
@@ -113,7 +137,7 @@ export class BasinLayer {
 const ABERR = `vec3 aberr(vec3 n,vec3 m){float u=length(m),g=sqrt(1.+u*u);if(u<1.e-8)return n;vec3 e=m/u;float mu=clamp(dot(n,e),-1.,1.);vec3 perp=n-e*mu;float plus=mu<0.?dot(perp,perp)/(1.-mu):1.+mu;float inv=1./(g+u),D=g*plus-mu*inv;return normalize((perp+e*(g*plus-inv))/max(1.e-30,D));}`;
 const placeGLSL = `uniform vec3 ship,momentum;${ABERR}vec4 place(vec3 p){vec3 r=p-ship;float d=max(length(r),1.e-6);vec3 n=aberr(r/d,momentum);return projectionMatrix*viewMatrix*vec4(n*min(d,2000.),1.);}`;
 export class CockpitBasinOverlay {
-  constructor() { this.scene = new T.Scene(); this.ready = false; this.group = new T.Group(); this.scene.add(this.group); this.shipU = { value: new T.Vector3() }; this.momU = { value: new T.Vector3() }; this.timeU = { value: 0 }; }
+  constructor() { this.scene = new T.Scene(); this.ready = false; this.group = new T.Group(); this.scene.add(this.group); this.shipU = { value: new T.Vector3() }; this.momU = { value: new T.Vector3() }; this.timeU = { value: 0 }; this.attractorLabels = []; }
   build(d) {
     if (this.ready) return; const layer = new BasinLayer(new T.Scene()); layer.build(d);
     const shellV = `${placeGLSL}varying vec3 vN;varying vec3 vV;void main(){vN=normal;vV=normalize(ship-position);gl_Position=place(position);}`;
@@ -123,11 +147,37 @@ export class CockpitBasinOverlay {
       const mesh = new T.Mesh(e.mesh.geometry, mat); mesh.frustumCulled = false; mesh.userData.label = e.basin.label; this.group.add(mesh);
     }
     this.lines = new T.LineSegments(layer.lines.geometry, new T.ShaderMaterial({ vertexShader: lineV, fragmentShader: lineFragment, uniforms: { time: this.timeU, opacity: { value: 0.35 }, ship: this.shipU, momentum: this.momU }, transparent: true, depthWrite: false, depthTest: false, blending: T.AdditiveBlending }));
-    this.lines.frustumCulled = false; this.group.add(this.lines); this.ready = true;
+    this.lines.frustumCulled = false; this.group.add(this.lines);
+    // The six published sinks, prioritized by significance; the three SDSS sinks are
+    // outside this cockpit overlay because their catchments are clipped by the grid.
+    for (const label of [1, 6, 2, 3, 4, 5]) {
+      const entry = layer.entries.find((e) => e.basin.label === label);
+      if (!entry) continue;
+      const sprite = attractorSprite(entry.basin);
+      this.group.add(sprite);
+      this.attractorLabels.push({ sprite, position: entry.attractor, label });
+    }
+    this.ready = true;
   }
   render(renderer, camera, shipLy, momentum, time, sdss = false) {
     if (!this.ready) return; this.shipU.value.set(...shipLy.map((x) => x / 1e6)); this.momU.value.set(...momentum); this.timeU.value = time;
-    for (const m of this.group.children) if (m.userData.label) m.visible = sdss || m.userData.label <= 6;
+    for (const m of this.group.children) if (m.userData.label && !m.isSprite) m.visible = sdss || m.userData.label <= 6;
+    const vp = new T.Vector4(); renderer.getViewport(vp);
+    const width = Math.max(1, vp.z), height = Math.max(1, vp.w), occupied = [];
+    const size = 24 * (2 * 1200 * Math.tan(camera.fov * Math.PI / 360)) / height;
+    for (const item of this.attractorLabels) {
+      const { sprite, position } = item;
+      sprite.visible = false;
+      const direction = cockpitAttractorDirection(position, shipLy, momentum);
+      if (!direction) continue;
+      sprite.position.set(...direction.map((v) => v * 1200));
+      sprite.scale.set(size * (768 / 72), size, 1);
+      const clip = sprite.position.clone().project(camera);
+      const x = (clip.x + 1) * width / 2, y = (1 - clip.y) * height / 2;
+      if (clip.z < -1 || clip.z > 1 || x < 132 || x > width - 132 || y < 20 || y > height - 20) continue;
+      if (occupied.some((p) => Math.abs(p.x - x) < 255 && Math.abs(p.y - y) < 30)) continue;
+      occupied.push({ x, y }); sprite.visible = true;
+    }
     const clear = renderer.autoClear; renderer.autoClear = false; renderer.render(this.scene, camera); renderer.autoClear = clear;
   }
 }
