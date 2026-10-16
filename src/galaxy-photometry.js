@@ -37,6 +37,8 @@ export function enrichGalaxy(o, data, ids = [o.id]) {
   const i = data ? ids.map((id) => data.index.get(id)).find((x) => x != null) ?? -1 : -1, c = data?.col;
   if (i >= 0) {
     const f = c.flags[i], V = c.V[i], q = c.q[i], pa = c.pa[i], T0 = c.T[i], rk = c.radiusKpc[i];
+    if (Number.isFinite(T0)) o.hubbleT = T0;
+    if (Number.isFinite(c.av[i])) o.avFg = c.av[i];
     if (Number.isFinite(V) && (o.Vmag == null || /^estimée/.test(o.vmagSource || ''))) { o.Vmag = V; o.vmagSource = vSource(f); }
     if (o.catalogue === 'cf4' && Number.isFinite(T0)) {
       const cls = classFromT(T0), C = CLASSES[cls];
@@ -55,10 +57,10 @@ export function enrichGalaxy(o, data, ids = [o.id]) {
 
 const vertexShader = `attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship;uniform float pix,avScale,band,gain;uniform sampler2D lut;varying vec3 light;varying float soft;
 vec4 thermal(float T){return texture2D(lut,vec2(clamp(log(max(100.,T)/100.)/log(10000.),0.,1.),.5));}
-void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));vec4 seen=thermal(temp*dship),cat=thermal(temp*dsun);flux*=exp(clamp(seen.a-cat.a,-60.,60.))*(dsun*dsun)/(dship*dship);if(band>=3.)flux*=.005;
+void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));vec4 seen=thermal(temp*dship),cat=thermal(temp*dsun);flux*=exp(clamp(seen.a-cat.a,-60.,60.))*(dsun*dsun)/(dship*dship);flux*=shown;if(band>=3.)flux*=.005;
  float size=clamp(2.*rad/d/pix,1.25,48.);soft=smoothstep(2.,5.,size);flux*=mix(1.,gain,soft);light=seen.rgb*flux/(size*size*.08);
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
- gl_Position=projectionMatrix*viewMatrix*vec4(n*1000.,1.);gl_PointSize=size;if(shown<.5){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}}`;
+ gl_Position=projectionMatrix*viewMatrix*vec4(n*1000.,1.);gl_PointSize=size;if(shown<.001){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}}`;
 const fragmentShader = `varying vec3 light;varying float soft;void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;float psf=mix(exp(-12.*r*r)*(1.-smoothstep(.7,1.,r)),exp(-4.*r*r)*(1.-smoothstep(.8,1.,r))*.33,soft);gl_FragColor=vec4(min(max(light,vec3(0)),vec3(5000))*psf,1.);}`;
 // Doppler factor of light emitted by a source of velocity v (units of c) toward unit direction k (source → observer):
 // D = 1 / (γ (1 − v·k)). The catalogue magnitude is what the Sun receives (factor D☉); seen from the ship (factor D),
@@ -67,7 +69,22 @@ const fragmentShader = `varying vec3 light;varying float soft;void main(){float 
 // first order in z (the flat, linear model of cosmic-motion.js).
 export function doppler(v, k) { const b2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2]; return Math.sqrt(1 - b2) / (1 - (v[0] * k[0] + v[1] * k[1] + v[2] * k[2])); }
 // Galaxy colour temperature by Hubble type (old red populations to young blue ones), on the black-body table of the stars.
-const typeTemp = (T) => (!Number.isFinite(T) ? 5200 : T <= -2 ? 4500 : T <= 2 ? 4900 : T <= 5 ? 5600 : 6800);
+export const typeTemp = (T) => (!Number.isFinite(T) ? 5200 : T <= -2 ? 4500 : T <= 2 ? 4900 : T <= 5 ? 5600 : 6800);
+// Same temperature for a cockpit galaxy object (measured Hubble type, else its model class).
+const CLASS_T = { E: -5, S0: -2, dE: -5, dSph: -5, dwarfUnknown: -5, Sab: 2, Sbc: 4, Scd: 6, Sm: 9, Ir: 10 };
+export const objectTemp = (o) => typeTemp(Number.isFinite(o.hubbleT) ? o.hubbleT : o.irregular ? 9 : CLASS_T[o.galaxyClass] ?? (o.type === 'galaxy' ? 4 : NaN));
+// Fraction of the Milky Way foreground extinction still in front of an observer at distance `far` (ly) from the Sun:
+// 1 within 3 000 ly, 0 beyond 150 000 ly, logarithmic in between (approximation shared by points and volumes).
+export const foregroundScale = (far) => (far < 3e3 ? 1 : far > 1.5e5 ? 0 : 1 - Math.log(far / 3e3) / Math.log(50));
+function lutAt(lut, T) { const x = Math.min(1, Math.max(0, Math.log(Math.max(100, T) / 100) / Math.log(1e4))) * 511, i = Math.min(510, Math.floor(x)), f = x - i, c = (k) => lut[4 * i + k] * (1 - f) + lut[4 * i + 4 + k] * f; return [c(0), c(1), c(2), c(3) + Math.log(Math.max(1, T / 1e6))]; }
+// Light of a galaxy seen with the source Doppler factor D instead of D☉ (the one included in its catalogue magnitude):
+// per-channel factor = rgb(T·D)/rgb(T·D☉) × L_V(T·D)/L_V(T·D☉) × (D☉/D)², times the foreground extinction removed.
+// Only the galaxy's own motion enters: the ship's velocity is applied once, later, to the whole sky (sky-optics.js).
+export function sourceTint(lut, T, Dsun, D, avFg = 0, fg = 1) {
+  if (!lut || lut.length < 2048 || !Number.isFinite(T)) return [1, 1, 1];
+  const a = lutAt(lut, T * D), b = lutAt(lut, T * Dsun), k = Math.exp(Math.max(-60, Math.min(60, a[3] - b[3]))) * (Dsun / D) ** 2 * 10 ** (0.4 * avFg * (1 - fg));
+  return [0, 1, 2].map((j) => (k * a[j]) / Math.max(1e-6, b[j]));
+}
 
 export class GalaxyLightLayer {
   constructor(lut) {
@@ -108,10 +125,12 @@ export class GalaxyLightLayer {
     this.key = '';
   }
   // Light-cone positions relative to the ship (doubles, then float32), at most 4 times per second of real time unless the
-  // ship jumped; galaxies drawn in volume (hidden ids) are not duplicated as points.
-  update(s, hidden = new Set(), now = performance.now() / 1000) {
+  // ship jumped. `weights` (id → factor) hands a galaxy over to its volume (local-group.js): the point keeps the share
+  // (1 − w_volume) × anisotropy of the light, the volume the rest, so that the sum is continuous (a Set hides entirely).
+  update(s, weights = new Map(), now = performance.now() / 1000) {
     if (this.status !== 'ready') return false;
-    const key = [...hidden].sort().join(',') + '|' + s.retarded, far = Math.hypot(...s.pos);
+    if (weights instanceof Set) weights = new Map([...weights].map((id) => [id, 0]));
+    const key = [...weights].map(([id, w]) => id + ':' + w.toFixed(3)).sort().join(',') + '|' + s.retarded, far = Math.hypot(...s.pos);
     const moved = !this.lastPos || Math.hypot(...s.pos.map((x, k) => x - this.lastPos[k])) > 0.01 * Math.max(far, 1e5);
     if (key === this.key && !moved && now < this.next) return false;
     this.key = key; this.next = now + 0.25; this.lastPos = [...s.pos];
@@ -120,12 +139,12 @@ export class GalaxyLightLayer {
       for (let j = 0; j < 3; j++) { b[j] = this.base[3 * k + j]; v[j] = this.vel[3 * k + j]; }
       if (s.retarded) receivedLinear(b, v, s.pos, s.t, q); else for (let j = 0; j < 3; j++) q[j] = b[j] + v[j] * s.t;
       const rx = q[0] - s.pos[0], ry = q[1] - s.pos[1], rz = q[2] - s.pos[2], rd = Math.hypot(rx, ry, rz) || 1;
-      p.setXYZ(k, rx, ry, rz); sh.setX(k, hidden.has(this.rows[k].id) ? 0 : 1); ds.setX(k, doppler(v, [-rx / rd, -ry / rd, -rz / rd]));
+      p.setXYZ(k, rx, ry, rz); sh.setX(k, weights.get(this.rows[k].id) ?? 1); ds.setX(k, doppler(v, [-rx / rd, -ry / rd, -rz / rd]));
     }
     p.needsUpdate = sh.needsUpdate = ds.needsUpdate = true;
     // Foreground extinction of the Milky Way (included in the catalogue magnitudes) removed progressively when leaving
     // the Galaxy: full within 3 000 ly of the Sun, none beyond 150 000 ly (logarithmic in between; approximation).
-    this.material.uniforms.avScale.value = far < 3e3 ? 1 : far > 1.5e5 ? 0 : 1 - Math.log(far / 3e3) / Math.log(50);
+    this.material.uniforms.avScale.value = foregroundScale(far);
     this.material.uniforms.band.value = s.band ?? 1; this.material.uniforms.gain.value = diffuseGain(s.band ?? 1);
     return true;
   }

@@ -5,7 +5,11 @@ import fs from "node:fs";
 import crypto from "node:crypto";
 import * as T from "three";
 import { photometryFrom, enrichGalaxy, GalaxyLightLayer, TYPICAL_MV, doppler } from "../src/galaxy-photometry.js";
-import { localGroupObjects, galaxyOrientation, groupLuminosity, groupRayRadiance, calibratedGain } from "../src/local-group.js";
+import { localGroupObjects, galaxyOrientation, groupLuminosity, groupRayRadiance, calibratedGain, LocalGroupLayer, volumeWeight } from "../src/local-group.js";
+import { applyGalaxyMotion } from "../src/cosmic-motion.js";
+import { BasinData } from "../src/cf4-basins.js";
+import { received } from "../src/ephemeris.js";
+import { sourceTint, objectTemp, foregroundScale } from "../src/galaxy-photometry.js";
 import { galaxyObject } from "../src/catalogue-galaxies.js";
 import { decodeCatalogue } from "../src/extragalactic-data.js";
 import { fluxFromMag } from "../src/photometry.js";
@@ -70,4 +74,36 @@ const cf4 = decodeCatalogue("cf4", JSON.parse(fs.readFileSync(new URL("../public
   check("Galaxie la plus lointaine décalée vers le rouge au premier ordre (z ≈ cz/c)", z > 0.05 && z < 0.2, `z = ${z.toFixed(3)} à ${(layer.rows[far].d / 1e6).toFixed(0)} millions d’al`);
   const v = [0, 0, -0.01], from = doppler(v, [0, 0, -1]), behind = doppler(v, [0, 0, 1]);
   check("Doppler : une source qui s’approche est décalée vers le bleu, qui s’éloigne vers le rouge (1 % de c)", from > 1.0099 && behind < 0.9901, `${from.toFixed(4)} / ${behind.toFixed(4)}`); }
+// 7 · Point ↔ volume coherence (the three closing criteria of the 16 October lot).
+{ const lut = JSON.parse(fs.readFileSync(new URL("../public/assets/blackbody-lut.json", import.meta.url))), bm = JSON.parse(fs.readFileSync(new URL("../public/cf4-basins-2023.json", import.meta.url))), braw = fs.readFileSync(new URL("../public/cf4-basins-2023.bin", import.meta.url));
+  const basins = new BasinData(bm, braw.buffer.slice(braw.byteOffset, braw.byteOffset + braw.byteLength)), field = (p) => basins.velocityEqAt(p.map((x) => x / 1e6));
+  const fixed = localGroupObjects().map((o) => applyGalaxyMotion(o, field)), layer = new LocalGroupLayer({}, fixed, new T.Group(), () => new T.Object3D(), new T.Group());
+  layer.setLut(lut); layer.calibrateFixed(); const Y = (t) => 0.2126 * t.x + 0.7152 * t.y + 0.0722 * t.z;
+  for (const o of fixed) { const r = received(o, [0, 0, 0], 0); o.lightXYZ = r.xyz; }
+  layer.update({ pos: [0, 0, 0], t: 0, pixelAngle: 1.2e-3 }, 1, false);
+  check("1 · Vu du Soleil : facteur spectral des quatre volumes du Groupe local = 1 (magnitude et couleur de référence conservées)", layer.u.groupTint.value.slice(0, 4).every((t) => Math.abs(t.x - 1) < 1e-6 && Math.abs(t.y - 1) < 1e-6 && Math.abs(t.z - 1) < 1e-6), layer.u.groupTint.value.slice(0, 4).map((t) => t.x.toFixed(4)).join(", "));
+  // M87 approached along the line of sight: point share + volume share = the model's light, through the hand-over.
+  const m87 = applyGalaxyMotion(galaxyObject(cf4.find((r) => r.raw[0] === 41361)), field); enrichGalaxy(m87, data); layer.setCatalogue([m87]);
+  const cat = m87.catalogueXYZ, dc = Math.hypot(...cat), u = cat.map((x) => x / dc), rows = [];
+  for (const dPix of [2, 3.5, 5, 6.5, 8, 12]) {
+    const dist = 2 * m87.radiusLy / (dPix * 1.2e-3), P = cat.map((x, k) => x - u[k] * dist), r = received(m87, P, 0); m87.lightXYZ = r.xyz;
+    const s = { pos: P, t: 0, pixelAngle: 1.2e-3, target: m87 }; layer.slotKey = null; layer.update(s, 1, false);
+    const i = 4 + layer.slots.indexOf(m87), h = layer.handoff.get(m87.id), R = layer.u.groupRotations.value[i], Pm = layer.u.groupParams.value[i];
+    // Volume light: diverging rays from the ship over the whole model, times its gain and its tint.
+    const rel = r.xyz.map((x, k) => x - P[k]), d = Math.hypot(...rel), ctr = new T.Vector3(...rel).divideScalar(m87.radiusLy), eye = ctr.clone().negate().applyMatrix3(R).toArray(), axis = ctr.clone().normalize();
+    const e1 = new T.Vector3(0, 0, 1).cross(axis).normalize(), e2 = axis.clone().cross(e1), N = 36, half = 1.05 * m87.radiusLy / d; let F = 0;
+    for (let a = 0; a < N; a++) for (let b = 0; b < N; b++) { const x = (-1 + (a + 0.5) * 2 / N) * half, y = (-1 + (b + 0.5) * 2 / N) * half; F += groupRayRadiance(layer.u.groupShapes.value[i], [Pm.x, Pm.y, Pm.z, 1], layer.u.groupSeeds.value[i], eye, axis.clone().addScaledVector(e1, x).addScaledVector(e2, y).normalize().applyMatrix3(R).toArray()) * (2 * half / N) ** 2; }
+    const volume = F * Pm.w * Y(layer.u.groupTint.value[i]);
+    // Point light, formula of the point shader: catalogue flux, distance, own Doppler + foreground (sourceTint), share.
+    const v = m87.motion, Dsun = doppler(v, cat.map((x) => -x / dc)), Dship = doppler(v, rel.map((x) => -x / d)), own = sourceTint(lut, objectTemp(m87), Dsun, Dship, m87.avFg || 0, foregroundScale(Math.hypot(...P)));
+    const k = data.index.get("cf4:41361"), dcat = data.col.mly[k] * 1e6, point = fluxFromMag(m87.Vmag) * (dcat / d) ** 2 * Y({ x: own[0], y: own[1], z: own[2] }) * h.aniso * (1 - h.w);
+    rows.push({ dPix, w: h.w, total: point + volume });
+  }
+  const refFlux = rows.at(-1).total, jumps = rows.map((x) => x.total / refFlux * (rows.at(-1).dPix / x.dPix) ** 2);
+  check("2 · Passage point → volume (M87 approchée, 2 à 12 px) : lumière totale continue à 6 % près, sans saut", jumps.every((x) => Math.abs(x - 1) < 0.06) && rows[0].w === 0 && rows.at(-1).w === 1, rows.map((x, j) => `${x.dPix} px w=${x.w.toFixed(2)} ${jumps[j].toFixed(3)}`).join(" · "));
+  // Ship velocity: the source factors use positions only; the ship's Doppler is applied once, by sky-optics, after the volumes.
+  const tints = (u) => { layer.update({ pos: [0, 0, 0], t: 0, pixelAngle: 1.2e-3, u }, 1, false); return layer.u.groupTint.value.map((t) => [t.x, t.y, t.z]).flat(); };
+  const rest = tints([0, 0, 0]), fast = tints([7, 0, 0]);
+  const sky = fs.readFileSync(new URL("../src/sky-optics.js", import.meta.url), "utf8"), iGroup = sky.indexOf("+groupRadiance(ray)"), iDop = sky.indexOf("if(optics>.5&&shift>.5&&momentum>.000001)"), pts = fs.readFileSync(new URL("../src/galaxy-photometry.js", import.meta.url), "utf8");
+  check("3 · Doppler du vaisseau appliqué une seule fois : facteurs des galaxies identiques au repos et à 0,99 c ; volumes ajoutés au ciel avant l’unique transformation de sky-optics ; points sans terme de vitesse du vaisseau", rest.every((x, j) => x === fast[j]) && iGroup > 0 && iDop > iGroup && sky.split("if(optics>.5&&shift>.5&&momentum>.000001)").length === 2 && !/momentum|speed/.test(pts.slice(pts.indexOf("const vertexShader"), pts.indexOf("const fragmentShader")))); }
 console.log(JSON.stringify({ passed: n }));
