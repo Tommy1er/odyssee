@@ -118,15 +118,18 @@ export function cockpitAttractorDirection(attractorMly, shipLy, momentum = [0, 0
   return Number.isFinite(d) && d > 1e-6 ? aberrateU(r.map((x) => x / d), momentum) : null;
 }
 function attractorSprite(b, regional = false) {
-  const canvas = document.createElement("canvas"); canvas.width = 768; canvas.height = 72;
-  const g = canvas.getContext("2d");
-  g.fillStyle = "rgba(5,18,30,.78)"; g.fillRect(3, 6, 762, 60);
-  g.fillStyle = "#" + (regional ? 0xc3ced3 : BASIN_COLORS[b.label]).toString(16).padStart(6, "0"); g.fillRect(5, 9, 6, 54);
-  g.font = "600 25px system-ui, sans-serif"; g.fillStyle = "#eaf1f5";
-  g.fillText(regional ? "Grand Attracteur · région de Norma" : "Attracteur CF4 · " + b.name, 27, 46, 725);
+  const text = regional ? "Grand Attracteur · région de Norma" : "Attracteur CF4 · " + b.name;
+  const canvas = document.createElement("canvas"), g = canvas.getContext("2d");
+  g.font = "600 26px system-ui, sans-serif";
+  canvas.width = Math.ceil(g.measureText(text).width) + 48; canvas.height = 56;
+  g.fillStyle = "rgba(5,18,30,.78)"; g.fillRect(0, 0, canvas.width, canvas.height);
+  g.fillStyle = "#" + (regional ? 0xc3ced3 : BASIN_COLORS[b.label]).toString(16).padStart(6, "0"); g.fillRect(4, 6, 5, 44);
+  g.font = "600 26px system-ui, sans-serif"; g.fillStyle = "#eaf1f5";
+  g.fillText(text, 24, 37);
   const texture = new T.CanvasTexture(canvas); texture.colorSpace = T.SRGBColorSpace;
   const material = new T.SpriteMaterial({ map: texture, transparent: true, depthTest: false, depthWrite: false, toneMapped: false });
   const sprite = new T.Sprite(material); sprite.renderOrder = 10;
+  sprite.userData.widthPx = canvas.width / 2; sprite.userData.heightPx = canvas.height / 2;
   sprite.userData.label = b.label; sprite.userData.name = b.name; sprite.userData.regional = regional; sprite.visible = false;
   return sprite;
 }
@@ -173,19 +176,29 @@ export class CockpitBasinOverlay {
     for (const m of this.group.children) if (m.userData.label && !m.isSprite) m.visible = sdss || m.userData.label <= 6;
     const vp = new T.Vector4(); renderer.getViewport(vp);
     const width = Math.max(1, vp.z), height = Math.max(1, vp.w), occupied = [];
-    const size = 24 * (2 * 1200 * Math.tan(camera.fov * Math.PI / 360)) / height;
+    // A fixed camera-space depth keeps text at its measured CSS-pixel size even off axis.
+    // The old constant radial distance enlarged side labels by 1/cos(angle), defeating collision tests.
+    camera.updateMatrixWorld();
+    const inverseRotation = camera.getWorldQuaternion(new T.Quaternion()).invert();
+    const cameraPosition = camera.getWorldPosition(new T.Vector3());
+    const depth = Math.min(1200, (camera.near + camera.far) / 2);
+    const pixelScale = 2 * depth / (height * camera.projectionMatrix.elements[5]);
     for (const item of this.attractorLabels) {
       const { sprite, position } = item;
       sprite.visible = false;
       const direction = cockpitAttractorDirection(position, shipLy, momentum);
       if (!direction) continue;
-      sprite.position.set(...direction.map((v) => v * 1200));
-      sprite.scale.set(size * (768 / 72), size, 1);
+      const ray = new T.Vector3(...direction), cameraRay = ray.clone().applyQuaternion(inverseRotation);
+      if (cameraRay.z >= -1e-8) continue;
+      sprite.position.copy(cameraPosition).addScaledVector(ray, depth / -cameraRay.z);
+      const labelWidth = sprite.userData.widthPx, labelHeight = sprite.userData.heightPx;
+      sprite.scale.set(pixelScale * labelWidth, pixelScale * labelHeight, 1);
       const clip = sprite.position.clone().project(camera);
       const x = (clip.x + 1) * width / 2, y = (1 - clip.y) * height / 2;
-      if (clip.z < -1 || clip.z > 1 || x < 132 || x > width - 132 || y < 20 || y > height - 20) continue;
-      if (occupied.some((p) => Math.abs(p.x - x) < 255 && Math.abs(p.y - y) < 30)) continue;
-      occupied.push({ x, y }); sprite.visible = true;
+      const box = { left: x - labelWidth / 2, right: x + labelWidth / 2, top: y - labelHeight / 2, bottom: y + labelHeight / 2 };
+      if (clip.z < -1 || clip.z > 1 || box.left < 6 || box.right > width - 6 || box.top < 6 || box.bottom > height - 6) continue;
+      if (occupied.some((p) => box.left < p.right + 6 && box.right > p.left - 6 && box.top < p.bottom + 6 && box.bottom > p.top - 6)) continue;
+      occupied.push(box); sprite.visible = true;
     }
     const clear = renderer.autoClear; renderer.autoClear = false; renderer.render(this.scene, camera); renderer.autoClear = clear;
   }

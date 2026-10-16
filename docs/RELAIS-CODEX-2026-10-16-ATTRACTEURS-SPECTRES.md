@@ -21,7 +21,7 @@ Date : 16 octobre 2026 · Base de travail : `c4622ed` · Branche : `codex/attrac
 1. `node scripts/validate-cf4-basins.mjs` : tests initiaux et trois tests complémentaires de directions (vaisseau au Soleil, déplacement, aberration à 0,99 c) + inventaire des bassins.
 2. `node scripts/validate-basins-ui.cjs` : les sept tests préexistants ne doivent pas régresser ; confirmer manuellement les noms et la lisibilité au Soleil et vers Shapley, y compris à 0,99 c.
 3. Vérifier la case désactivée par défaut, la vue dégagée et le mode de comparaison des deux vitesses. Examiner les risques de masquage par les commandes du cockpit.
-4. **Non exécuté ici** : l'environnement du dépôt n'est pas accessible localement ; ne jamais décrire les tests comme PASS sans exécution effective.
+4. Validation locale effectuée à la reprise du 16 octobre : voir le complément ci-dessous. Le rendu GPU reste à vérifier.
 
 ## Spectres galactiques : choix de données, sans fausse précision
 
@@ -56,3 +56,30 @@ Date : 16 octobre 2026 · Base de travail : `c4622ed` · Branche : `codex/attrac
 - STScI MAST, SWIRE/Brown : https://archive.stsci.edu/hlsp/reference-atlases
 - STScI MAST, galaxies empiriques : https://archive.stsci.edu/hlsp/galsedatlas
 - Bruzual & Charlot (2003) : https://doi.org/10.1046/j.1365-8711.2003.06897.x
+
+
+
+## Reprise du 16 octobre : projection corrigée et calcul spectral préparé
+
+### Étiquettes
+Le placement initial mettait tous les sprites à 1 200 unités de distance radiale. Une étiquette excentrée était donc plus proche du plan caméra et plus grande à l'écran, alors que le test de collision supposait une taille fixe. Les sprites ont maintenant une profondeur caméra constante ; leur taille tient compte de la matrice de projection (zoom compris). Le rectangle de collision utilise les dimensions mesurées du texte. La hauteur est de 28 pixels CSS (police de 13 pixels) et la largeur dépend du nom, y compris dans une demi-vue ou sur écran étroit. Les étiquettes derrière la caméra, tronquées ou superposées sont retirées. Leur centre reste sur la direction de l'attracteur, sans déplacement trompeur.
+
+### Préparation spectrale hors rendu
+- `src/spectral-response.js` : intégration d'une courbe F_lambda dans une réponse instrumentale, pondération énergie ou photons explicite, comparaison à un Doppler de référence. L'union des nœuds du spectre déplacé et du filtre conserve les raies fines ; Simpson intègre exactement leurs interpolants linéaires sur chaque intervalle.
+- Convention de préparation : `D * F_lambda(D * lambda)` conserve l'intégrale bolométrique de la **forme**. Ce n'est PAS une loi de boost du flux astronomique. Le raccord avec les amplitudes de Claude, la distance, l'extinction et le boost du vaisseau reste à définir et vérifier ensemble. Ce module n'est importé par aucun rendu.
+- `scripts/prepare-galaxy-spectra.mjs` : constructeur hors ligne de tables sur une grille D explicite, à partir de fichiers texte à deux colonnes. Conversion Å / nm / µm, conversion de la densité F_lambda, provenance obligatoire, empreinte SHA-256 et couverture spectrale. Pas de fichiers d'entrée officiels embarqués à ce stade ; extraction FITS encore nécessaire pour les fichiers STScI.
+- Les réponses hors couverture retournent une erreur explicite. Aucun spectre extrapolé, aucune nouvelle magnitude et aucune couleur de galaxie ne sont injectés dans le cockpit.
+- Vérification documentaire : la distribution **STScI TRDS SWIRE couvre 0,2–30 µm**, contrairement à la couverture plus large des originaux GRASIL. La description officielle donne les longueurs d'onde en Å et F_lambda en erg s⁻¹ cm⁻² Å⁻¹. MAST indique CC BY 4.0 pour ses produits Reference Atlases. Ces bornes excluent une utilisation sans réserve aux décalages extrêmes (0,99 c). Sources : pages STScI SWIRE et MAST Reference Atlases déjà citées, consultées le 16 octobre 2026.
+
+### Vérifications exécutées lors de la reprise
+- `node scripts/validate-cf4-basins.mjs` : 19 PASS.
+- `node scripts/validate-attractor-layout.mjs` : 10 PASS, matrices Three réelles, placement et collisions ; canvas simulé, aucun test GPU revendiqué.
+- `node scripts/validate-spectral-response.mjs` : 14 PASS sur cas analytiques (bandes triangulaires, raie fine, unités, conservation, limites, provenance). Ces cas ne valident pas un template de galaxie observée.
+- `node scripts/validate-catalogue-ui.mjs` : 40 PASS, intégration DOM avec OrbitControls réel ; pas de rendu GPU.
+- `npm run build` : construction locale effectuée. Les bundles générés seront reconstruits et enregistrés lors de l'intégration sur le dernier lot de Claude.
+
+### Suite après Claude
+1. Rebaser cette PR sur ses volumes 3D, conserver une source photométrique commune point/volume, reconstruire les bundles.
+2. Vérifier le rendu et la lisibilité des noms en navigateur (non disponible ici).
+3. Acquérir et extraire les FITS officiels SWIRE, ainsi qu'une réponse Johnson V documentée ; garder les modèles de type comme modèles, pas comme mesures propres à chaque galaxie. Les fonctions CIE disponibles dans le dépôt ne remplacent pas Johnson V.
+4. Valider les tables sur des spectres indépendants et raccorder explicitement la convention d'amplitude avant d'activer le nouveau moteur spectral.
