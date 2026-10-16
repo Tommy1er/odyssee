@@ -83,3 +83,20 @@ Le placement initial mettait tous les sprites à 1 200 unités de distance radia
 2. Vérifier le rendu et la lisibilité des noms en navigateur (non disponible ici).
 3. Acquérir et extraire les FITS officiels SWIRE, ainsi qu'une réponse Johnson V documentée ; garder les modèles de type comme modèles, pas comme mesures propres à chaque galaxie. Les fonctions CIE disponibles dans le dépôt ne remplacent pas Johnson V.
 4. Valider les tables sur des spectres indépendants et raccorder explicitement la convention d'amplitude avant d'activer le nouveau moteur spectral.
+
+## Intégration effective le 16 octobre (après le lot de Claude)
+
+- Le commit de Claude `6c5276b` (cohérence point / volumes 3D) a été contrôlé avant intégration.
+- La PR #1 a été intégrée **par squash** sur `main` dans `ee99168`. La comparaison GitHub confirme un seul commit supplémentaire et aucun écrasement des fichiers de Claude : les changements intégrés portent sur `src/cf4-basins.js`, les scripts de tests et préparation spectrale et le présent relais.
+- **Attention : cette fusion n'a PAS reconstruit les bundles statiques** `public/cockpit.js` / `public/cosmos.js`. L'ajout des étiquettes est bien dans les sources, mais il ne peut pas être considéré comme visible sur le site déployé à ce stade.
+- La validation de l'ancienne branche indiquait 19/19 (basins), 10/10 (projections sans GPU), 14/14 (intégration spectrale analytique), 40/40 (catalogue DOM) et `npm run build` réussi. **Ces tests n'ont pas été réexécutés sur `main` après fusion**, et le navigateur GPU reste à contrôler.
+
+### Prochaine intervention locale requise (sur main, sans nouvelle branche)
+
+1. `git pull --ff-only origin main` : conserver le commit `6c5276b` de Claude et `ee99168` de Codex.
+2. `node scripts/validate-cf4-basins.mjs`, `node scripts/validate-attractor-layout.mjs`, `node scripts/validate-galaxy-photometry.mjs`.
+3. `npm run build` puis vérifier `node scripts/validate-basins-ui.cjs` dans un navigateur compatible et les étiquettes Soleil → Shapley, 0 c → 0,99 c, vues normale/dégagée, largeur mobile.
+4. `git add public/cockpit.js public/cosmos.js` puis pousser le commit des bundles uniquement si les tests et l'inspection passent. Le site ne doit pas être déclaré publié ou fonctionnel avant cette étape.
+5. Pour la priorité 3 : utiliser `src/spectral-response.js` en **préparation uniquement** ; les modèles de spectres officiels, courbes de filtre et convention de flux ne sont pas encore validés. Ne pas perturber le fondu point / volume de Claude.
+
+Ne pas reprendre le chantier 2 de zéro : le code source est déjà fusionné. Le travail restant est le rebuild, l'essai GPU et, éventuellement, la correction de défauts révélés par ces essais.
