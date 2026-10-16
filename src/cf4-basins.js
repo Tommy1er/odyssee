@@ -8,6 +8,7 @@
 import * as T from "three";
 import { SG_AXES, MPC_MLY } from "./extragalactic-data.js";
 import { aberrateU } from "./physics.js";
+import { STRUCTURES } from "./cosmic-data.js";
 
 export const BASIN_COLORS = { 1: 0xffc46b, 2: 0x7fb7ff, 3: 0xff7f9e, 4: 0x8fe39a, 5: 0xc49bff, 6: 0x6fe0e0, 7: 0x8a8f99, 8: 0x7f8794, 9: 0x8b8693 };
 const TYPES = { u8: Uint8Array, u16: Uint16Array, u32: Uint32Array, i16: Int16Array, f32: Float32Array };
@@ -116,17 +117,17 @@ export function cockpitAttractorDirection(attractorMly, shipLy, momentum = [0, 0
   const d = Math.hypot(...r);
   return Number.isFinite(d) && d > 1e-6 ? aberrateU(r.map((x) => x / d), momentum) : null;
 }
-function attractorSprite(b) {
+function attractorSprite(b, regional = false) {
   const canvas = document.createElement("canvas"); canvas.width = 768; canvas.height = 72;
   const g = canvas.getContext("2d");
   g.fillStyle = "rgba(5,18,30,.78)"; g.fillRect(3, 6, 762, 60);
-  g.fillStyle = "#" + BASIN_COLORS[b.label].toString(16).padStart(6, "0"); g.fillRect(5, 9, 6, 54);
+  g.fillStyle = "#" + (regional ? 0xc3ced3 : BASIN_COLORS[b.label]).toString(16).padStart(6, "0"); g.fillRect(5, 9, 6, 54);
   g.font = "600 25px system-ui, sans-serif"; g.fillStyle = "#eaf1f5";
-  g.fillText("Attracteur CF4 · " + b.name, 27, 46, 725);
+  g.fillText(regional ? "Grand Attracteur · région de Norma" : "Attracteur CF4 · " + b.name, 27, 46, 725);
   const texture = new T.CanvasTexture(canvas); texture.colorSpace = T.SRGBColorSpace;
   const material = new T.SpriteMaterial({ map: texture, transparent: true, depthTest: false, depthWrite: false, toneMapped: false });
   const sprite = new T.Sprite(material); sprite.renderOrder = 10;
-  sprite.userData.label = b.label; sprite.userData.name = b.name; sprite.visible = false;
+  sprite.userData.label = b.label; sprite.userData.name = b.name; sprite.userData.regional = regional; sprite.visible = false;
   return sprite;
 }
 
@@ -156,6 +157,14 @@ export class CockpitBasinOverlay {
       const sprite = attractorSprite(entry.basin);
       this.group.add(sprite);
       this.attractorLabels.push({ sprite, position: entry.attractor, label });
+    }
+    // This is a separate approximate regional landmark (near Norma), NOT the
+    // dynamically reconstructed 322 Mly sink of the Laniakea watershed.
+    const greatAttractor = STRUCTURES.find((o) => o.id === "great-attractor");
+    if (greatAttractor) {
+      const regionalSprite = attractorSprite({ name: greatAttractor.name }, true);
+      this.group.add(regionalSprite);
+      this.attractorLabels.splice(1, 0, { sprite: regionalSprite, position: greatAttractor.p, label: null, regional: true });
     }
     this.ready = true;
   }
