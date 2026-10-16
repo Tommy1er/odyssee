@@ -1,0 +1,55 @@
+name: Galaxy spectra build and verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/galaxy-spectra.yml'
+      - 'src/galaxy-spectral.js'
+      - 'src/galaxy-sed-kc96-data.js'
+      - 'src/galaxy-photometry.js'
+      - 'src/local-group.js'
+      - 'src/cf4-basins.js'
+      - 'scripts/validate-galaxy-spectra.mjs'
+      - 'scripts/validate-galaxy-photometry.mjs'
+      - 'scripts/build-galaxy-sed-kc96.mjs'
+      - 'data/galaxy-spectra-kc96/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: galaxy-spectra-main
+  cancel-in-progress: false
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Validate archive and generated SED
+        run: node scripts/build-galaxy-sed-kc96.mjs
+      - name: Check spectral colours and magnitudes
+        run: |
+          node scripts/validate-galaxy-spectra.mjs
+          node scripts/validate-galaxy-photometry.mjs
+          node scripts/validate-cf4-basins.mjs
+      - name: Rebuild public JavaScript
+        run: npm run build
+      - name: Commit public bundles if generated output changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/cockpit.js public/cosmos.js
+          if ! git diff --cached --quiet; then
+            git commit -m "Build: intégrer spectres galactiques et étiquettes CF4 dans les bundles publics"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
