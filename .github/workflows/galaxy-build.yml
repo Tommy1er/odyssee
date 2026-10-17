@@ -7,6 +7,9 @@ on:
       - 'src/galaxy-spectral.js'
       - 'src/galaxy-photometry.js'
       - 'src/galaxy-observer-spectrum.js'
+      - 'src/galaxy-spectral-overlay.js'
+      - 'src/sky-optics.js'
+      - 'src/renderer.js'
       - 'src/galaxy-sed-kc96-data.js'
       - 'src/local-group.js'
       - 'src/flrw.js'
@@ -18,6 +21,7 @@ on:
       - 'scripts/validate-star-nurseries.mjs'
       - 'scripts/validate-galaxy-spectra.mjs'
       - 'scripts/validate-galaxy-observer-spectrum.mjs'
+      - 'scripts/validate-galaxy-spectral-overlay.mjs'
       - 'scripts/validate-nebulae.mjs'
       - 'data/galaxy-spectra-kc96/**'
   workflow_dispatch:
@@ -48,6 +52,7 @@ jobs:
           node scripts/validate-nebulae.mjs
           node scripts/validate-galaxy-spectra.mjs
           node scripts/validate-galaxy-observer-spectrum.mjs
+          node scripts/validate-galaxy-spectral-overlay.mjs
           node scripts/validate-galaxy-photometry.mjs
           node scripts/validate-cf4-basins.mjs
       - name: Compile public WebGL bundles
