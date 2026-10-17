@@ -54,7 +54,7 @@ test('No extrapolation of KC96 tables; fallback remains explicitly thermal',()=>
 });
 test('Capture separates point galaxy HDR emission from background sky in active mode',()=>{
  const renderer=fs.readFileSync(new URL('../src/renderer.js',import.meta.url),'utf8');
- assert(renderer.includes('activeGalaxySpectra?[]:[this.galaxyLight.points]'));
+ assert(renderer.includes('if(activeGalaxySpectra)this.galaxyLight.points.visible=false'));assert(renderer.includes('this.galaxyLight.points.visible=originalGalaxyVisibility'));
  assert(renderer.includes('galaxySpectralOverlay.render'));
 });
 test('HDR overlay is composited before exposure and tonemapping, not on gamma pixels',()=>{
