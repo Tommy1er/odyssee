@@ -25,6 +25,7 @@ on:
       - 'scripts/validate-star-nurseries.mjs'
       - 'scripts/validate-star-nurseries-ui.cjs'
       - 'scripts/validate-galaxy-ui.cjs'
+      - 'scripts/validate-galaxy-spectral-overlay-ui.cjs'
       - 'scripts/build-galaxy-sed-kc96.mjs'
       - 'data/galaxy-spectra-kc96/**'
   workflow_dispatch:
@@ -71,6 +72,7 @@ jobs:
           node scripts/validate-galaxy-ui.cjs
           node scripts/validate-basins-ui.cjs
           node scripts/validate-star-nurseries-ui.cjs
+          node scripts/validate-galaxy-spectral-overlay-ui.cjs
       - name: Keep SwiftShader captures for review
         if: always()
         uses: actions/upload-artifact@v4
@@ -79,4 +81,6 @@ jobs:
           path: |
             validation/v2-screenshots/nurserie-*.png
             validation/v2-screenshots/nurseries-ui-results.json
+            validation/v2-screenshots/galaxy-spectral-hdr-*.png
+            validation/v2-screenshots/galaxy-spectral-hdr-ui-results.json
           if-no-files-found: ignore
