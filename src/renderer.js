@@ -9,6 +9,7 @@ import {sub,norm,unit,velocity,aberrate,aberrateU,gammaU,gamma,mul,EQ_TO_GAL,AU}
 import {radiusLy,hash} from './body-data.js';
 import {createGalaxySphere,makePopulation,GAL_CENTER} from './galaxy.js';
 import {GalaxyLightLayer} from './galaxy-photometry.js';
+import {GalaxySpectralOverlay} from './galaxy-spectral-overlay.js';
 import {CockpitBasinOverlay} from './cf4-basins.js';
 import {createStarlight} from './stellar-light.js';
 import {SkyOptics} from './sky-optics.js';
@@ -43,7 +44,7 @@ export class SpaceRenderer{
   const positions=[],colors=[],sizes=[];for(const s of stars){positions.push(...s.xyz);colors.push(...stellarColor(s).toArray());sizes.push(Math.max(2,Math.min(7,5-(s.mag||5)*.3)));}
   const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('tint',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('pointSize',new T.Float32BufferAttribute(sizes,1));
   this.starMaterial=new T.ShaderMaterial({vertexShader:starVertex,fragmentShader:starFragment,uniforms:{ship:{value:new T.Vector3()},speed:{value:new T.Vector3()},optics:{value:0},shift:{value:1}},transparent:true,depthWrite:false,blending:T.AdditiveBlending});
-  this.galaxyLight=new GalaxyLightLayer(lut);this.basinOverlay=new CockpitBasinOverlay();this.flight.add(this.galaxyLight.points);this.galaxyAliases=new Map();this.sky=createStarlight(stars.filter(s=>s.type==='star'&&s.id!=='s2'),lut);this.starMaterial=this.sky.material;this.sky.frustumCulled=false;this.flight.add(this.sky);this.localGroup=new T.Group();this.flight.add(this.localGroup);
+  this.galaxyLight=new GalaxyLightLayer(lut);this.galaxySpectralOverlay=new GalaxySpectralOverlay(this.galaxyLight);this.basinOverlay=new CockpitBasinOverlay();this.flight.add(this.galaxyLight.points);this.galaxyAliases=new Map();this.sky=createStarlight(stars.filter(s=>s.type==='star'&&s.id!=='s2'),lut);this.starMaterial=this.sky.material;this.sky.frustumCulled=false;this.flight.add(this.sky);this.localGroup=new T.Group();this.flight.add(this.localGroup);
   this.map=new T.Scene();this.mapCamera=new T.PerspectiveCamera(50,1,.001,1000000);this.mapCamera.up.set(...EQ_TO_GAL[2]);this.mapCamera.position.set(14,13,18);
   this.controls=new OrbitControls(this.mapCamera,canvas);this.controls.enabled=false;this.controls.enableDamping=true;this.controls.dampingFactor=.1;this.controls.maxDistance=500000;this.controls.minDistance=.002;
   this.mapWorld=new T.Group();this.map.add(this.mapWorld);this.mapWorld.add(this.catalogueSky.mapPoints);const mg=new T.BufferGeometry();mg.setAttribute('position',new T.Float32BufferAttribute(positions,3));mg.setAttribute('color',new T.Float32BufferAttribute(colors,3));this.mapStars=new T.Points(mg,mapPoints(2,.75));this.mapWorld.add(this.mapStars);this.population=makePopulation();this.mapWorld.add(this.population);this.centerLabel=label('SAGITTARIUS A*','#e8b581');this.map.add(this.centerLabel);this.centerLabel.renderOrder=5;
@@ -121,10 +122,21 @@ export class SpaceRenderer{
   }else{
    const w=this.canvas.clientWidth,h=this.canvas.clientHeight;
    // Capture once in the catalogue frame, then transform EVERY incoming ray in one pass.
-   if(this.galaxyLight.update(s,this.volumeIds()))this.captureKey=null;const captureKey=[positionKey,s.target?.id,s.band,s.galaxyLight,s.orbitS2,this.localId].join("|");if(captureKey!==this.captureKey||s.wall-this.captureWall>(s.paused?4:.5)){const selectedCloud=this.environments.cache.get(s.target?.id);if(selectedCloud?.cloud)selectedCloud.group.visible=false;this.skyOptics.capture(this.renderer,this.flight,{stars:[this.sky,this.galaxyLight.points,...[...this.environments.cache.values()].filter(e=>e.o.id===s.target?.id&&e.stars).map(e=>e.group)],local:this.localGroup,backgrounds:[this.galaxy,...[...this.environments.cache.values()].filter(e=>e.o.id!==s.target?.id||!e.stars).map(e=>e.group)]});if(selectedCloud?.cloud)selectedCloud.group.visible=true;this.captureKey=captureKey;this.captureWall=s.wall;}
+   if(this.galaxyLight.update(s,this.volumeIds()))this.captureKey=null;
+    // Isolate catalogue point galaxies for a per-source SED HDR pass when relativistic Doppler is active.
+    // The legacy cube retains volumes and all other sources, and remains authoritative near compact objects
+    // and absorbing local clouds where a separate 2-D overlay would not respect optical occlusion.
+    const activeGalaxySpectra=this.galaxyLight.status==='ready'&&s.doppler&&(s.relativistic||s.opticalLab)&&(s.band??1)<2.5
+      &&!(s.target?.type==='blackhole'&&norm(sub(s.pos,s.target.lightXYZ||s.target.xyz))/radiusLy(s.target)<150)
+      &&!(['nebula','pillars'].includes(s.target?.type)&&norm(sub(s.pos,s.target.xyz))/radiusLy(s.target)<120);
+    const captureKey=[positionKey,s.target?.id,s.band,s.galaxyLight,s.orbitS2,this.localId,activeGalaxySpectra].join("|");if(captureKey!==this.captureKey||s.wall-this.captureWall>(s.paused?4:.5)){const selectedCloud=this.environments.cache.get(s.target?.id);if(selectedCloud?.cloud)selectedCloud.group.visible=false;this.skyOptics.capture(this.renderer,this.flight,{stars:[this.sky,...(activeGalaxySpectra?[]:[this.galaxyLight.points]),...[...this.environments.cache.values()].filter(e=>e.o.id===s.target?.id&&e.stars).map(e=>e.group)],local:this.localGroup,backgrounds:[this.galaxy,...[...this.environments.cache.values()].filter(e=>e.o.id!==s.target?.id||!e.stars).map(e=>e.group)]});if(selectedCloud?.cloud)selectedCloud.group.visible=true;this.captureKey=captureKey;this.captureWall=s.wall;}
    this.lens.isNear(s);this.skyOptics.material.uniforms.sky.value=this.skyOptics.target.texture;
    const draw=(betaOptics,half)=>{const skyOptics=!(s.external&&s.shipFrame!=='comoving')&&!!betaOptics;this.camera.aspect=(half?w/2:w)/h;this.camera.updateProjectionMatrix();
     // Schwarzschild is a separate local stationary optical model. Its cube now supplies HDR sky.
+    const relativeU=skyOptics&&(!half||betaOptics)?visualU:[0,0,0];
+    const spectralDrawn=activeGalaxySpectra&&this.galaxySpectralOverlay.render(this.renderer,this.camera,relativeU,skyOptics);
+    this.skyOptics.material.uniforms.galaxyOverlayOn.value=+!!spectralDrawn;
+    if(spectralDrawn)this.skyOptics.material.uniforms.galaxyOverlay.value=this.galaxySpectralOverlay.target.texture;
     this.skyOptics.render(this.renderer,this.camera,s,half&&!betaOptics?[0,0,0]:visualU,skyOptics);
     // Navigation symbols, not light: hidden in the clean view so that only the photometric sky remains.
     if(s.catalogueMarkers!==false&&!s.cleanView&&(s.target?.type==='cosmic'||norm(s.pos)>1e7))this.catalogueSky.render(this.renderer,this.camera,skyOptics?visualU:[0,0,0]);
