@@ -41,8 +41,9 @@ export function galaxyObserverSpectrum(galaxy,shipPosition=[0,0,0],shipFourVeloc
   templateLinearRgb:sample?sample.slice(0,3):null,
   gamma:gammaU(shipFourVelocity),
   status:tableCoverage?'class-template-only':archiveCoverage?'raw-spectrum-not-integrated':'out-of-archive',
-  // Important: existing high-speed *rendered* galaxy colours still use an inferred black-body from
-  // captured RGB, even if tableCoverage is true. Never label a diagnostic as a rendered solution.
-  renderedWithEmpiricalObserverSpectrum:false
+  // The global mixed sky and extended galaxy volumes still use inferred thermal colours.
+  // A separately composited HDR point-galaxy layer can use KC96 when this class is tabulated,
+  // but this diagnostic does not know which display mode / lensing fallback is active.
+  pointTemplateAvailableForRendering:tableCoverage,globalMixedSkyUsesEmpiricalSED:false
  };
 }
