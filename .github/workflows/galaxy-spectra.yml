@@ -7,6 +7,7 @@ on:
       - 'src/galaxy-spectral.js'
       - 'src/galaxy-sed-kc96-data.js'
       - 'src/galaxy-photometry.js'
+      - 'src/galaxy-observer-spectrum.js'
       - 'src/cockpit.js'
       - 'src/flrw.js'
       - 'src/extragalactic-nebulae.js'
@@ -15,6 +16,7 @@ on:
       - 'src/cf4-basins.js'
       - 'scripts/validate-galaxy-spectra.mjs'
       - 'scripts/validate-galaxy-photometry.mjs'
+      - 'scripts/validate-galaxy-observer-spectrum.mjs'
       - 'scripts/validate-flrw.mjs'
       - 'scripts/validate-star-nurseries.mjs'
       - 'scripts/validate-star-nurseries-ui.cjs'
@@ -46,6 +48,7 @@ jobs:
       - name: Check spectral colours and magnitudes
         run: |
           node scripts/validate-galaxy-spectra.mjs
+          node scripts/validate-galaxy-observer-spectrum.mjs
           node scripts/validate-galaxy-photometry.mjs
           node scripts/validate-cf4-basins.mjs
           node scripts/validate-flrw.mjs
