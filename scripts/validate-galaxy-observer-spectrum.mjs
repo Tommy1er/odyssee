@@ -51,7 +51,7 @@ check('Observe only galaxy objects with valid positions and subluminal motions',
 });
 check('No claim that rendering changed from its global approximate RGB thermal transform',()=>{
  const c=fs.readFileSync(new URL('../src/sky-optics.js',import.meta.url),'utf8');
- const a=galaxyObserverSpectrum(G());assert.equal(a.renderedWithEmpiricalObserverSpectrum,false);
+ const a=galaxyObserverSpectrum(G());assert.equal(a.globalMixedSkyUsesEmpiricalSED,false);assert.equal(a.pointTemplateAvailableForRendering,true);
  assert(c.includes('float temp=mix(2800.,16000.'));
 });
 check('Spectrum diagnostics actually available in cockpit galaxy information',()=>{
