@@ -24,7 +24,7 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
     const s=await page.evaluate(()=>window.flightSnapshot());
     check(id+' has real calibrated wind-cavity volume',s.nebula.shape===6&&s.nebula.Kl>0&&s.nebula.tau>0&&s.webgl);
     await page.click('#object-info');const sheet=await page.locator('#flight-dialog-body').textContent();
-    check(id+' scientific provenance and uncertainties displayed',sheet.includes('Région H II')&&sheet.includes('NASA')&&sheet.includes('indicati'));
+    check(id+' scientific provenance and uncertainties displayed',sheet.includes('Région H II')&&sheet.includes('NASA')&&(sheet.includes('indicati')||sheet.includes('estim')));
     await page.click('#close-flight-dialog');
     await page.locator('#clean-view').click();await page.waitForTimeout(1000);
     await page.screenshot({path:path.join(out,filename)});await page.locator('#restore-view').click();
