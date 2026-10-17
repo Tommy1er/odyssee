@@ -68,10 +68,11 @@ void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+
  gl_Position=projectionMatrix*viewMatrix*vec4(n*1000.,1.);gl_PointSize=size;if(shown<.001){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}}`;
 const fragmentShader = `varying vec3 light;varying float soft;void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;float psf=mix(exp(-12.*r*r)*(1.-smoothstep(.7,1.,r)),exp(-4.*r*r)*(1.-smoothstep(.8,1.,r))*.33,soft);gl_FragColor=vec4(min(max(light,vec3(0)),vec3(5000))*psf,1.);}`;
 // Doppler factor of light emitted by a source of velocity v (units of c) toward unit direction k (source → observer):
-// D = 1 / (γ (1 − v·k)). The catalogue magnitude is what the Sun receives (factor D☉); seen from the ship (factor D),
-// the black-body proxy of the galaxy's light is shifted to T·D and its flux multiplied by L_V(T·D) / L_V(T·D☉) × (D☉/D)²,
-// the same transformation as the ship's own motion (stellar-light.js). Cosmological redshift ≈ this Doppler effect at
-// first order in z (the flat, linear model of cosmic-motion.js).
+// D = 1 / (γ (1 − v·k)). Catalogue magnitude anchors the flux observed at the Sun (D☉).
+// For a MOVING SOURCE at fixed observer-frame emission distance, the V-band source correction is
+// L_V(T·D)/L_V(T·D☉) for the Planck fallback, or (D/D☉)^4 J(D)/J(D☉) for KC96 composite SEDs.
+// Do not multiply by (D☉/D)^2: that factor belongs to the moving OBSERVER/point-source
+// convention and was mistakenly applied before 17 Oct 2026. Flat-spacetime model, not FLRW.
 export function doppler(v, k) { const b2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2]; return Math.sqrt(1 - b2) / (1 - (v[0] * k[0] + v[1] * k[1] + v[2] * k[2])); }
 // Galaxy colour temperature by Hubble type (old red populations to young blue ones), on the black-body table of the stars.
 export const typeTemp = (T) => (!Number.isFinite(T) ? 5200 : T <= -2 ? 4500 : T <= 2 ? 4900 : T <= 5 ? 5600 : 6800);
@@ -83,7 +84,8 @@ export const objectTemp = (o) => typeTemp(Number.isFinite(o.hubbleT) ? o.hubbleT
 export const foregroundScale = (far) => (far < 3e3 ? 1 : far > 1.5e5 ? 0 : 1 - Math.log(far / 3e3) / Math.log(50));
 function lutAt(lut, T) { const x = Math.min(1, Math.max(0, Math.log(Math.max(100, T) / 100) / Math.log(1e4))) * 511, i = Math.min(510, Math.floor(x)), f = x - i, c = (k) => lut[4 * i + k] * (1 - f) + lut[4 * i + 4 + k] * f; return [c(0), c(1), c(2), c(3) + Math.log(Math.max(1, T / 1e6))]; }
 // Light of a galaxy seen with the source Doppler factor D instead of D☉ (the one included in its catalogue magnitude):
-// per-channel factor = rgb(T·D)/rgb(T·D☉) × L_V(T·D)/L_V(T·D☉) × (D☉/D)², times the foreground extinction removed.
+// The fallback below uses a ratio of Planck V luminosities and colour ratios, without
+// the erroneous moving-observer factor. The calibrated source magnitude is the reference.
 // Only the galaxy's own motion enters: the ship's velocity is applied once, later, to the whole sky (sky-optics.js).
 export function sourceTint(lut, T, Dsun, D, avFg = 0, fg = 1) {
   if (!lut || lut.length < 2048 || !Number.isFinite(T)) return [1, 1, 1];
