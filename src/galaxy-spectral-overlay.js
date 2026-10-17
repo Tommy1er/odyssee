@@ -6,6 +6,12 @@ import * as T from 'three';
 import {gammaU,norm,unit} from './physics.js';
 import {galaxySpectra} from './galaxy-spectral.js';
 
+// Pure scalar counterpart of the KC96 observer/source Doppler factor; independent test oracle for shader.
+export function spectralPointFluxRatio(Dsun,Dsource,Dobserver,Jcatalogue,Jtotal){
+ if(![Dsun,Dsource,Dobserver,Jcatalogue,Jtotal].every(x=>Number.isFinite(x)&&x>0))return null;
+ return (Dsource/Dsun)**4*Dobserver**2*Jtotal/Jcatalogue;
+}
+export function angularAberrationScale(Dobserver){return Dobserver>0&&Number.isFinite(Dobserver)?1/Dobserver:null;}
 export const spectralPointVertex=`
 attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship,sclass;
 uniform float pix,avScale,band,gain,g,momentum,optics;
