@@ -58,3 +58,9 @@ Scripts ajoutés :
 2. Inspection des deux captures (silhouette des cavités, couleur des zones H II, luminosité et obstacles de navigation) ; comparer à des *images scientifiques de référence* sans copier les couleurs assignées de Webb (IR).
 3. Préparer une vraie architecture **émetteurs imbriqués** (LMC+30 Dor / M33+NGC604) qui redistribue, au lieu de doubler, la lumière intégrée de la galaxie.
 4. Puis seulement, considérer l'expansion FLRW dans les vrais rayons observés et la correction K spectrale et distance de luminosité (nouveau chantier, nettement plus grand).
+
+## 5. Clôture du build rapide (17 octobre, 16:08 UTC)
+
+La CI courte `.github/workflows/galaxy-build.yml` a terminé sa séquence : les scripts numériques `validate-flrw`, `validate-star-nurseries`, `validate-nebulae`, `validate-galaxy-spectra`, `validate-galaxy-photometry`, `validate-cf4-basins` ont franchi l'étape qui précède `npm run build`. Le bot a ensuite enregistré **`e0a0d0dd784edd69b03b3a5e3cab7de70c09e3bf`**, modifiant uniquement `public/cockpit.js`; `public/cosmos.js` était inchangé. La compilation du lot est donc avérée.
+
+Les scripts de navigateur `validate-galaxy-ui`, `validate-basins-ui`, `validate-star-nurseries-ui` sont dans le workflow long séparé `galaxy-spectra.yml` et ses PNG sauvegardés comme artifact GitHub Actions. **Leurs résultats et captures ne sont PAS confirmés par Codex à la rédaction** ; une comparaison visuelle SwiftShader est encore requise, et ce lot n'est pas publié sur le Site hébergé.
