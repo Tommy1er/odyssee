@@ -68,6 +68,26 @@ const CONTINUA = {
 // diameter; hi/lo: line ratios (Hβ = 1) of the high- and low-ionisation zones; fc: fraction of the visual light in the
 // continuum; zone: [mode (0 radial, 1 ionisation fronts on dense surfaces, 2 patchy shock filaments), inner, outer, jitter].
 export const NEBULA_PHYSICS = {
+  tarantula: {
+    cls: 'Région H II géante, nuages et cavités creusées par les vents stellaires (Grand Nuage de Magellan)',
+    V: 4.0, afg: 0.25, tau: 1.1, fc: .14, cont: ['star',42000], zone:[0,.2,.82,.5],
+    hi:{o3:3.2,n2:.23,s2:.11,he1:.16},lo:{o3:.75,n2:1.15,s2:.65,o1:.1,he1:.07},
+    vNote:'Caldwell 103 : magnitude visuelle V ≈ 4,0 (NASA) incluant le gaz et les étoiles associées ; decomposition spectrale indicative',
+    tauNote:'poussière interne spatiale et alvéoles ionisées : paramètres de rendu indicatifs, pas une carte de A_V',
+    contNote:'continuum de jeunes étoiles massives et lumière diffusée : fraction de rendu hypothétique',
+    refs:['NASA Hubble : Caldwell 103 (distance 170 000 al, V 4,0)',
+      'Tsamis et al. 2003, MNRAS 338, 687 (spectrophotométrie de 30 Dor)'],
+  },
+  ngc604: {
+    cls:'Région H II géante : formation stellaire dans M33, cavités de vents stellaires',
+    V:11.5,afg:.18,tau:.7,fc:.12,cont:['star',39000],zone:[0,.24,.75,.45],
+    hi:{o3:3.2,n2:.25,s2:.12,he1:.12},lo:{o3:.65,n2:1.3,s2:.8,o1:.16},
+    vNote:'V ≈ 11,5 : estimation d’observateur (Webb Deep-Sky Society), NON une photométrie V intégrée instrumentale ; valeur illustrative',
+    tauNote:'filaments et cavités : répartition de poussière hypothétique',
+    contNote:'jeunes étoiles massives et diffusion : continuum relatif de rendu, non un spectre observé de NGC 604',
+    refs:['NASA Webb : NGC 604 dans M33, distance 2,73 millions d’al',
+      'NASA Hubble : nébuleuse de 1 500 al contenant plus de 200 étoiles massives'],
+  },
   orion: {
     cls: "Région H II (formation d’étoiles)", V: 4.0, afg: 0.3, tau: 1.2, fc: 0.1, cont: ["star", 40000], zone: [0, 0.25, 0.75, 0.5],
     hi: { o3: 4.0, n2: 0.35, s2: 0.1, he1: 0.12 }, lo: { o3: 0.6, n2: 1.6, s2: 0.9, o1: 0.1, he1: 0.05 },
@@ -132,7 +152,7 @@ export const NEBULA_PHYSICS = {
   },
 };
 // Rendering shape of each nebula (procedural structure).
-export const nebulaShape = (o) => (o.type === "pillars" ? 1 : ["crab", "vela-remnant", "sgrae"].includes(o.id) ? 2 : o.id === "eta-car" ? 3 : ["ring", "helix"].includes(o.id) ? 4 : o.id === "sgrb2" ? 5 : 0);
+export const nebulaShape = (o) => (o.type === "pillars" ? 1 : ["crab", "vela-remnant", "sgrae"].includes(o.id) ? 2 : o.id === "eta-car" ? 3 : ["ring", "helix"].includes(o.id) ? 4 : o.id === "sgrb2" ? 5 : ["tarantula","ngc604"].includes(o.id) ? 6 : 0);
 export const physicsOf = (o) => NEBULA_PHYSICS[o.id] || NEBULA_PHYSICS.orion;
 export const intrinsicMag = (P) => (P.V0 ?? P.V - P.afg);
 
@@ -174,7 +194,15 @@ export function makeField(shape, seed) {
     if (shape < 2.5) return Math.exp(-(((r - (0.69 + 0.12 * n)) / 0.075) ** 2)) * ss(0.3, 0.65, n) * 4;
     if (shape < 3.5) { const qy = Math.abs(y) - 0.42; return Math.exp(-(((Math.hypot(x / 0.32, qy / 0.51, z / 0.32) - 0.85) / 0.13) ** 2)) * (0.3 + n); }
     if (shape < 4.5) { const rr = Math.hypot(x, y * 1.18); return (Math.exp(-(((rr - 0.62) / 0.13) ** 2)) + 0.22 * Math.exp(-(rr * rr) / 0.18)) * Math.exp(-z * z * 18) * (0.4 + n); }
-    return Math.exp(-r * r * 2) * ss(0.3, 0.72, n) * 5;
+    if (shape < 5.5) return Math.exp(-r * r * 2) * ss(0.3, 0.72, n) * 5;
+    // H II regions: three overlapping wind-blown cavities with irregular luminous skins.
+    let shells = 0;
+    for (const [cx,cy,cz,rr] of [[-.28,.1,.05,.46],[.25,-.2,.13,.42],[.05,.34,-.18,.33]]) {
+      const radial = Math.hypot(x-cx,y-cy,z-cz);
+      const distorted = rr * (1 + .16*(fbm(9*x+3,9*y-1,9*z+2)-.5));
+      shells += Math.exp(-((radial-distorted)/.085)**2);
+    }
+    return (0.20*Math.exp(-2.7*r*r)+1.6*shells)*(0.32+0.95*n);
   };
   // Synchrotron nebula of a plerion: smooth ellipsoid inside the filament cage.
   const contDensity = (x, y, z) => Math.exp(-2 * ((x / 0.62) ** 2 + (y / 0.5) ** 2 + (z / 0.5) ** 2)) * (0.7 + 0.3 * fbm(3 * x, 3 * y, 3 * z));
@@ -203,7 +231,10 @@ float nebRaw(vec3 p){float n=nfbm(p*7.),r=length(p);
  if(shape<2.5)return exp(-pow((r-(.69+.12*n))/.075,2.))*smoothstep(.3,.65,n)*4.;
  if(shape<3.5){vec3 q=p;q.y=abs(q.y)-.42;return exp(-pow((length(q/vec3(.32,.51,.32))-.85)/.13,2.))*(.3+n);}
  if(shape<4.5){float rr=length(p.xy*vec2(1.,1.18));return (exp(-pow((rr-.62)/.13,2.))+.22*exp(-rr*rr/.18))*exp(-p.z*p.z*18.)*(.4+n);}
- return exp(-r*r*2.)*smoothstep(.3,.72,n)*5.;}
+ if(shape<5.5)return exp(-r*r*2.)*smoothstep(.3,.72,n)*5.;
+ vec4 cav[3];cav[0]=vec4(-.28,.1,.05,.46);cav[1]=vec4(.25,-.2,.13,.42);cav[2]=vec4(.05,.34,-.18,.33);
+ float shell=0.;for(int i=0;i<3;i++){float rr=length(p-cav[i].xyz),dist=cav[i].w*(1.+.16*(nfbm(p*9.+vec3(3.,-1.,2.))-.5));shell+=exp(-pow((rr-dist)/.085,2.));}
+ return (.20*exp(-2.7*r*r)+1.6*shell)*(.32+.95*n);}
 float nebDensity(vec3 p){return nebRaw(p)*(1.-smoothstep(.85,1.08,length(p)));}
 float nebContDensity(vec3 p){vec3 q=p/vec3(.62,.5,.5);return exp(-2.*dot(q,q))*(.7+.3*nfbm(p*3.));}
 float nebHiFrac(vec3 p,float den){float m=nebZone.x;
