@@ -61,7 +61,7 @@ vec4 thermal(float T){return texture2D(lut,vec2(clamp(log(max(100.,T)/100.)/log(
 vec4 galaxySED(float cls,float D){float u=(.5+clamp((D-.72)/.37,0.,1.)*256.)/257.;return texture2D(sedLut,vec2(u,(cls+.5)/8.));}
 void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));bool sedValid=(dsun>=.72&&dsun<=1.09&&dship>=.72&&dship<=1.09);
  vec4 seen=sedValid?galaxySED(sclass,dship):thermal(temp*dship),cat=sedValid?galaxySED(sclass,dsun):thermal(temp*dsun);
- flux*=(sedValid?(seen.a/max(cat.a,1.e-12)):exp(clamp(seen.a-cat.a,-60.,60.)))*(dsun*dsun)/(dship*dship);
+ flux*=sedValid?(seen.a/max(cat.a,1.e-12))*pow(dship/dsun,4.):exp(clamp(seen.a-cat.a,-60.,60.));
  flux*=shown;if(band>=3.)flux*=.005;
  float size=clamp(2.*rad/d/pix,1.25,48.);soft=smoothstep(2.,5.,size);flux*=mix(1.,gain,soft);light=seen.rgb*flux/(size*size*.08);
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
@@ -87,7 +87,7 @@ function lutAt(lut, T) { const x = Math.min(1, Math.max(0, Math.log(Math.max(100
 // Only the galaxy's own motion enters: the ship's velocity is applied once, later, to the whole sky (sky-optics.js).
 export function sourceTint(lut, T, Dsun, D, avFg = 0, fg = 1) {
   if (!lut || lut.length < 2048 || !Number.isFinite(T)) return [1, 1, 1];
-  const a = lutAt(lut, T * D), b = lutAt(lut, T * Dsun), k = Math.exp(Math.max(-60, Math.min(60, a[3] - b[3]))) * (Dsun / D) ** 2 * 10 ** (0.4 * avFg * (1 - fg));
+  const a = lutAt(lut, T * D), b = lutAt(lut, T * Dsun), k = Math.exp(Math.max(-60, Math.min(60, a[3] - b[3]))) * 10 ** (0.4 * avFg * (1 - fg));
   return [0, 1, 2].map((j) => (k * a[j]) / Math.max(1e-6, b[j]));
 }
 

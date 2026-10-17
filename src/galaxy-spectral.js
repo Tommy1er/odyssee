@@ -28,14 +28,16 @@ export function sedSample(kind,D){
   const lo=Math.min(SED_SAMPLES-2,Math.floor(x)),f=x-lo,offset=kind*SED_SAMPLES*4+lo*4;
   return [0,1,2,3].map(j=>SED_LUT[offset+j]*(1-f)+SED_LUT[offset+j+4]*f);
 }
-// Chromaticity is normalized to CIE Y=1 at every D. Brightness follows the V-filter
-// band integral relative to the solar-reference Doppler and the previous source factor
-// (D_sun/D_ship)^2. D*F_lambda(D lambda) is only the SED-shape convention;
-// this amplitude intentionally preserves the pre-existing simulator model.
+// Chromaticity is normalized to CIE Y=1 at every D. Brightness: a source of Doppler factor D seen at a given emission
+// distance (observer frame, the distances used throughout) has the specific intensity I_λ(λ) = D⁵ I'_λ(Dλ) (I_λ λ⁵
+// invariant), hence a band flux ∝ D⁴ ∫V(λ)·D F'(Dλ)dλ = D⁴ J(D) with the table's convention J. Relative to the Sun:
+// (D/D☉)⁴ J(D)/J(D☉) — for a black body exactly I_V(T·D)/I_V(T·D☉), the law of the thermal fallback (checked in
+// validate-galaxy-spectra.mjs). Correction of 17 October 2026: the earlier (D☉/D)² was the law of a MOVING OBSERVER
+// with catalogue-frame distances (stars, sky-optics), not of a moving source.
 // The galaxy's magnitude from the catalogue remains the absolute flux anchor.
 export function spectralSourceTint(kind,Dsun,D,avFg=0,fg=1){
   const now=sedSample(kind,D),sun=sedSample(kind,Dsun);
   if(!now||!sun)return null; // no silent extrapolation; caller can use legacy model
-  const k=(now[3]/sun[3])*(Dsun/D)**2*10**(.4*avFg*(1-fg));
+  const k=(now[3]/sun[3])*(D/Dsun)**4*10**(.4*avFg*(1-fg));
   return now.slice(0,3).map(v=>v*k);
 }
