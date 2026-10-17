@@ -35,6 +35,7 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
   await page.waitForFunction(()=>window.flightSnapshot().galaxyLight.status==='ready');const m87=await sheet();check('CF4 sheet: distance modulus, 2MRS morphological type and size, V magnitude with its provenance (15 Oct: replaces the class guessed from the distance method)',m87.includes('μ = 31,134')&&m87.includes('type morphologique T = -4 (2MRS')&&m87.includes('rayon isophotal 2MASS')&&m87.includes('K totale 2MRS'));
   check('M87 sheet: relativistic source/observer Doppler and spectral coverage disclosed',m87.includes('Diagnostic spectral du vaisseau')&&m87.includes('Photons visibles')&&m87.includes('Kinney')&&m87.includes('approximation thermique'));
   await jump('cf4:41361');await page.waitForFunction(()=>window.flightSnapshot().galaxies.slots.filter(x=>x.startsWith('cf4:')).length>=3);s=await snap();
+  check('HDR spectral galaxies: isolated per-class GPU layer is rendered',s.galaxyLight.spectralPoints===true);
   check('At M87: its nearest CF4 neighbours are rendered',s.galaxies.slots[0]==='cf4:41361'&&s.galaxies.slots.filter(x=>x.startsWith('cf4:')).length>=3);console.log('   slots',s.galaxies.slots.join(', '));
   await shot('galaxy-m87.png');
   await page.click('.type-filters button[data-type="all"]');await page.fill('#destination-search','PGC 41156');await page.waitForFunction(()=>document.querySelector('#destinations [data-id="cf4:41156"]'));
