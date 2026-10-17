@@ -8,7 +8,6 @@ import {SED_MIN,SED_MAX,SED_PROVENANCE} from './galaxy-sed-kc96-data.js';
 import {spectralClassFromObject,sedSample} from './galaxy-spectral.js';
 
 export const SHIP_VISIBLE_NM=Object.freeze([380,700]);
-const magnitude=v=>Math.hypot(...v);
 
 export function galaxyObserverSpectrum(galaxy,shipPosition=[0,0,0],shipFourVelocity=[0,0,0]){
  if(galaxy?.type!=='galaxy')return null;
