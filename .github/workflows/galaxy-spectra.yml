@@ -22,9 +22,9 @@ on:
       - 'data/galaxy-spectra-kc96/**'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
-  group: galaxy-spectra-main
+  group: galaxy-browser-validation
   cancel-in-progress: false
 jobs:
   validate-and-build:
@@ -62,13 +62,12 @@ jobs:
           node scripts/validate-galaxy-ui.cjs
           node scripts/validate-basins-ui.cjs
           node scripts/validate-star-nurseries-ui.cjs
-      - name: Commit public bundles if generated output changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/cockpit.js public/cosmos.js
-          if ! git diff --cached --quiet; then
-            git commit -m "Build: intégrer spectres galactiques et étiquettes CF4 dans les bundles publics"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+      - name: Keep SwiftShader captures for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cosmic-nurseries-swiftshader
+          path: |
+            validation/v2-screenshots/nurserie-*.png
+            validation/v2-screenshots/nurseries-ui-results.json
+          if-no-files-found: ignore
