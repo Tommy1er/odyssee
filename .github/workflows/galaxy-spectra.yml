@@ -41,6 +41,14 @@ jobs:
           node scripts/validate-galaxy-spectra.mjs
           node scripts/validate-galaxy-photometry.mjs
           node scripts/validate-cf4-basins.mjs
+      - name: Install headless Chromium for real WebGL integration tests
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Validate cockpit and reconstructed basins in a browser
+        run: |
+          node scripts/validate-galaxy-ui.cjs
+          node scripts/validate-basins-ui.cjs
       - name: Rebuild public JavaScript
         run: npm run build
       - name: Commit public bundles if generated output changed
