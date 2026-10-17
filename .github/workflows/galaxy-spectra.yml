@@ -7,10 +7,17 @@ on:
       - 'src/galaxy-spectral.js'
       - 'src/galaxy-sed-kc96-data.js'
       - 'src/galaxy-photometry.js'
+      - 'src/cockpit.js'
+      - 'src/flrw.js'
+      - 'src/extragalactic-nebulae.js'
+      - 'src/nebulae.js'
       - 'src/local-group.js'
       - 'src/cf4-basins.js'
       - 'scripts/validate-galaxy-spectra.mjs'
       - 'scripts/validate-galaxy-photometry.mjs'
+      - 'scripts/validate-flrw.mjs'
+      - 'scripts/validate-star-nurseries.mjs'
+      - 'scripts/validate-star-nurseries-ui.cjs'
       - 'scripts/build-galaxy-sed-kc96.mjs'
       - 'data/galaxy-spectra-kc96/**'
   workflow_dispatch:
@@ -22,7 +29,7 @@ concurrency:
 jobs:
   validate-and-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,6 +48,9 @@ jobs:
           node scripts/validate-galaxy-spectra.mjs
           node scripts/validate-galaxy-photometry.mjs
           node scripts/validate-cf4-basins.mjs
+          node scripts/validate-flrw.mjs
+          node scripts/validate-nebulae.mjs
+          node scripts/validate-star-nurseries.mjs
       - name: Rebuild public JavaScript before browser validation
         run: npm run build
       - name: Install headless Chromium for real WebGL integration tests
@@ -51,6 +61,7 @@ jobs:
         run: |
           node scripts/validate-galaxy-ui.cjs
           node scripts/validate-basins-ui.cjs
+          node scripts/validate-star-nurseries-ui.cjs
       - name: Commit public bundles if generated output changed
         run: |
           git config user.name "github-actions[bot]"
