@@ -200,7 +200,7 @@ export function makeField(shape, seed) {
     for (const [cx,cy,cz,rr] of [[-.28,.1,.05,.46],[.25,-.2,.13,.42],[.05,.34,-.18,.33]]) {
       const radial = Math.hypot(x-cx,y-cy,z-cz);
       const distorted = rr * (1 + .16*(fbm(9*x+3,9*y-1,9*z+2)-.5));
-      shells += Math.exp(-((radial-distorted)/.085)**2);
+      shells += Math.exp(-(((radial-distorted)/.085)**2));
     }
     return (0.20*Math.exp(-2.7*r*r)+1.6*shells)*(0.32+0.95*n);
   };
