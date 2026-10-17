@@ -139,6 +139,7 @@ export class SpaceRenderer{
     // Schwarzschild is a separate local stationary optical model. Its cube now supplies HDR sky.
     const relativeU=skyOptics&&(!half||betaOptics)?visualU:[0,0,0];
     const spectralDrawn=activeGalaxySpectra&&this.galaxySpectralOverlay.render(this.renderer,this.camera,relativeU,skyOptics);
+    if(!activeGalaxySpectra)this.galaxySpectralOverlay.drawn=false;
     this.skyOptics.material.uniforms.galaxyOverlayOn.value=+!!spectralDrawn;
     if(spectralDrawn)this.skyOptics.material.uniforms.galaxyOverlay.value=this.galaxySpectralOverlay.target.texture;
     this.skyOptics.render(this.renderer,this.camera,s,half&&!betaOptics?[0,0,0]:visualU,skyOptics);
