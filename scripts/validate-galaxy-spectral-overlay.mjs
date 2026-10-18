@@ -157,4 +157,25 @@ test('Galaxy colour is normalized relative to its own KC96 boundary, not an unan
  assert(spectralPointVertex.includes('color*=y0/max(dot(color'));
 });
 
+
+test('KC96-anchored RGB has no colour discontinuity at either spectral table edge',()=>{
+ const y=x=>.2126*x[0]+.7152*x[1]+.0722*x[2];
+ const p=(nm,T)=>1/(nm**5*Math.expm1(14387768.8/(nm*T)));
+ const thermalRGB=T=>[650,545,445].map(nm=>p(nm,T));
+ const tint=(kind,D,T)=>{
+  const edge=Math.max(.72,Math.min(1.09,D)),src=sedSample(kind,edge).slice(0,3);
+  if(D>=.72&&D<=1.09)return src;
+  const now=thermalRGB(T*D),ref=thermalRGB(T*edge);
+  const mixed=src.map((v,j)=>v*now[j]/ref[j]);
+  return mixed.map(v=>v*y(src)/y(mixed));
+ };
+ for(let kind=0;kind<8;kind++)for(const b of [.72,1.09]){
+  const center=tint(kind,b,5400),left=tint(kind,b-1e-7,5400),right=tint(kind,b+1e-7,5400);
+  for(let j=0;j<3;j++){
+   near(left[j],center[j],.0002);near(right[j],center[j],.0002);
+  }
+  near(y(left),y(center),1e-7);near(y(right),y(center),1e-7);
+ }
+});
+
 console.log(JSON.stringify({passed,status:'PASS',webgl:'requires separate Chromium test'}));
