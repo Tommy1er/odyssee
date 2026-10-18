@@ -137,7 +137,7 @@ test('No >0.86-magnitude jump at either KC96 boundary for any morphological type
   const lo=continuousGalaxyBand(k,edge-1e-7,T,I),hi=continuousGalaxyBand(k,edge+1e-7,T,I);
   assert(inner>0&&lo>0&&hi>0);
   const jumps=[-2.5*Math.log10(lo/inner),-2.5*Math.log10(hi/inner)];
-  for(const jump of jumps)assert(Math.abs(jump)<.001,\`kind=\${k} D=\${edge}: \${jump} mag\`);
+  for(const jump of jumps)assert(Math.abs(jump)<.001,'kind='+k+' D='+edge+': '+jump+' mag');
   near(continuousGalaxyBand(k,edge,T,I),edge**4*sedSample(k,edge)[3],1e-9);
  }
 });
