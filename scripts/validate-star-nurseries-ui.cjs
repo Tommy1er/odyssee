@@ -33,8 +33,14 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
       return !!node&&(node===el||el.contains(node));
     });
     check(id+' clean-view button is not occluded by arrived navigation HUD',hit);
+    // SwiftShader's full 1100×760 raymarched nursery screenshot exceeded 180s on GitHub CI.
+    // Reduce only the test capture viewport (not the application's rendering quality or scene),
+    // still with real WebGL and a readable 640×480 image. Restore the standard UI afterwards.
+    await page.setViewportSize({width:640,height:480});
     await page.locator('#clean-view').click();await page.waitForTimeout(1000);
-    await page.screenshot({path:path.join(out,filename)});await page.locator('#restore-view').click();
+    await page.screenshot({path:path.join(out,filename),timeout:180000});
+    await page.locator('#restore-view').click();
+    await page.setViewportSize({width:1100,height:760});
   }
   check('No browser or GLSL errors',errors.length===0);
  } finally {
