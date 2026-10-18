@@ -33,6 +33,22 @@ vec4 thermal(float t){
  return c;
 }
 vec4 galaxySED(float cls,float D){float u=(.5+clamp((D-.72)/.37,0.,1.)*256.)/257.;return texture2D(sedLut,vec2(u,(cls+.5)/8.));}
+// The empirical KC96 band luminosity is F(D) = D^4 J(D), with chromaticity CIE Y=1.
+// Outside the measured LUT, continue F from the *nearest measured boundary* using
+// only the thermal RATIO B_V(TD)/B_V(TD_edge). At D=D_edge both brightness and
+// colour agree with the actual KC96 boundary: no artificial magnitude/RGB jump.
+// The extension is a synthetic thermal model, NOT a measured UV/MIR spectrum.
+vec4 galaxyBridge(float cls,float D,float T){
+ float edgeD=clamp(D,.72,1.09);
+ vec4 edge=galaxySED(cls,edgeD);
+ float logBand=4.*log(edgeD)+log(max(edge.a,1.e-20));
+ if(D>=.72&&D<=1.09)return vec4(edge.rgb,logBand);
+ vec4 atD=thermal(T*D),atEdge=thermal(T*edgeD);
+ vec3 color=edge.rgb*atD.rgb/max(atEdge.rgb,vec3(1.e-5));
+ float y0=dot(edge.rgb,vec3(.2126,.7152,.0722));
+ color*=y0/max(dot(color,vec3(.2126,.7152,.0722)),1.e-8);
+ return vec4(color,logBand+clamp(atD.a-atEdge.a,-70.,70.));
+}
 void main(){
  float distance=max(length(position),1.e-6);vec3 n=position/distance;
  float Dobs=1.;vec3 shifted=n;
@@ -42,17 +58,17 @@ void main(){
   shifted=normalize((n-axis*mu+axis*(g*(1.+mu)-1./(g+momentum)))/Dobs);
  }
  float Dtotal=dship*Dobs;
- bool sedValid=dsun>=.72&&dsun<=1.09&&dship>=.72&&dship<=1.09&&Dtotal>=.72&&Dtotal<=1.09;
- vec4 cat=sedValid?galaxySED(sclass,dsun):thermal(temp*dsun);
- vec4 seen=sedValid?galaxySED(sclass,Dtotal):thermal(temp*Dtotal);
+ // Independent of the source's intermediate Doppler factor: one spectrum at the catalogue
+ // anchor Dsun, the same spectrum evaluated at Dsource*Dobserver. No double Doppler.
+ vec4 cat=galaxyBridge(sclass,dsun,temp);
+ vec4 seen=galaxyBridge(sclass,Dtotal,temp);
  float mag=vmag+5.*log(distance/dcat)/log(10.)+avfg*(avScale-1.);
  float flux=pow(10.,-.4*(mag-3.));
- // Source at catalogue-frame emission distance: (Ds/Dsun)^4 J(Ds)/J(Dsun).
- // A moving observer compresses angular solid angle by Dobs^-2 and increases bolometric
- // radiance by Dobs^4; thus POINT flux -> (Ds/Dsun)^4 Dobs^2 J(Ds*Dobs)/J(Dsun).
- if(sedValid)flux*=pow(dship/dsun,4.)*Dobs*Dobs*(seen.a/max(cat.a,1.e-12));
- // Thermal fallback exact within the blackbody model: B_V(T*Ds*Dobs)/B_V(T*Dsun)/Dobs^2.
- else flux*=exp(clamp(seen.a-cat.a,-60.,60.))/max(Dobs*Dobs,1.e-18);
+ // Point-source received flux is F(Dsource*Dobserver)/F(Dsun)/Dobserver^2.
+ // Within KC96, F(D)=D^4 J(D), reproducing Claude's moving-source correction
+ // and the moving-observer aberration factor exactly. Across the observed data
+ // boundary, both sides use the same KC96-anchored continuous thermal extension.
+ flux*=exp(clamp(seen.a-cat.a,-60.,60.))/max(Dobs*Dobs,1.e-18);
  flux*=shown;if(band>=3.)flux*=.005;
  float size=clamp(2.*rad/distance/pix/Dobs,1.25,48.);
  // Long-exposure gain onset on the same angular size as the historical cube sprite (pixRef = its pix).
