@@ -5,6 +5,13 @@
 // directly comparable with the stars. (Cube pixels away from the face centre are up to ~5× smaller: point stars near
 // cube edges are drawn brighter; known limitation of the star layer, not of this scale.)
 export const PIXEL_SR = (2 / 1024) ** 2;
+// Sky cube face resolution (sky-optics.js): 512 on narrow (phone) screens, 1024 otherwise. Point sprites (stars,
+// cluster stars, point galaxies) are drawn as a pixel sum in cube texels; a 512 texel spans 4 × PIXEL_SR, so without
+// this factor every point source would carry 4× its Φ on phones (≈1.5 mag too bright against the Milky Way, volumes,
+// nebulae and the screen-space galaxy overlay, which are radiances). Point flux is therefore scaled by (CUBE_SIZE/1024)².
+export const CUBE_SIZE = typeof innerWidth !== 'undefined' && innerWidth < 620 ? 512 : 1024;
+export const CUBE_POINT_SCALE = (CUBE_SIZE / 1024) ** 2;
+export const CUBE_POINT_GLSL = CUBE_POINT_SCALE.toFixed(6);
 export const PHOT_ZERO = 0.818 * 10 ** 1.2 * PIXEL_SR;
 export const fluxFromMag = (m) => PHOT_ZERO * 10 ** (-0.4 * m);
 // "Visible · pose longue": diffuse emission (nebulae, comet comae and tails) is multiplied by this gain, i.e. 2.5 magnitudes,

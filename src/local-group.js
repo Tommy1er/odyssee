@@ -5,10 +5,12 @@ import {fluxFromMag} from './photometry.js';
 import {doppler,sourceTint,objectTemp,foregroundScale} from './galaxy-photometry.js';
 import {spectralSourceTint,spectralClassFromObject} from './galaxy-spectral.js';
 import {hash} from './body-data.js';
-// Representative Local Group members, not an exhaustive galaxy catalogue.
+// Representative Local Group members, not an exhaustive galaxy catalogue. Distances agree with the UNGC rows of the
+// photometric point layer (M33: 0.85 Mpc = 2.772 Mly, was a rounded 3.0 Mly): otherwise, seen from anywhere but the
+// Sun, the point and the volume of the same galaxy sit 230 000 ly apart and the light jumps sideways at the 3–8 px handoff.
 const rows=[
  ['m31','Andromède · M31',10.68471,41.26875,2500000,110000,77,38,0,'https://www.nasa.gov/universe/galaxies/andromeda-galaxy/'],
- ['m33','Triangle · M33',23.46207,30.66018,3000000,30000,54,23,0,'https://www.nasa.gov/image-article/triangulum-galaxy/'],
+ ['m33','Triangle · M33',23.46207,30.66018,2772000,30000,54,23,0,'https://www.nasa.gov/image-article/triangulum-galaxy/'],
  ['lmc','Grand Nuage de Magellan',80.89417,-69.75611,163000,16000,35,120,1,'https://www.nasa.gov/universe/nasas-swift-produces-best-ultraviolet-maps-of-the-nearest-galaxies/'],
  ['smc','Petit Nuage de Magellan',13.15833,-72.80028,200000,10000,45,30,2,'https://www.nasa.gov/universe/galaxies/magellanic-clouds/']
 ];

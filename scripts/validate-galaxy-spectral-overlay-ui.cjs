@@ -29,7 +29,8 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
   await page.locator('#doppler').check();
   await page.waitForFunction(()=>window.flightSnapshot().galaxyLight.spectralPoints===true);
   await page.locator('#compare-physics').click();
-  await page.locator('#ship-frame').selectOption('comoving');
+  // #ship-frame lives in the hidden external-camera options in cockpit view; set it without a visibility wait.
+  await page.evaluate(()=>{const f=document.getElementById('ship-frame');f.value='comoving';f.dispatchEvent(new Event('change'));});
   await page.waitForFunction(()=>window.flightSnapshot().galaxyLight.spectralPoints===true);
   check('Split 0 / 0.99 c comparison renders separate HDR galaxy pass',(await snapshot()).galaxyLight.spectralPoints===true);
   await page.waitForTimeout(1000);

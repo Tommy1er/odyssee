@@ -9,7 +9,8 @@
 import * as T from 'three';
 import { galaxyVelocity, receivedLinear, C_KMS } from './cosmic-motion.js';
 import { classFromT, CLASSES, LY_PER_KPC } from './catalogue-galaxies.js';
-import { diffuseGain } from './photometry.js';
+import { diffuseGain, CUBE_SIZE, CUBE_POINT_GLSL } from './photometry.js';
+import {lutTexture} from './gpu-textures.js';
 import {galaxySpectra,spectralClassFromT} from './galaxy-spectral.js';
 
 // Typical absolute V magnitudes by model class, used only when no magnitude is published (flagged as an estimate).
@@ -59,7 +60,7 @@ export function enrichGalaxy(o, data, ids = [o.id]) {
 const vertexShader = `attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship,sclass;uniform float pix,avScale,band,gain;uniform sampler2D lut,sedLut;varying vec3 light;varying float soft;
 vec4 thermal(float T){return texture2D(lut,vec2(clamp(log(max(100.,T)/100.)/log(10000.),0.,1.),.5));}
 vec4 galaxySED(float cls,float D){float u=(.5+clamp((D-.72)/.37,0.,1.)*256.)/257.;return texture2D(sedLut,vec2(u,(cls+.5)/8.));}
-void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.));bool sedValid=(dsun>=.72&&dsun<=1.09&&dship>=.72&&dship<=1.09);
+void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.))*${CUBE_POINT_GLSL};bool sedValid=(dsun>=.72&&dsun<=1.09&&dship>=.72&&dship<=1.09);
  vec4 seen=sedValid?galaxySED(sclass,dship):thermal(temp*dship),cat=sedValid?galaxySED(sclass,dsun):thermal(temp*dsun);
  flux*=sedValid?(seen.a/max(cat.a,1.e-12))*pow(dship/dsun,4.):exp(clamp(seen.a-cat.a,-60.,60.));
  flux*=shown;if(band>=3.)flux*=.005;
@@ -95,10 +96,10 @@ export function sourceTint(lut, T, Dsun, D, avFg = 0, fg = 1) {
 
 export class GalaxyLightLayer {
   constructor(lut) {
-    const tex = new T.DataTexture(new Float32Array(lut), 512, 1, T.RGBAFormat, T.FloatType); tex.minFilter = tex.magFilter = T.LinearFilter; tex.needsUpdate = true;
-    const sedTex=new T.DataTexture(galaxySpectra.data,galaxySpectra.samples,galaxySpectra.ids.length,T.RGBAFormat,T.FloatType);
+    const tex = lutTexture(new Float32Array(lut), 512, 1); tex.minFilter = tex.magFilter = T.LinearFilter; tex.needsUpdate = true;
+    const sedTex=lutTexture(galaxySpectra.data,galaxySpectra.samples,galaxySpectra.ids.length);
     sedTex.minFilter=sedTex.magFilter=T.LinearFilter;sedTex.needsUpdate=true;
-    this.material = new T.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { sedLut:{value:sedTex}, pix: { value: (Math.PI / 2) / 1024 }, avScale: { value: 1 }, band: { value: 1 }, gain: { value: 1 }, lut: { value: tex } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending });
+    this.material = new T.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { sedLut:{value:sedTex}, pix: { value: (Math.PI / 2) / CUBE_SIZE }, avScale: { value: 1 }, band: { value: 1 }, gain: { value: 1 }, lut: { value: tex } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending });
     this.points = new T.Points(new T.BufferGeometry(), this.material); this.points.frustumCulled = false; this.points.visible = false;
     this.rows = []; this.status = 'idle'; this.next = 0; this.key = '';
   }

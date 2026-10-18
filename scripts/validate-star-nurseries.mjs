@@ -9,7 +9,7 @@ let n=0;function check(label,fn){fn();console.log('PASS '+label);n++;}
 const neb=extragalacticNebulae(), lg=localGroupObjects(),tar=neb.find(o=>o.id==='tarantula'),ngc=neb.find(o=>o.id==='ngc604');
 check('Two distinct giant H II complexes are directly navigable',()=>{assert.equal(neb.length,2);assert(neb.every(o=>o.type==='nebula'&&o.guide&&o.links.length>=2))});
 check('Tarantula J2000 direction and NASA distance',()=>{assert(Math.abs(Math.hypot(...tar.xyz)-170000)<1e-7);const ra=Math.atan2(tar.xyz[1],tar.xyz[0])*180/Math.PI,dec=Math.asin(tar.xyz[2]/tar.d)*180/Math.PI;assert(Math.abs(ra-84.67666667)<1e-5);assert(Math.abs(dec+69.10093056)<1e-5);});
-check('NGC 604 direction aligns with Webb position and host plane',()=>{const ra=Math.atan2(ngc.xyz[1],ngc.xyz[0])*180/Math.PI,dec=Math.asin(ngc.xyz[2]/ngc.d)*180/Math.PI;assert(Math.abs(ra-23.6407917)<1e-5);assert(Math.abs(dec-30.78305556)<1e-5);assert.equal(ngc.publishedDistanceLy,2730000);assert.equal(ngc.d,3000000);});
+check('NGC 604 direction aligns with Webb position and host plane',()=>{const ra=Math.atan2(ngc.xyz[1],ngc.xyz[0])*180/Math.PI,dec=Math.asin(ngc.xyz[2]/ngc.d)*180/Math.PI;assert(Math.abs(ra-23.6407917)<1e-5);assert(Math.abs(dec-30.78305556)<1e-5);assert.equal(ngc.publishedDistanceLy,2730000);assert.equal(ngc.d,2772000);assert(Math.abs(Math.hypot(...lg.find(o=>o.id==='m33').xyz)-ngc.d)<1);});// same depth as the M33 volume (UNGC)
 check('Both nurseries lie WITHIN their modelled host galaxy, not ~270k ly in front',()=>{
  const lmc=lg.find(o=>o.id==='lmc'),m33=lg.find(o=>o.id==='m33');
  assert(Math.hypot(...tar.xyz.map((x,k)=>x-lmc.xyz[k]))<lmc.radiusLy);

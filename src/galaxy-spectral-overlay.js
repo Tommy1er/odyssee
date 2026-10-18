@@ -5,6 +5,8 @@
 import * as T from 'three';
 import {gammaU,norm,unit} from './physics.js';
 import {galaxySpectra} from './galaxy-spectral.js';
+import {PIXEL_SR} from './photometry.js';
+import {lutTexture} from './gpu-textures.js';
 
 // Pure scalar counterpart of the KC96 observer/source Doppler factor; independent test oracle for shader.
 export function spectralPointFluxRatio(Dsun,Dsource,Dobserver,Jcatalogue,Jtotal){
@@ -12,9 +14,15 @@ export function spectralPointFluxRatio(Dsun,Dsource,Dobserver,Jcatalogue,Jtotal)
  return (Dsource/Dsun)**4*Dobserver**2*Jtotal/Jcatalogue;
 }
 export function angularAberrationScale(Dobserver){return Dobserver>0&&Number.isFinite(Dobserver)?1/Dobserver:null;}
+// The shared sky scale (photometry.js) stores a point source as a pixel SUM of 0.818·flux in cube texels of
+// PIXEL_SR = (2/1024)² sr, and the cube is then displayed as radiance (texel value per screen pixel, independent of
+// screen resolution). This overlay draws directly in SCREEN pixels of pix² sr, so the same pixel sum must be scaled by
+// PIXEL_SR/pix² to carry the same Φ; without it the point galaxies change brightness with resolution, DPR and zoom
+// (×(pix/2·1024)² relative to stars and to the volumes they hand off to). Pure oracle for the shader uniform.
+export function overlayPixelScale(pixScreen){return pixScreen>0&&Number.isFinite(pixScreen)?PIXEL_SR/(pixScreen*pixScreen):null;}
 export const spectralPointVertex=`
 attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship,sclass;
-uniform float pix,avScale,band,gain,g,momentum,optics;
+uniform float pix,pixRef,pixScale,avScale,band,gain,g,momentum,optics;
 uniform vec3 axis;
 uniform sampler2D lut,sedLut;
 varying vec3 light;varying float soft;
@@ -47,8 +55,9 @@ void main(){
  else flux*=exp(clamp(seen.a-cat.a,-60.,60.))/max(Dobs*Dobs,1.e-18);
  flux*=shown;if(band>=3.)flux*=.005;
  float size=clamp(2.*rad/distance/pix/Dobs,1.25,48.);
- soft=smoothstep(2.,5.,size);flux*=mix(1.,gain,soft);
- light=seen.rgb*flux/(size*size*.08);
+ // Long-exposure gain onset on the same angular size as the historical cube sprite (pixRef = its pix).
+ soft=smoothstep(2.,5.,2.*rad/distance/pixRef/Dobs);flux*=mix(1.,gain,soft);
+ light=seen.rgb*flux*pixScale/(size*size*.08);
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
  gl_Position=projectionMatrix*viewMatrix*vec4(shifted*1000.,1.);
  gl_PointSize=size;
@@ -64,13 +73,13 @@ void main(){
 export class GalaxySpectralOverlay {
  constructor(source){
   this.source=source;
-  const sed=new T.DataTexture(galaxySpectra.data,galaxySpectra.samples,galaxySpectra.ids.length,T.RGBAFormat,T.FloatType);
+  const sed=lutTexture(galaxySpectra.data,galaxySpectra.samples,galaxySpectra.ids.length);
   sed.minFilter=sed.magFilter=T.LinearFilter;sed.needsUpdate=true;
   this.material=new T.ShaderMaterial({
    vertexShader:spectralPointVertex,fragmentShader:spectralPointFragment,
    uniforms:{
     sedLut:{value:sed},lut:{value:source.material.uniforms.lut.value},
-    pix:{value:.001},avScale:{value:1},band:{value:1},gain:{value:1},
+    pix:{value:.001},pixRef:{value:source.material.uniforms.pix.value},pixScale:{value:1},avScale:{value:1},band:{value:1},gain:{value:1},
     g:{value:1},momentum:{value:0},axis:{value:new T.Vector3(0,0,-1)},optics:{value:0}
    },transparent:true,depthWrite:false,depthTest:false,blending:T.AdditiveBlending
   });
@@ -85,15 +94,18 @@ export class GalaxySpectralOverlay {
   const vp=new T.Vector4(),sc=new T.Vector4(),prevTarget=renderer.getRenderTarget(),
    clear=renderer.getClearColor(new T.Color()).clone(),alpha=renderer.getClearAlpha(),scissorTest=renderer.getScissorTest();
   renderer.getViewport(vp);renderer.getScissor(sc);
-  const width=Math.max(1,Math.floor(vp.z)),height=Math.max(1,Math.floor(vp.w));
+  // getViewport() is in CSS pixels; the drawing buffer (and s.pixelAngle) is in device pixels. Size the target in device
+  // pixels and let setRenderTarget() apply its own full viewport: renderer.setViewport() would multiply by the pixel ratio
+  // again and, on any DPR>1 screen (phones, retina), draw the galaxies magnified and off-register (measured: 3 % of flux).
+  const pr=renderer.getPixelRatio(),width=Math.max(1,Math.round(vp.z*pr)),height=Math.max(1,Math.round(vp.w*pr));
   if(this.target.width!==width||this.target.height!==height)this.target.setSize(width,height);
   this.points.geometry=this.source.points.geometry;
   const U=this.material.uniforms,root=this.source.material.uniforms,m=norm(u),gg=gammaU(u);
   U.g.value=gg;U.momentum.value=m;U.axis.value.set(...unit(u));U.optics.value=+optics;
   U.avScale.value=root.avScale.value;U.band.value=root.band.value;U.gain.value=root.gain.value;
-  U.pix.value=2*Math.tan(camera.fov*Math.PI/360)/height;
+  U.pix.value=2*Math.tan(camera.fov*Math.PI/360)/height;U.pixScale.value=overlayPixelScale(U.pix.value);U.pixRef.value=root.pix.value;
   try{
-   renderer.setRenderTarget(this.target);renderer.setViewport(0,0,width,height);
+   renderer.setRenderTarget(this.target);
    renderer.setScissorTest(false);renderer.setClearColor(0x000000,0);
    renderer.clear(true,true,true);renderer.render(this.scene,camera);
   }finally{

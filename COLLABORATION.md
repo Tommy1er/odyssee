@@ -79,6 +79,7 @@ node scripts/validate-immersion.mjs   # fond de la Voie lactée calibré, amas p
 python scripts/build-galaxy-catalogue.py  # régénère public/galaxy-catalogue.json (âges des amas ouverts, [Fe/H] des globulaires)
 python scripts/build-galaxy-photometry.py  # régénère public/galaxy-photometry.{json,bin} : 2MRS + CF4 + UNGC + McConnachie, magnitudes, formes, distances
 node scripts/validate-galaxy-photometry.mjs  # magnitudes de référence, doublons, enrichissement, calibration des volumes, couche de lumière
+node scripts/validate-galaxy-spectral-overlay.mjs  # couche HDR des galaxies ponctuelles : lois Doppler, échelle de pixel, DPR, occultation, cube 512, LUT half-float
 python scripts/build-extragalactic.py   # régénération hors ligne des 3 catalogues de carte
 node scripts/validate-extragalactic.mjs # données, incertitudes, plan supergalactique, sélection
 node scripts/validate-catalogue-ui.mjs  # intégration DOM sans rendu WebGL
@@ -98,6 +99,7 @@ node scripts/validate-comet-ui.cjs   # filtre Comètes, fiche, saut au périhél
 node scripts/validate-nebula-ui.cjs  # couleurs rendues d'Orion et M 57, œil / pose longue, fiche, Nuages de Magellan
 node scripts/validate-galaxy-ui.cjs  # visites M81 (UNGC) et M87 (CF4), liens de la carte, voisines, fiches
 node scripts/validate-basins-ui.cjs  # bassins sur la carte (surfaces, lignes, étiquettes, options) et bandeau du cockpit
+node scripts/validate-galaxy-spectral-overlay-ui.cjs  # couche HDR spectrale : modes, Doppler, comparaison 0 / 0,99 c, GLSL
 ```
 
 Les scripts UI utilisent leurs propres serveurs locaux et écrivent dans `validation/v2-screenshots/`. Créer ce dossier s’il manque. La variable facultative `CHROMIUM_PATH` permet d’utiliser un Chromium déjà installé. Les tests de navigation, d’orbites et de rendu ont leurs scripts dédiés ; les lancer séquentiellement car certains utilisent le même port. Le rendu logiciel peut être lent. Les comptes rendus JSON inclus sont des résultats de sessions précédentes, pas une preuve que des modifications futures passent.
@@ -127,3 +129,5 @@ Relais du 13 octobre : `docs/RELAIS-CODEX-2026-10-13-CIEL-CF4.md`. Test ciblé :
 Relais du 15 octobre (soir) : `docs/RELAIS-CLAUDE-2026-10-15-AVIS-REFONTE.md`, avis de Claude sur le dossier de refonte `docs/conception/Odyssee-Refonte-UX-UI.pdf`. Codex répond point par point avant tout code de refonte.
 
 Relais du 15 octobre (nuit) : `docs/RELAIS-CLAUDE-2026-10-15-RENDEZVOUS.md`, tranche Terre étape 1 : rendez-vous à la vitesse de la cible, continuité au départ, maintien de position. Tests : `node scripts/validate-rendezvous.mjs`, `node scripts/validate-rendezvous-ui.cjs`.
+
+Relais du 18 octobre : `docs/RELAIS-CLAUDE-2026-10-18-REVUE-HDR.md`, revue de la couche HDR spectrale de Codex : pixels physiques (DPR), échelle photométrique de la couche, occultation en vue rapprochée, flux ponctuel du cube 512 sur téléphone, repli half-float sans `OES_texture_float_linear`.

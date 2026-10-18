@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {spectralPointFluxRatio,angularAberrationScale,spectralPointVertex,spectralPointFragment} from '../src/galaxy-spectral-overlay.js';
+import {spectralPointFluxRatio,angularAberrationScale,overlayPixelScale,spectralPointVertex,spectralPointFragment} from '../src/galaxy-spectral-overlay.js';
+import {PIXEL_SR} from '../src/photometry.js';
+import {lutTexture,toHalfArray,floatLinearSupported} from '../src/gpu-textures.js';
+import * as THREE from 'three';
 import {sedSample} from '../src/galaxy-spectral.js';
 let passed=0;const test=(label,fn)=>{fn();passed++;console.log('PASS '+label)};
 const near=(a,b,tol=1e-6)=>assert(Math.abs(a-b)<=tol*Math.max(1,Math.abs(b)),a+' != '+b);
@@ -76,5 +79,40 @@ test('Unknown / invalid radiance factors are explicitly rejected',()=>{
  assert.equal(spectralPointFluxRatio(0,1,1,1,1),null);
  assert.equal(spectralPointFluxRatio(1,1,-1,1,1),null);
  assert.equal(angularAberrationScale(0),null);
+});
+test('Screen-pixel overlay carries the shared cube photometric scale (resolution, DPR and zoom independent)',()=>{
+ // Pixel sum S of a sprite on screen pixels of pix² sr must carry Φ = S·pix² = 0.818·flux·PIXEL_SR, like the cube.
+ near(overlayPixelScale(2/1024),1,1e-12);
+ for(const pix of [2.68e-3,1.34e-3,4.5e-4,6e-5]){const S=.818*overlayPixelScale(pix);near(S*pix*pix,.818*PIXEL_SR,1e-12);}
+ // Resolved disc: per-pixel value (radiance) independent of the screen pixel; pixel value = flux·pixScale/(size²·.08).
+ const theta=.02,v=pix=>overlayPixelScale(pix)/((theta/pix)**2*.08);near(v(2.68e-3)/v(6e-5),1,1e-12);
+ assert(spectralPointVertex.includes('flux*pixScale/(size*size*.08)'));
+ assert(spectralPointVertex.includes('2.*rad/distance/pixRef/Dobs'));
+ assert.equal(overlayPixelScale(0),null);
+});
+test('Overlay galaxies are background sky: close-up dimming and body occlusion, no second global Doppler',()=>{
+ const sky=fs.readFileSync(new URL('../src/sky-optics.js',import.meta.url),'utf8');
+ const g=sky.indexOf('vec3 G=galaxyOverlayOn>.5'),sys=sky.indexOf('G=max(vec3(0.),systemRadiance(ray,L+G)-S)'),shift=sky.indexOf('if(optics>.5&&shift>.5'),add=sky.indexOf('L+=G;');
+ assert(g>0&&g<sys&&sys<shift&&shift<add);assert(sky.includes('L*=dim;G*=dim;'));
+});
+globalThis.innerWidth=390;const phone=await import('../src/photometry.js?phone');delete globalThis.innerWidth;const desk=await import('../src/photometry.js');
+test('Phone 512 cube: point sprites keep the 1024 photometric Φ (stars, clusters, point galaxies)',()=>{
+ assert.equal(phone.CUBE_SIZE,512);near(phone.CUBE_POINT_SCALE*(2/512)**2,PIXEL_SR,1e-15);
+ assert.equal(desk.CUBE_SIZE,1024);assert.equal(desk.CUBE_POINT_SCALE,1);
+ for(const f of ['stellar-light.js','galaxy-photometry.js']){const src=fs.readFileSync(new URL('../src/'+f,import.meta.url),'utf8');assert(src.includes('*${CUBE_POINT_GLSL}'),f);}
+ assert(fs.readFileSync(new URL('../src/sky-optics.js',import.meta.url),'utf8').includes('const size=CUBE_SIZE;'));
+});
+test('Overlay target in device pixels (DPR>1 phones/retina): no double pixel-ratio viewport',()=>{
+ const src=fs.readFileSync(new URL('../src/galaxy-spectral-overlay.js',import.meta.url),'utf8');
+ assert(src.includes('vp.z*pr')&&src.includes('vp.w*pr')&&src.includes('renderer.getPixelRatio()'));
+ assert(!src.includes('renderer.setViewport(0,0,width,height)'));
+});
+test('Devices without OES_texture_float_linear get filterable half-float LUTs instead of a black sky',()=>{
+ const lut=JSON.parse(fs.readFileSync(new URL('../public/assets/blackbody-lut.json',import.meta.url),'utf8'));const a=new Float32Array(lut.data||lut);
+ const h=toHalfArray(a);let worst=0;for(let i=3;i<a.length;i+=4){const T=100*1e4**(((i-3)/4)/(a.length/4-1));if(T<2000)continue;worst=Math.max(worst,Math.abs(THREE.DataUtils.fromHalfFloat(h[i])-a[i]));}
+ assert(worst<.01,'ln Y half-float error '+worst);// < 1 % in flux for T ≥ 2000 K
+ assert.equal(lutTexture(a,512,1,true).type,THREE.HalfFloatType);assert.equal(lutTexture(a,512,1,false).type,THREE.FloatType);
+ assert.equal(floatLinearSupported(),true);// Node: no document, Float32 path kept
+ for(const f of ['sky-optics.js','stellar-light.js','galaxy-photometry.js','galaxy-spectral-overlay.js'])assert(!/DataTexture\([^;]*T\.FloatType/.test(fs.readFileSync(new URL('../src/'+f,import.meta.url),'utf8')),f);
 });
 console.log(JSON.stringify({passed,status:'PASS',webgl:'requires separate Chromium test'}));

@@ -111,4 +111,12 @@ const cf4 = decodeCatalogue("cf4", JSON.parse(fs.readFileSync(new URL("../public
   const rest = tints([0, 0, 0]), fast = tints([7, 0, 0]);
   const sky = fs.readFileSync(new URL("../src/sky-optics.js", import.meta.url), "utf8"), iGroup = sky.indexOf("+groupRadiance(ray)"), iDop = sky.indexOf("if(optics>.5&&shift>.5&&momentum>.000001)"), pts = fs.readFileSync(new URL("../src/galaxy-photometry.js", import.meta.url), "utf8");
   check("3 · Doppler du vaisseau appliqué une seule fois : facteurs des galaxies identiques au repos et à 0,99 c ; volumes ajoutés au ciel avant l’unique transformation de sky-optics ; points sans terme de vitesse du vaisseau", rest.every((x, j) => x === fast[j]) && iGroup > 0 && iDop > iGroup && sky.split("if(optics>.5&&shift>.5&&momentum>.000001)").length === 2 && !/momentum|speed/.test(pts.slice(pts.indexOf("const vertexShader"), pts.indexOf("const fragmentShader")))); }
+{
+  // 4 · The point and the volume of the same Local Group galaxy are the same object: positions within 0.2 model radius.
+  const pairs = { m31: "ungc:MESSIER031", m33: "ungc:MESSIER033", lmc: "ungc:LMC", smc: "ungc:SMC" }, gaps = [];
+  for (const o of localGroupObjects()) { const k = at(pairs[o.id]), ra = c.ra[k] * Math.PI / 180, de = c.dec[k] * Math.PI / 180, d = c.mly[k] * 1e6;
+    const p = [d * Math.cos(de) * Math.cos(ra), d * Math.cos(de) * Math.sin(ra), d * Math.sin(de)], X = o.catalogueXYZ || o.xyz;
+    gaps.push([o.id, Math.hypot(...p.map((x, j) => x - X[j])) / o.radiusLy]); }
+  check("4 · Point photométrique et volume d’une même galaxie du Groupe local au même endroit (écart < 0,45 rayon ; M33 aligné sur UNGC)", gaps.every(([, g]) => g < 0.45) && gaps.find(([id]) => id === "m33")[1] < 0.1, gaps.map(([id, g]) => id + " " + g.toFixed(3)).join(", "));
+}
 console.log(JSON.stringify({ passed: n }));
