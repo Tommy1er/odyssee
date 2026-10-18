@@ -4,7 +4,7 @@ import {spectralPointFluxRatio,angularAberrationScale,overlayPixelScale,spectral
 import {PIXEL_SR} from '../src/photometry.js';
 import {lutTexture,toHalfArray,floatLinearSupported} from '../src/gpu-textures.js';
 import * as THREE from 'three';
-import {sedSample} from '../src/galaxy-spectral.js';
+import {sedSample,continuousGalaxyBand} from '../src/galaxy-spectral.js';
 let passed=0;const test=(label,fn)=>{fn();passed++;console.log('PASS '+label)};
 const near=(a,b,tol=1e-6)=>assert(Math.abs(a-b)<=tol*Math.max(1,Math.abs(b)),a+' != '+b);
 test('At rest, the spectral overlay exactly preserves source calibration',()=>{
@@ -12,7 +12,8 @@ test('At rest, the spectral overlay exactly preserves source calibration',()=>{
 });
 test('One hundred percent of class variation remains per source, not pixel-averaged',()=>{
  assert(spectralPointVertex.includes('attribute float')&&spectralPointVertex.includes('sclass'));
- assert(spectralPointVertex.includes('galaxySED(sclass,Dtotal)'));
+ assert(spectralPointVertex.includes('galaxyBridge(sclass,Dtotal,temp)'));
+ assert(spectralPointVertex.includes('vec4 galaxyBridge('));
 });
 test('Source emission motion keeps Claude fixed-distance D^4 J(D) correction',()=>{
  for(let k of [0,3,7])for(let D of [.8,.95,1.07]){
@@ -51,9 +52,11 @@ test('Thermal fallback reproduces Planck observer point-flux law',()=>{
   near(law,direct,1e-8);
  }
 });
-test('No extrapolation of KC96 tables; fallback remains explicitly thermal',()=>{
- assert(spectralPointVertex.includes('Dtotal>=.72&&Dtotal<=1.09'));
- assert(spectralPointVertex.includes('thermal(temp*Dtotal)'));
+test('KC96 boundary extrapolation is anchored: empirical within, ratio of Planck only beyond',()=>{
+ assert(spectralPointVertex.includes('float edgeD=clamp(D,.72,1.09)'));
+ assert(spectralPointVertex.includes('if(D>=.72&&D<=1.09)return vec4(edge.rgb,logBand)'));
+ assert(spectralPointVertex.includes('logBand+clamp(atD.a-atEdge.a'));
+ assert(spectralPointVertex.includes('flux*=exp(clamp(seen.a-cat.a,-60.,60.))/max(Dobs*Dobs,1.e-18)'));
 });
 test('Capture separates point galaxy HDR emission from background sky in active mode',()=>{
  const renderer=fs.readFileSync(new URL('../src/renderer.js',import.meta.url),'utf8');
@@ -115,4 +118,43 @@ test('Devices without OES_texture_float_linear get filterable half-float LUTs in
  assert.equal(floatLinearSupported(),true);// Node: no document, Float32 path kept
  for(const f of ['sky-optics.js','stellar-light.js','galaxy-photometry.js','galaxy-spectral-overlay.js'])assert(!/DataTexture\([^;]*T\.FloatType/.test(fs.readFileSync(new URL('../src/'+f,import.meta.url),'utf8')),f);
 });
+
+test('KC96 source/observer flux exactly preserved throughout the measured domain',()=>{
+ const planckT=x=>x; // unused inside the measured archive by design
+ for(const k of [0,1,3,4,6,7])for(const [Ds,Do] of [[.96,1.05],[1.01,.86],[.98,1.08]]){
+  const Dsun=1,total=Ds*Do;
+  if(total<.72||total>1.09)continue;
+  const got=continuousGalaxyBand(k,total,5200,planckT)/continuousGalaxyBand(k,Dsun,5200,planckT)/Do**2;
+  const expected=spectralPointFluxRatio(Dsun,Ds,Do,sedSample(k,Dsun)[3],sedSample(k,total)[3]);
+  near(got,expected,1e-9);
+ }
+});
+test('No >0.86-magnitude jump at either KC96 boundary for any morphological type',()=>{
+ const B=(w,T)=>1/(w**5*Math.expm1(14387768.8/(w*T)));
+ const I=T=>{let sum=0;for(let w=380;w<=750;w+=2)sum+=Math.exp(-.5*((w-555)/44)**2)*B(w,T);return sum;};
+ for(const T of [4500,5600,6800])for(let k=0;k<8;k++)for(const edge of [.72,1.09]){
+  const inner=continuousGalaxyBand(k,edge,T,I);
+  const lo=continuousGalaxyBand(k,edge-1e-7,T,I),hi=continuousGalaxyBand(k,edge+1e-7,T,I);
+  assert(inner>0&&lo>0&&hi>0);
+  const jumps=[-2.5*Math.log10(lo/inner),-2.5*Math.log10(hi/inner)];
+  for(const jump of jumps)assert(Math.abs(jump)<.001,\`kind=\${k} D=\${edge}: \${jump} mag\`);
+  near(continuousGalaxyBand(k,edge,T,I),edge**4*sedSample(k,edge)[3],1e-9);
+ }
+});
+test('Thermal extrapolation beyond measured endpoints carries the exact endpoint band value',()=>{
+ const bb=T=>T**4;
+ for(let kind=0;kind<8;kind++)for(const edge of [.72,1.09])for(const D of [edge===.72?.5:1.5,edge===.72?.25:2]){
+  const anchored=continuousGalaxyBand(kind,edge,5100,bb);
+  const got=continuousGalaxyBand(kind,D,5100,bb);
+  near(got,anchored*bb(5100*D)/bb(5100*edge),1e-8);
+ }
+ assert.equal(continuousGalaxyBand(1,-1,5000,x=>x),null);
+ assert.equal(continuousGalaxyBand(100,1,5000,x=>x),null);
+});
+test('Galaxy colour is normalized relative to its own KC96 boundary, not an unanchored thermal RGB',()=>{
+ assert(spectralPointVertex.includes('edge.rgb*atD.rgb/max(atEdge.rgb'));
+ assert(spectralPointVertex.includes('float y0=dot(edge.rgb'));
+ assert(spectralPointVertex.includes('color*=y0/max(dot(color'));
+});
+
 console.log(JSON.stringify({passed,status:'PASS',webgl:'requires separate Chromium test'}));
