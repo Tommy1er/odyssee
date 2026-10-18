@@ -41,3 +41,18 @@ export function spectralSourceTint(kind,Dsun,D,avFg=0,fg=1){
   const k=(now[3]/sun[3])*(D/Dsun)**4*10**(.4*avFg*(1-fg));
   return now.slice(0,3).map(v=>v*k);
 }
+
+ // KC96-anchored broad-band luminosity for point sources, used as an independent numerical
+ // oracle for the GLSL galaxyBridge(). D is the TOTAL frequency factor in the catalogue frame.
+ // Inside the measured domain F(D)=D^4 J(D). Outside, use the ratio of the thermal model
+ // from the closest observed boundary; never substitute an unanchored black body at the edge.
+ // The caller provides the same passband-integrated Planck luminosity at T, e.g. Bessell V.
+export function continuousGalaxyBand(kind,D,T,thermalBand) {
+ if(!(Number.isFinite(D)&&D>0&&Number.isFinite(T)&&T>0)||typeof thermalBand!=='function')return null;
+ const edge=Math.max(SED_MIN,Math.min(SED_MAX,D)),sed=sedSample(kind,edge);
+ if(!sed||!(sed[3]>0))return null;
+ const base=edge**4*sed[3];
+ if(D>=SED_MIN&&D<=SED_MAX)return base;
+ const b=thermalBand(T*D),bEdge=thermalBand(T*edge);
+ return Number.isFinite(b)&&Number.isFinite(bEdge)&&b>=0&&bEdge>0?base*b/bEdge:null;
+}
