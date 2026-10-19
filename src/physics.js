@@ -33,3 +33,9 @@ export function toFrame(F,t,x){const dt=t-F.t0,dx=sub(x,F.x0),bx=dot(F.b,dx);ret
 export function fromFrame(F,t,x){const bx=dot(F.b,x);return {t:F.t0+F.g*(t+bx),x:add(F.x0,add(x,mul(F.b,F.k*bx+F.g*t)))};}
 export function uToFrame(F,u){const bu=dot(F.b,u);return add(u,mul(F.b,F.k*bu-F.g*gammaU(u)));}
 export function uFromFrame(F,u){const bu=dot(F.b,u);return add(u,mul(F.b,F.k*bu+F.g*gammaU(u)));}
+// Direction of the hypothetical speed of the 0 / 0.99 c optical comparison: the real direction of motion when the ship
+// really travels (β ≥ 1e-3, 300 km/s), otherwise the heading. A ship 'at rest' keeps a residual drift (planetary orbit,
+// tens of km/s) in an arbitrary direction; using it put the comparison at 0.99 c sideways to the view, and the screen
+// showed the strongly redshifted, nearly black side/rear sky instead of the forward sky the panel describes.
+export const LAB_REAL_BETA=1e-3;
+export function labDirection(beta,forward){return norm(beta)>=LAB_REAL_BETA?unit(beta):unit(forward);}

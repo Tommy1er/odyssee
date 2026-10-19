@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {spectralPointFluxRatio,angularAberrationScale,overlayPixelScale,spectralPointVertex,spectralPointFragment} from '../src/galaxy-spectral-overlay.js';
 import {PIXEL_SR} from '../src/photometry.js';
+import {labDirection,LAB_REAL_BETA} from '../src/physics.js';
 import {lutTexture,toHalfArray,floatLinearSupported} from '../src/gpu-textures.js';
 import * as THREE from 'three';
 import {sedSample,continuousGalaxyBand} from '../src/galaxy-spectral.js';
@@ -178,4 +179,12 @@ test('KC96-anchored RGB has no colour discontinuity at either spectral table edg
  }
 });
 
+test('0 / 0.99 c comparison moves along the heading unless the ship really travels',()=>{
+ const fwd=[0,0,-1];
+ assert.deepEqual(labDirection([7e-5,0,0],fwd),fwd);// 21 km/s residual drift: heading, not the drift
+ assert.deepEqual(labDirection([0,0,0],fwd),fwd);
+ const real=labDirection([0,.3,0],fwd);near(real[1],1);// real 0.3 c flight: true direction of motion
+ near(LAB_REAL_BETA,1e-3);
+ const r=fs.readFileSync(new URL('../src/renderer.js',import.meta.url),'utf8');assert((r.match(/labDirection\(physicalV/g)||[]).length===3);
+});
 console.log(JSON.stringify({passed,status:'PASS',webgl:'requires separate Chromium test'}));

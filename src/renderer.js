@@ -5,7 +5,7 @@ import {CosmicScene} from './cosmic-scene.js';
 import {LocalGroupLayer} from './local-group.js';
 import {PassageView} from './passage.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {sub,norm,unit,velocity,aberrate,aberrateU,gammaU,gamma,mul,EQ_TO_GAL,AU} from './physics.js';
+import {sub,norm,unit,velocity,aberrate,aberrateU,gammaU,gamma,mul,EQ_TO_GAL,AU,labDirection} from './physics.js';
 import {radiusLy,hash} from './body-data.js';
 import {createGalaxySphere,makePopulation,GAL_CENTER} from './galaxy.js';
 import {GalaxyLightLayer} from './galaxy-photometry.js';
@@ -89,7 +89,7 @@ export class SpaceRenderer{
  volumeIds(){const m=new Map();for(const o of [...this.localGroupLayer.objects,...this.localGroupLayer.slots]){const h=this.localGroupLayer.handoff.get(o.id);m.set(o.id,h?(1-h.w)*h.aniso:0);}for(const [k,v] of this.galaxyAliases)if(m.has(v))m.set(k,m.get(v));return m;}
  render(s,dt){this.lastState=s;s.pixelAngle=2*Math.tan((this.camera.fov||70)*Math.PI/360)/Math.max(1,this.renderer.getDrawingBufferSize(this._db||(this._db=new T.Vector2())).y);this.localGroupLayer.update(s,this.mapScale,s.map);this.solarMap.update(s,this.mapScale,s.map,this.byId);this.milkyLabel.visible=s.map&&this.mapScale<.0001;this.milkyLabel.position.set(...GAL_CENTER.map(x=>x*this.mapScale));this.milkyLabel.position.x+=2;this.sunLabel.visible=!this.milkyLabel.visible;
   this.catalogueSky.mapPoints.visible=!!s.map&&this.mapScale<.000002&&s.catalogueMarkers!==false;if(!s.map&&s.catalogueMarkers!==false&&(s.target?.type==='cosmic'||norm(s.pos)>1e7))this.catalogueSky.update(s.pos,[...this.localGroupLayer.objects,...this.localGroupLayer.slots],s.t,s.retarded);
-  const physicalV=velocity(s.u);let v=s.opticalLab?unit(physicalV.some(x=>x)?physicalV:new T.Vector3(0,0,-1).applyQuaternion(s.q).toArray()).map(x=>x*s.labBeta):physicalV;const forward=new T.Vector3(0,0,-1).applyQuaternion(s.q);this.starMaterial.uniforms.ship.value.set(...s.pos);this.starMaterial.uniforms.speed.value.set(...v);this.starMaterial.uniforms.optics.value=0;this.starMaterial.uniforms.shift.value=0;this.spacecraft.controls.enabled=s.external&&!s.map;if(s.trackTarget&&!s.opticalLab&&s.target){
+  const physicalV=velocity(s.u);let v=s.opticalLab?labDirection(physicalV,new T.Vector3(0,0,-1).applyQuaternion(s.q).toArray()).map(x=>x*s.labBeta):physicalV;const forward=new T.Vector3(0,0,-1).applyQuaternion(s.q);this.starMaterial.uniforms.ship.value.set(...s.pos);this.starMaterial.uniforms.speed.value.set(...v);this.starMaterial.uniforms.optics.value=0;this.starMaterial.uniforms.shift.value=0;this.spacecraft.controls.enabled=s.external&&!s.map;if(s.trackTarget&&!s.opticalLab&&s.target){
    const target=s.target.lookAt?this.objects.find(o=>o.id===s.target.lookAt):s.target;
    let n=unit(sub(target.lightXYZ||target.xyz,s.pos));if(s.relativistic&&(!s.external||s.shipFrame==='comoving'))n=aberrateU(n,s.u);
    const direction=vec(n),up=Math.abs(n[2])>.95?new T.Vector3(0,1,0):new T.Vector3(0,0,1);
@@ -98,7 +98,7 @@ export class SpaceRenderer{
   }else if(!s.external)this.camera.quaternion.copy(s.q);
   if(s.external){this.spacecraft.controls.update();this.camera.quaternion.copy(this.spacecraft.camera.quaternion);}
   this.spacecraft.camera.fov=s.opticalLab?46:70;this.camera.fov=s.external?this.spacecraft.camera.fov:(s.fov||70);this.camera.updateProjectionMatrix();this.camera.updateMatrixWorld();this.galaxy.material.uniforms.observer.value.set(...s.pos);this.galaxy.material.uniforms.speed.value.set(...v);this.galaxy.material.uniforms.optics.value=0;this.galaxy.material.uniforms.band.value=s.band??1;this.galaxy.material.uniforms.exposure.value=s.exposure??1;this.galaxy.material.uniforms.enabled.value=+s.galaxyLight;this.starMaterial.uniforms.exposure.value=1;this.starMaterial.uniforms.band.value=s.band??1;this.galaxy.bake(this.renderer,s);this.environments.update(s);this.orbit.update(s);
-  const visualU=s.opticalLab?mul(unit(norm(physicalV)>0?physicalV:forward.toArray()),gamma(s.labBeta)*s.labBeta):s.u;
+  const visualU=s.opticalLab?mul(labDirection(physicalV,forward.toArray()),gamma(s.labBeta)*s.labBeta):s.u;
   const positionKey=[s.t,...s.pos,s.retarded].join("|");if(this.positionKey!==positionKey){this.positionKey=positionKey;const attr=this.sky.geometry.attributes.position,absolute=this.sky.geometry.attributes.catalogPosition;this.sky.userData.stars.forEach((o,i)=>{const p=o.lightXYZ||o.xyz;attr.setXYZ(i,p[0]-s.pos[0],p[1]-s.pos[1],p[2]-s.pos[2]);absolute.setXYZ(i,...p);});attr.needsUpdate=absolute.needsUpdate=true;
   const mapAttr=this.mapStars.geometry.attributes.position;this.stars.forEach((o,i)=>mapAttr.setXYZ(i,...o.xyz));mapAttr.needsUpdate=true;this.mapStars.geometry.computeBoundingSphere();}
   const o=s.target,relative=o?sub(o.lightXYZ||o.xyz,s.pos):null;
@@ -146,7 +146,7 @@ export class SpaceRenderer{
     // Navigation symbols, not light: hidden in the clean view so that only the photometric sky remains.
     if(s.catalogueMarkers!==false&&!s.cleanView&&(s.target?.type==='cosmic'||norm(s.pos)>1e7))this.catalogueSky.render(this.renderer,this.camera,skyOptics?visualU:[0,0,0]);
     if(s.basinOverlay&&!s.cleanView)this.basinOverlay.render(this.renderer,this.camera,s.pos,skyOptics?visualU:[0,0,0],s.wall);
-    if(s.external)this.spacecraft.render(this.renderer,{...s,shipLightSources:this.shipLight=this.shipLighting.update(s),opticalLab:s.opticalLab&&!!betaOptics,labBeta:betaOptics?s.labBeta:0,speedValue:half&&!betaOptics?0:norm(physicalV),gammaValue:half&&!betaOptics?1:gammaU(s.u),velocityVector:physicalV},half?w/2/h:w/h);
+    if(s.external)this.spacecraft.render(this.renderer,{...s,shipLightSources:this.shipLight=this.shipLighting.update(s),opticalLab:s.opticalLab&&!!betaOptics,labBeta:betaOptics?s.labBeta:0,speedValue:half&&!betaOptics?0:norm(physicalV),gammaValue:half&&!betaOptics?1:gammaU(s.u),velocityVector:s.opticalLab?labDirection(physicalV,forward.toArray()):physicalV},half?w/2/h:w/h);
    };
    if(s.opticalLab){this.renderer.setScissorTest(true);this.renderer.setViewport(0,0,w/2,h);this.renderer.setScissor(0,0,w/2,h);draw(0,true);this.renderer.setViewport(w/2,0,w/2,h);this.renderer.setScissor(w/2,0,w/2,h);draw(1,true);this.renderer.setScissorTest(false);this.renderer.setViewport(0,0,w,h);}else draw(+s.relativistic,false);if(s.passage)this.passageView.render(this.renderer,s.passage.progress,s.passage.unstable,performance.now()/1000,w/h);
   }
