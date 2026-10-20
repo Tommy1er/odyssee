@@ -1,0 +1,29 @@
+name: Nested emission reference budget
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/emission-budget.yml'
+      - 'src/emission-budget.js'
+      - 'scripts/validate-emission-budget.mjs'
+      - 'src/local-group.js'
+      - 'src/extragalactic-nebulae.js'
+      - 'src/nebulae.js'
+      - 'src/photometry.js'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reference-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node scripts/validate-emission-budget.mjs
