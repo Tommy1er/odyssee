@@ -17,6 +17,10 @@ on:
       - 'src/flrw.js'
       - 'src/extragalactic-nebulae.js'
       - 'src/nebulae.js'
+      - 'src/nested-emission.js'
+      - 'src/emission-budget.js'
+      - 'scripts/validate-nested-emission.mjs'
+      - 'scripts/validate-nested-emission-ui.cjs'
       - 'src/local-group.js'
       - 'src/cf4-basins.js'
       - 'scripts/validate-galaxy-spectra.mjs'
@@ -60,6 +64,7 @@ jobs:
           node scripts/validate-galaxy-spectral-overlay.mjs
           node scripts/validate-galaxy-photometry.mjs
           node scripts/validate-cf4-basins.mjs
+          node scripts/validate-nested-emission.mjs
           node scripts/validate-flrw.mjs
           node scripts/validate-nebulae.mjs
           node scripts/validate-star-nurseries.mjs
@@ -71,6 +76,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Validate cockpit and reconstructed basins in a browser
         run: |
+          node scripts/validate-nested-emission-ui.cjs
           node scripts/validate-galaxy-ui.cjs
           node scripts/validate-basins-ui.cjs
           node scripts/validate-star-nurseries-ui.cjs
@@ -83,6 +89,8 @@ jobs:
           path: |
             validation/v2-screenshots/nurserie-*.png
             validation/v2-screenshots/nurseries-ui-results.json
+            validation/v2-screenshots/nested-emission-*.png
+            validation/v2-screenshots/nested-emission-ui-results.json
             validation/v2-screenshots/galaxy-spectral-hdr-*.png
             validation/v2-screenshots/galaxy-spectral-hdr-ui-results.json
           if-no-files-found: ignore

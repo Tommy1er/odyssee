@@ -15,6 +15,9 @@ on:
       - 'src/flrw.js'
       - 'src/extragalactic-nebulae.js'
       - 'src/nebulae.js'
+      - 'src/nested-emission.js'
+      - 'src/emission-budget.js'
+      - 'scripts/validate-nested-emission.mjs'
       - 'src/cockpit.js'
       - 'src/cf4-basins.js'
       - 'scripts/validate-flrw.mjs'
@@ -47,6 +50,7 @@ jobs:
         run: npm ci
       - name: Scientific numeric regressions
         run: |
+          node scripts/validate-nested-emission.mjs
           node scripts/validate-flrw.mjs
           node scripts/validate-star-nurseries.mjs
           node scripts/validate-nebulae.mjs
