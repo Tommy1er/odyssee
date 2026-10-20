@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {spectralPointFluxRatio,angularAberrationScale,overlayPixelScale,spectralPointVertex,spectralPointFragment} from '../src/galaxy-spectral-overlay.js';
-import {PIXEL_SR} from '../src/photometry.js';
+import {PIXEL_SR,texelGain,TEXEL_GLSL} from '../src/photometry.js';
 import {labDirection,LAB_REAL_BETA} from '../src/physics.js';
 import {lutTexture,toHalfArray,floatLinearSupported} from '../src/gpu-textures.js';
 import * as THREE from 'three';
@@ -186,5 +186,15 @@ test('0 / 0.99 c comparison moves along the heading unless the ship really trave
  const real=labDirection([0,.3,0],fwd);near(real[1],1);// real 0.3 c flight: true direction of motion
  near(LAB_REAL_BETA,1e-3);
  const r=fs.readFileSync(new URL('../src/renderer.js',import.meta.url),'utf8');assert((r.match(/labDirection\(physicalV/g)||[]).length===3);
+});
+test('Point sprites carry the same flux wherever they fall in a cube face or on screen (pixel solid angle)',()=>{
+ // Gnomonic pixel of side h in tangent units at (x,y): dΩ = h² (1+x²+y²)^(-3/2). Summed over a 90° face: 4π/6 sr.
+ const N=512,h=2/N;let face=0;for(let i=0;i<N;i++)for(let j=0;j<N;j++){const x=-1+(i+.5)*h,y=-1+(j+.5)*h;face+=h*h*(1+x*x+y*y)**-1.5;}
+ near(face,4*Math.PI/6,1e-5);
+ // A sprite's pixel sum × texelGain × local dΩ equals the centre-pixel convention everywhere (corner: ×5.2).
+ for(const [x,y] of [[0,0],[.5,.2],[1,1],[-.9,.4]])near(texelGain(x,y)*h*h*(1+x*x+y*y)**-1.5,h*h,1e-12);
+ near(texelGain(1,1),3**1.5,1e-12);
+ assert(TEXEL_GLSL.includes('pow(1.+dot(t,t),1.5)'));
+ for(const f of ['stellar-light.js','galaxy-photometry.js','galaxy-spectral-overlay.js']){const src=fs.readFileSync(new URL('../src/'+f,import.meta.url),'utf8');assert(src.includes('${TEXEL_GLSL}'),f);assert((src.match(/light\*=texelGain\(mv\.xyz\)/g)||[]).length===(f==='stellar-light.js'?2:1),f);}
 });
 console.log(JSON.stringify({passed,status:'PASS',webgl:'requires separate Chromium test'}));

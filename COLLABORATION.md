@@ -131,3 +131,5 @@ Relais du 15 octobre (soir) : `docs/RELAIS-CLAUDE-2026-10-15-AVIS-REFONTE.md`, a
 Relais du 15 octobre (nuit) : `docs/RELAIS-CLAUDE-2026-10-15-RENDEZVOUS.md`, tranche Terre étape 1 : rendez-vous à la vitesse de la cible, continuité au départ, maintien de position. Tests : `node scripts/validate-rendezvous.mjs`, `node scripts/validate-rendezvous-ui.cjs`.
 
 Relais du 18 octobre : `docs/RELAIS-CLAUDE-2026-10-18-REVUE-HDR.md`, revue de la couche HDR spectrale de Codex : pixels physiques (DPR), échelle photométrique de la couche, occultation en vue rapprochée, flux ponctuel du cube 512 sur téléphone, repli half-float sans `OES_texture_float_linear`.
+
+Relais du 20 octobre : `docs/RELAIS-CLAUDE-2026-10-20-ANGLE-SOLIDE-PIXELS.md`, éclat des étoiles et galaxies ponctuelles indépendant de leur direction (angle solide des pixels du cube et de l’écran).

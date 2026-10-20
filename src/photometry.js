@@ -12,6 +12,15 @@ export const PIXEL_SR = (2 / 1024) ** 2;
 export const CUBE_SIZE = typeof innerWidth !== 'undefined' && innerWidth < 620 ? 512 : 1024;
 export const CUBE_POINT_SCALE = (CUBE_SIZE / 1024) ** 2;
 export const CUBE_POINT_GLSL = CUBE_POINT_SCALE.toFixed(6);
+// Perspective (cube face or screen) pixels are not equal in solid angle: at tangent-plane coordinates t = (x, y)/(-z)
+// a pixel spans (pixel at the centre) · (1 + |t|²)^(−3/2) sr, down to ×0.19 in a 90° cube-face corner. Point sprites store
+// a pixel SUM, so to carry the same Φ wherever they fall their light is multiplied by (1 + |t|²)^(3/2), and a resolved
+// sprite's size in pixels by (1 + |t|²)^(3/4) (mean linear pixel scale). Before this, a star or point galaxy changed
+// brightness by up to ×5 with its direction in the sky cube (±50 % measured between neighbouring galaxies).
+export const TEXEL_GLSL = `vec2 texelTan(vec3 viewPos){return viewPos.z<-1.e-6?viewPos.xy/(-viewPos.z):vec2(0.);}
+float texelGain(vec3 viewPos){vec2 t=texelTan(viewPos);return pow(1.+dot(t,t),1.5);}
+float texelScale(vec3 viewPos){vec2 t=texelTan(viewPos);return pow(1.+dot(t,t),.75);}`;
+export const texelGain = (x, y) => (1 + x * x + y * y) ** 1.5;
 export const PHOT_ZERO = 0.818 * 10 ** 1.2 * PIXEL_SR;
 export const fluxFromMag = (m) => PHOT_ZERO * 10 ** (-0.4 * m);
 // "Visible · pose longue": diffuse emission (nebulae, comet comae and tails) is multiplied by this gain, i.e. 2.5 magnitudes,

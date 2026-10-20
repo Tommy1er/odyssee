@@ -5,7 +5,7 @@
 import * as T from 'three';
 import {gammaU,norm,unit} from './physics.js';
 import {galaxySpectra} from './galaxy-spectral.js';
-import {PIXEL_SR} from './photometry.js';
+import {PIXEL_SR,TEXEL_GLSL} from './photometry.js';
 import {lutTexture} from './gpu-textures.js';
 
 // Pure scalar counterpart of the KC96 observer/source Doppler factor; independent test oracle for shader.
@@ -49,6 +49,7 @@ vec4 galaxyBridge(float cls,float D,float T){
  color*=y0/max(dot(color,vec3(.2126,.7152,.0722)),1.e-8);
  return vec4(color,logBand+clamp(atD.a-atEdge.a,-70.,70.));
 }
+${TEXEL_GLSL}
 void main(){
  float distance=max(length(position),1.e-6);vec3 n=position/distance;
  float Dobs=1.;vec3 shifted=n;
@@ -70,12 +71,15 @@ void main(){
  // boundary, both sides use the same KC96-anchored continuous thermal extension.
  flux*=exp(clamp(seen.a-cat.a,-60.,60.))/max(Dobs*Dobs,1.e-18);
  flux*=shown;if(band>=3.)flux*=.005;
- float size=clamp(2.*rad/distance/pix/Dobs,1.25,48.);
+ vec4 mv=viewMatrix*vec4(shifted*1000.,1.);
+ // Screen pixels off-axis span less solid angle (same law as the cube faces, photometry.js TEXEL_GLSL).
+ float size=clamp(2.*rad/distance/pix/Dobs*texelScale(mv.xyz),1.25,48.);
  // Long-exposure gain onset on the same angular size as the historical cube sprite (pixRef = its pix).
  soft=smoothstep(2.,5.,2.*rad/distance/pixRef/Dobs);flux*=mix(1.,gain,soft);
  light=seen.rgb*flux*pixScale/(size*size*.08);
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
- gl_Position=projectionMatrix*viewMatrix*vec4(shifted*1000.,1.);
+ light*=texelGain(mv.xyz);
+ gl_Position=projectionMatrix*mv;
  gl_PointSize=size;
  if(shown<.001){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}
 }`;

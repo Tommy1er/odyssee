@@ -9,7 +9,7 @@
 import * as T from 'three';
 import { galaxyVelocity, receivedLinear, C_KMS } from './cosmic-motion.js';
 import { classFromT, CLASSES, LY_PER_KPC } from './catalogue-galaxies.js';
-import { diffuseGain, CUBE_SIZE, CUBE_POINT_GLSL } from './photometry.js';
+import { diffuseGain, CUBE_SIZE, CUBE_POINT_GLSL, TEXEL_GLSL } from './photometry.js';
 import {lutTexture} from './gpu-textures.js';
 import {galaxySpectra,spectralClassFromT} from './galaxy-spectral.js';
 
@@ -60,13 +60,14 @@ export function enrichGalaxy(o, data, ids = [o.id]) {
 const vertexShader = `attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship,sclass;uniform float pix,avScale,band,gain;uniform sampler2D lut,sedLut;varying vec3 light;varying float soft;
 vec4 thermal(float T){return texture2D(lut,vec2(clamp(log(max(100.,T)/100.)/log(10000.),0.,1.),.5));}
 vec4 galaxySED(float cls,float D){float u=(.5+clamp((D-.72)/.37,0.,1.)*256.)/257.;return texture2D(sedLut,vec2(u,(cls+.5)/8.));}
+${TEXEL_GLSL}
 void main(){float d=max(length(position),1e-6);vec3 n=position/d;float mag=vmag+5.*log(d/dcat)/log(10.)+avfg*(avScale-1.);float flux=pow(10.,-.4*(mag-3.))*${CUBE_POINT_GLSL};bool sedValid=(dsun>=.72&&dsun<=1.09&&dship>=.72&&dship<=1.09);
  vec4 seen=sedValid?galaxySED(sclass,dship):thermal(temp*dship),cat=sedValid?galaxySED(sclass,dsun):thermal(temp*dsun);
  flux*=sedValid?(seen.a/max(cat.a,1.e-12))*pow(dship/dsun,4.):exp(clamp(seen.a-cat.a,-60.,60.));
  flux*=shown;if(band>=3.)flux*=.005;
- float size=clamp(2.*rad/d/pix,1.25,48.);soft=smoothstep(2.,5.,size);flux*=mix(1.,gain,soft);light=seen.rgb*flux/(size*size*.08);
+ vec4 mv=viewMatrix*vec4(n*1000.,1.);float size=clamp(2.*rad/d/pix*texelScale(mv.xyz),1.25,48.);soft=smoothstep(2.,5.,2.*rad/d/pix);flux*=mix(1.,gain,soft);light=seen.rgb*flux/(size*size*.08);
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
- gl_Position=projectionMatrix*viewMatrix*vec4(n*1000.,1.);gl_PointSize=size;if(shown<.001){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}}`;
+ light*=texelGain(mv.xyz);gl_Position=projectionMatrix*mv;gl_PointSize=size;if(shown<.001){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}}`;
 const fragmentShader = `varying vec3 light;varying float soft;void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;float psf=mix(exp(-12.*r*r)*(1.-smoothstep(.7,1.,r)),exp(-4.*r*r)*(1.-smoothstep(.8,1.,r))*.33,soft);gl_FragColor=vec4(min(max(light,vec3(0)),vec3(5000))*psf,1.);}`;
 // Doppler factor of light emitted by a source of velocity v (units of c) toward unit direction k (source → observer):
 // D = 1 / (γ (1 − v·k)). Catalogue magnitude anchors the flux observed at the Sun (D☉).
@@ -99,7 +100,7 @@ export class GalaxyLightLayer {
     const tex = lutTexture(new Float32Array(lut), 512, 1); tex.minFilter = tex.magFilter = T.LinearFilter; tex.needsUpdate = true;
     const sedTex=lutTexture(galaxySpectra.data,galaxySpectra.samples,galaxySpectra.ids.length);
     sedTex.minFilter=sedTex.magFilter=T.LinearFilter;sedTex.needsUpdate=true;
-    this.material = new T.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { sedLut:{value:sedTex}, pix: { value: (Math.PI / 2) / CUBE_SIZE }, avScale: { value: 1 }, band: { value: 1 }, gain: { value: 1 }, lut: { value: tex } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending });
+    this.material = new T.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { sedLut:{value:sedTex}, pix: { value: 2 / CUBE_SIZE }, avScale: { value: 1 }, band: { value: 1 }, gain: { value: 1 }, lut: { value: tex } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending });
     this.points = new T.Points(new T.BufferGeometry(), this.material); this.points.frustumCulled = false; this.points.visible = false;
     this.rows = []; this.status = 'idle'; this.next = 0; this.key = '';
   }
