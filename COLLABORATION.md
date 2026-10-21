@@ -80,6 +80,7 @@ python scripts/build-galaxy-catalogue.py  # régénère public/galaxy-catalogue.
 python scripts/build-galaxy-photometry.py  # régénère public/galaxy-photometry.{json,bin} : 2MRS + CF4 + UNGC + McConnachie, magnitudes, formes, distances
 node scripts/validate-galaxy-photometry.mjs  # magnitudes de référence, doublons, enrichissement, calibration des volumes, couche de lumière
 node scripts/validate-galaxy-spectral-overlay.mjs  # couche HDR des galaxies ponctuelles : lois Doppler, échelle de pixel, DPR, occultation, cube 512, LUT half-float
+node scripts/validate-nebula-points.mjs  # nébuleuses non résolues en points étalonnés, relais point → volume, cible visible de loin
 python scripts/build-extragalactic.py   # régénération hors ligne des 3 catalogues de carte
 node scripts/validate-extragalactic.mjs # données, incertitudes, plan supergalactique, sélection
 node scripts/validate-catalogue-ui.mjs  # intégration DOM sans rendu WebGL
@@ -133,3 +134,5 @@ Relais du 15 octobre (nuit) : `docs/RELAIS-CLAUDE-2026-10-15-RENDEZVOUS.md`, tra
 Relais du 18 octobre : `docs/RELAIS-CLAUDE-2026-10-18-REVUE-HDR.md`, revue de la couche HDR spectrale de Codex : pixels physiques (DPR), échelle photométrique de la couche, occultation en vue rapprochée, flux ponctuel du cube 512 sur téléphone, repli half-float sans `OES_texture_float_linear`.
 
 Relais du 20 octobre : `docs/RELAIS-CLAUDE-2026-10-20-ANGLE-SOLIDE-PIXELS.md`, éclat des étoiles et galaxies ponctuelles indépendant de leur direction (angle solide des pixels du cube et de l’écran).
+
+Relais du 21 octobre : `docs/RELAIS-CLAUDE-2026-10-21-NEBULEUSES-POINT-VOLUME.md`, nébuleuses non résolues en points étalonnés, relais point → volume, cible visible de loin, PSF intégrée sur le pixel pour toutes les sources ponctuelles, populations d’amas dans le cube principal.

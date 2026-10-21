@@ -90,7 +90,7 @@ test('Screen-pixel overlay carries the shared cube photometric scale (resolution
  for(const pix of [2.68e-3,1.34e-3,4.5e-4,6e-5]){const S=.818*overlayPixelScale(pix);near(S*pix*pix,.818*PIXEL_SR,1e-12);}
  // Resolved disc: per-pixel value (radiance) independent of the screen pixel; pixel value = flux·pixScale/(size²·.08).
  const theta=.02,v=pix=>overlayPixelScale(pix)/((theta/pix)**2*.08);near(v(2.68e-3)/v(6e-5),1,1e-12);
- assert(spectralPointVertex.includes('flux*pixScale/(size*size*.08)'));
+ assert(spectralPointVertex.includes('light=seen.rgb*flux*pixScale*.818'));// pixel-integrated PSF: pixel sum .818·flux·pixScale
  assert(spectralPointVertex.includes('2.*rad/distance/pixRef/Dobs'));
  assert.equal(overlayPixelScale(0),null);
 });

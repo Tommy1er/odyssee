@@ -5,7 +5,7 @@
 import * as T from 'three';
 import {gammaU,norm,unit} from './physics.js';
 import {galaxySpectra} from './galaxy-spectral.js';
-import {PIXEL_SR,TEXEL_GLSL} from './photometry.js';
+import {PIXEL_SR,TEXEL_GLSL,PSF_VERTEX_GLSL,PSF_FRAGMENT} from './photometry.js';
 import {lutTexture} from './gpu-textures.js';
 
 // Pure scalar counterpart of the KC96 observer/source Doppler factor; independent test oracle for shader.
@@ -50,6 +50,7 @@ vec4 galaxyBridge(float cls,float D,float T){
  return vec4(color,logBand+clamp(atD.a-atEdge.a,-70.,70.));
 }
 ${TEXEL_GLSL}
+${PSF_VERTEX_GLSL}
 void main(){
  float distance=max(length(position),1.e-6);vec3 n=position/distance;
  float Dobs=1.;vec3 shifted=n;
@@ -76,20 +77,15 @@ void main(){
  float size=clamp(2.*rad/distance/pix/Dobs*texelScale(mv.xyz),1.25,48.);
  // Long-exposure gain onset on the same angular size as the historical cube sprite (pixRef = its pix).
  soft=smoothstep(2.,5.,2.*rad/distance/pixRef/Dobs);flux*=mix(1.,gain,soft);
- light=seen.rgb*flux*pixScale/(size*size*.08);
+ psfS=psfSigma(size,soft,1.);// drawn on the screen grid itself: pixel-integrated, no resamplingpsfD=psfDraw(size,psfS);
+ light=seen.rgb*flux*pixScale*.818;
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
  light*=texelGain(mv.xyz);
  gl_Position=projectionMatrix*mv;
- gl_PointSize=size;
+ gl_PointSize=psfD;
  if(shown<.001){gl_Position=vec4(2.,2.,2.,1.);gl_PointSize=0.;}
 }`;
-export const spectralPointFragment=`
-varying vec3 light;varying float soft;
-void main(){
- float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;
- float psf=mix(exp(-12.*r*r)*(1.-smoothstep(.7,1.,r)),exp(-4.*r*r)*(1.-smoothstep(.8,1.,r))*.33,soft);
- gl_FragColor=vec4(min(max(light,vec3(0.)),vec3(5000.))*psf,1.);
-}`;
+export const spectralPointFragment=PSF_FRAGMENT;
 export class GalaxySpectralOverlay {
  constructor(source){
   this.source=source;
@@ -99,7 +95,7 @@ export class GalaxySpectralOverlay {
    vertexShader:spectralPointVertex,fragmentShader:spectralPointFragment,
    uniforms:{
     sedLut:{value:sed},lut:{value:source.material.uniforms.lut.value},
-    pix:{value:.001},pixRef:{value:source.material.uniforms.pix.value},pixScale:{value:1},avScale:{value:1},band:{value:1},gain:{value:1},
+    pix:{value:.001},psfMin:{value:0},pixRef:{value:source.material.uniforms.pix.value},pixScale:{value:1},avScale:{value:1},band:{value:1},gain:{value:1},
     g:{value:1},momentum:{value:0},axis:{value:new T.Vector3(0,0,-1)},optics:{value:0}
    },transparent:true,depthWrite:false,depthTest:false,blending:T.AdditiveBlending
   });

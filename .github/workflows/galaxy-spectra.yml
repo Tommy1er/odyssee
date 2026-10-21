@@ -18,6 +18,11 @@ on:
       - 'src/extragalactic-nebulae.js'
       - 'src/nebulae.js'
       - 'src/nested-emission.js'
+      - 'src/nebula-points.js'
+      - 'src/environments.js'
+      - 'src/photometry.js'
+      - 'src/stellar-light.js'
+      - 'scripts/validate-nebula-points.mjs'
       - 'src/emission-budget.js'
       - 'scripts/validate-nested-emission.mjs'
       - 'scripts/validate-nested-emission-ui.cjs'
@@ -65,6 +70,7 @@ jobs:
           node scripts/validate-galaxy-photometry.mjs
           node scripts/validate-cf4-basins.mjs
           node scripts/validate-nested-emission.mjs
+          node scripts/validate-nebula-points.mjs
           node scripts/validate-flrw.mjs
           node scripts/validate-nebulae.mjs
           node scripts/validate-star-nurseries.mjs

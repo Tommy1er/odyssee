@@ -32,6 +32,8 @@ export class GalacticOrbit{
 }
 
 // Selected clouds integrate their volume per screen ray, without a low-resolution capture.
-export const cloudGLSL=`uniform vec3 cloudCenter;uniform mat3 cloudRotation;uniform float cloudActive;${nebulaGLSL(72)}
-vec3 cloudRadiance(vec3 ray,vec3 background){if(cloudActive<.5)return background;vec3 eye=cloudRotation*(-cloudCenter),dir=cloudRotation*ray,T;return nebulaMarch(eye,dir,background,T);}`;
+// cloudOpacity: share of the cloud drawn as a volume; its dust occludes the background only in that proportion (the
+// point that carries the rest already includes the cloud's own extinction in its calibrated flux).
+export const cloudGLSL=`uniform vec3 cloudCenter;uniform mat3 cloudRotation;uniform float cloudActive,cloudOpacity;${nebulaGLSL(72)}
+vec3 cloudRadiance(vec3 ray,vec3 background){if(cloudActive<.5)return background;vec3 eye=cloudRotation*(-cloudCenter),dir=cloudRotation*ray,T;vec3 L=nebulaMarch(eye,dir,vec3(0.),T);return L+background*mix(vec3(1.),T,cloudOpacity);}`;
 export function nebulaUniforms(){return {shape:{value:0},seed:{value:0},nebKl:{value:0},nebKc:{value:0},nebTau:{value:0},nebGain:{value:1},nebContShape:{value:0},nebHi:{value:new T.Vector3(1,1,1)},nebLo:{value:new T.Vector3(1,1,1)},nebCont:{value:new T.Vector3(1,1,1)},nebZone:{value:new T.Vector4()}};}

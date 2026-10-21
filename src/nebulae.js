@@ -279,6 +279,8 @@ export function calibrate(o, { n = 40, steps = 64 } = {}) {
   for (const [x, y] of rays) if (x * x + y * y < 0.25) { let c = 0; samples(x, y, (a, b, z, ds) => (c += F.density(a, b, z) * ds)); colSum += c; colN++; }
   const kTau = colSum > 0 ? P.tau / (colSum / colN) : 0;
   let Eline = 0, Econt = 0, Eline0 = 0, Econt0 = 0;
+  // Integrated linear RGB of each component (Earth view), for the unresolved point representation's colour.
+  const lineRGB = [0, 0, 0], contRGB = [0, 0, 0];
   for (const [x, y] of rays) {
     let T = [1, 1, 1];
     samples(x, y, (a, b, z, ds) => {
@@ -288,8 +290,9 @@ export function calibrate(o, { n = 40, steps = 64 } = {}) {
       if (e < 1e-5 && cd < 1e-5) return;
       const col = loC.map((v, k) => v + (hiC[k] - v) * f);
       const tau = REDDEN.map((r) => kTau * den * ds * r), half = tau.map((t) => Math.exp(-0.5 * t));
-      Eline += lum(col.map((v, k) => v * e * ds * T[k] * half[k])) * dA;
-      Econt += lum(contC.map((v, k) => v * cd * ds * T[k] * half[k])) * dA;
+      const lc = col.map((v, k) => v * e * ds * T[k] * half[k]), cc = contC.map((v, k) => v * cd * ds * T[k] * half[k]);
+      Eline += lum(lc) * dA; Econt += lum(cc) * dA;
+      for (let k = 0; k < 3; k++) { lineRGB[k] += lc[k] * dA; contRGB[k] += cc[k] * dA; }
       Eline0 += e * ds * dA; Econt0 += cd * ds * dA;
       T = T.map((t, k) => t * Math.exp(-tau[k]));
     });
@@ -299,6 +302,8 @@ export function calibrate(o, { n = 40, steps = 64 } = {}) {
   return {
     shape, seed, kTau, Kl, Kc, hiC, loC, contC, contShape, zone: P.zone, Phi, J,
     escape: (Kl * Eline + Kc * Econt) / Math.max(Kl * Eline0 + Kc * Econt0, 1e-300),
+    // Chromaticity of the whole cloud seen from the Earth, normalised to luminance 1 (Kl·Eline + Kc·Econt = J).
+    rgb: [0, 1, 2].map((k) => (J > 0 ? (Kl * lineRGB[k] + Kc * contRGB[k]) / J : 1)),
   };
 }
 export function hashId(id) { let h = 2166136261; for (const c of id) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; }

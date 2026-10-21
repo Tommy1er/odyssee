@@ -21,6 +21,25 @@ export const TEXEL_GLSL = `vec2 texelTan(vec3 viewPos){return viewPos.z<-1.e-6?v
 float texelGain(vec3 viewPos){vec2 t=texelTan(viewPos);return pow(1.+dot(t,t),1.5);}
 float texelScale(vec3 viewPos){vec2 t=texelTan(viewPos);return pow(1.+dot(t,t),.75);}`;
 export const texelGain = (x, y) => (1 + x * x + y * y) ** 1.5;
+// Point-spread function of every point sprite (stars, cluster stars, point galaxies, unresolved nebulae, HDR overlay):
+// a Gaussian INTEGRATED over each pixel's area (erf), so that the pixel sum is 1 wherever the source falls between pixels.
+// The former profile exp(−12 r²), sampled at pixel centres with sprites down to 1.25 px, gave pixel sums from 0 to 8 × the
+// nominal value with sub-pixel position (NGC 604 seen from the Sun fell on a pixel corner and vanished). σ ≥ 0.55 px keeps
+// the sum within 0.1 %; the sprite is drawn large enough (7σ + 1 px) to hold the Gaussian. The total stays 0.818 × flux,
+// the pixel sum on which PHOT_ZERO is defined.
+export const PSF_SUM = 0.818;
+// psfMin: minimum σ in centre pixels of the surface the sprite is drawn on, × the local pixel scale. For the sky cube it is
+// set to 0.6 SCREEN pixel (renderer.js): the cube is then resampled per screen pixel, and a Gaussian narrower than
+// ~0.5 screen pixel is aliased (pixel sum ±19 % with the sub-pixel position on screen, measured 21 Oct 2026).
+export const PSF_MIN_SCREEN = 0.6;
+export const PSF_VERTEX_GLSL = `uniform float psfMin;varying float psfS,psfD;
+float psfSigma(float size,float soft,float scale){return max(max(mix(.102,.177,soft)*size,.55),psfMin*scale);}
+float psfDraw(float size,float sigma){return max(size,7.*sigma+1.);}`;
+export const PSF_FRAGMENT_GLSL = `varying float psfS,psfD;
+float erfA(float x){float s=sign(x);x=abs(x);float t=1./(1.+.3275911*x);return s*(1.-((((1.061405429*t-1.453152027)*t+1.421413741)*t-.284496736)*t+.254829592)*t*exp(-x*x));}
+float pixelPSF(){vec2 p=(gl_PointCoord-.5)*psfD;float k=.70710678/psfS;return .25*(erfA((p.x+.5)*k)-erfA((p.x-.5)*k))*(erfA((p.y+.5)*k)-erfA((p.y-.5)*k));}`;
+export const PSF_FRAGMENT = `varying vec3 light;${PSF_FRAGMENT_GLSL}
+void main(){gl_FragColor=vec4(min(max(light*pixelPSF(),vec3(0.)),vec3(5000.)),1.);}`;
 export const PHOT_ZERO = 0.818 * 10 ** 1.2 * PIXEL_SR;
 export const fluxFromMag = (m) => PHOT_ZERO * 10 ** (-0.4 * m);
 // "Visible · pose longue": diffuse emission (nebulae, comet comae and tails) is multiplied by this gain, i.e. 2.5 magnitudes,
