@@ -35,6 +35,7 @@ on:
       - 'scripts/validate-flrw.mjs'
       - 'scripts/validate-star-nurseries.mjs'
       - 'scripts/validate-star-nurseries-ui.cjs'
+      - 'scripts/validate-moon-ui.cjs'
       - 'scripts/validate-galaxy-ui.cjs'
       - 'scripts/validate-galaxy-spectral-overlay-ui.cjs'
       - 'scripts/build-galaxy-sed-kc96.mjs'
@@ -52,7 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.sha }}
           persist-credentials: true
       - uses: actions/setup-node@v4
         with:
@@ -87,12 +88,22 @@ jobs:
           node scripts/validate-basins-ui.cjs
           node scripts/validate-star-nurseries-ui.cjs
           node scripts/validate-galaxy-spectral-overlay-ui.cjs
+      - name: Validate lunar texture and final capture
+        run: node scripts/validate-moon-ui.cjs
+      - name: Record tested source revision
+        if: always()
+        run: |
+          mkdir -p validation/v2-screenshots
+          git rev-parse HEAD > validation/v2-screenshots/tested-source-sha.txt
       - name: Keep SwiftShader captures for review
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cosmic-nurseries-swiftshader
           path: |
+            validation/v2-screenshots/tested-source-sha.txt
+            validation/v2-screenshots/moon-restored.png
+            validation/v2-screenshots/moon-repair-results.json
             validation/v2-screenshots/nurserie-*.png
             validation/v2-screenshots/nurseries-ui-results.json
             validation/v2-screenshots/nested-emission-*.png
