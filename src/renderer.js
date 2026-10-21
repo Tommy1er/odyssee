@@ -120,7 +120,7 @@ export class SpaceRenderer{
   for(const m of [this.starMaterial,this.galaxyLight.material,this.nebulaPoints.material,...[...this.environments.cache.values()].filter(e=>e.stars).map(e=>e.stars.material)])if(m?.uniforms?.psfMin&&m.uniforms.psfMin.value!==psfMin){m.uniforms.psfMin.value=psfMin;this.captureKey=null;}
   const nebulaPoint=new Map();this.nebulaHandoff={};
   for(const o of this.nebulaPoints.objects){const w=nebulaVolume.get(o.id),g=this.emissionBudget.childGains.get(o.id)??1,e=this.environments.cache.get(o.id);
-   if(e?.cloud&&s.target?.id!==o.id){e.cloud.material.uniforms.nebGain.value*=w;if(w<=0)e.group.visible=false;}
+   if(e?.cloud&&s.target?.id!==o.id){e.cloud.material.uniforms.nebGain.value*=w;e.cloud.material.uniforms.cloudOpacity.value=w;if(w<=0)e.group.visible=false;}
    nebulaPoint.set(o.id,visBand?(1-w)*g:0);this.nebulaHandoff[o.id]={volume:w,point:visBand?1-w:0,gain:g};}
   this.skyOptics.cloudOpacity=s.target&&nebulaVolume.has(s.target.id)?nebulaVolume.get(s.target.id):1;
   this.skyOptics.cloudGain=s.target&&nebulaVolume.has(s.target.id)?nebulaVolume.get(s.target.id)*(this.emissionBudget.childGains.get(s.target.id)??1):0;

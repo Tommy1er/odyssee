@@ -34,7 +34,8 @@ const src=f=>fs.readFileSync(new URL('../src/'+f,import.meta.url),'utf8');
  check('4 · Sprites (et toutes les populations d’amas) dans la passe des sources ponctuelles, seuls les volumes de nuages dans le cube de fond ; correction d’angle solide',r.includes('stars:[this.sky,this.galaxyLight.points,this.nebulaPoints.points,...[...this.environments.cache.values()].filter(e=>e.stars)')&&r.includes('backgrounds:[this.galaxy,...[...this.environments.cache.values()].filter(e=>!e.stars)')&&pts.includes('texelGain(mv.xyz)')&&pts.includes('${CUBE_POINT_GLSL}'));
  check('4b · Nuage sélectionné retiré du cube de fond sans condition de distance',r.includes('const directCloud=!!selectedCloud?.cloud;'));
  check('4c · Marche par rayon d’écran pondérée par w, sans limite de 120 rayons quand un poids est fourni',so.includes('diffuseGain(s.band??1)*cloudGain')&&so.includes('this.cloudGain??'));
- check('4d · Poussière du nuage dessinée à proportion de w (le point inclut déjà son extinction)',env.includes('background*mix(vec3(1.),T,cloudOpacity)'));
+ check('4d · Poussière du nuage sélectionné dessinée à proportion de w (le point inclut déjà son extinction)',env.includes('background*mix(vec3(1.),T,cloudOpacity)'));
+ check('4f · Poussière non sélectionnée : alpha du cube pondéré par le relais, uniform branché au même poids',env.includes('cloudOpacity:{value:1}')&&env.includes('vec4(L,cloudOpacity*clamp(1.-dot(T,')&&r.includes('e.cloud.material.uniforms.cloudOpacity.value=w;'));
  check('4e · Gains du budget appliqués au point, au volume du cube et à la marche directe',r.includes('(1-w)*g')&&r.includes('nebulaVolume.get(s.target.id)*(this.emissionBudget.childGains.get(s.target.id)??1)'));}
 // 5. Pixel-integrated Gaussian PSF (every point sprite): pixel sum independent of the sub-pixel position, also for
 //    the smallest sprites; the former centre-sampled profile ranged from 0 to 8 × nominal (NGC 604 vanished on a pixel corner).

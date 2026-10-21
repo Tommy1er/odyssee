@@ -8,14 +8,14 @@ import {clusterPopulation} from './cluster-population.js';
 const vertex=`varying vec3 localPoint;void main(){localPoint=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
 // Nebula volume (visible bands: physical emission-line model of nebulae.js; other bands: qualitative model). Output is
 // premultiplied: radiance + background × (1 − alpha), alpha from the luminance-weighted dust transmission.
-const fragment=`precision highp float;varying vec3 localPoint;uniform vec3 eye;uniform float band;${nebulaGLSL(24)}
-void main(){vec3 dir=normalize(localPoint-eye);vec3 T;vec3 L=nebulaMarch(eye,dir,vec3(0.),T);gl_FragColor=vec4(L,clamp(1.-dot(T,vec3(.2126,.7152,.0722)),0.,1.));}`;
+const fragment=`precision highp float;varying vec3 localPoint;uniform vec3 eye;uniform float band,cloudOpacity;${nebulaGLSL(24)}
+void main(){vec3 dir=normalize(localPoint-eye);vec3 T;vec3 L=nebulaMarch(eye,dir,vec3(0.),T);gl_FragColor=vec4(L,cloudOpacity*clamp(1.-dot(T,vec3(.2126,.7152,.0722)),0.,1.));}`;
 function random(seed){return()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return (seed+.5)/4294967296;};}
 export class EnvironmentLayer{
  constructor(scene,objects,lut=[]){this.scene=scene;this.lut=lut;this.objects=objects.filter(o=>['nebula','pillars','cluster'].includes(o.type));this.cache=new Map();this.active=[];this.lastUpdate=-1;}
  create(o){const group=new T.Group(),r=radiusLy(o);let cloud,stars;if(o.type==='cluster'){
  stars=createClusterStars(clusterPopulation(o),this.lut,o.xyz);group.add(stars);
- }else{const m=new T.ShaderMaterial({vertexShader:vertex,fragmentShader:fragment,uniforms:{eye:{value:new T.Vector3()},band:{value:1},...nebulaUniforms()},transparent:true,premultipliedAlpha:true,depthWrite:false,side:T.BackSide});applyCalibration(m.uniforms,calibration(o),1);cloud=new T.Mesh(new T.SphereGeometry(1.1,40,28),m);group.add(cloud);}
+ }else{const m=new T.ShaderMaterial({vertexShader:vertex,fragmentShader:fragment,uniforms:{eye:{value:new T.Vector3()},band:{value:1},cloudOpacity:{value:1},...nebulaUniforms()},transparent:true,premultipliedAlpha:true,depthWrite:false,side:T.BackSide});applyCalibration(m.uniforms,calibration(o),1);cloud=new T.Mesh(new T.SphereGeometry(1.1,40,28),m);group.add(cloud);}
  group.renderOrder=2;this.scene.add(group);const entry={group,cloud,stars,o,r};this.cache.set(o.id,entry);return entry;}
  update(s){if(s.wall>this.lastUpdate+.5||this.lastTarget!==s.target?.id||!this.lastPos||norm(sub(s.pos,this.lastPos))>.01){this.lastPos=[...s.pos];this.lastUpdate=s.wall;this.lastTarget=s.target?.id;this.active=this.objects.map(o=>({o,score:norm(sub(o.lightXYZ||o.xyz,s.pos))/radiusLy(o)})).filter(x=>x.score<600).sort((a,b)=>a.score-b.score).slice(0,7).map(x=>x.o);
  // Also the selected object and the naked-eye globular clusters (integrated V ≤ 6 from the ship, e.g. ω Centauri, 47 Tucanae).
