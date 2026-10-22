@@ -9,6 +9,7 @@ on:
       - 'scripts/validate-rendezvous-ui.cjs'
       - 'scripts/validate-mission-storage.mjs'
       - 'scripts/validate-nebula-directions.mjs'
+      - 'scripts/validate-nebula-directions-ui.cjs'
       - '.github/workflows/mission-nebula.yml'
   workflow_dispatch:
 permissions:
@@ -29,6 +30,7 @@ jobs:
       - run: node scripts/validate-mission-storage.mjs && node scripts/validate-nebula-directions.mjs && node scripts/validate-rendezvous.mjs
       - run: npm run build
       - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
+      - run: node scripts/validate-nebula-directions-ui.cjs
       - run: node scripts/validate-rendezvous-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()
@@ -38,3 +40,4 @@ jobs:
             validation/v2-screenshots/rdv-*.png
             validation/v2-screenshots/mission-mobile.png
             validation/v2-screenshots/rendezvous-results.json
+            validation/v2-screenshots/nebula-directions-gpu.json
