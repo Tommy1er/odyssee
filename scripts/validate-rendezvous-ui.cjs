@@ -17,11 +17,23 @@ try{
  await page.click('#engage',{force:true});s=await snap();
  check('Engager : la vitesse de départ est conservée (pas de remise à zéro)',Math.abs(s.speed-v0)*299792458<0.01&&s.navigationStage==='brake');
  check('Engager : trajet calculé dans le référentiel de la Terre',s.autopilot&&s.frameVelocity&&Math.hypot(...s.frameVelocity)*299792.458>29&&Math.hypot(...s.frameVelocity)*299792.458<31,(Math.hypot(...s.frameVelocity)*299792.458).toFixed(2)+' km/s');
- await page.selectOption('#time-rate','10000',{force:true});await page.waitForFunction(()=>!!window.flightSnapshot().arrival,{},long);s=await snap();
+ await page.click('#pause',{force:true});const inFlight=await snap();
+ await page.waitForFunction(()=>window.flightSnapshot().shipReady&&window.flightSnapshot().voyagerReady,{},long);
+ await page.reload();await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},long);await page.click('#resume-mission');
+ await page.waitForFunction(()=>window.flightSnapshot().autopilot,{},long);s=await snap();
+ check('Reprise en cours de trajet : impulsion, horloges et pilote conservés en pause',s.paused&&s.t===inFlight.t&&s.tau===inFlight.tau&&JSON.stringify(s.pos)===JSON.stringify(inFlight.pos)&&JSON.stringify(s.u)===JSON.stringify(inFlight.u)&&s.activeGoal===inFlight.activeGoal);
+ await page.selectOption('#time-rate','10000',{force:true});await page.click('#pause',{force:true});await page.waitForFunction(()=>!!window.flightSnapshot().arrival,{},long);s=await snap();
  check('Rendez-vous Terre : à la vitesse de la Terre',s.arrival.contract==='rendezvous'&&s.relativeSpeed<0.01,s.relativeSpeed.toExponential(2)+' m/s ; vitesse catalogue '+(s.speed*299792.458).toFixed(2)+' km/s');
  check('Rendez-vous Terre : 5 rayons du centre, en pause',s.localRatio>4.99&&s.localRatio<5.01&&s.paused,'rapport '+s.localRatio.toFixed(4));
  check('Maintien actif et annoncé',s.hold?.active&&Math.abs(s.hold.thrust/9.80665-0.04)<0.002&&(await page.textContent('#navigation-phase')).includes('ARRIVÉE')&&(await page.textContent('#navigation-phase')).includes('MAINTIEN'),(s.hold.thrust/9.80665).toFixed(4)+' g');
  await page.screenshot({path:out+'/rdv-earth.png'});
+ const savedEarth=s;await page.waitForFunction(()=>window.flightSnapshot().shipReady&&window.flightSnapshot().voyagerReady,{},long);
+ await page.reload();await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},long);
+ await page.click('#resume-mission');await page.waitForFunction(()=>window.flightSnapshot().arrival?.id==='solar:Terre',{},long);s=await snap();
+ check('Rechargement : reprise Terre en pause, horloges et état orbital conservés',s.paused&&s.t===savedEarth.t&&s.tau===savedEarth.tau&&s.hold?.active&&JSON.stringify(s.pos)===JSON.stringify(savedEarth.pos)&&JSON.stringify(s.u)===JSON.stringify(savedEarth.u));
+ await page.click('#prepare-moon');s=await snap();check('Préparer la Lune conserve le maintien terrestre',s.target==='moon:Lune'&&!s.autopilot&&s.hold?.active&&s.orbital.id==='solar:Terre');
+ await choose('Terre','solar:Terre');
+
  const t0=s.t;await page.selectOption('#time-rate','0.00273785',{force:true});await page.click('#pause',{force:true});await page.waitForFunction(t=>window.flightSnapshot().t-t>1/365.25,t0,long);await page.click('#pause',{force:true});s=await snap();
  const vHold=s.speed;check('Un jour simulé plus tard : toujours à 5 rayons, vitesse de la Terre',s.localRatio>4.99&&s.localRatio<5.01&&s.relativeSpeed<0.01&&s.hold?.active,'rapport '+s.localRatio.toFixed(4)+' après '+((s.t-t0)*365.25).toFixed(2)+' j');
  await choose('Lune','moon:Lune');await page.click('#engage',{force:true});s=await snap();
@@ -29,6 +41,12 @@ try{
  await page.selectOption('#time-rate','10000',{force:true});await page.waitForFunction(()=>!!window.flightSnapshot().arrival,{},long);s=await snap();
  check('Rendez-vous Lune : 5 rayons, vitesse de la Lune, maintien actif',s.arrival.id==='moon:Lune'&&s.localRatio>4.99&&s.localRatio<5.01&&s.relativeSpeed<1&&s.hold?.active,s.relativeSpeed.toExponential(2)+' m/s');
  await page.screenshot({path:out+'/rdv-moon.png'});
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('#choose-earth').scrollIntoViewIfNeeded();await page.screenshot({path:out+'/mission-mobile.png'});
+ check('Mobile : commandes Terre et Lune accessibles',await page.locator('#choose-earth').isVisible()&&await page.locator('#choose-moon').isVisible());
+ const widths=await page.evaluate(()=>({doc:document.documentElement.scrollWidth,view:innerWidth}));check('Mobile : pas de débordement horizontal',widths.doc<=widths.view+1);
+ await page.setViewportSize({width:960,height:700});
+
  await page.click('#hold-toggle',{force:true});s=await snap();check('Couper le maintien : chute libre annoncée',s.hold&&!s.hold.active&&s.events.at(-1).includes('Maintien coupé'));
  check('Aucune erreur navigateur ni shader',errors.length===0,errors.join(' | '));
 }catch(e){console.error(e);try{await page.screenshot({path:out+'/rdv-failure.png'});}catch{}process.exitCode=1;}

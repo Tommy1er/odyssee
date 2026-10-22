@@ -1,0 +1,40 @@
+name: Mission persistence and directional nebula validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/cockpit.html'
+      - 'public/cockpit.css'
+      - 'scripts/validate-rendezvous-ui.cjs'
+      - 'scripts/validate-mission-storage.mjs'
+      - 'scripts/validate-nebula-directions.mjs'
+      - '.github/workflows/mission-nebula.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node scripts/validate-mission-storage.mjs && node scripts/validate-nebula-directions.mjs && node scripts/validate-rendezvous.mjs
+      - run: npm run build
+      - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
+      - run: node scripts/validate-rendezvous-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mission-earth-moon
+          path: |
+            validation/v2-screenshots/rdv-*.png
+            validation/v2-screenshots/mission-mobile.png
+            validation/v2-screenshots/rendezvous-results.json

@@ -44,3 +44,6 @@ body{font-size:14px}.flight-workspace{grid-template-columns:278px minmax(350px,1
    actual toolbar children remain interactive, as do the navigation HUD's own buttons below it. */
 #observatory-controls{z-index:4;pointer-events:none}
 #observatory-controls>*{pointer-events:auto}
+
+/* Mission controls remain in document flow on desktop and phone. */
+.mission-controls{flex:1 1 100%;min-width:0}.mission-controls>div{display:flex;flex-wrap:wrap;gap:6px}.mission-controls small{display:block;margin-top:6px;color:#adc5cf;font-size:11px}.mission-controls button{min-height:36px}#prepare-moon{white-space:normal} .clean-view .mission-controls{display:none}

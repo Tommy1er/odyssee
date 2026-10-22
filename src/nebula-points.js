@@ -9,6 +9,7 @@
 // draws the volume (backdrop cube texels for other clouds, screen pixels for the selected cloud, which sky-optics marches
 // per screen ray at any distance), w to the volume, 1 − w to the point. Visible bands only; other bands keep the volume.
 import * as T from 'three';
+import {nebulaDirectionGain} from './nebula-anisotropy.js';
 import {sub} from './physics.js';
 import {radiusLy} from './body-data.js';
 import {calibrate,physicsOf,intrinsicMag} from './nebulae.js';
@@ -57,7 +58,8 @@ export class NebulaPointLayer {
     this.material = new T.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { pix: { value: 2 / CUBE_SIZE }, band: { value: 1 }, gain: { value: 1 }, psfMin: { value: .55 } },
       transparent: true, depthWrite: false, depthTest: false, blending: T.AdditiveBlending });
     this.points = new T.Points(g, this.material); this.points.frustumCulled = false; this.points.renderOrder = 3;
-    this.weights = new Map(); this.coloured = new Set(); this.key = '';
+    this.weights = new Map(); this.key = '';
+    this.rotations=this.objects.map(o=>new T.Quaternion().setFromUnitVectors(new T.Vector3(0,0,-1),new T.Vector3(...o.xyz).normalize()).invert());
   }
   // weights: id → share drawn as a point (already including any emission-budget gain). Returns true when the sprites changed.
   update(s, weights) {
@@ -65,7 +67,8 @@ export class NebulaPointLayer {
     let changed = false;
     this.objects.forEach((o, k) => {
       const rel = sub(o.lightXYZ || o.xyz, s.pos), w = weights.get(o.id) ?? 0;
-      if (w > 0 && !this.coloured.has(o.id)) { tint.setXYZ(k, ...nebulaColour(o)); this.coloured.add(o.id); tint.needsUpdate = true; changed = true; }
+      if(w>0){const local=new T.Vector3(...rel).negate().applyQuaternion(this.rotations[k]).toArray(),gain=nebulaDirectionGain(o.id,local),rgb=nebulaColour(o).map((v,i)=>v*gain[i]);
+        if(rgb.some((v,i)=>Math.abs(tint.array[3*k+i]-v)>1e-5)){tint.setXYZ(k,...rgb);tint.needsUpdate=true;changed=true;}}
       p.setXYZ(k, ...rel); if (Math.abs(sh.getX(k) - w) > 1e-6) changed = true; sh.setX(k, w);
     });
     p.needsUpdate = sh.needsUpdate = true;
