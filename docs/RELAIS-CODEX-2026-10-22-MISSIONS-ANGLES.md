@@ -17,3 +17,10 @@ Base : 59c5dc9, publiée le 22 octobre. Chantier confié à Codex par Abdoulaye.
 - Prévisualisation : serveur corrigé et accessible, mais WebGL désactivé dans le navigateur cloud (échec de création de contexte). Vérification graphique confiée à GitHub. Nouveau workflow dédié : reprise pendant le trajet et au maintien terrestre, poursuite vers la Lune, contrôles 390 px et captures. Le workflow graphique existant reste nécessaire pour la non-régression du ciel et de la Lune.
 
 Ne publier qu’après lecture des résultats graphiques du nouveau lot. L’essai Samsung réel appartient toujours à Abdoulaye ; aucun GPU physique mobile n’a été testé ici.
+
+## Contrôle GPU et reprise de validation
+
+- Run 39740181287 : intégration effective du shader de volume dans un framebuffer flottant, cinq directions chacune pour Tarentule et NGC 604. Écart maximal par canal au point calibré : 1,03 % Tarentule, 1,36 % NGC 604. Ceci mesure le modèle shader intégré, pas le flux final de chaque pixel écran et pas un GPU mobile physique.
+- Run 39740181255 : budget imbriqué, galaxies, bassins, pouponnières et couche HDR réussis sans erreurs JS/GLSL. Interruption à la limite globale de 40 minutes pendant le contrôle lunaire, après les assertions de texture et orientation. Délai porté à 60 minutes pour laisser terminer les suites séquentielles.
+- Le premier test de reprise de mission a conservé exactement les positions, impulsions et horloges en trajet puis au maintien terrestre. Son attente d’une journée échouait avec le temps en pause ; les clics forcés sont remplacés par des clics soumis aux contrôles d’accessibilité Playwright et chaque pause/reprise est maintenant immédiatement vérifiée. Les échecs enregistrent l’état physique complet.
+- Commandes mobiles : retour à la ligne des groupes de boutons ; statut de sauvegarde sous les choix Terre/Lune.
