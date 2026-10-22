@@ -24,3 +24,15 @@ Ne publier qu’après lecture des résultats graphiques du nouveau lot. L’ess
 - Run 39740181255 : budget imbriqué, galaxies, bassins, pouponnières et couche HDR réussis sans erreurs JS/GLSL. Interruption à la limite globale de 40 minutes pendant le contrôle lunaire, après les assertions de texture et orientation. Délai porté à 60 minutes pour laisser terminer les suites séquentielles.
 - Le premier test de reprise de mission a conservé exactement les positions, impulsions et horloges en trajet puis au maintien terrestre. Son attente d’une journée échouait avec le temps en pause ; les clics forcés sont remplacés par des clics soumis aux contrôles d’accessibilité Playwright et chaque pause/reprise est maintenant immédiatement vérifiée. Les échecs enregistrent l’état physique complet.
 - Commandes mobiles : retour à la ligne des groupes de boutons ; statut de sauvegarde sous les choix Terre/Lune.
+
+## Validation finale des missions
+
+Run 39808797973 (source 6a32206e8015a0e9579be6fea24e4a01554fc88a) : succès. 21 contrôles navigateur, aucune erreur JS/GLSL ; capture mobile 390×844 examinée. Reprise en cours de trajet et au maintien terrestre avec position, impulsion et horloges exactement conservées. Maintien pendant 1,03 journée simulée à 5,0002 rayons terrestres, puis rendez-vous lunaire à 5 rayons, vitesse relative 0,00107 m/s. Coupure du maintien et annonce de chute libre vérifiées. Contrôle GPU directionnel de nouveau réussi. Le run précédent 39808241571 avait déjà réussi le même parcours avant la dernière disposition mobile.
+
+Artefact GitHub : mission-earth-moon, 12441530227. La sauvegarde est locale au navigateur/appareil, sans synchronisation entre appareils.
+
+## Validation graphique finale
+
+Run 39809181370 (source cb6e28bc26664fedf6dff2ad111139c4982f8199) : contrôles numériques, budget imbriqué, galaxies, bassins, pouponnières, couche HDR et Lune réussis. Les huit assertions lunaires passent, y compris texture complète, orientation verrouillée vers la Terre, vue dégagée et absence d’erreur. Capture moon-restored.png examinée : disque texturé et éclairé, ciel visible. Artefact cosmic-nurseries-swiftshader 12442660752. La limite globale de 40 minutes était insuffisante ; la suite complète a terminé dans le délai de 60 minutes. Les validations graphiques portent sur le code et la mise en page publiables ; les modifications ultérieures de ce relais ne changent pas le rendu.
+
+Le budget V reste désactivé par défaut. L’écart lié au rééchantillonnage des petites sources lors de rotations de caméra n’est pas déclaré éliminé. Aucun essai sur GPU physique Samsung : reste à faire sur l’appareil d’Abdoulaye.
