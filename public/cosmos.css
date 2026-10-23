@@ -6,3 +6,5 @@
 .basins{display:grid;gap:.45rem;margin:.6rem 0;padding:.7rem 0;border-top:1px solid #1f3442;border-bottom:1px solid #1f3442}#basins-legend{display:flex;flex-wrap:wrap;gap:.35rem .8rem;font-size:.82rem}#basins-legend button{font-size:inherit;text-align:left;display:inline-flex;align-items:center;gap:.35rem}#basins-legend i{width:.75rem;height:.75rem;border-radius:50%;display:inline-block}.label.basin-label{pointer-events:auto;border-style:dashed}
 
 .quick-flight{border:1px solid #527b77;border-radius:6px;padding:.6rem .8rem;background:#102b2b;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scene-controls{align-items:center}.quick-flight:hover{background:#234b50;color:#ecfff9}
+/* Overlay rows span the whole view: only their buttons take clicks, the empty space lets clicks and wheel reach the 3D map. */
+.levelbar,.scene-controls{pointer-events:none}.levelbar>*,.scene-controls>*{pointer-events:auto}

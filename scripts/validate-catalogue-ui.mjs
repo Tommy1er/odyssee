@@ -40,8 +40,8 @@ const radius=()=>{const s=w.cosmicSnapshot();return Math.hypot(...s.camera.map((
 const clickLabel=name=>[...w.document.querySelectorAll('#labels button')].find(b=>b.textContent.includes(name)).click();
 $('survey-catalogue').value='auto';$('survey-search').value='';$('survey-error').value='Infinity';$('home').click();await wait(()=>w.cosmicSnapshot().survey.ready&&w.cosmicSnapshot().survey.key==='mcconnachie');tick();
 clickLabel('M33');tick();
-check('M33 label centers the camera and shows a galaxy with synthetic populations off',()=>{
- const s=w.cosmicSnapshot();assert.equal(s.selected,'m33');assert(s.visible.includes('m33'));assert(!s.visible.includes('local-group'));assert(!s.survey.synthetic);
+check('M33 label centers the camera and shows its class volume (symbol hidden, no double drawing) with synthetic populations off',()=>{
+ const s=w.cosmicSnapshot();assert.equal(s.selected,'m33');assert(s.preview.visible&&s.preview.id==='m33'&&!s.visible.includes('m33'));assert(!s.visible.includes('local-group'));assert(!s.survey.synthetic);
  assert(radius()<.2);assert.equal(s.boost,1);assert($('quick-flight').getAttribute('href').includes('target=m33'));
 });
 let before=radius();clickLabel('M33');tick();
@@ -52,7 +52,7 @@ check('Trackpad wheel approaches the selected center',()=>{assert(radius()<befor
 before=radius();wheel([...w.document.querySelectorAll('#labels button')].find(b=>b.textContent.includes('M33')),-10,true);tick();
 check('Pinching over the label reaches OrbitControls rather than the page',()=>assert(radius()<before));
 wheel(canvas,-10000,true);tick();
-check('Close zoom stops outside the galaxy rather than entering an invisible shell',()=>assert(radius()>=.03*1.5-1e-10));
+check('Close zoom enters the visible class volume of M33 and stops at 30 % of its radius',()=>{const s=w.cosmicSnapshot();assert(s.preview.visible&&s.preview.id==='m33');assert(Math.abs(radius()-.03*.3)<1e-9);assert(s.clip[0]<radius()*.01);});
 before=radius();wheel(canvas,100);tick();
 check('Reverse wheel moves away from the same target',()=>assert(radius()>before));
 clickLabel('M31');wheel(canvas,-20);tick();const afterGesture=w.cosmicSnapshot().camera;tick();
@@ -75,7 +75,7 @@ check('Selected local catalogue galaxy has a volume, source notes and a size-bas
 // All fixed structure types retain useful focus, a second approach, and a valid visit link.
 for(const [id,expectedLevel] of [['milky-way',0],['local-group',0],['virgo-cluster',1],['virgo-supercluster',1],['great-attractor',2],['laniakea',2],['bootes-void',3]]){
  w.document.querySelector('#results [data-object="'+id+'"]').click();tick();const d=radius();$('approach').click();tick();
- check('Structure '+id+' frames and approaches at its own scale',()=>{assert.equal(w.cosmicSnapshot().selected,id);assert.equal(w.cosmicSnapshot().level,expectedLevel);assert(radius()<d);assert(!w.cosmicSnapshot().preview.visible);assert(!$('quick-flight').hidden);});
+ check('Structure '+id+' frames and approaches at its own scale',()=>{assert.equal(w.cosmicSnapshot().selected,id);assert.equal(w.cosmicSnapshot().level,expectedLevel);assert(radius()<d);assert.equal(w.cosmicSnapshot().preview.visible,id==='milky-way');assert(!$('quick-flight').hidden);});
 }
 await wait(()=>w.cosmicSnapshot().survey.ready&&w.cosmicSnapshot().survey.key==='cf4');
 $('survey-search').value='PGC 41361';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>w.cosmicSnapshot().survey.shown===1);$('survey-results').querySelector('button').click();tick();
@@ -101,5 +101,19 @@ const vertices=bl.entries.find(e=>e.basin.label===2).mesh.geometry.attributes.po
 for(let i=0;i<vertices.count;i++){const p=new Three.Vector3().fromBufferAttribute(vertices,i).project(bc);if(p.z>-1&&p.z<1&&Math.abs(p.x)<.8&&Math.abs(p.y)<.8){surfacePixel=[(p.x+1)*500,(1-p.y)*400];break;}}
 assert(surfacePixel);const oldSelection=w.cosmicSnapshot().selected,oldRadius=radius();canvas.dispatchEvent(new w.MouseEvent('pointerdown',{clientX:surfacePixel[0],clientY:surfacePixel[1],button:0}));canvas.dispatchEvent(new w.MouseEvent('pointerup',{clientX:surfacePixel[0],clientY:surfacePixel[1],button:0}));tick();
 check('Clicking a visible basin surface selects its reconstructed region',()=>{assert(w.cosmicSnapshot().selected.startsWith('cf4-basin:'));assert(w.cosmicSnapshot().selected!==oldSelection||radius()<oldRadius);});
+// 23 Oct 2026 report: clicking the drawn M31 symbol centred the zoom on the Local Group (near the Sun). The symbol is
+// enlarged up to ×6, its pick sphere is the true radius, and the Local Group envelope behind it was hit instead.
+{$('home').click();tick();$('survey-search').value='aucune-entree-zz';$('survey-search').dispatchEvent(new w.Event('input'));await wait(()=>w.cosmicSnapshot().survey.shown===0);
+ const s0=w.cosmicSnapshot(),cam=new Three.PerspectiveCamera(48,1000/800,.00001,10000);cam.up.set(...s0.up);cam.position.set(...s0.camera);cam.lookAt(...s0.target);cam.updateMatrixWorld();
+ const m31=[1.8465,.3484,1.649];const v=new Three.Vector3(...m31).project(cam),px=(v.x+1)*500+16,py=(1-v.y)*400;
+ const sphere=.11/new Three.Vector3(...m31).distanceTo(cam.position)*400/Math.tan(24*Math.PI/180);
+ canvas.dispatchEvent(new w.MouseEvent('pointerdown',{clientX:px,clientY:py,button:0}));canvas.dispatchEvent(new w.MouseEvent('pointerup',{clientX:px,clientY:py,button:0}));tick();tick();
+ check('A click on the enlarged M31 symbol, outside its true-radius pick sphere ('+sphere.toFixed(1)+' px), selects M31 and recentres the zoom on it',()=>{const s=w.cosmicSnapshot();assert(sphere<16);assert.equal(s.selected,'m31');assert(s.target.every((x,i)=>Math.abs(x-m31[i])<2e-3));});
+ let before=radius();wheel(canvas,-30);tick();check('The wheel then zooms toward M31, not toward the Sun',()=>{const s=w.cosmicSnapshot();assert(radius()<before&&s.target.every((x,i)=>Math.abs(x-m31[i])<2e-3));});
+ $('survey-search').value='';$('survey-search').dispatchEvent(new w.Event('input'));}
+// Dezoom to the observable universe: comoving horizon 46 500 Mly, clip planes follow the distance.
+$('survey-radius').value='14300';$('survey-radius').dispatchEvent(new w.Event('change'));tick();tick();
+check('Exploration radius at the horizon frames the whole observable universe with its horizon drawn',()=>{const s=w.cosmicSnapshot();assert(Math.hypot(...s.camera)>46500*1.5&&s.horizon.visible&&s.level===3&&s.clip[1]>Math.hypot(...s.camera)+46500);});
+$('home').click();tick();tick();$('universe').click();tick();tick();check('« Univers observable » button reaches the same scale; zoom range 30 % of a galaxy radius to 150 000 Mly',()=>{const s=w.cosmicSnapshot();assert(radius()>46500*2&&s.zoom.max===150000);});
 check('Interaction sequence has no DOM errors',()=>assert.deepEqual(errors,[]));
 w.close();console.log(JSON.stringify({passed:n,mode:'DOM integration with real OrbitControls; GPU not tested'}));
