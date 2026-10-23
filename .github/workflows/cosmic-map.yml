@@ -8,6 +8,9 @@ on:
       - 'src/map-galaxy-preview.js'
       - 'src/observed-galaxies.js'
       - 'src/render-diagnostics.js'
+      - 'src/render-budget.js'
+      - 'src/renderer.js'
+      - 'src/cockpit.js'
       - 'public/cosmos.*'
       - 'scripts/validate-cosmos*.cjs'
       - '.github/workflows/cosmic-map.yml'
@@ -24,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [validate-cosmos-zoom-ui, validate-cosmos]
+        suite: [validate-cosmos-zoom-ui, validate-cosmos, validate-cosmos-context-ui]
     steps:
       - uses: actions/checkout@v4
         with:
