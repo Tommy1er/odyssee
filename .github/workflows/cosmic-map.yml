@@ -1,0 +1,45 @@
+name: Cosmic map zoom and cockpit integration
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/cosmos.js'
+      - 'src/cosmic-scene.js'
+      - 'src/map-galaxy-preview.js'
+      - 'src/observed-galaxies.js'
+      - 'src/render-diagnostics.js'
+      - 'public/cosmos.*'
+      - 'scripts/validate-cosmos*.cjs'
+      - '.github/workflows/cosmic-map.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cosmic-map-validation
+  cancel-in-progress: true
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [validate-cosmos-zoom-ui, validate-cosmos]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node scripts/validate-map-preview.mjs && node scripts/validate-catalogue-ui.mjs && node scripts/validate-render-diagnostics.mjs
+      - run: npm run build
+      - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
+      - run: node scripts/${{ matrix.suite }}.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.suite }}
+          path: validation/v2-screenshots/cosmos*
