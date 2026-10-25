@@ -21,6 +21,8 @@ for(const fail of [-1,2]){
  r.draws.forEach(x=>assert.equal(x.camera,cube.children[x.face]));assert.equal(r.getRenderTarget(),saved);assert.equal(r.getActiveCubeFace(),4);assert.equal(r.getActiveMipmapLevel(),2);assert(r.getScissorTest());assert(r.xr.enabled);assert(target.texture.generateMipmaps);
  assert.deepEqual(r.getViewport(new T.Vector4()).toArray(),[3,4,500,300]);assert.deepEqual(r.getScissor(new T.Vector4()).toArray(),[1,2,100,90]);
 }
+const scene=new T.Scene(),visible=new T.Mesh(new T.BoxGeometry(),new T.MeshBasicMaterial()),hidden=new T.Mesh(new T.BoxGeometry(),new T.MeshBasicMaterial());hidden.visible=false;scene.add(visible,hidden);const compiled=[];
+trace.gl={isContextLost:()=>false};await trace.compile({compileAsync:async(o,c,target)=>compiled.push([o,target])},scene,new T.PerspectiveCamera(),'visible-only');assert.deepEqual(compiled,[[visible,scene]]);
 trace.stop();assert.throws(()=>trace.run('must not run',()=>assert.fail()),/interrompu/);
 delete globalThis.requestAnimationFrame;
 console.log('PASS startup journal persists pending/failure; cube yields between six matching faces; render state restores on success/failure; loss aborts');

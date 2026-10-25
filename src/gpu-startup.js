@@ -35,9 +35,17 @@ export class GPUStartup {
  async compile(renderer,scene,camera,label){
   await nextFrame();
   return this.task('Compilation asynchrone · '+label,async()=>{
-   let timer;
-   try{await Promise.race([renderer.compileAsync(scene,camera),new Promise((_,reject)=>{timer=setInterval(()=>{if(this.cancelled||this.gl.isContextLost())reject(Error('Contexte perdu pendant la compilation'));},50);})]);}
-   finally{clearInterval(timer);}
+   // Three.compile traverses hidden objects too. Prepare only visible drawables,
+   // preserving the real scene's lights/environment through targetScene.
+   const objects=[];scene.traverseVisible(o=>{if(o.material&&o.layers.test(camera.layers))objects.push(o);});
+   for(const object of objects){
+    await nextFrame();this.check();const materials=Array.isArray(object.material)?object.material:[object.material];
+    await this.task('Matériau · '+materials.map(m=>m.name||m.type+' #'+m.id).join(', '),async()=>{
+     let timer;
+     try{await Promise.race([renderer.compileAsync(object,camera,scene),new Promise((_,reject)=>{timer=setInterval(()=>{if(this.cancelled||this.gl.isContextLost())reject(Error('Contexte perdu pendant la compilation'));},50);})]);}
+     finally{clearInterval(timer);}
+    });
+   }
   });
  }
  stop(){this.cancelled=true;this.persist();}
