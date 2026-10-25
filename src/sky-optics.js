@@ -1,3 +1,4 @@
+import {captureCubeStartup} from './gpu-startup.js';
 import * as T from 'three';
 import {gammaU,norm,unit,mul,sub} from './physics.js';
 import {CloseupModel,closeupGLSL} from './closeup.js';
@@ -49,6 +50,14 @@ L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.
   const c=cmbBand(this.lut,this.cmbK,g,gap);this.cmb={F:c.F,theta:c.theta,T:c.Tpeak};if(!(c.F>1e-9)){x.cmbOn.value=0;return;}
   x.cmbOn.value=1;x.cmbFlux.value=c.F;x.cmbSigma.value=Math.max(c.theta/1.177,.7*pixel);x.cmbW.value=Math.min(1,Math.max(0,(c.theta/pixel-.7)/1.3));x.cmbW.value=x.cmbW.value*x.cmbW.value*(3-2*x.cmbW.value);
   const i=Math.max(0,Math.min(511,Math.round(Math.log(Math.max(100,c.Tpeak)/100)/Math.log(1e4)*511)));x.cmbRGB.value.set(this.lut[4*i],this.lut[4*i+1],this.lut[4*i+2]);}
+ async captureStartup(renderer,scene,layers,trace){
+ const {stars,local,backgrounds}=layers,sharp=Array.isArray(stars)?stars:[stars],sv=sharp.map(o=>o.visible),lv=local.visible,bv=backgrounds.map(o=>o.visible);
+ try{sharp.forEach(o=>o.visible=false);local.visible=false;
+  await captureCubeStartup(renderer,this.backdropCamera,scene,trace,'Fond diffus 256');
+  sharp.forEach((o,i)=>o.visible=sv[i]);local.visible=lv;backgrounds.forEach(o=>o.visible=false);scene.add(this.backdrop);
+  await captureCubeStartup(renderer,this.cube,scene,trace,'Ciel ponctuel '+CUBE_SIZE);
+ }finally{scene.remove(this.backdrop);sharp.forEach((o,i)=>o.visible=sv[i]);local.visible=lv;backgrounds.forEach((o,i)=>o.visible=bv[i]);}
+ }
  capture(renderer,scene,layers){const viewport=new T.Vector4(),scissor=new T.Vector4();renderer.getViewport(viewport);renderer.getScissor(scissor);const test=renderer.getScissorTest(),target=renderer.getRenderTarget();renderer.setScissorTest(false);
  if(layers){const {stars,local,backgrounds}=layers,sharp=Array.isArray(stars)?stars:[stars],sv=sharp.map(o=>o.visible),lv=local.visible,visibility=backgrounds.map(o=>o.visible);sharp.forEach(o=>o.visible=false);local.visible=false;this.backdropCamera.update(renderer,scene);sharp.forEach((o,i)=>o.visible=sv[i]);local.visible=lv;backgrounds.forEach(o=>o.visible=false);scene.add(this.backdrop);this.cube.update(renderer,scene);scene.remove(this.backdrop);backgrounds.forEach((o,i)=>o.visible=visibility[i]);}
  else this.cube.update(renderer,scene);

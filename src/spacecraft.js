@@ -40,9 +40,10 @@ export class SpacecraftView{
  new GLTFLoader().load('./assets/voyager.glb',g=>{const box=new T.Box3().setFromObject(g.scene),size=box.getSize(new T.Vector3()),center=box.getCenter(new T.Vector3());g.scene.position.sub(center);const holder=new T.Group();holder.add(g.scene);holder.scale.setScalar(2/Math.max(size.x,size.y,size.z));this.voyager=holder;},undefined,e=>{this.voyagerError=String(e);});}
  // With a known light direction, frame the hull in three-quarter lighting (camera choice only; light unchanged).
  focus(lightDir){if(lightDir){const l=new T.Vector3(...lightDir).normalize(),up=Math.abs(l.y)>.9?new T.Vector3(1,0,0):new T.Vector3(0,1,0),side=new T.Vector3().crossVectors(l,up).normalize();this.camera.position.copy(l.multiplyScalar(.72).addScaledVector(side,.6).addScaledVector(up,.35).normalize().multiplyScalar(22));}else this.camera.position.set(13,7,16);this.camera.up.set(0,1,0);this.controls.target.set(0,0,0);this.camera.lookAt(0,0,0);this.controls.update();}
- render(renderer,s,aspect){
- if(!this.environment){const pmrem=new T.PMREMGenerator(renderer);const room=new RoomEnvironment();this.environment=pmrem.fromScene(room,.06);room.dispose();pmrem.dispose();}
- const astro=(s.shipLighting||'astro')==='astro';this.studio.visible=!astro;this.astro.visible=astro;this.scene.environment=astro?null:this.environment.texture;
+ async render(renderer,s,aspect,trace){
+ const astro=(s.shipLighting||'astro')==='astro';
+ if(!astro&&!this.environment){const pmrem=new T.PMREMGenerator(renderer);const room=new RoomEnvironment();this.environment=pmrem.fromScene(room,.06);room.dispose();pmrem.dispose();}
+ this.studio.visible=!astro;this.astro.visible=astro;this.scene.environment=astro?null:this.environment.texture;
  if(astro){renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;const src=s.shipLightSources||[],Edom=src[0]?.E||0;if(src[0]&&!this.framedForLight){this.focus(src[0].dir);this.framedForLight=true;}
   this.starLights.forEach((l,i)=>{const x=src[i];if(!x){l.intensity=0;l.visible=false;return;}l.visible=true;l.position.set(...x.dir).multiplyScalar(40);l.color.setRGB(...blackbodyRGB(this.lut,x.T));l.intensity=displayIntensity(x.E,Edom);});}
  const firing=!s.paused&&!s.passage&&!s.gr&&(s.orbit?.assist||s.engine==='thrust'||s.engine==='brake'||s.ap?.stage==='brake'||s.ap?.stage==='flight'&&(s.ap.elapsed<s.ap.plan.ta||s.ap.elapsed>s.ap.plan.ta+s.ap.plan.tc));
@@ -52,6 +53,6 @@ this.camera.aspect=aspect||renderer.domElement.clientWidth/renderer.domElement.c
  const scale=Math.max(1.5,Math.min(2,renderer.getPixelRatio())),w=Math.round(viewport.z*scale),h=Math.round(viewport.w*scale);
  if(!this.target){this.target=new T.WebGLRenderTarget(w,h,{samples:4,format:T.RGBAFormat});this.composite=new T.Scene();this.compositeCamera=new T.OrthographicCamera(-1,1,1,-1,0,1);this.composite.add(new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,uniforms:{image:{value:this.target.texture}},vertexShader:'varying vec2 shipUV;void main(){shipUV=uv;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:'varying vec2 shipUV;uniform sampler2D image;void main(){gl_FragColor=texture2D(image,shipUV);\n#include <colorspace_fragment>\n}'})));}
  if(this.target.width!==w||this.target.height!==h)this.target.setSize(w,h);
- renderer.setScissorTest(false);renderer.setRenderTarget(this.target);renderer.setClearColor(0,0);renderer.autoClear=true;renderer.render(this.scene,this.camera);
- renderer.setRenderTarget(target);renderer.setViewport(viewport);renderer.setScissor(scissor);renderer.setScissorTest(test);renderer.setClearColor(color,alpha);renderer.autoClear=false;renderer.render(this.composite,this.compositeCamera);renderer.autoClear=save;}
+ renderer.setScissorTest(false);renderer.setRenderTarget(this.target);renderer.setClearColor(0,0);renderer.autoClear=true;if(trace)await trace.compile(renderer,this.scene,this.camera,'Vaisseau et ombres');renderer.render(this.scene,this.camera);
+ renderer.setRenderTarget(target);renderer.setViewport(viewport);renderer.setScissor(scissor);renderer.setScissorTest(test);renderer.setClearColor(color,alpha);renderer.autoClear=false;if(trace)await trace.compile(renderer,this.composite,this.compositeCamera,'Composition du vaisseau');renderer.render(this.composite,this.compositeCamera);renderer.autoClear=save;}
 }

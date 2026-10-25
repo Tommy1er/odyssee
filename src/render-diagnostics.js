@@ -14,9 +14,9 @@ export function showRenderError(element,error,page){
 
 // Register BEFORE WebGLRenderer: its generic thrown error drops statusMessage.
 // Do not retry a lost GPU in a loop. Even after restoration require a fresh page.
-export function monitorWebGL(canvas,element,page,onStop=()=>{}){
+export function monitorWebGL(canvas,element,page,onStop=()=>{},diagnostic=()=>''){
  let reason='',stopped=false;
- const showError=error=>showRenderError(element,[String(error?.message||error||''),reason].filter(Boolean).join('\n'),page);
+ const showError=error=>showRenderError(element,[String(error?.message||error||''),reason,diagnostic()].filter(Boolean).join('\n'),page);
  const listeners={
   webglcontextcreationerror:event=>{reason='webglcontextcreationerror: '+(event.statusMessage||'Aucune raison fournie par le navigateur');stopped=true;showError();onStop();},
   webglcontextlost:event=>{event.preventDefault();reason='webglcontextlost: '+(event.statusMessage||'Aucune raison fournie par le navigateur');stopped=true;showError();onStop();},
