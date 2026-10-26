@@ -26,7 +26,7 @@ ${closeupGLSL}
 ${systemGLSL}
 ${systemPrimaryGLSL}
 ${cometGLSL}
-${blackHoleGLSL}
+// BLACK_HOLE_MODULE
 ${cloudGLSL}
 ${localGroupGLSL}
 uniform float bhActive;
@@ -37,14 +37,31 @@ vec3 L=max(vec3(0),textureCube(sky,ray).rgb)+groupRadiance(ray)*groupGain;
 // same occlusion by planets, moons and stars as the cube (systemRadiance is affine in its background, so S(L+G)-S(L)
 // is G seen through the bodies), but NOT the approximate global RGB Doppler below.
 vec3 G=galaxyOverlayOn>.5?max(vec3(0.),texture2D(galaxyOverlay,uvp*.5+.5).rgb):vec3(0.);
-if(bhActive>.5)L=traceBlackHole(ray);
+// BLACK_HOLE_RADIANCE
 if(cloudActive>.5)L=cloudRadiance(ray,L);
 if(bodyKind>.5){float dim=band<2.?.035:1.;L*=dim;G*=dim;}if(bodyKind>.5||secCount>.5){vec3 S=systemRadiance(ray,L);if(G.r+G.g+G.b>0.)G=max(vec3(0.),systemRadiance(ray,L+G)-S);L=S;}if(cometCount>.5)L+=cometRadiance(ray);
 if(optics>.5&&shift>.5&&momentum>.000001){if(band<2.5){float blue=L.b/(L.r+L.b+1.e-20);float temp=mix(2800.,16000.,clamp((blue-.18)/.66,0.,1.));vec4 rest=thermal(temp),seen=thermal(temp*D);float gain=exp(clamp(seen.a-rest.a,-70.,60.));if(temp*D<100.)gain=0.;L*=gain*seen.rgb/max(rest.rgb,vec3(.0001));}else{L*=exp(clamp(4.*log(D),-70.,60.));}}
 if(cmbOn>.5){float Tc=D*cmbT0/(cmbGs*(1.-dot(cmbBetaS,ray)));vec3 Lc=vec3(0.);if(Tc>150.){vec4 c=thermal(Tc);Lc=cmbK*exp(clamp(c.a,-80.,80.))*c.rgb;}float th=dot(n,axis)>0.?length(cross(n,axis)):3.14159;vec3 Lp=cmbFlux/(6.2831853*cmbSigma*cmbSigma)*exp(-.5*th*th/(cmbSigma*cmbSigma))*cmbRGB;L+=mix(Lp,Lc,cmbW);}
 // Point galaxies have been spectral-shifted separately BEFORE RGB merger. Compose in linear HDR.
 if(galaxyOverlayOn>.5)L+=G;
-L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.2126,.7152,.0722));rgb=mix(vec3(y),rgb,smoothstep(.15,.8,y));}gl_FragColor=vec4(pow(rgb,vec3(1./2.2)),1.);}`});this.lut=lut;this.cmbK=blackbodyK(lut,PHOT_ZERO);{const b=SUN_CMB_KMS/C_KMS,dir=SUN_CMB_DIR;this.material.uniforms.cmbBetaS.value.set(...dir.map(x=>x*b));this.material.uniforms.cmbGs.value=1/Math.sqrt(1-b*b);this.material.uniforms.cmbK.value=this.cmbK;}this.scene.add(new T.Mesh(new T.PlaneGeometry(2,2),this.material));Object.assign(this.material.uniforms,nebulaUniforms());this.closeup=new CloseupModel(this.material.uniforms,objects,lut);this.system=new SystemBodies(this.material.uniforms,objects,this.closeup);this.comets=new CometLayer(this.material.uniforms,objects);}
+L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.2126,.7152,.0722));rgb=mix(vec3(y),rgb,smoothstep(.15,.8,y));}gl_FragColor=vec4(pow(rgb,vec3(1./2.2)),1.);}`});this.lut=lut;this.cmbK=blackbodyK(lut,PHOT_ZERO);{const b=SUN_CMB_KMS/C_KMS,dir=SUN_CMB_DIR;this.material.uniforms.cmbBetaS.value.set(...dir.map(x=>x*b));this.material.uniforms.cmbGs.value=1/Math.sqrt(1-b*b);this.material.uniforms.cmbK.value=this.cmbK;}this.material.name="Optique ordinaire (sans traceur de trou noir)";this.ordinaryMaterial=this.material;this.compiledMaterials=new Set();this.screen=new T.Mesh(new T.PlaneGeometry(2,2),this.material);this.scene.add(this.screen);Object.assign(this.material.uniforms,nebulaUniforms());this.closeup=new CloseupModel(this.material.uniforms,objects,lut);this.system=new SystemBodies(this.material.uniforms,objects,this.closeup);this.comets=new CometLayer(this.material.uniforms,objects);}
+ // Keep the expensive geodesic program out of ordinary startup entirely (not just a uniform branch).
+ selectVariant(s){const bh=s.target?.type==='blackhole'?s.target:null;
+  const rr=bh?schwarzschildR(norm(sub(s.pos,bh.lightXYZ||bh.xyz))/radiusLy(bh),.5):Infinity;
+  const active=!!s.lensing&&rr<150&&rr>1.02;
+  if(active&&!this.blackHoleMaterial){const base=this.ordinaryMaterial;
+   this.blackHoleMaterial=new T.ShaderMaterial({name:'Optique trou noir (traceur géodésique)',depthTest:false,depthWrite:false,
+    uniforms:base.uniforms,vertexShader:base.vertexShader,fragmentShader:base.fragmentShader
+     .replace('// BLACK_HOLE_MODULE',blackHoleGLSL)
+     .replace('// BLACK_HOLE_RADIANCE','if(bhActive>.5)L=traceBlackHole(ray);')});}
+  this.material=active?this.blackHoleMaterial:this.ordinaryMaterial;this.screen.material=this.material;
+  return this.material;
+ }
+ async prepare(renderer,s,trace){const material=this.selectVariant(s);if(this.compiledMaterials.has(material))return;
+  if(trace)await trace.compile(renderer,this.scene,this.camera,material.name);
+  else await renderer.compileAsync(this.scene,this.camera);
+  this.compiledMaterials.add(material);
+ }
  // Forward CMB hot spot at the ship's speed (flux, size, colour); off while it is invisible (γ below ≈ 100).
  updateCMB(x,u,enabled,pixel){const m=norm(u),g=Math.sqrt(1+m*m),gap=1/(g*(g+m));if(!enabled||!(this.lut?.length>2000)||m<20){x.cmbOn.value=0;this.cmb=null;return;}
   const c=cmbBand(this.lut,this.cmbK,g,gap);this.cmb={F:c.F,theta:c.theta,T:c.Tpeak};if(!(c.F>1e-9)){x.cmbOn.value=0;return;}

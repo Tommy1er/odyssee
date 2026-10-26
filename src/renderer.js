@@ -169,7 +169,7 @@ export class SpaceRenderer{
     if(activeGalaxySpectra)this.galaxyLight.points.visible=false;
     try{const layers={stars:[this.sky,this.galaxyLight.points,this.nebulaPoints.points,...[...this.environments.cache.values()].filter(e=>e.stars).map(e=>e.group)],local:this.localGroup,backgrounds:[this.galaxy,...[...this.environments.cache.values()].filter(e=>!e.stars).map(e=>e.group)]};if(this.startupTrace)await this.skyOptics.captureStartup(this.renderer,this.flight,layers,this.startupTrace);else this.skyOptics.capture(this.renderer,this.flight,layers);}finally{this.galaxyLight.points.visible=originalGalaxyVisibility;if(directCloud)selectedCloud.group.visible=true;}this.captureKey=captureKey;this.captureWall=s.wall;}
    this.lens.isNear(s);this.skyOptics.material.uniforms.sky.value=this.skyOptics.target.texture;
-   if(this.startupTrace){await this.startupTrace.compile(this.renderer,this.skyOptics.scene,this.skyOptics.camera,'Optique plein écran');}
+   await this.skyOptics.prepare(this.renderer,s,this.startupTrace);
    const draw=async(betaOptics,half)=>{const skyOptics=!(s.external&&s.shipFrame!=='comoving')&&!!betaOptics;this.camera.aspect=(half?w/2:w)/h;this.camera.updateProjectionMatrix();
     // Schwarzschild is a separate local stationary optical model. Its cube now supplies HDR sky.
     const relativeU=skyOptics&&(!half||betaOptics)?visualU:[0,0,0];
