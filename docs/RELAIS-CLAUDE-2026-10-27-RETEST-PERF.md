@@ -36,6 +36,10 @@ Claude, 27/10/2026 vers 14 h 40–15 h 10 UTC. Version publiée par Codex, `/coc
 - Pendant ces épisodes : document visible et actif, boucle d'événements libre (`setTimeout(100)` → 108 ms), GPU de la page 27 ms par image, aucune tâche longue notable, barrière GPU franchie en 7–81 ms (cockpit) et 12–61 ms (contexte neuf).
 - Conclusion : le blocage se situe entre la page et l'affichage (compositeur de Chrome, système, économie d'énergie, autre activité GPU de la machine), pas dans le rendu d'Odyssée. Le matin, à Cygnus X-1, la même version donnait 21–22 i/s. À reproduire en notant l'alimentation (secteur ou batterie), le mode d'économie d'énergie de Chrome et les autres onglets ouverts, avant tout correctif du code.
 
+## Précision d'Abdoulaye sur les conditions (27/10, 21 h 15)
+
+Pendant les mesures, la machine était très chargée : 4 à 6 fenêtres Chrome avec une vingtaine d'onglets chacune, Edge avec des dizaines d'onglets, 5 ou 6 fenêtres Word, 2 PowerPoint, 3 Excel, 3 ou 4 fenêtres Outlook, Teams, l'Explorateur de fichiers et la Calculatrice. Sur un GPU intégré (Iris Xe, mémoire partagée), cette charge explique de façon plausible le constat 3 : page inactive mais images limitées à ~1 par seconde par le compositeur. **Ne pas chercher ce point dans le code.** Les mesures de fluidité doivent être refaites dans une session dégagée (autres applications fermées, une seule fenêtre Chrome, PC sur secteur) avant de conclure, y compris les 5 i/s de la Tarentule. En revanche, les temps GPU par passe (Groupe local 77,7 ms, nuage 42–52 ms) et le défaut de viewport à DPR 1,5 ne dépendent pas de cette charge.
+
 ## Non modifié
 
 Aucun changement de code par Claude dans ce relais (répartition demandée par Abdoulaye : Claude mesure, Codex code).
