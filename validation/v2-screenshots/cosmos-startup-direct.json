@@ -1,0 +1,656 @@
+{
+  "text": "Démarrage GPU · durées CPU/pilote ; cubes attendus par barrières GPU\nÉtapes actives : aucune\nMatériau · ShaderMaterial #187 : terminé (11 ms)\nMatériau · ShaderMaterial #188 : terminé (11 ms)\nMatériau · ShaderMaterial #189 : terminé (11 ms)\nMatériau · ShaderMaterial #190 : terminé (12 ms)\nMatériau · ShaderMaterial #191 : terminé (11 ms)\nMatériau · ShaderMaterial #192 : terminé (14 ms)\nMatériau · ShaderMaterial #193 : terminé (11 ms)\nMatériau · ShaderMaterial #194 : terminé (11 ms)\nMatériau · ShaderMaterial #195 : terminé (10 ms)\nMatériau · ShaderMaterial #196 : terminé (11 ms)\nMatériau · ShaderMaterial #197 : terminé (11 ms)\nMatériau · ShaderMaterial #198 : terminé (11 ms)\nMatériau · ShaderMaterial #199 : terminé (11 ms)\nMatériau · ShaderMaterial #200 : terminé (11 ms)\nMatériau · ShaderMaterial #102 : terminé (12 ms)\nSoumission shader 11 : terminé (0 ms)\nSoumission shader 12 : terminé (0 ms)\nSoumission programme 6 : terminé (0 ms)\nCiel ponctuel 1024 · face 1/6 : terminé (132 ms)\nDessin Scene · 1024 px, face 0 : terminé (132 ms)\nFin GPU · Ciel ponctuel 1024 face 1 : terminé (451 ms)\nCiel ponctuel 1024 · face 2/6 : terminé (1 ms)\nDessin Scene · 1024 px, face 1 : terminé (1 ms)\nFin GPU · Ciel ponctuel 1024 face 2 : terminé (282 ms)\nCiel ponctuel 1024 · face 3/6 : terminé (1 ms)\nDessin Scene · 1024 px, face 2 : terminé (1 ms)\nFin GPU · Ciel ponctuel 1024 face 3 : terminé (299 ms)\nCiel ponctuel 1024 · face 4/6 : terminé (2 ms)\nDessin Scene · 1024 px, face 3 : terminé (2 ms)\nFin GPU · Ciel ponctuel 1024 face 4 : terminé (248 ms)\nCiel ponctuel 1024 · face 5/6 : terminé (1 ms)\nDessin Scene · 1024 px, face 4 : terminé (1 ms)\nFin GPU · Ciel ponctuel 1024 face 5 : terminé (399 ms)\nCiel ponctuel 1024 · face 6/6 : terminé (2 ms)\nDessin Scene · 1024 px, face 5 : terminé (1 ms)\nFin GPU · Ciel ponctuel 1024 face 6 : terminé (414 ms)\nCompilation asynchrone · Optique ordinaire (ciel profond) : terminé (23 ms)\nMatériau · Optique ordinaire (ciel profond) : terminé (12 ms)\nSoumission shader 13 : terminé (0 ms)\nSoumission shader 14 : terminé (0 ms)\nSoumission programme 7 : terminé (0 ms)\nSoumission shader 15 : terminé (0 ms)\nSoumission shader 16 : terminé (0 ms)\nSoumission programme 8 : terminé (0 ms)\nDessin Scene · écran : terminé (35 ms)",
+  "previous": null,
+  "ready": true,
+  "entries": [
+    {
+      "label": "Chargement des catalogues",
+      "start": 124.69999999995343,
+      "status": "terminé",
+      "ms": 1259
+    },
+    {
+      "label": "Construction du moteur",
+      "start": 1383.5999999999767,
+      "status": "terminé",
+      "ms": 1344
+    },
+    {
+      "label": "Contexte : KHR_parallel_shader_compile absent",
+      "start": 2727.5999999999767,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Pilote : ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver) · tampon 552×600",
+      "start": 2727.9000000000233,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Compilation asynchrone · Voie lactée 128",
+      "start": 2882.9000000000233,
+      "status": "terminé",
+      "ms": 171
+    },
+    {
+      "label": "Matériau · ShaderMaterial #92",
+      "start": 2893.5,
+      "status": "terminé",
+      "ms": 161
+    },
+    {
+      "label": "Soumission shader 1",
+      "start": 2896.0999999999767,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 2",
+      "start": 2896.29999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission programme 1",
+      "start": 2896.4000000000233,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Voie lactée 128 · face 1/6",
+      "start": 3054.4000000000233,
+      "status": "terminé",
+      "ms": 20
+    },
+    {
+      "label": "Dessin Scene · 128 px, face 0",
+      "start": 3054.5999999999767,
+      "status": "terminé",
+      "ms": 19
+    },
+    {
+      "label": "Fin GPU · Voie lactée 128 face 1",
+      "start": 3074.0999999999767,
+      "status": "terminé",
+      "ms": 408
+    },
+    {
+      "label": "Voie lactée 128 · face 2/6",
+      "start": 3499.4000000000233,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 128 px, face 1",
+      "start": 3499.5999999999767,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Fin GPU · Voie lactée 128 face 2",
+      "start": 3500,
+      "status": "terminé",
+      "ms": 299
+    },
+    {
+      "label": "Voie lactée 128 · face 3/6",
+      "start": 3816.1999999999534,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 128 px, face 2",
+      "start": 3816.29999999993,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Voie lactée 128 face 3",
+      "start": 3817.6999999999534,
+      "status": "terminé",
+      "ms": 398
+    },
+    {
+      "label": "Voie lactée 128 · face 4/6",
+      "start": 4232.599999999977,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 128 px, face 3",
+      "start": 4232.699999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Fin GPU · Voie lactée 128 face 4",
+      "start": 4233.29999999993,
+      "status": "terminé",
+      "ms": 532
+    },
+    {
+      "label": "Voie lactée 128 · face 5/6",
+      "start": 4782.5,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 128 px, face 4",
+      "start": 4782.599999999977,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Voie lactée 128 face 5",
+      "start": 4783.599999999977,
+      "status": "terminé",
+      "ms": 433
+    },
+    {
+      "label": "Voie lactée 128 · face 6/6",
+      "start": 5232.599999999977,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 128 px, face 5",
+      "start": 5232.79999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Fin GPU · Voie lactée 128 face 6",
+      "start": 5233.400000000023,
+      "status": "terminé",
+      "ms": 549
+    },
+    {
+      "label": "Compilation asynchrone · Fond diffus 256",
+      "start": 8073.79999999993,
+      "status": "terminé",
+      "ms": 31
+    },
+    {
+      "label": "Matériau · ShaderMaterial #93",
+      "start": 8092.099999999977,
+      "status": "terminé",
+      "ms": 12
+    },
+    {
+      "label": "Soumission shader 3",
+      "start": 8092.599999999977,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 4",
+      "start": 8092.699999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission programme 2",
+      "start": 8092.79999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Fond diffus 256 · face 1/6",
+      "start": 8124.400000000023,
+      "status": "terminé",
+      "ms": 16
+    },
+    {
+      "label": "Dessin Scene · 256 px, face 0",
+      "start": 8124.400000000023,
+      "status": "terminé",
+      "ms": 3
+    },
+    {
+      "label": "Fin GPU · Fond diffus 256 face 1",
+      "start": 8140.29999999993,
+      "status": "terminé",
+      "ms": 192
+    },
+    {
+      "label": "Fond diffus 256 · face 2/6",
+      "start": 8349.099999999977,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 256 px, face 1",
+      "start": 8349.400000000023,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Fond diffus 256 face 2",
+      "start": 8350.900000000023,
+      "status": "terminé",
+      "ms": 15
+    },
+    {
+      "label": "Fond diffus 256 · face 3/6",
+      "start": 8382.400000000023,
+      "status": "terminé",
+      "ms": 2
+    },
+    {
+      "label": "Dessin Scene · 256 px, face 2",
+      "start": 8382.599999999977,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Fond diffus 256 face 3",
+      "start": 8384.099999999977,
+      "status": "terminé",
+      "ms": 15
+    },
+    {
+      "label": "Fond diffus 256 · face 4/6",
+      "start": 8415.699999999953,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 256 px, face 3",
+      "start": 8416,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Fond diffus 256 face 4",
+      "start": 8416.699999999953,
+      "status": "terminé",
+      "ms": 16
+    },
+    {
+      "label": "Fond diffus 256 · face 5/6",
+      "start": 8449,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 256 px, face 4",
+      "start": 8449.29999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Fin GPU · Fond diffus 256 face 5",
+      "start": 8449.900000000023,
+      "status": "terminé",
+      "ms": 16
+    },
+    {
+      "label": "Fond diffus 256 · face 6/6",
+      "start": 8482.5,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 256 px, face 5",
+      "start": 8482.599999999977,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Fond diffus 256 face 6",
+      "start": 8483.5,
+      "status": "terminé",
+      "ms": 15
+    },
+    {
+      "label": "Compilation asynchrone · Ciel ponctuel 1024",
+      "start": 8515.699999999953,
+      "status": "terminé",
+      "ms": 329
+    },
+    {
+      "label": "Matériau · ShaderMaterial #105",
+      "start": 8532.400000000023,
+      "status": "terminé",
+      "ms": 17
+    },
+    {
+      "label": "Soumission shader 5",
+      "start": 8533,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 6",
+      "start": 8533.199999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission programme 3",
+      "start": 8533.699999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Matériau · ShaderMaterial #111",
+      "start": 8565.599999999977,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Soumission shader 7",
+      "start": 8566.199999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 8",
+      "start": 8566.5,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission programme 4",
+      "start": 8566.699999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Matériau · ShaderMaterial #186",
+      "start": 8582.5,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Soumission shader 9",
+      "start": 8583,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 10",
+      "start": 8583.199999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission programme 5",
+      "start": 8583.29999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Matériau · ShaderMaterial #187",
+      "start": 8599.099999999977,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #188",
+      "start": 8615.699999999953,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #189",
+      "start": 8632.400000000023,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #190",
+      "start": 8649.199999999953,
+      "status": "terminé",
+      "ms": 12
+    },
+    {
+      "label": "Matériau · ShaderMaterial #191",
+      "start": 8665.699999999953,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #192",
+      "start": 8682.5,
+      "status": "terminé",
+      "ms": 14
+    },
+    {
+      "label": "Matériau · ShaderMaterial #193",
+      "start": 8699.199999999953,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #194",
+      "start": 8715.900000000023,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #195",
+      "start": 8732.599999999977,
+      "status": "terminé",
+      "ms": 10
+    },
+    {
+      "label": "Matériau · ShaderMaterial #196",
+      "start": 8749.199999999953,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #197",
+      "start": 8765.900000000023,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #198",
+      "start": 8782.599999999977,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #199",
+      "start": 8800,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #200",
+      "start": 8820.29999999993,
+      "status": "terminé",
+      "ms": 11
+    },
+    {
+      "label": "Matériau · ShaderMaterial #102",
+      "start": 8832.599999999977,
+      "status": "terminé",
+      "ms": 12
+    },
+    {
+      "label": "Soumission shader 11",
+      "start": 8833,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 12",
+      "start": 8833.5,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission programme 6",
+      "start": 8833.79999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Ciel ponctuel 1024 · face 1/6",
+      "start": 8849,
+      "status": "terminé",
+      "ms": 132
+    },
+    {
+      "label": "Dessin Scene · 1024 px, face 0",
+      "start": 8849.29999999993,
+      "status": "terminé",
+      "ms": 132
+    },
+    {
+      "label": "Fin GPU · Ciel ponctuel 1024 face 1",
+      "start": 8981.099999999977,
+      "status": "terminé",
+      "ms": 451
+    },
+    {
+      "label": "Ciel ponctuel 1024 · face 2/6",
+      "start": 9449.099999999977,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 1024 px, face 1",
+      "start": 9449.29999999993,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Ciel ponctuel 1024 face 2",
+      "start": 9450.199999999953,
+      "status": "terminé",
+      "ms": 282
+    },
+    {
+      "label": "Ciel ponctuel 1024 · face 3/6",
+      "start": 9748.900000000023,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 1024 px, face 2",
+      "start": 9749.199999999953,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Ciel ponctuel 1024 face 3",
+      "start": 9750,
+      "status": "terminé",
+      "ms": 299
+    },
+    {
+      "label": "Ciel ponctuel 1024 · face 4/6",
+      "start": 10065.599999999977,
+      "status": "terminé",
+      "ms": 2
+    },
+    {
+      "label": "Dessin Scene · 1024 px, face 3",
+      "start": 10065.79999999993,
+      "status": "terminé",
+      "ms": 2
+    },
+    {
+      "label": "Fin GPU · Ciel ponctuel 1024 face 4",
+      "start": 10067.599999999977,
+      "status": "terminé",
+      "ms": 248
+    },
+    {
+      "label": "Ciel ponctuel 1024 · face 5/6",
+      "start": 10332.29999999993,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Dessin Scene · 1024 px, face 4",
+      "start": 10332.5,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Ciel ponctuel 1024 face 5",
+      "start": 10333.29999999993,
+      "status": "terminé",
+      "ms": 399
+    },
+    {
+      "label": "Ciel ponctuel 1024 · face 6/6",
+      "start": 10749.599999999977,
+      "status": "terminé",
+      "ms": 2
+    },
+    {
+      "label": "Dessin Scene · 1024 px, face 5",
+      "start": 10749.900000000023,
+      "status": "terminé",
+      "ms": 1
+    },
+    {
+      "label": "Fin GPU · Ciel ponctuel 1024 face 6",
+      "start": 10751.400000000023,
+      "status": "terminé",
+      "ms": 414
+    },
+    {
+      "label": "Compilation asynchrone · Optique ordinaire (ciel profond)",
+      "start": 11188.29999999993,
+      "status": "terminé",
+      "ms": 23
+    },
+    {
+      "label": "Matériau · Optique ordinaire (ciel profond)",
+      "start": 11199,
+      "status": "terminé",
+      "ms": 12
+    },
+    {
+      "label": "Soumission shader 13",
+      "start": 11199.699999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 14",
+      "start": 11200.29999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission programme 7",
+      "start": 11200.400000000023,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 15",
+      "start": 11211.79999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission shader 16",
+      "start": 11212.199999999953,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Soumission programme 8",
+      "start": 11212.29999999993,
+      "status": "terminé",
+      "ms": 0
+    },
+    {
+      "label": "Dessin Scene · écran",
+      "start": 11214.29999999993,
+      "status": "terminé",
+      "ms": 35
+    }
+  ],
+  "sync": false
+}
