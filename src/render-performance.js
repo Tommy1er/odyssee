@@ -9,7 +9,7 @@ export class RenderPerformance{
    const start=performance.now();try{return original.call(this,scene,camera);}finally{self.record(name,'cpu',performance.now()-start);if(query){gl.endQuery(self.ext.TIME_ELAPSED_EXT);self.pending.push({query,name});}}
   };
  }
- record(name,kind,ms){let row=this.rows.get(name);if(!row){row={cpu:[],gpu:[],calls:0};this.rows.set(name,row);}if(kind==='cpu')row.calls++;row[kind].push(ms);if(row[kind].length>240)row[kind].shift();}
+ record(name,kind,ms){let row=this.rows.get(name);if(!row){row={cpu:[],gpu:[],calls:0};if(this.rows.size>=64)this.rows.delete(this.rows.keys().next().value);this.rows.set(name,row);}if(kind==='cpu')row.calls++;row[kind].push(ms);if(row[kind].length>240)row[kind].shift();}
  begin(now){this.frame++;if(this.previous!=null){this.frames.push(now-this.previous);if(this.frames.length>240)this.frames.shift();}this.previous=now;this.start=performance.now();this.poll();}
  mark(label){const now=performance.now();if(this.markTime!=null)this.record(label,'cpu',now-this.markTime);this.markTime=now;}
  end(){this.cpu.push(performance.now()-this.start);if(this.cpu.length>240)this.cpu.shift();this.markTime=null;}
