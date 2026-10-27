@@ -33,7 +33,7 @@ await optics.prepare(renderer,nebula);
 assert.equal(optics.material.name,'Optique ordinaire (corps du système)','superset kept while the cloud program compiles');
 release();await new Promise(r=>setTimeout(r,0));await new Promise(r=>setTimeout(r,0));
 await optics.prepare(renderer,nebula);
-assert.equal(optics.material.name,'Optique ordinaire (nuage)');assert(has(optics.material,'nebulaMarch')&&!has(optics.material,'shadeSurface'));
+assert.equal(optics.material.name,'Optique ordinaire (nuage)');assert(has(optics.material,'cloudTransmission')&&!has(optics.material,'shadeSurface'));
 optics.cloudGain=undefined;
 // Startup next to a resolved body: the first image waits for the deep-sky program only; the system one follows.
 {const fresh=new SkyOptics(new Float32Array(2048)),seen=[];fresh.material.uniforms.bodyKind.value=1;
@@ -45,10 +45,11 @@ optics.cloudGain=undefined;
 await optics.prepare(renderer,{...near,lensing:false});assert(!has(optics.material,'traceBlackHole'));
 await optics.prepare(renderer,near);
 assert.equal(optics.material.name,'Optique trou noir (traceur géodésique)');
-assert(has(optics.material,'traceBlackHole')&&has(optics.material,'i<520')&&has(optics.material,'shadeSurface')&&has(optics.material,'nebulaMarch'));
+assert(has(optics.material,'traceBlackHole')&&has(optics.material,'i<520')&&has(optics.material,'shadeSurface')&&has(optics.material,'cloudTransmission'));
 const n=programs.length;
 // Shared uniforms and cached programs.
 for(const m of programs)assert.equal(m.uniforms,u);
+assert(has(optics.cloudPass.material,'nebulaMarch'));
 u.exposure.value=3;await optics.prepare(renderer,deep);assert.equal(optics.material.name,'Optique ordinaire (ciel profond)');assert.equal(optics.material.uniforms.exposure.value,3);
 await optics.prepare(renderer,near);assert.equal(programs.length,n);
 // Variant sources: markers removed cleanly; one systemRadiance call per program.

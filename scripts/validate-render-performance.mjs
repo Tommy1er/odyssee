@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {needsSkyCapture} from '../src/sky-refresh.js';
+import {cloudSize} from '../src/cloud-pass.js';
+const p={key:'sky',pos:[0,0,0],t:0,wall:0,nearest:1};
+const n={key:'sky',pos:[0,0,0],t:1e-8,wall:.1,paused:false};
+assert(!needsSkyCapture(p,n),'time progression alone must not recapture every frame');
+assert(needsSkyCapture(p,{...n,wall:.51}));
+assert(!needsSkyCapture(p,{...n,wall:1,paused:true}));
+assert(needsSkyCapture(p,{...n,wall:4.1,paused:true}));
+assert(needsSkyCapture(p,{...n,key:'band changed'}));
+assert(needsSkyCapture(p,{...n,pos:[.01,0,0]}));
+assert(needsSkyCapture(p,{...n,t:2}));
+assert(needsSkyCapture(null,n));
+assert.deepEqual(cloudSize(1051,832),[526,416]);
+assert.deepEqual(cloudSize(1051/2,832),[263,416]);
+assert.deepEqual(cloudSize(5,7,1),[5,7]);
+console.log('PASS sky capture cadence/parallax/target/time jumps; half-resolution dimensions');
