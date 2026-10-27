@@ -64,3 +64,19 @@ Instrumentation temporaire injectée dans la page : changement de programme opti
 Conclusions :
 - Les trois parcours qui risquaient un blocage aboutissent, sans erreur ni perte de contexte. La correction par modules couvre aussi la Tarentule et le trou noir.
 - Il reste des chantiers de **performance**, distincts de la compilation : (a) démarrage saccadé pendant environ 45 s ; (b) marche du nuage à 122 ms par image sur Iris Xe (piste : demi-résolution hors écran puis suréchantillonnage, ou nombre de pas adaptatif) ; (c) environ 5 i/s près de Cygnus X-1 pour une cause encore inconnue, à profiler (copies du cube, `generateMipmap`, intégration de la géodésique côté processeur).
+
+## Profil complet sur Iris Xe, version publiée antérieure à 74b5800 (27/10/2026 après-midi)
+
+Mesure de référence **avant** la passe nuage réduite et la correction de cadence des cubes de Codex : la version en ligne dessinait encore l'optique avec `nebulaMarch` en plein écran. Le profileur, injecté dans la page puis retiré, enveloppe toutes les méthodes du contexte WebGL2 du cockpit pendant 5–8 s. Il relève le temps CPU de chaque appel et le temps GPU (`EXT_disjoint_timer_query_webgl2`, aucune mesure disjointe ni perdue) de chaque dessin, effacement, copie, mipmap, transfert et lecture, avec la cible (écran, face de cube, cible hors écran) et le programme. La session est unique, sans rechargement, enchaînant Soleil → Tarentule → Cygnus X-1 par le passage stable.
+
+| Lieu | i/s (médiane / p95 par image) | GPU mesuré par image | Détail GPU | CPU |
+|---|---|---|---|---|
+| Soleil (départ, ~2 ua) | **24,2** (33 / 83 ms) | 12,1 ms | optique « corps du système » 5,0 ms ; faces de cube 1024 ≈ 5,6 ms (1,9 face par image) | appels GL 0,5 ms ; tâches longues 9,3 ms par image |
+| Tarentule (variante « nuage » 13,6 s après l'arrivée) | **6,0** (167 / 317 ms) | 158 ms | **optique + nuage plein écran 145 ms (92 %)** ; cubes ≈ 8,5 ms (6 faces par image) | appels GL 1,5 ms ; tâches longues 39 ms par image |
+| Cygnus X-1, 15 R_s (programme trou noir **43,7 s** après l'arrivée, aucune erreur ni perte de contexte) | **21,3** profilé, **22,4** sans profileur sur 8 s (33 / 84–100 ms) | 14,3 ms | optique trou noir (avec système et nuage) 8,2 ms ; faces de cube ≈ 4,5 ms (2,1 faces par image) | appels GL 0,6 ms ; tâches longues 9,5 ms par image |
+
+Lecture :
+- **Tarentule** : le nuage plein écran fait l'essentiel du coût GPU. Sa marche à résolution réduite (74b5800 / c345ca9) vise donc le bon poste. Une fois le nuage traité, il restera environ 13 ms de GPU et environ 40 ms de tâches longues côté processeur par image.
+- **Cygnus X-1 : les 2–5 i/s du matin ne se reproduisent pas.** Avec le même enchaînement Tarentule → Cygnus X-1 sans rechargement et la même version publiée, la cadence est de 21–22 i/s et le GPU n'est pas saturé (14 ms). La lenteur du matin était donc passagère ou liée aux conditions de mesure (instrumentation plus lourde alors : surveillance continue, intervalle de 250 ms). Elle n'est pas propre au rendu du trou noir. La correction de cadence des cubes de Codex reste utile (Tarentule : 6 faces par image), mais elle ne repose plus sur une lenteur démontrée à Cygnus X-1.
+- **Compilation du trou noir** : 30,7 s le matin, 43,7 s l'après-midi. Elle reste la plus longue et elle est attendue avec le ciel figé. La compiler par anticipation (par exemple dès que la cible est un trou noir, avant la proximité) éviterait cette attente sans la raccourcir.
+- Ces chiffres serviront de référence au retest de la version contenant 74b5800 / c345ca9 (`?perf=1`).
