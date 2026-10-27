@@ -39,8 +39,14 @@ Cause : FXC inline chaque appel. `main` appelait `systemRadiance` deux fois, cel
 - Node : `validate-optics-variants` (réécrit : démarrage ciel profond, arrière-plan avec repli compilé, pas de double compilation, trou noir attendu, uniforms partagés, sources des variantes), `validate-galaxy-spectral-overlay` (ordre `G` / système / Doppler / ajout, `sysT` présent, un seul `systemRadiance`), `validate-optics`, `validate-compact`, `validate-eclipses`, `validate-immersion`, `validate-nebula-points`, `validate-catalogue-ui` : PASS. `npm run build` OK.
 - Navigateur SwiftShader `validate-cosmos-context-ui` (direct, `?target=m31`, `?gpuTrace=1`) : 12 vérifications, aucune erreur (démarrage et dessin, 18 faces avant la première image, libellé « Optique ordinaire (… », pas de trou noir, perte et restauration de contexte). SwiftShader ne reproduit pas le compilateur D3D : le retest sur Iris Xe reste indispensable.
 
+## Retest du cockpit publié sur Iris Xe (27/10/2026, version publiée par Codex avec 852788b)
+
+- `/cockpit.html?gpuTrace=1`, sans cible : `ready: true` vers 26 s, sans étape ouverte ni perte de contexte. Voie lactée 128 (compilation 0,6 s), fond diffus 256, ciel ponctuel 1024 (3,7 s), 18 faces, puis **« Optique ordinaire (ciel profond) » en 2,2 s**. Ciel affiché (Voie lactée visible), environ 30 images/s, bandeau d'erreur masqué.
+- À t ≈ 100 s, une instrumentation temporaire de `gl.useProgram` sur le contexte du cockpit montre que le programme optique dessiné est la variante **corps du système** (`shadeSurface` présent, ni nuage ni traceur). Elle a donc compilé en arrière-plan et pris le relais sans bloquer l'affichage.
+- `/cockpit.html` (démarrage normal) : `ready` à 19,4 s (chargement de page inclus), ciel profond en 0,9 s. Le programme corps du système est utilisé à partir de 38,9 s, soit environ 19,5 s après la première image, avec le ciel profond affiché entre-temps.
+- Non testés ici : approche d'un trou noir (variante complète, attendue), nébuleuse sélectionnée de près, parcours carte → cockpit.
+
 ## Reste à faire
 
-- Retester le cockpit publié sur Iris Xe (`?gpuTrace=1` puis normal) une fois que Codex a publié cette version. Vérifier aussi l'arrivée du ciel, puis l'apparition du Soleil et des planètes en arrière-plan.
 - La variante trou noir contient encore tous les modules et le traceur : son temps de compilation sur Iris Xe n'est pas mesuré et peut rester long (elle est attendue, comme avant 6f32354).
 - Les durées mesurées sont celles de l'en-tête reconstitué, pas à l'octet près celui de three. Les rapports sont nets.
