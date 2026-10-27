@@ -81,12 +81,13 @@ bool secondaryHit(vec3 ray,inout vec3 behindGlow,inout vec3 frontGlow,out float 
   if(cov>0.&&t<hitT){hitT=t;hitCol=col;hitA=cov;any=true;}}
  return any;}
 // Composition with the primary body: depth order by distance along the ray.
-vec3 systemRadiance(vec3 ray,vec3 L){vec3 front=vec3(0.);float t,a;vec3 c;
+vec3 systemRadiance(vec3 ray,vec3 L){vec3 front=vec3(0.);float t,a;vec3 c;sysT=1.;
  bool hit=secCount>.5&&secondaryHit(ray,L,front,t,c,a);
+ if(hit)sysT*=1.-a;
  if(bodyKind<.5)return (hit?mix(L,c,a):L)+front;
  float tp=1.e20,bp=dot(ray,bodyCenter),dp=1.-dot(bodyCenter-ray*bp,bodyCenter-ray*bp);if(bp>0.&&dp>0.)tp=(bp-sqrt(dp))*primaryRadiusLs;
- if(hit&&t<tp)return mix(localRadiance(ray,L),c,a)+front;
- return localRadiance(ray,hit?mix(L,c,a):L)+front;}
+ // A single localRadiance call (FXC inlining: two calls cost ≈ 45 s of compilation on Iris Xe). Same background and order.
+ bool fore=hit&&t<tp;vec3 lr=localRadiance(ray,fore?L:(hit?mix(L,c,a):L));return (fore?mix(lr,c,a):lr)+front;}
 `;
 
 export class SystemBodies {

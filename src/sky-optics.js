@@ -16,51 +16,91 @@ import {lutTexture} from './gpu-textures.js';
 import {cmbBand,blackbodyK,CMB_T0,SUN_CMB_DIR,SUN_CMB_KMS,C_KMS} from './cosmic-motion.js';
 // Every incoming sky ray (including extended objects) shares this observer boost.
 // RGB radiance is a spectral proxy, not a measured spectrum: see physics-v2.html.
+const VARIANT_NAMES={'':'ciel profond',s:'corps du système',c:'nuage',sc:'corps du système + nuage'};
+const variantFlags=key=>key==='bh'?{system:true,cloud:true,blackHole:true}:{system:key.includes('s'),cloud:key.includes('c'),blackHole:false};
+const cutModule=(src,tag,replacement='')=>src.replace(new RegExp('/\\*'+tag+'\\*/[\\s\\S]*?/\\*'+tag+'_END\\*/'),replacement);
+// Fragment source of one optical variant, from the full ordinary program (every module, no black-hole tracer).
+// Without the close-up/system module, pixelAngle (also read by the comets) is declared on its own.
+export function opticsVariantSource(full,{system,cloud,blackHole}){let f=full;
+ if(!system)f=cutModule(cutModule(f,'SYSTEM_MODULE','uniform float pixelAngle;'),'SYSTEM');
+ if(!cloud)f=cutModule(cutModule(f,'CLOUD_MODULE'),'CLOUD');
+ if(blackHole)f=f.replace('// BLACK_HOLE_MODULE',blackHoleGLSL).replace('// BLACK_HOLE_RADIANCE','if(bhActive>.5)L=traceBlackHole(ray);');
+ return f;
+}
 export class SkyOptics{
  constructor(lut,objects=[]){const size=CUBE_SIZE;this.target=new T.WebGLCubeRenderTarget(size,{type:T.HalfFloatType,minFilter:T.LinearFilter,magFilter:T.LinearFilter,generateMipmaps:false});this.cube=new T.CubeCamera(.001,2500,this.target);this.backdropTarget=new T.WebGLCubeRenderTarget(256,{type:T.HalfFloatType,minFilter:T.LinearFilter,generateMipmaps:false});this.backdropCamera=new T.CubeCamera(.001,2500,this.backdropTarget);this.backdrop=new T.Mesh(new T.SphereGeometry(1900,16,12),new T.ShaderMaterial({uniforms:{sky:{value:this.backdropTarget.texture}},vertexShader:'varying vec3 ray;void main(){ray=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec3 ray;uniform samplerCube sky;void main(){gl_FragColor=vec4(textureCube(sky,normalize(ray)).rgb,1.);}',side:T.BackSide,depthWrite:false,depthTest:false}));this.backdrop.renderOrder=-30;this.scene=new T.Scene();this.camera=new T.OrthographicCamera(-1,1,1,-1,0,1);const tex=lutTexture(new Float32Array(lut),512,1);tex.minFilter=tex.magFilter=T.LinearFilter;tex.needsUpdate=true;
  this.material=new T.ShaderMaterial({depthTest:false,depthWrite:false,uniforms:{sky:{value:this.target.texture},galaxyOverlay:{value:null},galaxyOverlayOn:{value:0},lut:{value:tex},rotation:{value:new T.Matrix3()},axis:{value:new T.Vector3(0,0,-1)},g:{value:1},momentum:{value:0},optics:{value:0},shift:{value:1},exposure:{value:1},aspect:{value:1},tanFov:{value:.7},band:{value:1},cloudActive:{value:0},cloudOpacity:{value:1},cloudCenter:{value:new T.Vector3()},cloudRotation:{value:new T.Matrix3()},shape:{value:0},seed:{value:0},bhActive:{value:0},radial:{value:new T.Vector3()},diskNormal:{value:new T.Vector3(.18,.84,.51).normalize()},observerRadius:{value:15},diskModel:{value:0},diskTmax:{value:1e4},diskOuter:{value:30},disk:{value:0},time:{value:0},cmbOn:{value:0},cmbT0:{value:CMB_T0},cmbGs:{value:1},cmbK:{value:1},cmbW:{value:1},cmbFlux:{value:0},cmbSigma:{value:1e-3},cmbBetaS:{value:new T.Vector3()},cmbRGB:{value:new T.Vector3(1,1,1)}},vertexShader:'varying vec2 uvp;void main(){uvp=position.xy;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:`precision highp float;varying vec2 uvp;uniform samplerCube sky;uniform sampler2D lut,galaxyOverlay;uniform float galaxyOverlayOn;uniform mat3 rotation;uniform vec3 axis;uniform float g,momentum,optics,shift,exposure,aspect,tanFov,band;
 // Cosmic microwave background (cosmic-motion.js): black body T0 seen with the solar dipole and the ship's Doppler factor;
 // below about 2 pixels the forward hot spot is drawn as a point of the same total flux.
 uniform float cmbOn,cmbT0,cmbGs,cmbK,cmbW,cmbFlux,cmbSigma;uniform vec3 cmbBetaS,cmbRGB;
+/*SYSTEM_MODULE*/
 ${closeupGLSL}
 ${systemGLSL}
 ${systemPrimaryGLSL}
+/*SYSTEM_MODULE_END*/
 ${cometGLSL}
 // BLACK_HOLE_MODULE
+/*CLOUD_MODULE*/
 ${cloudGLSL}
+/*CLOUD_MODULE_END*/
 ${localGroupGLSL}
 uniform float bhActive;
 vec4 thermal(float t){float clipped=clamp(t,100.,1000000.);vec4 c=texture2D(lut,vec2(log(clipped/100.)/log(10000.),.5));c.a+=log(max(t,100.)/clipped);return c;}
 void main(){vec3 n=normalize(rotation*vec3(uvp.x*aspect*tanFov,uvp.y*tanFov,-1.));vec3 ray=n;float D=1.;if(optics>.5&&momentum>.000001){float mu=clamp(dot(n,axis),-1.,1.);vec3 perpendicular=n-axis*mu;float oneMinus=mu>0.?dot(perpendicular,perpendicular)/(1.+mu):1.-mu;float inverseD=g*oneMinus+mu/(g+momentum);D=1./max(inverseD,1.e-20);ray=normalize((perpendicular+axis*(1./(g+momentum)-g*oneMinus))*D);}
 vec3 L=max(vec3(0),textureCube(sky,ray).rgb)+groupRadiance(ray)*groupGain;
 // Point galaxies, already spectral-shifted per source (HDR overlay). They are background sky: same close-up dimming and
-// same occlusion by planets, moons and stars as the cube (systemRadiance is affine in its background, so S(L+G)-S(L)
-// is G seen through the bodies), but NOT the approximate global RGB Doppler below.
+// same occlusion by planets, moons and stars as the cube (the system compositing is affine in its background,
+// S(B) = E + sysT·B, so S(L+G)-S(L) = sysT·G: G seen through the bodies, from one evaluation), but NOT the approximate
+// global RGB Doppler below.
 vec3 G=galaxyOverlayOn>.5?max(vec3(0.),texture2D(galaxyOverlay,uvp*.5+.5).rgb):vec3(0.);
 // BLACK_HOLE_RADIANCE
-if(cloudActive>.5)L=cloudRadiance(ray,L);
-if(bodyKind>.5){float dim=band<2.?.035:1.;L*=dim;G*=dim;}if(bodyKind>.5||secCount>.5){vec3 S=systemRadiance(ray,L);if(G.r+G.g+G.b>0.)G=max(vec3(0.),systemRadiance(ray,L+G)-S);L=S;}if(cometCount>.5)L+=cometRadiance(ray);
+/*CLOUD*/if(cloudActive>.5)L=cloudRadiance(ray,L);/*CLOUD_END*/
+/*SYSTEM*/if(bodyKind>.5){float dim=band<2.?.035:1.;L*=dim;G*=dim;}if(bodyKind>.5||secCount>.5){vec3 S=systemRadiance(ray,L);G*=sysT;L=S;}/*SYSTEM_END*/if(cometCount>.5)L+=cometRadiance(ray);
 if(optics>.5&&shift>.5&&momentum>.000001){if(band<2.5){float blue=L.b/(L.r+L.b+1.e-20);float temp=mix(2800.,16000.,clamp((blue-.18)/.66,0.,1.));vec4 rest=thermal(temp),seen=thermal(temp*D);float gain=exp(clamp(seen.a-rest.a,-70.,60.));if(temp*D<100.)gain=0.;L*=gain*seen.rgb/max(rest.rgb,vec3(.0001));}else{L*=exp(clamp(4.*log(D),-70.,60.));}}
 if(cmbOn>.5){float Tc=D*cmbT0/(cmbGs*(1.-dot(cmbBetaS,ray)));vec3 Lc=vec3(0.);if(Tc>150.){vec4 c=thermal(Tc);Lc=cmbK*exp(clamp(c.a,-80.,80.))*c.rgb;}float th=dot(n,axis)>0.?length(cross(n,axis)):3.14159;vec3 Lp=cmbFlux/(6.2831853*cmbSigma*cmbSigma)*exp(-.5*th*th/(cmbSigma*cmbSigma))*cmbRGB;L+=mix(Lp,Lc,cmbW);}
 // Point galaxies have been spectral-shifted separately BEFORE RGB merger. Compose in linear HDR.
 if(galaxyOverlayOn>.5)L+=G;
-L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.2126,.7152,.0722));rgb=mix(vec3(y),rgb,smoothstep(.15,.8,y));}gl_FragColor=vec4(pow(rgb,vec3(1./2.2)),1.);}`});this.lut=lut;this.cmbK=blackbodyK(lut,PHOT_ZERO);{const b=SUN_CMB_KMS/C_KMS,dir=SUN_CMB_DIR;this.material.uniforms.cmbBetaS.value.set(...dir.map(x=>x*b));this.material.uniforms.cmbGs.value=1/Math.sqrt(1-b*b);this.material.uniforms.cmbK.value=this.cmbK;}this.material.name="Optique ordinaire (sans traceur de trou noir)";this.ordinaryMaterial=this.material;this.compiledMaterials=new Set();this.screen=new T.Mesh(new T.PlaneGeometry(2,2),this.material);this.scene.add(this.screen);Object.assign(this.material.uniforms,nebulaUniforms());this.closeup=new CloseupModel(this.material.uniforms,objects,lut);this.system=new SystemBodies(this.material.uniforms,objects,this.closeup);this.comets=new CometLayer(this.material.uniforms,objects);}
- // Keep the expensive geodesic program out of ordinary startup entirely (not just a uniform branch).
- selectVariant(s){const bh=s.target?.type==='blackhole'?s.target:null;
-  const rr=bh?schwarzschildR(norm(sub(s.pos,bh.lightXYZ||bh.xyz))/radiusLy(bh),.5):Infinity;
-  const active=!!s.lensing&&rr<150&&rr>1.02;
-  if(active&&!this.blackHoleMaterial){const base=this.ordinaryMaterial;
-   this.blackHoleMaterial=new T.ShaderMaterial({name:'Optique trou noir (traceur géodésique)',depthTest:false,depthWrite:false,
-    uniforms:base.uniforms,vertexShader:base.vertexShader,fragmentShader:base.fragmentShader
-     .replace('// BLACK_HOLE_MODULE',blackHoleGLSL)
-     .replace('// BLACK_HOLE_RADIANCE','if(bhActive>.5)L=traceBlackHole(ray);')});}
-  this.material=active?this.blackHoleMaterial:this.ordinaryMaterial;this.screen.material=this.material;
-  return this.material;
+L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.2126,.7152,.0722));rgb=mix(vec3(y),rgb,smoothstep(.15,.8,y));}gl_FragColor=vec4(pow(rgb,vec3(1./2.2)),1.);}`});this.lut=lut;this.cmbK=blackbodyK(lut,PHOT_ZERO);{const b=SUN_CMB_KMS/C_KMS,dir=SUN_CMB_DIR;this.material.uniforms.cmbBetaS.value.set(...dir.map(x=>x*b));this.material.uniforms.cmbGs.value=1/Math.sqrt(1-b*b);this.material.uniforms.cmbK.value=this.cmbK;}this.uniforms=this.material.uniforms;this.fullFragment=this.material.fragmentShader;this.variants=new Map();this.compiledMaterials=new Set();this.pendingMaterials=new Map();this.material.dispose();this.material=this.variant('');this.ordinaryMaterial=this.material;this.screen=new T.Mesh(new T.PlaneGeometry(2,2),this.material);this.scene.add(this.screen);Object.assign(this.material.uniforms,nebulaUniforms());this.closeup=new CloseupModel(this.material.uniforms,objects,lut);this.system=new SystemBodies(this.material.uniforms,objects,this.closeup);this.comets=new CometLayer(this.material.uniforms,objects);}
+ // Optical programs per module (Iris Xe / ANGLE D3D11, 27/10/2026): FXC inlines every call, so one program holding the
+ // close-up bodies, the nebula march and the geodesic tracer took minutes to compile. Each variant holds only the modules
+ // the view needs; the black-hole tracer stays out of every ordinary program. All variants share one uniforms object.
+ variant(key){let m=this.variants.get(key);if(m)return m;const flags=variantFlags(key);
+  m=new T.ShaderMaterial({name:flags.blackHole?'Optique trou noir (traceur géodésique)':'Optique ordinaire ('+VARIANT_NAMES[key]+')',depthTest:false,depthWrite:false,
+   uniforms:this.uniforms,vertexShader:'varying vec2 uvp;void main(){uvp=position.xy;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:opticsVariantSource(this.fullFragment,flags)});
+  m.userData.flags=flags;this.variants.set(key,m);return m;
  }
- async prepare(renderer,s,trace){const material=this.selectVariant(s);if(this.compiledMaterials.has(material))return;
-  if(trace)await trace.compile(renderer,this.scene,this.camera,material.name);
-  else await renderer.compileAsync(this.scene,this.camera);
+ cloudTarget(s){const cloudGain=this.cloudGain??(s.target&&norm(sub(s.target.xyz,s.pos))/radiusLy(s.target)<120?1:0);
+  return {cloudGain,cloud:s.target&&['nebula','pillars'].includes(s.target.type)&&cloudGain>0?s.target:null};}
+ // Same conditions as render(): lensing near a black hole, a resolved primary or secondary body, the selected cloud.
+ variantKey(s){const bh=s.target?.type==='blackhole'?s.target:null;
+  const rr=bh?schwarzschildR(norm(sub(s.pos,bh.lightXYZ||bh.xyz))/radiusLy(bh),.5):Infinity;
+  if(!!s.lensing&&rr<150&&rr>1.02)return 'bh';
+  this.system.update(s,this.closeup.body,s.pixelAngle||.0015);const u=this.uniforms;
+  return (u.bodyKind.value>.5||u.secCount.value>.5?'s':'')+(this.cloudTarget(s).cloud?'c':'');
+ }
+ selectVariant(s){return this.variant(this.variantKey(s));}
+ use(material){this.material=material;this.screen.material=material;}
+ // Compiled program holding every needed module with the fewest extra ones; otherwise the one already on screen.
+ fallback(key){const need=variantFlags(key);let best=null,extra=Infinity;
+  for(const m of this.compiledMaterials){const f=m.userData.flags;if((need.system&&!f.system)||(need.cloud&&!f.cloud))continue;
+   const e=+f.system+ +f.cloud+2*f.blackHole;if(e<extra){best=m;extra=e;}}
+  return best||this.material;
+ }
+ async compileVariant(renderer,material,trace){const scene=new T.Scene();scene.add(new T.Mesh(this.screen.geometry,material));
+  if(trace)await trace.compile(renderer,scene,this.camera,material.name);
+  else await renderer.compileAsync(scene,this.camera);
   this.compiledMaterials.add(material);
+ }
+ // The black-hole approach waits for its exact program (as before). The first image waits only for the deep-sky program
+ // (1.4 s on Iris Xe, against 15 s for the close-up/system bodies and 12 s for a cloud): bodies and clouds are prepared in
+ // the background and appear once their program is ready, instead of the sky freezing during a long driver compilation.
+ async prepare(renderer,s,trace){const key=this.variantKey(s),material=this.variant(key);
+  if(this.compiledMaterials.has(material)){this.use(material);return;}
+  if(key==='bh'){await this.compileVariant(renderer,material,trace);this.use(material);return;}
+  if(!this.compiledMaterials.size){const deep=this.variant('');await this.compileVariant(renderer,deep,trace);this.use(deep);if(material===deep)return;}
+  else this.use(this.fallback(key));
+  if(!this.pendingMaterials.has(material))this.pendingMaterials.set(material,this.compileVariant(renderer,material,null)
+   .catch(e=>{this.variantError=material.name+' : '+(e?.message||e);}).finally(()=>this.pendingMaterials.delete(material)));
  }
  // Forward CMB hot spot at the ship's speed (flux, size, colour); off while it is invisible (γ below ≈ 100).
  updateCMB(x,u,enabled,pixel){const m=norm(u),g=Math.sqrt(1+m*m),gap=1/(g*(g+m));if(!enabled||!(this.lut?.length>2000)||m<20){x.cmbOn.value=0;this.cmb=null;return;}
@@ -82,5 +122,5 @@ L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.
 
  render(renderer,camera,s,u,enabled){camera.updateMatrixWorld();const bh=s.target?.type==='blackhole'?s.target:null,rr=bh?schwarzschildR(norm(sub(s.pos,bh.lightXYZ||bh.xyz))/radiusLy(bh),.5):Infinity;const bhU=this.material.uniforms;// The selected cloud is marched per screen ray at any distance, weighted by its point→volume handoff (renderer.js,
  // nebula-points.js); legacy rule (< 120 radii, full weight) when no weight is supplied.
- const cloudGain=this.cloudGain??(s.target&&norm(sub(s.target.xyz,s.pos))/radiusLy(s.target)<120?1:0);const cloud=s.target&&['nebula','pillars'].includes(s.target.type)&&cloudGain>0?s.target:null;bhU.cloudActive.value=+!!cloud;bhU.cloudOpacity.value=this.cloudOpacity??1;if(cloud){bhU.cloudCenter.value.set(...sub(cloud.lightXYZ||cloud.xyz,s.pos)).divideScalar(radiusLy(cloud));const q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,0,-1),new T.Vector3(...cloud.xyz).normalize());bhU.cloudRotation.value.setFromMatrix4(new T.Matrix4().makeRotationFromQuaternion(q)).transpose();applyCalibration(bhU,calibration(cloud),diffuseGain(s.band??1)*cloudGain);}bhU.bhActive.value=+(s.lensing&&rr<150&&rr>1.02);if(bh){bhU.radial.value.set(...sub(s.pos,bh.lightXYZ||bh.xyz)).normalize();bhU.observerRadius.value=s.gr?.id===bh.id?s.gr.r:rr;const acc=accretionOf(bh);const earth=this.closeup.objects.find(x=>x.id==='solar:Terre');bhU.diskNormal.value.set(...diskAxis(bh,earth?earth.xyz:[0,0,0]));bhU.diskModel.value=MODEL_CODE[acc.model]||0;bhU.diskTmax.value=acc.Tmax||1e4;bhU.diskOuter.value=acc.rOut||30;bhU.time.value=s.wall;} const x=this.material.uniforms;x.rotation.value.setFromMatrix4(camera.matrixWorld);x.axis.value.set(...unit(u));x.g.value=gammaU(u);x.momentum.value=norm(u);x.optics.value=+enabled;if(x.groupGain)x.groupGain.value=diffuseGain(s.band??1);x.shift.value=+s.doppler;x.exposure.value=s.exposure;x.band.value=s.band;x.aspect.value=camera.aspect;x.tanFov.value=Math.tan(camera.fov/2*Math.PI/180);const db=renderer.getDrawingBufferSize(this.drawSize||(this.drawSize=new T.Vector2()));this.updateCMB(x,u,enabled,2*x.tanFov.value/Math.max(1,db.y));this.system.update(s,this.closeup.body,2*x.tanFov.value/Math.max(1,db.y));this.comets.update(s);renderer.render(this.scene,this.camera);}
+ const {cloudGain,cloud}=this.cloudTarget(s);bhU.cloudActive.value=+!!cloud;bhU.cloudOpacity.value=this.cloudOpacity??1;if(cloud){bhU.cloudCenter.value.set(...sub(cloud.lightXYZ||cloud.xyz,s.pos)).divideScalar(radiusLy(cloud));const q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,0,-1),new T.Vector3(...cloud.xyz).normalize());bhU.cloudRotation.value.setFromMatrix4(new T.Matrix4().makeRotationFromQuaternion(q)).transpose();applyCalibration(bhU,calibration(cloud),diffuseGain(s.band??1)*cloudGain);}bhU.bhActive.value=+(s.lensing&&rr<150&&rr>1.02);if(bh){bhU.radial.value.set(...sub(s.pos,bh.lightXYZ||bh.xyz)).normalize();bhU.observerRadius.value=s.gr?.id===bh.id?s.gr.r:rr;const acc=accretionOf(bh);const earth=this.closeup.objects.find(x=>x.id==='solar:Terre');bhU.diskNormal.value.set(...diskAxis(bh,earth?earth.xyz:[0,0,0]));bhU.diskModel.value=MODEL_CODE[acc.model]||0;bhU.diskTmax.value=acc.Tmax||1e4;bhU.diskOuter.value=acc.rOut||30;bhU.time.value=s.wall;} const x=this.material.uniforms;x.rotation.value.setFromMatrix4(camera.matrixWorld);x.axis.value.set(...unit(u));x.g.value=gammaU(u);x.momentum.value=norm(u);x.optics.value=+enabled;if(x.groupGain)x.groupGain.value=diffuseGain(s.band??1);x.shift.value=+s.doppler;x.exposure.value=s.exposure;x.band.value=s.band;x.aspect.value=camera.aspect;x.tanFov.value=Math.tan(camera.fov/2*Math.PI/180);const db=renderer.getDrawingBufferSize(this.drawSize||(this.drawSize=new T.Vector2()));this.updateCMB(x,u,enabled,2*x.tanFov.value/Math.max(1,db.y));this.system.update(s,this.closeup.body,2*x.tanFov.value/Math.max(1,db.y));this.comets.update(s);renderer.render(this.scene,this.camera);}
 }

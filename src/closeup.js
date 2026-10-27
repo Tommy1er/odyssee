@@ -12,6 +12,9 @@ import {bodyFrame,hasIAU} from './iau-rotation.js';
 export const closeupGLSL=`
 uniform vec3 bodyCenter,bodyLight,bodyTint;uniform mat3 bodyRotation;
 uniform float bodyKind,bodyStyle,bodySeed,bodyTime,bodyMapReady,bodyCloudReady,bodyRing,bodyAtmosphere,bodyPhase,activityTime;uniform float bodyLimb,bodyGranule,bodyConvective,bodySpots;uniform float bodyCompactness,bodyBeamBlend;float nsLimb=1.;
+// sysT: background transmission of the system/close-up compositing along this ray (systemRadiance is affine in its
+// background: S(B) = E + sysT·B). Lets sky-optics apply the bodies to the point-galaxy overlay without a second call.
+float sysT=1.;
 uniform sampler2D bodyMap,cloudMap,nightMap,ringMap;uniform float ringReady;uniform float nightReady;
 vec3 eclipseTint=vec3(1.);float eclipseRed=0.;vec3 primaryStarlight(vec3 pR);
 float noiseHash(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7))+bodySeed)*43758.5453);}
@@ -45,20 +48,22 @@ vec3 shadeSurface(vec3 normal,vec3 ray){vec3 p=normalize(bodyRotation*normal);ve
  return col;
 }
 vec3 localRadiance(vec3 ray,vec3 background){if(bodyKind<.5)return background;
- vec3 center=bodyCenter;float b=dot(ray,center),disc=1.-dot(center,center)+b*b;float aa=max(fwidth(disc),.0000001);float surfaceT=1.e20;vec3 col=background;
+ vec3 center=bodyCenter;float b=dot(ray,center),disc=1.-dot(center,center)+b*b;float aa=max(fwidth(disc),.0000001);float surfaceT=1.e20;vec3 col=background;vec3 sN=vec3(0.,0.,1.);float sGain=0.,sCov=0.;bool sHit=false;
  // Neutron stars: Schwarzschild light bending, Beloborodov (2002) relation for a distant observer,
  // 1 − cos α = (1 − cos ψ)(1 − u), u = Rs/R. The star looks larger by 1/√(1−u) and shows more than half its surface.
  float imp2=max(0.,dot(center,center)-b*b),bmax2=1./max(.05,1.-bodyCompactness);
  if(bodyKind>2.5&&b>0.&&imp2<bmax2){float sinA=sqrt(min(1.,imp2*(1.-bodyCompactness))),cosA=sqrt(max(0.,1.-sinA*sinA)),cosPsi=max(-1.,1.-(1.-cosA)/(1.-bodyCompactness)),sinPsi=sqrt(max(0.,1.-cosPsi*cosPsi));
   vec3 q=ray*b-center;vec3 eHat=length(q)>1.e-7?normalize(q):normalize(cross(ray,vec3(0.,1.,0.)));vec3 normal=cosPsi*normalize(-center)+sinPsi*eHat;nsLimb=cosA;surfaceT=b;
   // Gravitational redshift of the thermal surface: bolometric intensity × g⁴ = (1 − u)².
-  vec3 surface=shadeSurface(normal,ray)*pow(1.-bodyCompactness,2.);float dB=bmax2-imp2;col=mix(background,surface,smoothstep(0.,max(fwidth(dB),.0000001),dB));}
- else if(b>0.&&disc>0.){surfaceT=b-sqrt(disc);if(surfaceT<0.)surfaceT=b+sqrt(disc);vec3 normal=normalize(ray*surfaceT-center);eclipseRed=0.;eclipseTint=bodyKind<1.5?primaryStarlight(ray*surfaceT):vec3(1.);vec3 surface=shadeSurface(normal,ray);col=mix(background,surface,smoothstep(0.,aa,disc));}
+  sN=normal;sGain=pow(1.-bodyCompactness,2.);float dB=bmax2-imp2;sCov=smoothstep(0.,max(fwidth(dB),.0000001),dB);sHit=true;}
+ else if(b>0.&&disc>0.){surfaceT=b-sqrt(disc);if(surfaceT<0.)surfaceT=b+sqrt(disc);vec3 normal=normalize(ray*surfaceT-center);eclipseRed=0.;eclipseTint=bodyKind<1.5?primaryStarlight(ray*surfaceT):vec3(1.);sN=normal;sGain=1.;sCov=smoothstep(0.,aa,disc);sHit=true;}
+ // A single shadeSurface call: D3D11 (FXC) inlines every call, and two calls doubled the procedural terrain (Iris Xe, 27/10/2026).
+ if(sHit){vec3 surface=shadeSurface(sN,ray)*sGain;col=mix(background,surface,sCov);sysT*=1.-sCov;}
  // Thin atmosphere: optical depth follows the chord through a spherical shell.
  if(bodyAtmosphere>0.&&b>0.){float R=1.+bodyAtmosphere,ad=R*R-dot(center,center)+b*b;
-  if(ad>0.){float hit=b-sqrt(ad);vec3 n=normalize(ray*max(hit,0.)-center);float grazing=pow(1.-abs(dot(n,-ray)),3.);float lighting=.05+.95*max(0.,dot(n,bodyLight));vec3 haze=bodyStyle==1.?vec3(.08,.38,1.):bodyStyle==2.?bodyTint:vec3(.14,.34,.55);float opacity=disc>0.?grazing*.5:min(.65,sqrt(ad)*2.8);col=mix(col,haze*lighting,opacity);}}
+  if(ad>0.){float hit=b-sqrt(ad);vec3 n=normalize(ray*max(hit,0.)-center);float grazing=pow(1.-abs(dot(n,-ray)),3.);float lighting=.05+.95*max(0.,dot(n,bodyLight));vec3 haze=bodyStyle==1.?vec3(.08,.38,1.):bodyStyle==2.?bodyTint:vec3(.14,.34,.55);float opacity=disc>0.?grazing*.5:min(.65,sqrt(ad)*2.8);col=mix(col,haze*lighting,opacity);sysT*=1.-opacity;}}
  if(bodyRing>.5){vec3 ro=bodyRotation*(-center),rd=bodyRotation*ray;float t=-ro.y/(rd.y+1.e-12);vec3 hit=ro+rd*t;float r=length(hit.xz);
-  if(t>0.&&t<surfaceT&&r>1.24&&r<2.32){float edge=smoothstep(1.24,1.27,r)*(1.-smoothstep(2.29,2.32,r));float gap=1.-.94*exp(-pow((r-1.95)/.026,2.));float bands=.62+.12*sin(r*280.)+.08*sin(r*723.)+.08*sin(r*67.);float tau=edge*gap*bands;vec4 ringTex=texture2D(ringMap,vec2(clamp((r-1.24)/1.08,0.,1.),.5),1.5);if(ringReady>.5)tau=ringTex.a*edge*gap;vec3 ringColor=mix(vec3(.35,.29,.2),vec3(.82,.74,.58),smoothstep(1.4,1.8,r));if(ringReady>.5)ringColor=ringTex.rgb;vec3 l=bodyRotation*bodyLight;float along=dot(hit,l),shade=dot(hit,hit)-along*along;float shadow=1.-.88*(1.-smoothstep(.94,1.04,shade))*(1.-smoothstep(-.03,.03,along));col=mix(col,ringColor*(.2+abs(l.y))*shadow,tau);}}
+  if(t>0.&&t<surfaceT&&r>1.24&&r<2.32){float edge=smoothstep(1.24,1.27,r)*(1.-smoothstep(2.29,2.32,r));float gap=1.-.94*exp(-pow((r-1.95)/.026,2.));float bands=.62+.12*sin(r*280.)+.08*sin(r*723.)+.08*sin(r*67.);float tau=edge*gap*bands;vec4 ringTex=texture2D(ringMap,vec2(clamp((r-1.24)/1.08,0.,1.),.5),1.5);if(ringReady>.5)tau=ringTex.a*edge*gap;vec3 ringColor=mix(vec3(.35,.29,.2),vec3(.82,.74,.58),smoothstep(1.4,1.8,r));if(ringReady>.5)ringColor=ringTex.rgb;vec3 l=bodyRotation*bodyLight;float along=dot(hit,l),shade=dot(hit,hit)-along*along;float shadow=1.-.88*(1.-smoothstep(.94,1.04,shade))*(1.-smoothstep(-.03,.03,along));col=mix(col,ringColor*(.2+abs(l.y))*shadow,tau);sysT*=1.-tau;}}
  if((bodyKind==2.||bodyKind==3.||bodyKind==4.)&&b>0.){float impact=sqrt(imp2)/(bodyKind>2.5?sqrt(bmax2):1.);float glow=exp(-max(0.,impact-1.)*6.)*(1.-smoothstep(1.,1.06,1./max(impact,.0001)));col+=bodyTint*glow*(bodyKind==2.?.2+.06*sin(activityTime*.8+impact*9.):.32);
   if(bodyKind>=3.){
    // Radio beams along the magnetic axis, inclined ≈40° to the spin axis: false colour, invisible to the eye.

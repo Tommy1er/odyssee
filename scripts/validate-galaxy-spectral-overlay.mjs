@@ -96,8 +96,12 @@ test('Screen-pixel overlay carries the shared cube photometric scale (resolution
 });
 test('Overlay galaxies are background sky: close-up dimming and body occlusion, no second global Doppler',()=>{
  const sky=fs.readFileSync(new URL('../src/sky-optics.js',import.meta.url),'utf8');
- const g=sky.indexOf('vec3 G=galaxyOverlayOn>.5'),sys=sky.indexOf('G=max(vec3(0.),systemRadiance(ray,L+G)-S)'),shift=sky.indexOf('if(optics>.5&&shift>.5'),add=sky.indexOf('L+=G;');
+ const g=sky.indexOf('vec3 G=galaxyOverlayOn>.5'),sys=sky.indexOf('vec3 S=systemRadiance(ray,L);G*=sysT;'),shift=sky.indexOf('if(optics>.5&&shift>.5'),add=sky.indexOf('L+=G;');
  assert(g>0&&g<sys&&sys<shift&&shift<add);assert(sky.includes('L*=dim;G*=dim;'));
+ // Bodies apply to the overlay through their transmission sysT (systemRadiance is affine in its background), one call only.
+ const bodies=fs.readFileSync(new URL('../src/closeup.js',import.meta.url),'utf8')+fs.readFileSync(new URL('../src/system-bodies.js',import.meta.url),'utf8');
+ for(const t of ['sysT*=1.-sCov;','sysT*=1.-opacity;','sysT*=1.-tau;','if(hit)sysT*=1.-a;','sysT=1.;'])assert(bodies.includes(t),t);
+ assert.equal((sky.match(/systemRadiance\(/g)||[]).length,1);
 });
 globalThis.innerWidth=390;const phone=await import('../src/photometry.js?phone');delete globalThis.innerWidth;const desk=await import('../src/photometry.js');
 test('Phone 512 cube: point sprites keep the 1024 photometric Φ (stars, clusters, point galaxies)',()=>{

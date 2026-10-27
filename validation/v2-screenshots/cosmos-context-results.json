@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "Cockpit starts and draws direct",
+    "All 18 cube faces complete before first displayed frame",
+    "Context loss pauses simulation and exposes diagnostic",
+    "Restoration requires reload instead of automatically resuming",
+    "Cockpit starts and draws ?target=m31",
+    "All 18 cube faces complete before first displayed frame",
+    "Context loss pauses simulation and exposes diagnostic",
+    "Restoration requires reload instead of automatically resuming",
+    "Cockpit starts and draws ?gpuTrace=1",
+    "All 18 cube faces complete before first displayed frame",
+    "Context loss pauses simulation and exposes diagnostic",
+    "Restoration requires reload instead of automatically resuming"
+  ],
+  "errors": []
+}
