@@ -21,10 +21,10 @@ emission=vec4(L/cloudRadianceScale,1.);transmission=vec4(mix(vec3(1.),T,cloudOpa
   this.scene=new T.Scene();this.scene.add(new T.Mesh(new T.PlaneGeometry(2,2),this.material));this.camera=new T.OrthographicCamera(-1,1,1,-1,0,1);
  }
  render(renderer,scale=.5){const u=this.uniforms;u.cloudRadianceScale.value=Math.max(1e-30,(Math.abs(u.nebKl.value)+Math.abs(u.nebKc.value))*Math.abs(u.nebGain.value));const viewport=renderer.getViewport(new T.Vector4()),scissor=renderer.getScissor(new T.Vector4()),test=renderer.getScissorTest(),target=renderer.getRenderTarget(),face=renderer.getActiveCubeFace(),mip=renderer.getActiveMipmapLevel();
-  // Default framebuffer viewports are CSS pixels; render targets use physical pixels. Respect split comparison views.
-  const ratio=target?1:renderer.getPixelRatio(),[w,h]=cloudSize(viewport.z*ratio,viewport.w*ratio,scale);
+  const physical=renderer.getCurrentViewport(new T.Vector4()),[w,h]=cloudSize(physical.z,physical.w,scale);
   if(this.target.width!==w||this.target.height!==h)this.target.setSize(w,h);
-  try{renderer.setRenderTarget(this.target);renderer.setViewport(0,0,w,h);renderer.setScissorTest(false);renderer.render(this.scene,this.camera);}
-  finally{renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.setScissor(scissor);renderer.setScissorTest(test);}
+  // setRenderTarget applies the target's physical viewport. setViewport would multiply it by DPR again.
+  try{renderer.setRenderTarget(this.target);renderer.setScissorTest(false);renderer.render(this.scene,this.camera);}
+  finally{renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
  }
 }

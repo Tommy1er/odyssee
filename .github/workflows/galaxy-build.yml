@@ -26,6 +26,7 @@ on:
       - 'src/cockpit.js'
       - 'src/gpu-startup.js'
       - 'src/cloud-pass.js'
+      - 'src/group-pass.js'
       - 'src/sky-refresh.js'
       - 'src/render-performance.js'
       - 'src/render-diagnostics.js'

@@ -11,13 +11,14 @@ const header='precision highp float;varying vec2 uvp;uniform float band,g,moment
 const main='void main(){'+observerRayGLSL+'vec3 B=vec3(probeBackground)+vec3(probeStar)*step(95.,gl_FragCoord.x)*step(gl_FragCoord.x,96.)*step(71.,gl_FragCoord.y)*step(gl_FragCoord.y,72.);gl_FragColor=vec4(cloudRadiance(ray,B),1.);}';
 const make=code=>{const s=new T.Scene();s.add(new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({uniforms:u,vertexShader:pass.material.vertexShader,fragmentShader:header+code+main,depthTest:false,depthWrite:false})));return s;};
 const reference=make(cloudGLSL),composite=make(cloudSampleGLSL);
-function draw(scene){r.setRenderTarget(target);r.setViewport(0,0,W,H);r.render(scene,cam);const p=new Float32Array(W*H*4);r.readRenderTargetPixels(target,0,0,W,H,p);return p;}
-window.measure=()=>{const rows=[];for(const id of ['tarantula','ngc604'])for(const opacity of [0,.35,1])for(const relativistic of [false,true])for(const brightness of [1,1e-8]){
+function draw(scene){r.setRenderTarget(target);r.setViewport(0,0,W/r.getPixelRatio(),H/r.getPixelRatio());r.render(scene,cam);const p=new Float32Array(W*H*4);r.readRenderTargetPixels(target,0,0,W,H,p);return p;}
+window.measure=()=>{const rows=[];for(const dpr of [1,1.5,2])for(const id of ['tarantula','ngc604'])for(const opacity of [0,.35,1])for(const relativistic of [false,true])for(const brightness of [1,1e-8]){
+ r.setPixelRatio(dpr);
  const c=calibrate({id,type:'nebula',radiusLy:1,d:1});applyCalibration(u,c,brightness/c.J);u.probeBackground.value=0;u.probeStar.value=0;u.cloudOpacity.value=opacity;u.optics.value=+relativistic;u.momentum.value=relativistic?.4:0;u.g.value=Math.sqrt(1+u.momentum.value**2);
- const a=draw(reference);r.setRenderTarget(target);r.setViewport(0,0,W,H);r.setScissor(2,3,111,97);r.setScissorTest(true);
- pass.render(r,.5);if(r.getRenderTarget()!==target||!r.getScissorTest()||r.getScissor(new T.Vector4()).toArray().join()!=[2,3,111,97].join())throw Error('Render state not restored');r.setScissorTest(false);
+ const a=draw(reference);r.setRenderTarget(target);r.setViewport(0,0,W/r.getPixelRatio(),H/r.getPixelRatio());r.setScissor(2,3,111,97);r.setScissorTest(true);
+ pass.render(r,.5);if(r.getCurrentViewport(new T.Vector4()).toArray().join()!==[0,0,W,H].join())throw Error('Physical viewport not restored');if(r.getRenderTarget()!==target||!r.getScissorTest()||r.getScissor(new T.Vector4()).toArray().join()!=[2,3,111,97].join())throw Error('Render state not restored');r.setScissorTest(false);
  const b=draw(composite);let sum=0,delta=0,l1=0,peak=0;for(let i=0;i<a.length;i++)if(i%4!==3){if(!Number.isFinite(b[i]))throw Error('Nonfinite HDR');sum+=a[i];delta+=b[i]-a[i];l1+=Math.abs(b[i]-a[i]);peak=Math.max(peak,a[i]);}
- rows.push({id,opacity,relativistic,brightness,fluxError:Math.abs(delta)/sum,l1:l1/sum,peak,cloudPixels:[pass.target.width,pass.target.height]});
+ rows.push({dpr,id,opacity,relativistic,brightness,fluxError:Math.abs(delta)/sum,l1:l1/sum,peak,cloudPixels:[pass.target.width,pass.target.height]});
  u.probeBackground.value=1;const at=draw(reference),bt=draw(composite);let transmissionError=0;for(let i=0;i<a.length;i++)if(i%4!==3)transmissionError+=Math.abs((at[i]-a[i])-(bt[i]-b[i]));rows.at(-1).transmissionError=transmissionError/(W*H*3);
  if(opacity===0){u.probeBackground.value=.02;u.probeStar.value=10;const star=draw(composite),i=(71*W+95)*4;if(Math.abs(star[i]-b[i]-10.02)>.001||Math.abs(star[i+4]-b[i+4]-.02)>.001)throw Error('Point source blurred by cloud pass');}
  }
