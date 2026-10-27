@@ -50,3 +50,17 @@ Cause : FXC inline chaque appel. `main` appelait `systemRadiance` deux fois, cel
 
 - La variante trou noir contient encore tous les modules et le traceur : son temps de compilation sur Iris Xe n'est pas mesuré et peut rester long (elle est attendue, comme avant 6f32354).
 - Les durées mesurées sont celles de l'en-tête reconstitué, pas à l'octet près celui de three. Les rapports sont nets.
+
+## Trois essais complémentaires sur Iris Xe (27/10/2026, version publiée, une seule session Chrome)
+
+Instrumentation temporaire injectée dans la page : changement de programme optique (`gl.useProgram`), images par seconde (rAF), retard de la boucle d'événements (intervalle de 250 ms), tâches longues et, ponctuellement, temps GPU par dessin (`EXT_disjoint_timer_query_webgl2`). Les passages vers la Tarentule et Cygnus X-1 utilisent le laboratoire « trou de ver stable » (téléportation fictive à la distance de rendez-vous). La mission enregistrée (`odyssee.mission.v1`, 23/10) n'a pas été modifiée.
+
+| Essai | Délai jusqu'au bon programme | Erreurs | Réactivité |
+|---|---|---|---|
+| 1. Carte `/cosmos` → clic M31 → « Ouvrir Andromède · M31 dans le cockpit » | ciel profond à 16,8 s, corps du système à 23,3 s (6,5 s après) | aucune, pas de perte de contexte | démarrage saccadé jusqu'à ~45 s (1 à 16 i/s, une tâche longue de 2,7 s), puis **20–28 i/s** stables ; optique système 3,4 ms GPU par image |
+| 2. Passage vers la Tarentule (arrivée à 1 680 al du centre) | variante « nuage » **7,8 s** après l'arrivée ; volume visible ensuite | aucune | 2–4 i/s pendant la compilation (une tâche longue de 0,76 s) ; **4 i/s en régime établi** : l'optique avec nuage coûte **122 ms GPU par image** (marche de 72 pas plein écran à 1051×832) |
+| 3. Passage vers Cygnus X-1 (15 rayons de Schwarzschild, lentille active) | variante trou noir complète **30,7 s** après l'arrivée (attendue, ciel figé pendant ce temps) | aucune, pas de perte de contexte | boucle d'événements réactive pendant la compilation (un seul blocage de 1,7 s, sinon < 0,5 s) ; **≈ 2–5 i/s en régime établi** alors que l'optique trou noir ne coûte que 10,6 ms GPU et que les tâches longues ne représentent que 0,7 s sur 6 s : cause non identifiée (les requêtes de temps ne couvrent ni les copies, ni les mipmaps, ni les lectures) |
+
+Conclusions :
+- Les trois parcours qui risquaient un blocage aboutissent, sans erreur ni perte de contexte. La correction par modules couvre aussi la Tarentule et le trou noir.
+- Il reste des chantiers de **performance**, distincts de la compilation : (a) démarrage saccadé pendant environ 45 s ; (b) marche du nuage à 122 ms par image sur Iris Xe (piste : demi-résolution hors écran puis suréchantillonnage, ou nombre de pas adaptatif) ; (c) environ 5 i/s près de Cygnus X-1 pour une cause encore inconnue, à profiler (copies du cube, `generateMipmap`, intégration de la géodésique côté processeur).
