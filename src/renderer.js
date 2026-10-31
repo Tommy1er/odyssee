@@ -1,3 +1,4 @@
+import {SceneTimings} from './scene-timings.js';
 import {needsSkyCapture} from './sky-refresh.js';
 import {renderPixelRatio} from './render-budget.js';
 import {nestedEmissionBudget} from './nested-emission.js';
@@ -43,7 +44,7 @@ if(kind>.5){float light=max(.025,dot(normalize(n),normalize(vec3(-.8,.45,1.))));
 
 export class SpaceRenderer{
  constructor(canvas,stars,onPick,objects=stars,lut=[]){
-  this.catalogueSky=new CatalogueSky();this.cosmicFlight=new CosmicScene({map:false});this.cosmicView=new T.Scene();this.cosmicView.add(this.cosmicFlight.root);this.canvas=canvas;this.onPick=onPick;this.stars=stars;this.objects=objects;this.nearCheck=0;this.mapMode=false;this.mapScale=1;this.localId=null;this.track=[];
+  this.sceneTimings=new URLSearchParams(location.search).has('perf')?new SceneTimings():null;this.catalogueSky=new CatalogueSky();this.cosmicFlight=new CosmicScene({map:false});this.cosmicView=new T.Scene();this.cosmicView.add(this.cosmicFlight.root);this.canvas=canvas;this.onPick=onPick;this.stars=stars;this.objects=objects;this.nearCheck=0;this.mapMode=false;this.mapScale=1;this.localId=null;this.track=[];
   this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});this.renderer.setClearColor(0x000000);this.renderer.outputColorSpace=T.SRGBColorSpace;
   this.flight=new T.Scene();this.camera=new T.PerspectiveCamera(70,1,.001,3000);this.galaxy=createGalaxySphere();this.flight.add(this.galaxy);this.passageView=new PassageView();this.spacecraft=new SpacecraftView(canvas,lut);this.shipLighting=new ShipLighting(objects);this.shipLight=[];this.skyOptics=new SkyOptics(lut,objects);this.lens=new BlackHoleLens();this.environments=new EnvironmentLayer(this.flight,objects,lut);this.nebulaPoints=new NebulaPointLayer(this.environments.objects);this.flight.add(this.nebulaPoints.points);this.orbit=new GalacticOrbit(this.flight,GAL_CENTER);
   const positions=[],colors=[],sizes=[];for(const s of stars){positions.push(...s.xyz);colors.push(...stellarColor(s).toArray());sizes.push(Math.max(2,Math.min(7,5-(s.mag||5)*.3)));}
@@ -92,7 +93,7 @@ export class SpaceRenderer{
  // Galaxies drawn in volume (local-group.js): share of their light left to the point layer (1 − w) × anisotropy, also under
  // every catalogue id that designates them.
  volumeIds(){const m=new Map();for(const o of [...this.localGroupLayer.objects,...this.localGroupLayer.slots]){const h=this.localGroupLayer.handoff.get(o.id);m.set(o.id,(h?(1-h.w)*h.aniso:0)*(this.emissionBudget?.hostGains.get(o.id)??1));}for(const [k,v] of this.galaxyAliases)if(m.has(v))m.set(k,m.get(v));return m;}
- async render(s,dt){this.lastState=s;s.pixelAngle=2*Math.tan((this.camera.fov||70)*Math.PI/360)/Math.max(1,this.renderer.getDrawingBufferSize(this._db||(this._db=new T.Vector2())).y);this.localGroupLayer.update(s,this.mapScale,s.map);this.solarMap.update(s,this.mapScale,s.map,this.byId);this.milkyLabel.visible=s.map&&this.mapScale<.0001;this.milkyLabel.position.set(...GAL_CENTER.map(x=>x*this.mapScale));this.milkyLabel.position.x+=2;this.sunLabel.visible=!this.milkyLabel.visible;
+ async render(s,dt){const timings=this.sceneTimings;timings?.begin(s);let timingError=null;try{this.lastState=s;s.pixelAngle=2*Math.tan((this.camera.fov||70)*Math.PI/360)/Math.max(1,this.renderer.getDrawingBufferSize(this._db||(this._db=new T.Vector2())).y);this.localGroupLayer.update(s,this.mapScale,s.map);timings?.mark('Galaxies : sélection et photométrie');this.solarMap.update(s,this.mapScale,s.map,this.byId);this.milkyLabel.visible=s.map&&this.mapScale<.0001;this.milkyLabel.position.set(...GAL_CENTER.map(x=>x*this.mapScale));this.milkyLabel.position.x+=2;this.sunLabel.visible=!this.milkyLabel.visible;
   this.catalogueSky.mapPoints.visible=!!s.map&&this.mapScale<.000002&&s.catalogueMarkers!==false;if(!s.map&&s.catalogueMarkers!==false&&(s.target?.type==='cosmic'||norm(s.pos)>1e7))this.catalogueSky.update(s.pos,[...this.localGroupLayer.objects,...this.localGroupLayer.slots],s.t,s.retarded);
   const physicalV=velocity(s.u);let v=s.opticalLab?labDirection(physicalV,new T.Vector3(0,0,-1).applyQuaternion(s.q).toArray()).map(x=>x*s.labBeta):physicalV;const forward=new T.Vector3(0,0,-1).applyQuaternion(s.q);this.starMaterial.uniforms.ship.value.set(...s.pos);this.starMaterial.uniforms.speed.value.set(...v);this.starMaterial.uniforms.optics.value=0;this.starMaterial.uniforms.shift.value=0;this.spacecraft.controls.enabled=s.external&&!s.map;if(s.trackTarget&&!s.opticalLab&&s.target){
    const target=s.target.lookAt?this.objects.find(o=>o.id===s.target.lookAt):s.target;
@@ -102,7 +103,7 @@ export class SpaceRenderer{
    else{this.camera.up.copy(up);this.camera.lookAt(direction);}
   }else if(!s.external)this.camera.quaternion.copy(s.q);
   if(s.external){this.spacecraft.controls.update();this.camera.quaternion.copy(this.spacecraft.camera.quaternion);}
-  this.spacecraft.camera.fov=s.opticalLab?46:70;this.camera.fov=s.external?this.spacecraft.camera.fov:(s.fov||70);this.camera.updateProjectionMatrix();this.camera.updateMatrixWorld();this.galaxy.material.uniforms.observer.value.set(...s.pos);this.galaxy.material.uniforms.speed.value.set(...v);this.galaxy.material.uniforms.optics.value=0;this.galaxy.material.uniforms.band.value=s.band??1;this.galaxy.material.uniforms.exposure.value=s.exposure??1;this.galaxy.material.uniforms.enabled.value=+s.galaxyLight;this.starMaterial.uniforms.exposure.value=1;this.starMaterial.uniforms.band.value=s.band??1;await this.galaxy.bake(this.renderer,s,this.startupTrace);this.environments.update(s);this.orbit.update(s);
+  this.spacecraft.camera.fov=s.opticalLab?46:70;this.camera.fov=s.external?this.spacecraft.camera.fov:(s.fov||70);this.camera.updateProjectionMatrix();this.camera.updateMatrixWorld();this.galaxy.material.uniforms.observer.value.set(...s.pos);this.galaxy.material.uniforms.speed.value.set(...v);this.galaxy.material.uniforms.optics.value=0;this.galaxy.material.uniforms.band.value=s.band??1;this.galaxy.material.uniforms.exposure.value=s.exposure??1;this.galaxy.material.uniforms.enabled.value=+s.galaxyLight;this.starMaterial.uniforms.exposure.value=1;this.starMaterial.uniforms.band.value=s.band??1;timings?.mark('Caméra et repères');await this.galaxy.bake(this.renderer,s,this.startupTrace);timings?.mark('Voie lactée : cube 128');this.environments.update(s);timings?.mark('Environnements : création et mise à jour');this.orbit.update(s);
   // Reference V allocation, applied to both cube/HDR point handoff and host volumes.
   this.referenceBudgetEnabled??=new URLSearchParams(location.search).get('emissionBudget')==='reference';
   // Nebulae: share of each cloud drawn by its volume (backdrop march, or per-screen-ray march for the selected cloud at any
@@ -130,6 +131,7 @@ export class SpaceRenderer{
   const budgetKey=[...this.emissionBudget.hostGains,...this.emissionBudget.childGains].map(([id,g])=>id+':'+g.toFixed(8)).join('|');
   if(this.emissionBudgetKey!==budgetKey){this.captureKey=null;this.emissionBudgetKey=budgetKey;this.galaxyLight.key='';}
 
+  timings?.mark('Budget lumineux et relais points-volumes');
   const visualU=s.opticalLab?mul(labDirection(physicalV,forward.toArray()),gamma(s.labBeta)*s.labBeta):s.u;
   const updateSkyPositions=()=>{const positionKey=[s.t,...s.pos,s.retarded].join('|');
    if(this.positionKey!==positionKey){this.positionKey=positionKey;const attr=this.sky.geometry.attributes.position,absolute=this.sky.geometry.attributes.catalogPosition;
@@ -138,8 +140,10 @@ export class SpaceRenderer{
   };if(s.map)updateSkyPositions();
   const o=s.target,relative=o?sub(o.lightXYZ||o.xyz,s.pos):null;
   if(s.wall>this.nearCheck||this.nearTarget!==o?.id||!this.nearPos||norm(sub(s.pos,this.nearPos))>.01){this.nearPos=[...s.pos];this.nearCheck=s.wall+.3;this.nearTarget=o?.id;let best=null,score=120;for(const body of this.objects){if(['nebula','pillars','cluster','galaxy','cosmic','waypoint'].includes(body.type))continue;const q=norm(sub(body.lightXYZ||body.xyz,s.pos))/radiusLy(body);if(q<score){score=q;best=body;}}this.nearObject=best;}
-  const selectedNear=o&&!['nebula','pillars','cluster','galaxy','cosmic','waypoint'].includes(o.type)&&norm(relative)/radiusLy(o)<120;const body=selectedNear?o:this.nearObject,local=!!body,bodyRelative=body?sub(body.lightXYZ||body.xyz,s.pos):null,ratio=body?norm(bodyRelative)/radiusLy(body):Infinity;const direct=this.skyOptics.closeup.update(body,s);this.localGroup.visible=local&&!direct&&body?.type!=='blackhole';
+  timings?.mark('Recherche des corps proches');
+  const selectedNear=o&&!['nebula','pillars','cluster','galaxy','cosmic','waypoint'].includes(o.type)&&norm(relative)/radiusLy(o)<120;const body=selectedNear?o:this.nearObject,local=!!body,bodyRelative=body?sub(body.lightXYZ||body.xyz,s.pos):null,ratio=body?norm(bodyRelative)/radiusLy(body):Infinity;const direct=this.skyOptics.closeup.update(body,s);timings?.mark('Gros plan : paramètres et textures');this.localGroup.visible=local&&!direct&&body?.type!=='blackhole';
   if(local){const o=body;this.setLocal(o);let direction=unit(bodyRelative);this.body.position.copy(vec(direction).multiplyScalar(ratio));if(['nebula','pillars','cluster','galaxy','cosmic'].includes(o.type)){if(!this.body.userData.oriented){this.body.quaternion.copy(s.q);this.body.userData.oriented=true;}}else this.body.quaternion.identity();if(o.type==='blackhole')this.body.quaternion.setFromUnitVectors(new T.Vector3(0,0,1),vec(direction).negate());if(o.type==='pulsar')this.body.rotation.z=s.wall*.5;if(this.cloud)this.cloud.uniforms.gain.value=s.scientific?1:.18;if(this.surface)this.surface.uniforms.time.value=s.wall;this.sky.visible=true;}
+  timings?.mark('Géométrie locale');
   this.local=local||!!s.target&&['nebula','pillars','cluster','galaxy','cosmic'].includes(s.target.type)&&norm(sub(s.target.xyz,s.pos))/radiusLy(s.target)<120;if(s.target&&['nebula','pillars','cluster','galaxy','cosmic'].includes(s.target.type)&&this.local)this.localId=s.target.id;this.localRatio=ratio;this.marker=null;
   if(o&&!this.mapMode){let n=unit(relative);if(s.relativistic)n=aberrateU(n,visualU);let point=vec(n).multiplyScalar(100).project(this.camera);const view=vec(n).applyQuaternion(this.camera.quaternion.clone().invert()),ahead=view.z<0;
    const offscreen=!ahead||Math.abs(point.x)>.78||Math.abs(point.y)>.76;
@@ -157,14 +161,16 @@ export class SpaceRenderer{
   }else{
    const w=this.canvas.clientWidth,h=this.canvas.clientHeight;
    // Capture once in the catalogue frame, then transform EVERY incoming ray in one pass.
+   timings?.mark('Repères de navigation');
    const previousGalaxyKey=this.galaxyLight.key;if(this.galaxyLight.update(s,this.volumeIds())&&this.galaxyLight.key!==previousGalaxyKey)this.captureKey=null;
+    timings?.mark('Catalogue des galaxies ponctuelles');
     // Isolate catalogue point galaxies for a per-source SED HDR pass when relativistic Doppler is active.
     // The legacy cube retains volumes and all other sources, and remains authoritative near compact objects
     // and absorbing local clouds where a separate 2-D overlay would not respect optical occlusion.
     const activeGalaxySpectra=this.galaxyLight.status==='ready'&&s.doppler&&(s.relativistic||s.opticalLab)&&(s.band??1)<2.5
       &&!(s.target?.type==='blackhole'&&norm(sub(s.pos,s.target.lightXYZ||s.target.xyz))/radiusLy(s.target)<150)
       &&!(['nebula','pillars'].includes(s.target?.type)&&norm(sub(s.pos,s.target.xyz))/radiusLy(s.target)<120);
-    const captureKey=[s.retarded,s.target?.id,s.band,s.galaxyLight,s.orbitS2,this.localId,activeGalaxySpectra].join("|");if(this.captureKey===null||needsSkyCapture(this.skyCapture,{key:captureKey,pos:s.pos,t:s.t,wall:s.wall,paused:s.paused})){ updateSkyPositions();const selectedCloud=this.environments.cache.get(s.target?.id);const directCloud=!!selectedCloud?.cloud;if(directCloud)selectedCloud.group.visible=false;
+    const captureKey=[s.retarded,s.target?.id,s.band,s.galaxyLight,s.orbitS2,this.localId,activeGalaxySpectra].join("|");if(this.captureKey===null||needsSkyCapture(this.skyCapture,{key:captureKey,pos:s.pos,t:s.t,wall:s.wall,paused:s.paused})){ updateSkyPositions();timings?.mark('Positions des étoiles');const selectedCloud=this.environments.cache.get(s.target?.id);const directCloud=!!selectedCloud?.cloud;if(directCloud)selectedCloud.group.visible=false;
     // Hide isolated points in BOTH backdrop and scene cube passes (never sneak into a backdrop texture).
     // Every point sprite layer (stars, ALL cluster populations, point galaxies, unresolved nebulae) goes to the main cube,
     // whose pixels define the photometric scale; non-selected clusters used to be drawn in the 256-pixel backdrop, where
@@ -172,8 +178,9 @@ export class SpaceRenderer{
     const originalGalaxyVisibility=this.galaxyLight.points.visible;
     if(activeGalaxySpectra)this.galaxyLight.points.visible=false;
     try{const layers={stars:[this.sky,this.galaxyLight.points,this.nebulaPoints.points,...[...this.environments.cache.values()].filter(e=>e.stars).map(e=>e.group)],local:this.localGroup,backgrounds:[this.galaxy,...[...this.environments.cache.values()].filter(e=>!e.stars).map(e=>e.group)]};if(this.startupTrace)await this.skyOptics.captureStartup(this.renderer,this.flight,layers,this.startupTrace);else this.skyOptics.capture(this.renderer,this.flight,layers);}finally{this.galaxyLight.points.visible=originalGalaxyVisibility;if(directCloud)selectedCloud.group.visible=true;}this.captureKey=captureKey;this.captureWall=s.wall;let nearest=Infinity;for(const star of this.sky.userData.stars)nearest=Math.min(nearest,norm(sub(star.lightXYZ||star.xyz,s.pos)));for(const object of this.environments.active)nearest=Math.min(nearest,Math.max(radiusLy(object)*.05,norm(sub(object.lightXYZ||object.xyz,s.pos))-radiusLy(object)));this.skyCapture={key:captureKey,pos:[...s.pos],t:s.t,wall:s.wall,nearest};}
+   timings?.mark('Captures des cubes de ciel et distances');
    this.lens.isNear(s);this.skyOptics.material.uniforms.sky.value=this.skyOptics.target.texture;
-   await this.skyOptics.prepare(this.renderer,s,this.startupTrace);
+   await this.skyOptics.prepare(this.renderer,s,this.startupTrace);timings?.mark('Préparation des programmes optiques');
    const draw=async(betaOptics,half)=>{const skyOptics=!(s.external&&s.shipFrame!=='comoving')&&!!betaOptics;this.camera.aspect=(half?w/2:w)/h;this.camera.updateProjectionMatrix();
     // Schwarzschild is a separate local stationary optical model. Its cube now supplies HDR sky.
     const relativeU=skyOptics&&(!half||betaOptics)?visualU:[0,0,0];
@@ -189,6 +196,7 @@ export class SpaceRenderer{
    };
    if(s.opticalLab){this.renderer.setScissorTest(true);this.renderer.setViewport(0,0,w/2,h);this.renderer.setScissor(0,0,w/2,h);await draw(0,true);this.renderer.setViewport(w/2,0,w/2,h);this.renderer.setScissor(w/2,0,w/2,h);await draw(1,true);this.renderer.setScissorTest(false);this.renderer.setViewport(0,0,w,h);}else await draw(+s.relativistic,false);if(s.passage)this.passageView.render(this.renderer,s.passage.progress,s.passage.unstable,performance.now()/1000,w/h);
   }
+ }catch(e){timingError=e;throw e;}finally{timings?.finish(timingError);}
  }
 }
 export {T};

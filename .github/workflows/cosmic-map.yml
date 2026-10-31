@@ -14,6 +14,7 @@ on:
       - 'src/group-pass.js'
       - 'src/sky-refresh.js'
       - 'src/render-performance.js'
+      - 'src/scene-timings.js'
       - 'scripts/validate-cloud-pass-ui.cjs'
       - 'scripts/validate-blackhole-warmup-ui.cjs'
       - 'scripts/validate-group-pass-ui.cjs'

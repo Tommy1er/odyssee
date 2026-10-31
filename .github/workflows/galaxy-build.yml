@@ -29,6 +29,7 @@ on:
       - 'src/group-pass.js'
       - 'src/sky-refresh.js'
       - 'src/render-performance.js'
+      - 'src/scene-timings.js'
       - 'src/render-diagnostics.js'
       - 'src/render-budget.js'
       - 'src/galaxy.js'
