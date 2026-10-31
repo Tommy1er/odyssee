@@ -4,7 +4,13 @@ import {cloudGLSL} from './environments.js';
 export const observerRayGLSL=`vec3 n=normalize(rotation*vec3(uvp.x*aspect*tanFov,uvp.y*tanFov,-1.));vec3 ray=n;float D=1.;if(optics>.5&&momentum>.000001){float mu=clamp(dot(n,axis),-1.,1.);vec3 perpendicular=n-axis*mu;float oneMinus=mu>0.?dot(perpendicular,perpendicular)/(1.+mu):1.-mu;float inverseD=g*oneMinus+mu/(g+momentum);D=1./max(inverseD,1.e-20);ray=normalize((perpendicular+axis*(1./(g+momentum)-g*oneMinus))*D);}`;
 export const cloudSampleGLSL=`uniform float cloudActive,cloudRadianceScale;uniform sampler2D cloudLight,cloudTransmission;
 vec3 cloudRadiance(vec3 ray,vec3 background){return texture2D(cloudLight,uvp*.5+.5).rgb*cloudRadianceScale+background*texture2D(cloudTransmission,uvp*.5+.5).rgb;}`;
-export function cloudSize(width,height,scale=.5){return [Math.max(1,Math.ceil(width*scale)),Math.max(1,Math.ceil(height*scale))];}
+// Per-pass pixel budget, independent of monitor DPI and GPU brand. Small clouds retain full resolution.
+export const MAX_VOLUME_PIXELS=512*512;
+export function cloudSize(width,height,scale=.5){
+ let w=Math.max(1,Math.ceil(width*scale)),h=Math.max(1,Math.ceil(height*scale));
+ if(scale<1&&w*h>MAX_VOLUME_PIXELS){const f=Math.sqrt(MAX_VOLUME_PIXELS/(w*h));w=Math.max(1,Math.min(MAX_VOLUME_PIXELS,Math.floor(w*f)));h=Math.max(1,Math.min(MAX_VOLUME_PIXELS,Math.floor(h*f)));}
+ return [w,h];
+}
 export class CloudPass{
  constructor(uniforms){
   this.target=new T.WebGLRenderTarget(1,1,{count:2,type:T.HalfFloatType,minFilter:T.LinearFilter,magFilter:T.LinearFilter,depthBuffer:false,stencilBuffer:false,generateMipmaps:false});

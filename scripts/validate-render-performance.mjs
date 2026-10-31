@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {needsSkyCapture} from '../src/sky-refresh.js';
-import {cloudSize} from '../src/cloud-pass.js';
+import {cloudSize,MAX_VOLUME_PIXELS} from '../src/cloud-pass.js';
 const p={key:'sky',pos:[0,0,0],t:0,wall:0,nearest:1};
 const n={key:'sky',pos:[0,0,0],t:1e-8,wall:.1,paused:false};
 assert(!needsSkyCapture(p,n),'time progression alone must not recapture every frame');
@@ -14,6 +14,11 @@ assert(needsSkyCapture(null,n));
 assert.deepEqual(cloudSize(1051,832),[526,416]);
 assert.deepEqual(cloudSize(1051/2,832),[263,416]);
 assert.deepEqual(cloudSize(5,7,1),[5,7]);
+for(const [w,h] of [[1920,1080],[3840,2160],[7680,4320],[390,844],[3440,1440],[1000000,1]]){
+ const [x,y]=cloudSize(w,h);assert(x*y<=MAX_VOLUME_PIXELS);assert(x>=1&&y>=1);assert(x<=Math.ceil(w/2)&&y<=Math.ceil(h/2));
+ if(w/h<10&&w/h>.1)assert(Math.abs(x/y-w/h)<.02,'preserve observer ray aspect');
+}
+assert.deepEqual(cloudSize(1920,1080,1),[1920,1080],'small clouds/reference path retain full resolution');
 console.log('PASS sky capture cadence/parallax/target/time jumps; half-resolution dimensions');
 
 // Arrival timings retain transition frames even after many steady slow frames.
