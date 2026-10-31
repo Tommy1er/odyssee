@@ -58,3 +58,32 @@ for(const k of [{},{system:true},{cloud:true},{system:true,cloud:true},{system:t
  assert.equal((f.match(/uniform float pixelAngle/g)||[]).length+(f.includes('#define SECN')?0:0)<=1,true);assert(f.includes('pixelAngle'));
  assert.equal((f.match(/systemRadiance\(ray/g)||[]).length,k.system?1:0);assert.equal(f.includes('cloudRadiance(ray'),!!k.cloud);}
 console.log('PASS deep-sky startup; system/cloud programs compiled in the background with a compiled fallback; black hole awaited; shared uniforms; cached variants');
+// Selection warmup is non-blocking, deduplicated and never swaps the current view on completion.
+{
+ const o=new SkyOptics(new Float32Array(2048)),far={...deep,target:{type:'blackhole',xyz:[10000,0,0],radiusLy:1}},calls=[];let unlock;
+ const r={async compileAsync(scene){const m=scene.children[0].material;calls.push(m);if(m.userData.flags?.blackHole)await new Promise(resolve=>{unlock=resolve;});}};
+ o.prewarmTarget(r,far);assert.equal(calls.length,0,'no warmup before first sky');
+ await o.prepare(r,deep);const ordinary=o.material;
+ o.prewarmTarget(r,{...far,lensing:false});o.prewarmTarget(r,deep);assert.equal(calls.length,1,'no unrelated warmup');
+ o.prewarmTarget(r,far);await new Promise(r=>setTimeout(r,0));
+ assert.equal(o.blackHolePreparation.status,'compiling');assert.equal(o.material,ordinary);
+ o.prewarmTarget(r,far);await o.prepare(r,far);await o.prepare(r,deep);
+ assert.equal(calls.filter(m=>m.userData.flags?.blackHole).length,1,'one shared black-hole compilation');
+ let arrived=false;const waiting=o.prepare(r,near).then(()=>{arrived=true;});await new Promise(r=>setTimeout(r,0));
+ assert(!arrived,'early arrival awaits the existing compilation');assert.equal(calls.filter(m=>m.userData.flags?.blackHole).length,1);
+ unlock();await waiting;assert.equal(o.blackHolePreparation.status,'ready');assert(o.material.userData.flags.blackHole);
+ await o.prepare(r,deep);o.prewarmTarget(r,far);await o.prepare(r,near);assert.equal(calls.filter(m=>m.userData.flags?.blackHole).length,1,'cached across journeys and targets');
+}
+{
+ const o=new SkyOptics(new Float32Array(2048)),far={...deep,target:{type:'blackhole',xyz:[10000,0,0],radiusLy:1}};let unlock;
+ const r={async compileAsync(scene){if(scene.children[0].material.userData.flags?.blackHole)await new Promise(resolve=>{unlock=resolve;});}};
+ await o.prepare(r,far);await new Promise(r=>setTimeout(r,0));const ordinary=o.material;await o.prepare(r,deep);unlock();await new Promise(r=>setTimeout(r,0));
+ assert.equal(o.material,ordinary,'completion after deselection never activates the black-hole program');assert.equal(o.blackHolePreparation.status,'ready');
+}
+{
+ const o=new SkyOptics(new Float32Array(2048)),far={...deep,target:{type:'blackhole',xyz:[10000,0,0],radiusLy:1}};let failures=0;
+ const r={async compileAsync(scene){if(scene.children[0].material.userData.flags?.blackHole){failures++;throw Error('driver rejected program');}}};
+ await o.prepare(r,deep);o.prewarmTarget(r,far);await new Promise(r=>setTimeout(r,0));assert.equal(o.blackHolePreparation.status,'error');
+ o.prewarmTarget(r,far);await o.prepare(r,far);await assert.rejects(o.prepare(r,near),/driver rejected/);assert.equal(failures,1,'failed warmup never retries each frame');assert(!o.material.userData.flags.blackHole);
+}
+console.log('PASS black-hole selection warmup, first-sky priority, deduplication, early arrival, deselection, reuse and failure');

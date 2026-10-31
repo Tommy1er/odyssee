@@ -64,7 +64,7 @@ if(optics>.5&&shift>.5&&momentum>.000001){if(band<2.5){float blue=L.b/(L.r+L.b+1
 if(cmbOn>.5){float Tc=D*cmbT0/(cmbGs*(1.-dot(cmbBetaS,ray)));vec3 Lc=vec3(0.);if(Tc>150.){vec4 c=thermal(Tc);Lc=cmbK*exp(clamp(c.a,-80.,80.))*c.rgb;}float th=dot(n,axis)>0.?length(cross(n,axis)):3.14159;vec3 Lp=cmbFlux/(6.2831853*cmbSigma*cmbSigma)*exp(-.5*th*th/(cmbSigma*cmbSigma))*cmbRGB;L+=mix(Lp,Lc,cmbW);}
 // Point galaxies have been spectral-shifted separately BEFORE RGB merger. Compose in linear HDR.
 if(galaxyOverlayOn>.5)L+=G;
-L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.2126,.7152,.0722));rgb=mix(vec3(y),rgb,smoothstep(.15,.8,y));}gl_FragColor=vec4(pow(rgb,vec3(1./2.2)),1.);}`});this.lut=lut;this.cmbK=blackbodyK(lut,PHOT_ZERO);{const b=SUN_CMB_KMS/C_KMS,dir=SUN_CMB_DIR;this.material.uniforms.cmbBetaS.value.set(...dir.map(x=>x*b));this.material.uniforms.cmbGs.value=1/Math.sqrt(1-b*b);this.material.uniforms.cmbK.value=this.cmbK;}this.uniforms=this.material.uniforms;this.fullFragment=this.material.fragmentShader;this.variants=new Map();this.compiledMaterials=new Set();this.pendingMaterials=new Map();this.material.dispose();this.material=this.variant('');this.ordinaryMaterial=this.material;this.screen=new T.Mesh(new T.PlaneGeometry(2,2),this.material);this.scene.add(this.screen);Object.assign(this.material.uniforms,nebulaUniforms());this.closeup=new CloseupModel(this.material.uniforms,objects,lut);this.system=new SystemBodies(this.material.uniforms,objects,this.closeup);this.comets=new CometLayer(this.material.uniforms,objects);this.cloudPass=new CloudPass(this.uniforms);this.groupPass=new GroupPass(this.uniforms);}
+L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.2126,.7152,.0722));rgb=mix(vec3(y),rgb,smoothstep(.15,.8,y));}gl_FragColor=vec4(pow(rgb,vec3(1./2.2)),1.);}`});this.lut=lut;this.cmbK=blackbodyK(lut,PHOT_ZERO);{const b=SUN_CMB_KMS/C_KMS,dir=SUN_CMB_DIR;this.material.uniforms.cmbBetaS.value.set(...dir.map(x=>x*b));this.material.uniforms.cmbGs.value=1/Math.sqrt(1-b*b);this.material.uniforms.cmbK.value=this.cmbK;}this.uniforms=this.material.uniforms;this.fullFragment=this.material.fragmentShader;this.variants=new Map();this.compiledMaterials=new Set();this.pendingMaterials=new Map();this.compilationErrors=new Map();this.blackHolePreparation={status:"idle"};this.material.dispose();this.material=this.variant('');this.ordinaryMaterial=this.material;this.screen=new T.Mesh(new T.PlaneGeometry(2,2),this.material);this.scene.add(this.screen);Object.assign(this.material.uniforms,nebulaUniforms());this.closeup=new CloseupModel(this.material.uniforms,objects,lut);this.system=new SystemBodies(this.material.uniforms,objects,this.closeup);this.comets=new CometLayer(this.material.uniforms,objects);this.cloudPass=new CloudPass(this.uniforms);this.groupPass=new GroupPass(this.uniforms);}
  // Optical programs per module (Iris Xe / ANGLE D3D11, 27/10/2026): FXC inlines every call, so one program holding the
  // close-up bodies, the nebula march and the geodesic tracer took minutes to compile. Each variant holds only the modules
  // the view needs; the black-hole tracer stays out of every ordinary program. All variants share one uniforms object.
@@ -96,16 +96,33 @@ L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.
   this.compiledMaterials.add(material);
  }
  async prepareCloud(renderer){if(!this.cloudCompilation)this.cloudCompilation=renderer.compileAsync(this.cloudPass.scene,this.cloudPass.camera);await this.cloudCompilation;}
- // The black-hole approach waits for its exact program (as before). The first image waits only for the deep-sky program
- // (1.4 s on Iris Xe, against 15 s for the close-up/system bodies and 12 s for a cloud): bodies and clouds are prepared in
- // the background and appear once their program is ready, instead of the sky freezing during a long driver compilation.
+ // Share one promise between selection-time warmup and arrival. A finished warmup never changes the displayed variant.
+ requestCompilation(renderer,material,trace){
+  if(this.compiledMaterials.has(material))return Promise.resolve();
+  if(this.pendingMaterials.has(material))return this.pendingMaterials.get(material);
+  if(this.compilationErrors.has(material))return Promise.reject(this.compilationErrors.get(material));
+  const blackHole=material.userData.flags.blackHole;
+  if(blackHole)this.blackHolePreparation={status:'compiling',startedAt:performance.now()};
+  const task=this.compileVariant(renderer,material,trace).then(()=>{
+   if(blackHole)this.blackHolePreparation={...this.blackHolePreparation,status:'ready',finishedAt:performance.now()};
+  }).catch(e=>{this.variantError=material.name+' : '+(e?.message||e);this.compilationErrors.set(material,e);
+   if(blackHole)this.blackHolePreparation={...this.blackHolePreparation,status:'error',error:e?.message||String(e)};throw e;
+  }).finally(()=>this.pendingMaterials.delete(material));
+  this.pendingMaterials.set(material,task);return task;
+ }
+ prewarmTarget(renderer,s){
+  // Do not delay the first ordinary sky, and do not compile this expensive program for unrelated targets.
+  if(!this.compiledMaterials.size||!s.lensing||s.target?.type!=='blackhole')return;
+  this.requestCompilation(renderer,this.variant('bh'),null).catch(()=>{});
+ }
+ // Ordinary navigation continues during warmup. If arrival precedes completion, only the remaining time is awaited:
+ // never display an unlensed approximation as though the physically required black-hole program were ready.
  async prepare(renderer,s,trace){this.groupPass.prepare(renderer);const key=this.variantKey(s),material=this.variant(key);
-  if(this.compiledMaterials.has(material)){this.use(material);return;}
-  if(key==='bh'){await this.compileVariant(renderer,material,trace);this.use(material);return;}
-  if(!this.compiledMaterials.size){const deep=this.variant('');await this.compileVariant(renderer,deep,trace);this.use(deep);if(material===deep)return;}
+  if(this.compiledMaterials.has(material)){this.use(material);this.prewarmTarget(renderer,s);return;}
+  if(key==='bh'){await this.requestCompilation(renderer,material,trace);if(this.variantKey(s)==='bh')this.use(material);return;}
+  if(!this.compiledMaterials.size){const deep=this.variant('');await this.requestCompilation(renderer,deep,trace);this.use(deep);if(material===deep){this.prewarmTarget(renderer,s);return;}}
   else this.use(this.fallback(key));
-  if(!this.pendingMaterials.has(material))this.pendingMaterials.set(material,this.compileVariant(renderer,material,null)
-   .catch(e=>{this.variantError=material.name+' : '+(e?.message||e);}).finally(()=>this.pendingMaterials.delete(material)));
+  this.requestCompilation(renderer,material,null).catch(()=>{});this.prewarmTarget(renderer,s);
  }
  // Forward CMB hot spot at the ship's speed (flux, size, colour); off while it is invisible (γ below ≈ 100).
  updateCMB(x,u,enabled,pixel){const m=norm(u),g=Math.sqrt(1+m*m),gap=1/(g*(g+m));if(!enabled||!(this.lut?.length>2000)||m<20){x.cmbOn.value=0;this.cmb=null;return;}

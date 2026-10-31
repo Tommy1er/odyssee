@@ -15,6 +15,7 @@ on:
       - 'src/sky-refresh.js'
       - 'src/render-performance.js'
       - 'scripts/validate-cloud-pass-ui.cjs'
+      - 'scripts/validate-blackhole-warmup-ui.cjs'
       - 'scripts/validate-group-pass-ui.cjs'
       - 'scripts/validate-render-performance.mjs'
       - 'src/galaxy.js'
@@ -38,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [validate-cosmos-zoom-ui, validate-cosmos, validate-cosmos-context-ui, validate-cloud-pass-ui, validate-group-pass-ui]
+        suite: [validate-cosmos-zoom-ui, validate-cosmos, validate-cosmos-context-ui, validate-cloud-pass-ui, validate-group-pass-ui, validate-blackhole-warmup-ui]
     steps:
       - uses: actions/checkout@v4
         with:
