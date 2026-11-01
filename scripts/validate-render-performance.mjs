@@ -32,3 +32,18 @@ console.log('PASS sky capture cadence/parallax/target/time jumps; half-resolutio
  p.begin(s);now+=5;p.finish(new Error('driver'));assert.match(p.last.error,/driver/);assert.equal(p.current,null);
 }
 console.log('PASS scene spans sum to elapsed time; bounded slow frames; arrival retained; failures recorded');
+
+// Destination preparation leaves the current scene untouched; the arrival reuses the same resources.
+{
+ const {EnvironmentLayer}=await import('../src/environments.js');const {Scene,Group}=await import('three');
+ const objects=[{id:'a',type:'nebula',xyz:[0,0,0]},{id:'b',type:'nebula',xyz:[100,0,0]}];
+ const layer=new EnvironmentLayer(new Scene(),objects);layer.candidates=({pos})=>[objects[pos[0]>50?1:0]];
+ let creates=0;layer.create=o=>{creates++;const e={o,r:1,group:new Group()};layer.cache.set(o.id,e);return e;};
+ layer.active=[objects[0]];layer.lastPos=[0,0,0];layer.create(objects[0]);const current=layer.cache.get('a');
+ layer.prewarm([100,0,0],objects[1]);const task=layer.preparation.task;layer.prewarm([100,0,0],objects[1]);assert.equal(layer.preparation.task,task);
+ await task;assert.equal(layer.preparation.status,'ready');assert.equal(layer.preparation.created,1);assert(current.group.visible);assert(!layer.cache.get('b').group.visible);assert.deepEqual(layer.active,[objects[0]]);assert.deepEqual(layer.lastPos,[0,0,0]);
+ layer.update({wall:1,pos:[100,0,0],target:objects[1]});assert.equal(creates,2);assert(layer.cache.get('b').group.visible);
+ layer.cache.delete('a');layer.prewarm([0,0,0],objects[0]);const cancelled=layer.preparation.task;layer.prewarm([100,0,0],null);await cancelled;assert(!layer.cache.has('a'));assert.equal(layer.preparation.status,'idle');
+ layer.prewarm([0,0,0],objects[0]);layer.create=()=>{throw Error('resource failure');};await layer.preparation.task;assert.equal(layer.preparation.status,'error');
+}
+console.log('PASS environment destination warmup: hidden resources, deduplication, arrival reuse, cancellation and failure');

@@ -17,12 +17,25 @@ export class EnvironmentLayer{
  stars=createClusterStars(clusterPopulation(o),this.lut,o.xyz);group.add(stars);
  }else{const m=new T.ShaderMaterial({vertexShader:vertex,fragmentShader:fragment,uniforms:{eye:{value:new T.Vector3()},band:{value:1},cloudOpacity:{value:1},...nebulaUniforms()},transparent:true,premultipliedAlpha:true,depthWrite:false,side:T.BackSide});applyCalibration(m.uniforms,calibration(o),1);cloud=new T.Mesh(new T.SphereGeometry(1.1,40,28),m);group.add(cloud);}
  group.renderOrder=2;this.scene.add(group);const entry={group,cloud,stars,o,r};this.cache.set(o.id,entry);return entry;}
- update(s){if(s.wall>this.lastUpdate+.5||this.lastTarget!==s.target?.id||!this.lastPos||norm(sub(s.pos,this.lastPos))>.01){this.lastPos=[...s.pos];this.lastUpdate=s.wall;this.lastTarget=s.target?.id;this.active=this.objects.map(o=>({o,score:norm(sub(o.lightXYZ||o.xyz,s.pos))/radiusLy(o)})).filter(x=>x.score<600).sort((a,b)=>a.score-b.score).slice(0,7).map(x=>x.o);
+ candidates(s){const active=this.objects.map(o=>({o,score:norm(sub(o.lightXYZ||o.xyz,s.pos))/radiusLy(o)})).filter(x=>x.score<600).sort((a,b)=>a.score-b.score).slice(0,7).map(x=>x.o);
  // Also the selected object and the naked-eye globular clusters (integrated V ≤ 6 from the ship, e.g. ω Centauri, 47 Tucanae).
- const extra=this.objects.filter(o=>o.clusterModel==='globular'&&o.mag!=null&&o.mag+5*Math.log10(Math.max(1e-9,norm(sub(o.lightXYZ||o.xyz,s.pos)))/o.d)<=6);if(s.target&&this.objects.includes(s.target))extra.push(s.target);for(const o of extra)if(!this.active.includes(o))this.active.push(o);for(const e of this.cache.values())e.group.visible=false;}
+ const extra=this.objects.filter(o=>o.clusterModel==='globular'&&o.mag!=null&&o.mag+5*Math.log10(Math.max(1e-9,norm(sub(o.lightXYZ||o.xyz,s.pos)))/o.d)<=6);if(s.target&&this.objects.includes(s.target))extra.push(s.target);for(const o of extra)if(!active.includes(o))active.push(o);return active;}
+ prewarm(pos,target){
+  const key=JSON.stringify([target?.id,pos]);if(this.preparation?.key===key)return;
+  const generation=(this.generation||0)+1;this.generation=generation;this.prepared=new Set();
+  this.preparation={key,target:target?.id||null,status:target?'preparing':'idle',created:0};
+  if(!target)return;
+  const candidates=this.candidates({pos,target}).slice(0,16);this.prepared=new Set(candidates.map(o=>o.id));
+  const run=async()=>{for(const o of candidates){
+   await new Promise(resolve=>setTimeout(resolve,0));if(this.generation!==generation)return;
+   if(!this.cache.has(o.id)){const e=this.create(o);e.group.visible=false;this.preparation.created++;}
+  }if(this.generation===generation)this.preparation.status='ready';};
+  this.preparation.task=run().catch(e=>{if(this.generation===generation){this.preparation.status='error';this.preparation.error=String(e);}});
+ }
+ update(s){if(s.wall>this.lastUpdate+.5||this.lastTarget!==s.target?.id||!this.lastPos||norm(sub(s.pos,this.lastPos))>.01){this.lastPos=[...s.pos];this.lastUpdate=s.wall;this.lastTarget=s.target?.id;this.active=this.candidates(s);for(const e of this.cache.values())e.group.visible=false;}
  for(const o of this.active){const e=this.cache.get(o.id)||this.create(o),rel=sub(o.lightXYZ||o.xyz,s.pos);e.group.visible=true;e.group.position.set(...rel.map(x=>x/e.r));if(!e.group.userData.oriented){const toward=new T.Vector3(...o.xyz).normalize();e.group.quaternion.setFromUnitVectors(new T.Vector3(0,0,-1),toward);e.group.userData.oriented=true;}if(e.cloud){const eye=e.group.position.clone().negate().applyQuaternion(e.group.quaternion.clone().invert());e.cloud.material.uniforms.eye.value.copy(eye);e.cloud.material.uniforms.band.value=s.band??1;e.cloud.material.uniforms.nebGain.value=diffuseGain(s.band??1);}if(e.stars){const u=e.stars.material.uniforms;u.center.value.set(...rel);u.ship.value.set(...s.pos);u.band.value=s.band??1;}}
  // Keep a small bounded cache while the observer travels through thousands of catalogued objects.
- if(this.cache.size>16){for(const [id,e] of this.cache){if(!e.group.visible){e.group.traverse(x=>{x.geometry?.dispose();x.material?.dispose();});this.scene.remove(e.group);this.cache.delete(id);if(this.cache.size<=12)break;}}}
+ if(this.cache.size>16){for(const [id,e] of this.cache){if(!e.group.visible&&!this.prepared?.has(id)){e.group.traverse(x=>{x.geometry?.dispose();x.material?.dispose();});this.scene.remove(e.group);this.cache.delete(id);if(this.cache.size<=12)break;}}}
  }
 }
 export function s2Position(t,center){const e=.884,P=16,a=Math.cbrt(4.297e6*P*P)*AU;const M=2*Math.PI*((t+8.37)%P)/P;let E=M;for(let k=0;k<12;k++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));const x=a*(Math.cos(E)-e),y=a*Math.sqrt(1-e*e)*Math.sin(E);const a1=new T.Vector3(.78,.22,.59).normalize(),a2=new T.Vector3(.31,-.84,-.44);a2.addScaledVector(a1,-a1.dot(a2)).normalize();return add(center,a1.multiplyScalar(x).addScaledVector(a2,y).toArray());}
