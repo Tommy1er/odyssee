@@ -32,7 +32,7 @@ void main(){${observerRayGLSL}gl_FragColor=vec4(groupRadiance(ray)/groupLightSca
  }
  render(renderer){const physical=renderer.getCurrentViewport(new T.Vector4());if(!this.select(physical.w))return;
   const viewport=renderer.getViewport(new T.Vector4()),scissor=renderer.getScissor(new T.Vector4()),test=renderer.getScissorTest(),target=renderer.getRenderTarget(),face=renderer.getActiveCubeFace(),mip=renderer.getActiveMipmapLevel();
-  const [w,h]=cloudSize(physical.z,physical.w,.5,this.budget.limit);this.target.setSize(w,h);
+  const [w,h]=cloudSize(physical.z,physical.w,this.budget.scale,this.budget.limit);this.target.setSize(w,h);
   const query=this.budget.begin(renderer);
   try{renderer.setRenderTarget(this.target);renderer.setScissorTest(false);renderer.render(this.scene,this.camera);}
   finally{this.budget.end(query);renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}

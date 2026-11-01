@@ -56,13 +56,16 @@ console.log('PASS environment destination warmup: hidden resources, deduplicatio
   for(let i=0;i<100;i++)b.sample(.1);assert.equal(b.limit,max);
   const [w,h]=cloudSize(3840,2160,.5,b.limit);assert(w*h<=max);const ratio=renderPixelRatio(3840,2160,2,profile);assert(3840*2160*ratio**2<=GRAPHICS_PROFILES[profile].pixels+1);
  }
- const b=new VolumeBudget();b.setProfile('__proto__');assert.equal(b.profile,'balanced');
+ let now=0;const b=new VolumeBudget(()=>now);b.setProfile('__proto__');assert.equal(b.profile,'balanced');
  // Nonblocking queries: no result read until availability, disjoint results discarded, no nesting.
  let available=false,disjoint=false,active=false,reads=0,deletes=0;
  const ext={TIME_ELAPSED_EXT:1,GPU_DISJOINT_EXT:2};const gl={CURRENT_QUERY:3,QUERY_RESULT_AVAILABLE:4,QUERY_RESULT:5,getExtension:()=>ext,isContextLost:()=>false,getParameter:()=>disjoint,getQuery:()=>active,createQuery:()=>({}),beginQuery:()=>{active=true;},endQuery:()=>{active=false;},deleteQuery:()=>deletes++,getQueryParameter:(q,p)=>{if(p===4)return available;reads++;return 20000000;}};
- const r={getContext:()=>gl};for(let i=0;i<30;i++){const q=b.begin(r);b.end(q);}assert(b.pending);b.begin(r);assert.equal(reads,0);available=true;b.begin(r);assert.equal(reads,1);assert.equal(deletes,1);
- b.tick=29;b.end(b.begin(r));disjoint=true;b.begin(r);assert.equal(deletes,2);assert.equal(b.pending,null);
- disjoint=false;active=true;b.tick=29;assert.equal(b.begin(r),null);
+ const r={getContext:()=>gl};b.end(b.begin(r));for(let i=0;i<30;i++)assert.equal(b.begin(r),null);assert(b.pending);b.begin(r);assert.equal(reads,0);available=true;b.begin(r);assert.equal(reads,1);assert.equal(deletes,1);
+ now=500;b.end(b.begin(r));disjoint=true;b.begin(r);assert.equal(deletes,2);assert.equal(b.pending,null);
+ disjoint=false;active=true;now=1000;assert.equal(b.begin(r),null);
+ active=false;const slow=new VolumeBudget(()=>now);slow.setProfile('performance');
+ for(let i=0;i<7;i++){now+=1000;slow.end(slow.begin(r));}assert(slow.medianMs!==null);assert(slow.limit<65536,'adapt within seven 1-fps frames, not 150 frames');
+ const balanced=cloudSize(1051,834,.5,262144),quality=cloudSize(1051,834,.75,524288);assert(quality[0]*quality[1]>balanced[0]*balanced[1]*2);assert(quality[0]*quality[1]<=524288);
  const fallback=new VolumeBudget();assert.equal(fallback.begin({getContext:()=>({...gl,getExtension:()=>null})}),null);assert.equal(fallback.limit,262144);
 }
 console.log('PASS graphics profiles, bounded GPU adaptation, asynchronous queries, disjoint rejection and fixed fallback');
