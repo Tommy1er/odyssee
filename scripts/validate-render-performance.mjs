@@ -69,3 +69,18 @@ console.log('PASS environment destination warmup: hidden resources, deduplicatio
  const fallback=new VolumeBudget();assert.equal(fallback.begin({getContext:()=>({...gl,getExtension:()=>null})}),null);assert.equal(fallback.limit,262144);
 }
 console.log('PASS graphics profiles, bounded GPU adaptation, asynchronous queries, disjoint rejection and fixed fallback');
+
+// Compilation uses the HDR target but restores all renderer state before the promise resolves.
+{
+ const {compileForTarget}=await import('../src/cloud-pass.js');const {Vector4}=await import('three');
+ const original={},hdr={};let target=original,face=3,mip=2,test=true,release;
+ let viewport=new Vector4(2,3,40,50),physical=new Vector4(3,4.5,60,75),scissor=new Vector4(5,6,20,30);
+ const saved=[viewport.clone(),physical.clone(),scissor.clone()];
+ const r={getRenderTarget:()=>target,getActiveCubeFace:()=>face,getActiveMipmapLevel:()=>mip,getViewport:v=>v.copy(viewport),getCurrentViewport:v=>v.copy(physical),getScissor:v=>v.copy(scissor),getScissorTest:()=>test,
+ setRenderTarget:(t,f=0,m=0)=>{target=t;face=f;mip=m;viewport.set(0,0,1,1);physical.set(0,0,1,1);scissor.set(0,0,1,1);test=false;},setViewport:v=>viewport.copy(v),state:{viewport:v=>physical.copy(v)},setScissor:v=>scissor.copy(v),setScissorTest:v=>test=v,
+ compileAsync:()=>{assert.equal(target,hdr);return new Promise(resolve=>release=resolve);}};
+ const pending=compileForTarget(r,{}, {},hdr);assert.equal(target,original);assert.equal(face,3);assert.equal(mip,2);assert(test);assert.deepEqual([viewport,physical,scissor],saved);release();await pending;
+ r.compileAsync=()=>{throw Error('driver submission');};assert.throws(()=>compileForTarget(r,{}, {},hdr),/driver submission/);assert.equal(target,original);assert.deepEqual([viewport,physical,scissor],saved);
+ r.compileAsync=()=>Promise.reject(Error('driver completion'));await assert.rejects(compileForTarget(r,{}, {},hdr),/driver completion/);assert.equal(target,original);assert(test);
+}
+console.log('PASS HDR compilation target, immediate state restoration and driver errors');

@@ -1,7 +1,7 @@
 import {VolumeBudget} from './graphics-quality.js';
 import * as T from 'three';
 import {localGroupGLSL,GROUP_SLOTS} from './local-group.js';
-import {observerRayGLSL,cloudSize} from './cloud-pass.js';
+import {observerRayGLSL,cloudSize,compileForTarget} from './cloud-pass.js';
 const mask='uniform float groupReduced[8];';
 const filtered=condition=>mask+localGroupGLSL.replace('float sh=groupShapes[j];',condition+'float sh=groupShapes[j];');
 // Small/distant galaxies retain the exact full-resolution march, including their point/volume handoff.
@@ -20,7 +20,7 @@ void main(){${observerRayGLSL}gl_FragColor=vec4(groupRadiance(ray)/groupLightSca
   this.scene=new T.Scene();this.scene.add(new T.Mesh(new T.PlaneGeometry(2,2),this.material));this.camera=new T.OrthographicCamera(-1,1,1,-1,0,1);
  }
  needed(){const u=this.uniforms;return u.groupCenters?.value.some((c,i)=>u.groupShapes.value[i]>=0&&c.length()<20);}
- prepare(renderer){if(!this.compilation&&this.needed())this.compilation=renderer.compileAsync(this.scene,this.camera).then(()=>{this.ready=true;}).catch(e=>{this.error=e?.message||String(e);});}
+ prepare(renderer){if(!this.compilation&&this.needed())this.compilation=compileForTarget(renderer,this.scene,this.camera,this.target).then(()=>{this.ready=true;}).catch(e=>{this.error=e?.message||String(e);});}
  select(height){const u=this.uniforms;let scale=0,active=false;
   for(let i=0;i<GROUP_SLOTS;i++){const c=u.groupCenters?.value[i],d=c?.length()??Infinity;
    const boost=u.optics.value>.5?Math.max(1e-9,u.g.value+u.momentum.value*(c?.dot(u.axis.value)||0)/Math.max(d,1e-9)):1;

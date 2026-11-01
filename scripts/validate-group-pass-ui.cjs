@@ -3,7 +3,7 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'validation/v2-screen
 const entry=`import * as T from 'three';
 import {GroupPass,groupSampleGLSL} from './src/group-pass.js';
 import {localGroupGLSL} from './src/local-group.js';
-import {observerRayGLSL} from './src/cloud-pass.js';
+import {observerRayGLSL,compileForTarget} from './src/cloud-pass.js';
 const W=192,H=144,r=new T.WebGLRenderer({canvas:document.querySelector('canvas')});r.setSize(W,H);
 const u={rotation:{value:new T.Matrix3()},axis:{value:new T.Vector3(0,0,-1)},g:{value:1},momentum:{value:0},optics:{value:0},aspect:{value:W/H},tanFov:{value:.7},groupCenters:{value:Array.from({length:8},()=>new T.Vector3(0,0,-1))},groupRotations:{value:Array.from({length:8},()=>new T.Matrix3())},groupShapes:{value:[1,0,-1,-1,-1,-1,-1,-1]},groupSeeds:{value:Array.from({length:8},(_,i)=>i*13)},groupParams:{value:Array.from({length:8},()=>new T.Vector4(1,1,.045,1))},groupTint:{value:Array.from({length:8},()=>new T.Vector3(.9,.8,.6))},groupTime:{value:0},groupGain:{value:1}};
 const pass=new GroupPass(u),target=new T.WebGLRenderTarget(W,H,{type:T.FloatType,depthBuffer:false});
@@ -11,7 +11,7 @@ const header='precision highp float;varying vec2 uvp;uniform mat3 rotation;unifo
 const make=code=>{const s=new T.Scene();s.add(new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({uniforms:u,vertexShader:pass.material.vertexShader,fragmentShader:header+code+'void main(){'+observerRayGLSL+'gl_FragColor=vec4(groupRadiance(ray),1.);}',depthTest:false,depthWrite:false})));return s;};
 const reference=make(localGroupGLSL),composite=make(groupSampleGLSL);
 function draw(scene){r.setRenderTarget(target);r.setViewport(0,0,W/r.getPixelRatio(),H/r.getPixelRatio());r.render(scene,pass.camera);const p=new Float32Array(W*H*4);r.readRenderTargetPixels(target,0,0,W,H,p);return p;}
-window.measure=async()=>{await r.compileAsync(pass.scene,pass.camera);pass.ready=true;const rows=[];
+window.measure=async()=>{await compileForTarget(r,pass.scene,pass.camera,pass.target);pass.ready=true;const compiledCount=r.info.programs.length;pass.render(r);if(r.info.programs.length!==compiledCount)throw Error('Group first HDR draw recompiled after preparation');const rows=[];
 for(const dpr of [1,1.5,2])for(const shape of [0,1])for(const distance of [.4,1,40])for(const brightness of [1,1e-8]){
  r.setPixelRatio(dpr);u.groupShapes.value[0]=shape;u.groupCenters.value[0].set(.16,.08,-distance);u.groupCenters.value[1].set(2,0,-40);u.groupTime.value=.3;u.optics.value=1;u.momentum.value=.4;u.g.value=Math.sqrt(1.16);for(const p of u.groupParams.value)p.w=brightness;
  const a=draw(reference);pass.render(r);const b=draw(composite);let sum=0,delta=0,l1=0;const ca=[0,0],cb=[0,0];let sa=0,sb=0;

@@ -12,6 +12,14 @@ export function cloudSize(width,height,scale=.5,budget=MAX_VOLUME_PIXELS){
  if(scale<1&&w*h>budget){const f=Math.sqrt(budget/(w*h));w=Math.max(1,Math.min(budget,Math.floor(w*f)));h=Math.max(1,Math.min(budget,Math.floor(h*f)));}
  return [w,h];
 }
+// Three.js keys programs by output colour space. Compile for the SAME target as the first draw.
+// Restore immediately after submitting compilation, not after waiting for the driver promise.
+export function compileForTarget(renderer,scene,camera,target){
+ if(!renderer.getRenderTarget)return renderer.compileAsync(scene,camera); // Minimal non-WebGL test adapters.
+ const previous=renderer.getRenderTarget(),face=renderer.getActiveCubeFace(),mip=renderer.getActiveMipmapLevel(),viewport=renderer.getViewport(new T.Vector4()),physical=renderer.getCurrentViewport(new T.Vector4()),scissor=renderer.getScissor(new T.Vector4()),test=renderer.getScissorTest();
+ try{renderer.setRenderTarget(target);return renderer.compileAsync(scene,camera);}
+ finally{renderer.setRenderTarget(previous,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
+}
 export class CloudPass{
  constructor(uniforms){this.budget=new VolumeBudget();
   this.target=new T.WebGLRenderTarget(1,1,{count:2,type:T.HalfFloatType,minFilter:T.LinearFilter,magFilter:T.LinearFilter,depthBuffer:false,stencilBuffer:false,generateMipmaps:false});

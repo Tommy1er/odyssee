@@ -1,5 +1,5 @@
 import {GroupPass,groupSampleGLSL} from './group-pass.js';
-import {CloudPass,cloudSampleGLSL,observerRayGLSL} from './cloud-pass.js';
+import {CloudPass,cloudSampleGLSL,observerRayGLSL,compileForTarget} from './cloud-pass.js';
 import {captureCubeStartup} from './gpu-startup.js';
 import * as T from 'three';
 import {gammaU,norm,unit,mul,sub} from './physics.js';
@@ -95,7 +95,7 @@ L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.
   else await renderer.compileAsync(scene,this.camera);
   this.compiledMaterials.add(material);
  }
- async prepareCloud(renderer){if(!this.cloudCompilation)this.cloudCompilation=renderer.compileAsync(this.cloudPass.scene,this.cloudPass.camera);await this.cloudCompilation;}
+ async prepareCloud(renderer){if(!this.cloudCompilation)this.cloudCompilation=compileForTarget(renderer,this.cloudPass.scene,this.cloudPass.camera,this.cloudPass.target);await this.cloudCompilation;}
  // Share one promise between selection-time warmup and arrival. A finished warmup never changes the displayed variant.
  requestCompilation(renderer,material,trace){
   if(this.compiledMaterials.has(material))return Promise.resolve();

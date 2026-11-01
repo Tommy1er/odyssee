@@ -1,7 +1,7 @@
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict'),esbuild=require('esbuild');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'validation/v2-screenshots');fs.mkdirSync(out,{recursive:true});
 const entry=`import * as T from 'three';
-import {CloudPass,observerRayGLSL,cloudSampleGLSL} from './src/cloud-pass.js';
+import {CloudPass,observerRayGLSL,cloudSampleGLSL,compileForTarget} from './src/cloud-pass.js';
 import {cloudGLSL,nebulaUniforms} from './src/environments.js';
 import {calibrate,applyCalibration} from './src/nebulae.js';
 const r=new T.WebGLRenderer({canvas:document.querySelector('canvas')});r.setSize(192,144);const W=192,H=144;
@@ -12,7 +12,7 @@ const main='void main(){'+observerRayGLSL+'vec3 B=vec3(probeBackground)+vec3(pro
 const make=code=>{const s=new T.Scene();s.add(new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({uniforms:u,vertexShader:pass.material.vertexShader,fragmentShader:header+code+main,depthTest:false,depthWrite:false})));return s;};
 const reference=make(cloudGLSL),composite=make(cloudSampleGLSL);
 function draw(scene){r.setRenderTarget(target);r.setViewport(0,0,W/r.getPixelRatio(),H/r.getPixelRatio());r.render(scene,cam);const p=new Float32Array(W*H*4);r.readRenderTargetPixels(target,0,0,W,H,p);return p;}
-window.measure=()=>{const rows=[];pass.budget.setProfile('quality');r.setRenderTarget(null);r.setPixelRatio(1);r.setViewport(0,0,W,H);pass.render(r);if(pass.target.width!==144||pass.target.height!==108)throw Error('Quality uses 75 percent axes');pass.budget.setProfile('balanced');for(const dpr of [1,1.5,2])for(const id of ['tarantula','ngc604'])for(const opacity of [0,.35,1])for(const relativistic of [false,true])for(const brightness of [1,1e-8]){
+window.measure=async()=>{await compileForTarget(r,pass.scene,pass.camera,pass.target);const compiledCount=r.info.programs.length;const rows=[];pass.budget.setProfile('quality');r.setRenderTarget(null);r.setPixelRatio(1);r.setViewport(0,0,W,H);pass.render(r);if(pass.target.width!==144||pass.target.height!==108)throw Error('Quality uses 75 percent axes');if(r.info.programs.length!==compiledCount)throw Error('Cloud first HDR draw recompiled after preparation');pass.budget.setProfile('balanced');for(const dpr of [1,1.5,2])for(const id of ['tarantula','ngc604'])for(const opacity of [0,.35,1])for(const relativistic of [false,true])for(const brightness of [1,1e-8]){
  r.setPixelRatio(dpr);
  const c=calibrate({id,type:'nebula',radiusLy:1,d:1});applyCalibration(u,c,brightness/c.J);u.probeBackground.value=0;u.probeStar.value=0;u.cloudOpacity.value=opacity;u.optics.value=+relativistic;u.momentum.value=relativistic?.4:0;u.g.value=Math.sqrt(1+u.momentum.value**2);
  const a=draw(reference);r.setRenderTarget(target);r.setViewport(0,0,W/r.getPixelRatio(),H/r.getPixelRatio());r.setScissor(2,3,111,97);r.setScissorTest(true);
