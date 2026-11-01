@@ -1,3 +1,4 @@
+import {VolumeBudget} from './graphics-quality.js';
 import * as T from 'three';
 import {cloudGLSL} from './environments.js';
 // Same observer ray as the full-resolution optics, shared so relativistic aberration cannot diverge.
@@ -6,13 +7,13 @@ export const cloudSampleGLSL=`uniform float cloudActive,cloudRadianceScale;unifo
 vec3 cloudRadiance(vec3 ray,vec3 background){return texture2D(cloudLight,uvp*.5+.5).rgb*cloudRadianceScale+background*texture2D(cloudTransmission,uvp*.5+.5).rgb;}`;
 // Per-pass pixel budget, independent of monitor DPI and GPU brand. Small clouds retain full resolution.
 export const MAX_VOLUME_PIXELS=512*512;
-export function cloudSize(width,height,scale=.5){
+export function cloudSize(width,height,scale=.5,budget=MAX_VOLUME_PIXELS){
  let w=Math.max(1,Math.ceil(width*scale)),h=Math.max(1,Math.ceil(height*scale));
- if(scale<1&&w*h>MAX_VOLUME_PIXELS){const f=Math.sqrt(MAX_VOLUME_PIXELS/(w*h));w=Math.max(1,Math.min(MAX_VOLUME_PIXELS,Math.floor(w*f)));h=Math.max(1,Math.min(MAX_VOLUME_PIXELS,Math.floor(h*f)));}
+ if(scale<1&&w*h>budget){const f=Math.sqrt(budget/(w*h));w=Math.max(1,Math.min(budget,Math.floor(w*f)));h=Math.max(1,Math.min(budget,Math.floor(h*f)));}
  return [w,h];
 }
 export class CloudPass{
- constructor(uniforms){
+ constructor(uniforms){this.budget=new VolumeBudget();
   this.target=new T.WebGLRenderTarget(1,1,{count:2,type:T.HalfFloatType,minFilter:T.LinearFilter,magFilter:T.LinearFilter,depthBuffer:false,stencilBuffer:false,generateMipmaps:false});
   this.target.textures[0].name='Nuage : émission';this.target.textures[1].name='Nuage : transmission';
   uniforms.cloudRadianceScale={value:1};this.uniforms=uniforms;
@@ -27,10 +28,11 @@ emission=vec4(L/cloudRadianceScale,1.);transmission=vec4(mix(vec3(1.),T,cloudOpa
   this.scene=new T.Scene();this.scene.add(new T.Mesh(new T.PlaneGeometry(2,2),this.material));this.camera=new T.OrthographicCamera(-1,1,1,-1,0,1);
  }
  render(renderer,scale=.5){const u=this.uniforms;u.cloudRadianceScale.value=Math.max(1e-30,(Math.abs(u.nebKl.value)+Math.abs(u.nebKc.value))*Math.abs(u.nebGain.value));const viewport=renderer.getViewport(new T.Vector4()),scissor=renderer.getScissor(new T.Vector4()),test=renderer.getScissorTest(),target=renderer.getRenderTarget(),face=renderer.getActiveCubeFace(),mip=renderer.getActiveMipmapLevel();
-  const physical=renderer.getCurrentViewport(new T.Vector4()),[w,h]=cloudSize(physical.z,physical.w,scale);
+  const physical=renderer.getCurrentViewport(new T.Vector4()),[w,h]=cloudSize(physical.z,physical.w,scale,this.budget.limit);
   if(this.target.width!==w||this.target.height!==h)this.target.setSize(w,h);
   // setRenderTarget applies the target's physical viewport. setViewport would multiply it by DPR again.
+  const query=scale<1?this.budget.begin(renderer):null;
   try{renderer.setRenderTarget(this.target);renderer.setScissorTest(false);renderer.render(this.scene,this.camera);}
-  finally{renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
+  finally{this.budget.end(query);renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
  }
 }

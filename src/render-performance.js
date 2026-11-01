@@ -15,7 +15,7 @@ export class RenderPerformance{
  end(){this.cpu.push(performance.now()-this.start);if(this.cpu.length>240)this.cpu.shift();this.markTime=null;}
  poll(){const gl=this.gl;if(gl.isContextLost()){this.pending=[];return;}const disjoint=this.ext&&gl.getParameter(this.ext.GPU_DISJOINT_EXT);
   this.pending=this.pending.filter(({query,name})=>{if(disjoint){gl.deleteQuery(query);this.discarded++;return false;}if(!gl.getQueryParameter(query,gl.QUERY_RESULT_AVAILABLE))return true;this.record(name,'gpu',gl.getQueryParameter(query,gl.QUERY_RESULT)/1e6);gl.deleteQuery(query);return false;});}
- snapshot(){const stats=a=>{if(!a.length)return null;const s=[...a].sort((a,b)=>a-b);return {n:a.length,meanMs:a.reduce((a,b)=>a+b,0)/a.length,p50Ms:s[Math.floor(s.length*.5)],p95Ms:s[Math.floor(s.length*.95)],maxMs:s.at(-1)};};
+ snapshot(){const stats=a=>{if(!a.length)return null;const s=[...a].sort((a,b)=>a-b);return {n:a.length,meanMs:a.reduce((a,b)=>a+b,0)/a.length,p50Ms:s[Math.floor(s.length*.5)],p95Ms:s[Math.floor(s.length*.95)],p99Ms:s[Math.floor(s.length*.99)],maxMs:s.at(-1)};};
   return {gpuTimers:!!this.ext,note:'CPU = soumission/attente ; GPU = dessins échantillonnés 1 image sur 10, pas toute la trame',frame:stats(this.frames),frameWork:stats(this.cpu),pending:this.pending.length,discarded:this.discarded,passes:Object.fromEntries([...this.rows].map(([n,r])=>[n,{calls:r.calls,cpu:stats(r.cpu),gpu:stats(r.gpu)}]))};}
  dispose(){this.renderer.render=this.original;for(const {query} of this.pending)this.gl.deleteQuery(query);this.pending=[];}
 }

@@ -1,3 +1,4 @@
+import {VolumeBudget} from './graphics-quality.js';
 import * as T from 'three';
 import {localGroupGLSL,GROUP_SLOTS} from './local-group.js';
 import {observerRayGLSL,cloudSize} from './cloud-pass.js';
@@ -8,7 +9,7 @@ export const groupSampleGLSL=filtered('if(groupReduced[j]>.5)continue;').replace
 uniform sampler2D groupLight;uniform float groupLightScale,groupReducedOn;
 vec3 groupRadiance(vec3 ray){vec3 L=groupDirectRadiance(ray);if(groupReducedOn>.5)L+=texture2D(groupLight,uvp*.5+.5).rgb*groupLightScale;return L;}`;
 export class GroupPass{
- constructor(uniforms){this.uniforms=uniforms;this.ready=false;
+ constructor(uniforms){this.budget=new VolumeBudget();this.uniforms=uniforms;this.ready=false;
   this.target=new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,minFilter:T.LinearFilter,magFilter:T.LinearFilter,depthBuffer:false,stencilBuffer:false,generateMipmaps:false});this.target.texture.name='Groupe local : grands volumes';
   Object.assign(uniforms,{groupReduced:{value:Array(GROUP_SLOTS).fill(0)},groupReducedOn:{value:0},groupLight:{value:this.target.texture},groupLightScale:{value:1}});
   this.material=new T.ShaderMaterial({name:'Groupe local HDR demi-résolution',uniforms,depthTest:false,depthWrite:false,
@@ -31,8 +32,9 @@ void main(){${observerRayGLSL}gl_FragColor=vec4(groupRadiance(ray)/groupLightSca
  }
  render(renderer){const physical=renderer.getCurrentViewport(new T.Vector4());if(!this.select(physical.w))return;
   const viewport=renderer.getViewport(new T.Vector4()),scissor=renderer.getScissor(new T.Vector4()),test=renderer.getScissorTest(),target=renderer.getRenderTarget(),face=renderer.getActiveCubeFace(),mip=renderer.getActiveMipmapLevel();
-  const [w,h]=cloudSize(physical.z,physical.w);this.target.setSize(w,h);
+  const [w,h]=cloudSize(physical.z,physical.w,.5,this.budget.limit);this.target.setSize(w,h);
+  const query=this.budget.begin(renderer);
   try{renderer.setRenderTarget(this.target);renderer.setScissorTest(false);renderer.render(this.scene,this.camera);}
-  finally{renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
+  finally{this.budget.end(query);renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
  }
 }
