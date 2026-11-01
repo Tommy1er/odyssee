@@ -189,11 +189,14 @@ export class SpaceRenderer{
     if(!activeGalaxySpectra)this.galaxySpectralOverlay.drawn=false;
     this.skyOptics.material.uniforms.galaxyOverlayOn.value=+!!spectralDrawn;
     if(spectralDrawn)this.skyOptics.material.uniforms.galaxyOverlay.value=this.galaxySpectralOverlay.target.texture;
-    this.skyOptics.render(this.renderer,this.camera,s,half&&!betaOptics?[0,0,0]:visualU,skyOptics);
+    timings?.mark('Couche spectrale HDR');
+    this.skyOptics.render(this.renderer,this.camera,s,half&&!betaOptics?[0,0,0]:visualU,skyOptics,timings);
     // Navigation symbols, not light: hidden in the clean view so that only the photometric sky remains.
     if(s.catalogueMarkers!==false&&!s.cleanView&&(s.target?.type==='cosmic'||norm(s.pos)>1e7))this.catalogueSky.render(this.renderer,this.camera,skyOptics?visualU:[0,0,0]);
     if(s.basinOverlay&&!s.cleanView)this.basinOverlay.render(this.renderer,this.camera,s.pos,skyOptics?visualU:[0,0,0],s.wall);
+    timings?.mark('Repères et surcouches');
     if(s.external)await this.spacecraft.render(this.renderer,{...s,shipLightSources:this.shipLight=this.shipLighting.update(s),opticalLab:s.opticalLab&&!!betaOptics,labBeta:betaOptics?s.labBeta:0,speedValue:half&&!betaOptics?0:norm(physicalV),gammaValue:half&&!betaOptics?1:gammaU(s.u),velocityVector:s.opticalLab?labDirection(physicalV,forward.toArray()):physicalV},half?w/2/h:w/h,this.startupTrace);
+    timings?.mark('Vaisseau 3D');
    };
    if(s.opticalLab){this.renderer.setScissorTest(true);this.renderer.setViewport(0,0,w/2,h);this.renderer.setScissor(0,0,w/2,h);await draw(0,true);this.renderer.setViewport(w/2,0,w/2,h);this.renderer.setScissor(w/2,0,w/2,h);await draw(1,true);this.renderer.setScissorTest(false);this.renderer.setViewport(0,0,w,h);}else await draw(+s.relativistic,false);if(s.passage)this.passageView.render(this.renderer,s.passage.progress,s.passage.unstable,performance.now()/1000,w/h);
   }
