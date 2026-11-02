@@ -72,7 +72,7 @@ console.log('PASS graphics profiles, bounded GPU adaptation, asynchronous querie
 
 // Compilation uses the HDR target but restores all renderer state before the promise resolves.
 {
- const {compileForTarget}=await import('../src/cloud-pass.js');const {Vector4}=await import('three');
+ const {compileForTarget,drawForTarget}=await import('../src/cloud-pass.js');const {Vector4}=await import('three');
  const original={},hdr={};let target=original,face=3,mip=2,test=true,release;
  let viewport=new Vector4(2,3,40,50),physical=new Vector4(3,4.5,60,75),scissor=new Vector4(5,6,20,30);
  const saved=[viewport.clone(),physical.clone(),scissor.clone()];
@@ -80,7 +80,21 @@ console.log('PASS graphics profiles, bounded GPU adaptation, asynchronous querie
  setRenderTarget:(t,f=0,m=0)=>{target=t;face=f;mip=m;viewport.set(0,0,1,1);physical.set(0,0,1,1);scissor.set(0,0,1,1);test=false;},setViewport:v=>viewport.copy(v),state:{viewport:v=>physical.copy(v)},setScissor:v=>scissor.copy(v),setScissorTest:v=>test=v,
  compileAsync:()=>{assert.equal(target,hdr);return new Promise(resolve=>release=resolve);}};
  const pending=compileForTarget(r,{}, {},hdr);assert.equal(target,original);assert.equal(face,3);assert.equal(mip,2);assert(test);assert.deepEqual([viewport,physical,scissor],saved);release();await pending;
+
+ r.autoClear=true;r.getPixelRatio=()=>1.5;let drawn=0;const setV=r.setViewport,setS=r.setScissor;
+ r.setViewport=(v,...a)=>typeof v==='number'?viewport.set(v,...a):setV(v);r.setScissor=(v,...a)=>typeof v==='number'?scissor.set(v,...a):setS(v);
+ r.render=()=>{assert.equal(target,hdr);assert.equal(r.autoClear,false);assert(test);assert.equal(physical.z,1);assert.equal(physical.w,1);drawn++;};
+ drawForTarget(r,{}, {},hdr);assert.equal(drawn,1);assert.equal(target,original);assert(r.autoClear);assert.deepEqual([viewport,physical,scissor],saved);
+ r.render=()=>{throw Error('first draw');};assert.throws(()=>drawForTarget(r,{}, {},hdr),/first draw/);assert.equal(target,original);assert(r.autoClear);assert.deepEqual([viewport,physical,scissor],saved);
  r.compileAsync=()=>{throw Error('driver submission');};assert.throws(()=>compileForTarget(r,{}, {},hdr),/driver submission/);assert.equal(target,original);assert.deepEqual([viewport,physical,scissor],saved);
  r.compileAsync=()=>Promise.reject(Error('driver completion'));await assert.rejects(compileForTarget(r,{}, {},hdr),/driver completion/);assert.equal(target,original);assert(test);
 }
 console.log('PASS HDR compilation target, immediate state restoration and driver errors');
+
+{
+ const {DrawWarmup}=await import('../src/draw-warmup.js');const q=new DrawWarmup(),calls=[];
+ const a=q.enqueue('A',()=>calls.push('A')),b=q.enqueue('B',()=>calls.push('B'));
+ assert.deepEqual(calls,[]);q.step();assert.deepEqual(calls,['A']);assert.deepEqual(q.snapshot().pending,['B']);await a;q.step();await b;assert.deepEqual(calls,['A','B']);
+ const failed=q.enqueue('failure',()=>{throw Error('driver draw');});const caught=assert.rejects(failed,/driver draw/);q.step();await caught;assert.equal(q.history.at(-1).status,'error');assert.equal(q.active,null);
+}
+console.log('PASS one-pixel warmup state and one draw per frame queue, including failure');

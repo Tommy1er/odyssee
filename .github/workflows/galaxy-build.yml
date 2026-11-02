@@ -30,6 +30,7 @@ on:
       - 'src/sky-refresh.js'
       - 'src/render-performance.js'
       - 'src/graphics-quality.js'
+      - 'src/draw-warmup.js'
       - 'src/scene-timings.js'
       - 'src/render-diagnostics.js'
       - 'src/render-budget.js'

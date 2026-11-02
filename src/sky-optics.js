@@ -1,5 +1,6 @@
+import {DrawWarmup} from './draw-warmup.js';
 import {GroupPass,groupSampleGLSL} from './group-pass.js';
-import {CloudPass,cloudSampleGLSL,observerRayGLSL,compileForTarget} from './cloud-pass.js';
+import {CloudPass,cloudSampleGLSL,observerRayGLSL,compileForTarget,drawForTarget} from './cloud-pass.js';
 import {captureCubeStartup} from './gpu-startup.js';
 import * as T from 'three';
 import {gammaU,norm,unit,mul,sub} from './physics.js';
@@ -64,7 +65,7 @@ if(optics>.5&&shift>.5&&momentum>.000001){if(band<2.5){float blue=L.b/(L.r+L.b+1
 if(cmbOn>.5){float Tc=D*cmbT0/(cmbGs*(1.-dot(cmbBetaS,ray)));vec3 Lc=vec3(0.);if(Tc>150.){vec4 c=thermal(Tc);Lc=cmbK*exp(clamp(c.a,-80.,80.))*c.rgb;}float th=dot(n,axis)>0.?length(cross(n,axis)):3.14159;vec3 Lp=cmbFlux/(6.2831853*cmbSigma*cmbSigma)*exp(-.5*th*th/(cmbSigma*cmbSigma))*cmbRGB;L+=mix(Lp,Lc,cmbW);}
 // Point galaxies have been spectral-shifted separately BEFORE RGB merger. Compose in linear HDR.
 if(galaxyOverlayOn>.5)L+=G;
-L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.2126,.7152,.0722));rgb=mix(vec3(y),rgb,smoothstep(.15,.8,y));}gl_FragColor=vec4(pow(rgb,vec3(1./2.2)),1.);}`});this.lut=lut;this.cmbK=blackbodyK(lut,PHOT_ZERO);{const b=SUN_CMB_KMS/C_KMS,dir=SUN_CMB_DIR;this.material.uniforms.cmbBetaS.value.set(...dir.map(x=>x*b));this.material.uniforms.cmbGs.value=1/Math.sqrt(1-b*b);this.material.uniforms.cmbK.value=this.cmbK;}this.uniforms=this.material.uniforms;this.fullFragment=this.material.fragmentShader;this.variants=new Map();this.compiledMaterials=new Set();this.pendingMaterials=new Map();this.compilationErrors=new Map();this.blackHolePreparation={status:"idle"};this.material.dispose();this.material=this.variant('');this.ordinaryMaterial=this.material;this.screen=new T.Mesh(new T.PlaneGeometry(2,2),this.material);this.scene.add(this.screen);Object.assign(this.material.uniforms,nebulaUniforms());this.closeup=new CloseupModel(this.material.uniforms,objects,lut);this.system=new SystemBodies(this.material.uniforms,objects,this.closeup);this.comets=new CometLayer(this.material.uniforms,objects);this.cloudPass=new CloudPass(this.uniforms);this.groupPass=new GroupPass(this.uniforms);}
+L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.2126,.7152,.0722));rgb=mix(vec3(y),rgb,smoothstep(.15,.8,y));}gl_FragColor=vec4(pow(rgb,vec3(1./2.2)),1.);}`});this.lut=lut;this.cmbK=blackbodyK(lut,PHOT_ZERO);{const b=SUN_CMB_KMS/C_KMS,dir=SUN_CMB_DIR;this.material.uniforms.cmbBetaS.value.set(...dir.map(x=>x*b));this.material.uniforms.cmbGs.value=1/Math.sqrt(1-b*b);this.material.uniforms.cmbK.value=this.cmbK;}this.uniforms=this.material.uniforms;this.fullFragment=this.material.fragmentShader;this.variants=new Map();this.compiledMaterials=new Set();this.pendingMaterials=new Map();this.compilationErrors=new Map();this.blackHolePreparation={status:"idle"};this.material.dispose();this.material=this.variant('');this.ordinaryMaterial=this.material;this.screen=new T.Mesh(new T.PlaneGeometry(2,2),this.material);this.scene.add(this.screen);Object.assign(this.material.uniforms,nebulaUniforms());this.closeup=new CloseupModel(this.material.uniforms,objects,lut);this.system=new SystemBodies(this.material.uniforms,objects,this.closeup);this.comets=new CometLayer(this.material.uniforms,objects);this.cloudPass=new CloudPass(this.uniforms);this.groupPass=new GroupPass(this.uniforms);this.drawWarmup=new DrawWarmup();this.groupPass.warmup=this.drawWarmup;}
  // Optical programs per module (Iris Xe / ANGLE D3D11, 27/10/2026): FXC inlines every call, so one program holding the
  // close-up bodies, the nebula march and the geodesic tracer took minutes to compile. Each variant holds only the modules
  // the view needs; the black-hole tracer stays out of every ordinary program. All variants share one uniforms object.
@@ -93,9 +94,14 @@ L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.
  async compileVariant(renderer,material,trace){if(material.userData.flags.cloud)await this.prepareCloud(renderer);const scene=new T.Scene();scene.add(new T.Mesh(this.screen.geometry,material));
   if(trace)await trace.compile(renderer,scene,this.camera,material.name);
   else await renderer.compileAsync(scene,this.camera);
+  if(renderer.getRenderTarget&&!material.userData.flags.blackHole&&(material.userData.flags.system||material.userData.flags.cloud))await this.drawWarmup.enqueue(material.name,()=>drawForTarget(renderer,scene,this.camera,null));
   this.compiledMaterials.add(material);
  }
- async prepareCloud(renderer){if(!this.cloudCompilation)this.cloudCompilation=compileForTarget(renderer,this.cloudPass.scene,this.cloudPass.camera,this.cloudPass.target);await this.cloudCompilation;}
+ async prepareCloud(renderer){if(!this.cloudCompilation){this.cloudCompilation=compileForTarget(renderer,this.cloudPass.scene,this.cloudPass.camera,this.cloudPass.target);this.cloudCompilation.then(()=>{if(renderer.getRenderTarget)this.drawWarmup.enqueue('Nuage HDR émission/transmission',()=>drawForTarget(renderer,this.cloudPass.scene,this.cloudPass.camera,this.cloudPass.target)).catch(e=>{this.variantError=String(e);});}).catch(()=>{});}await this.cloudCompilation;}
+ startOrdinaryWarmup(renderer){if(this.ordinaryPreparation)return;this.ordinaryPreparation={status:'preparing'};this.groupPass.prepare(renderer,true);
+  const run=async()=>{for(const key of ['s','c','sc']){this.ordinaryPreparation.label=this.variant(key).name;await this.requestCompilation(renderer,this.variant(key),null);}await this.groupPass.compilation;if(this.groupPass.error)throw Error(this.groupPass.error);this.ordinaryPreparation={status:'ready'};};
+  run().catch(e=>{this.ordinaryPreparation={status:'error',error:String(e)};});
+ }
  // Share one promise between selection-time warmup and arrival. A finished warmup never changes the displayed variant.
  requestCompilation(renderer,material,trace){
   if(this.compiledMaterials.has(material))return Promise.resolve();
@@ -117,7 +123,7 @@ L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.
  }
  // Ordinary navigation continues during warmup. If arrival precedes completion, only the remaining time is awaited:
  // never display an unlensed approximation as though the physically required black-hole program were ready.
- async prepare(renderer,s,trace){this.groupPass.prepare(renderer);const key=this.variantKey(s),material=this.variant(key);
+ async prepare(renderer,s,trace){if(!trace)this.drawWarmup.step();this.groupPass.prepare(renderer);const key=this.variantKey(s),material=this.variant(key);
   if(this.compiledMaterials.has(material)){this.use(material);this.prewarmTarget(renderer,s);return;}
   if(key==='bh'){await this.requestCompilation(renderer,material,trace);if(this.variantKey(s)==='bh')this.use(material);return;}
   if(!this.compiledMaterials.size){const deep=this.variant('');await this.requestCompilation(renderer,deep,trace);this.use(deep);if(material===deep){this.prewarmTarget(renderer,s);return;}}

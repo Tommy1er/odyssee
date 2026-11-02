@@ -20,6 +20,13 @@ export function compileForTarget(renderer,scene,camera,target){
  try{renderer.setRenderTarget(target);return renderer.compileAsync(scene,camera);}
  finally{renderer.setRenderTarget(previous,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
 }
+// A real draw with the original target format, restricted to one physical pixel.
+// Screen-target warmups run BEFORE the normal screen draw, which overwrites that pixel in the same frame.
+export function drawForTarget(renderer,scene,camera,target){
+ const previous=renderer.getRenderTarget(),face=renderer.getActiveCubeFace(),mip=renderer.getActiveMipmapLevel(),viewport=renderer.getViewport(new T.Vector4()),physical=renderer.getCurrentViewport(new T.Vector4()),scissor=renderer.getScissor(new T.Vector4()),test=renderer.getScissorTest(),clear=renderer.autoClear,dpr=renderer.getPixelRatio();
+ try{renderer.setRenderTarget(target);renderer.setViewport(0,0,1/dpr,1/dpr);renderer.state.viewport(new T.Vector4(0,0,1,1));renderer.setScissor(0,0,1/dpr,1/dpr);renderer.setScissorTest(true);renderer.autoClear=false;renderer.render(scene,camera);}
+ finally{renderer.autoClear=clear;renderer.setRenderTarget(previous,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
+}
 export class CloudPass{
  constructor(uniforms){this.budget=new VolumeBudget();
   this.target=new T.WebGLRenderTarget(1,1,{count:2,type:T.HalfFloatType,minFilter:T.LinearFilter,magFilter:T.LinearFilter,depthBuffer:false,stencilBuffer:false,generateMipmaps:false});
