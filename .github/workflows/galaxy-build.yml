@@ -13,6 +13,8 @@ on:
       - 'src/galaxy-sed-kc96-data.js'
       - 'src/local-group.js'
       - 'src/flrw.js'
+      - 'src/cosmology.js'
+      - 'scripts/validate-photon-path.mjs'
       - 'src/extragalactic-nebulae.js'
       - 'src/nebulae.js'
       - 'src/nested-emission.js'
@@ -70,6 +72,7 @@ jobs:
           node scripts/validate-nested-emission.mjs
           node scripts/validate-nebula-points.mjs
           node scripts/validate-flrw.mjs
+          node scripts/validate-photon-path.mjs
           node scripts/validate-star-nurseries.mjs
           node scripts/validate-nebulae.mjs
           node scripts/validate-galaxy-spectra.mjs
@@ -83,7 +86,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/cockpit.js public/cosmos.js
+          git add public/cockpit.js public/cosmos.js public/cosmology.js
           if ! git diff --cached --quiet; then
             git fetch origin main
             if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then

@@ -17,7 +17,7 @@ function simpson(fn,z){
 export function flatLCDM(z,parameters=FLRW_PLANCK_2018){
  if(!Number.isFinite(z)||z<0||z>2) return null;
  const {H0,omegaM,omegaLambda}=parameters;
- if(!(H0>0)||omegaM<0||omegaLambda<0||!Number.isFinite(H0)||Math.abs(omegaM+omegaLambda-1)>1e-7)throw Error('Flat LCDM parameters required');
+ if(!(H0>0)||omegaM<0||omegaLambda<0||!Number.isFinite(H0)||!Number.isFinite(omegaM)||!Number.isFinite(omegaLambda)||Math.abs(omegaM+omegaLambda-1)>1e-7)throw Error('Flat LCDM parameters required');
  const E=x=>Math.sqrt(omegaM*(1+x)**3+omegaLambda);
  const dc=(C_KM_S/H0)*simpson(x=>1/E(x),z);
  const lookbackGyr=(MPC_KM/(H0*JULIAN_YEAR_SECONDS*1e9))*simpson(x=>1/((1+x)*E(x)),z);
@@ -35,4 +35,20 @@ export function galaxyLookback(o){
  if(z==null)return null;
  const model=flatLCDM(z);
  return model&&{...model,source:'z_CMB≈v_CMB/c from CF4, not a peculiar velocity',observedDistanceMpc:row.mpc??null,warning:z<.01?'À faible redshift, les vitesses particulières rendent les distances cosmologiques très incertaines.':'Distance cosmologique de référence, pas la distance mesurée de cette galaxie.'};
+}
+
+// Independent integration in scale factor a, not a Lorentz boost of the catalogue worldlines.
+// Incoming radial null ray: dχ/da=-c/(a²H), dt/da=1/(aH). χ in Mpc, t in Gyr.
+export function radialPhotonPath(z,parameters=FLRW_PLANCK_2018,steps=256){
+ const reference=flatLCDM(z,parameters);if(!reference)return null;
+ if(!Number.isInteger(steps)||steps<16||steps>4096)throw Error('Photon path requires 16–4096 steps');
+ const {H0,omegaM,omegaLambda}=parameters,a0=1/(1+z),da=(1-a0)/steps;
+ const hubbleGyr=MPC_KM/(H0*JULIAN_YEAR_SECONDS*1e9),E=a=>Math.sqrt(omegaM/a**3+omegaLambda);
+ const slope=a=>[-C_KM_S/(H0*a*a*E(a)),hubbleGyr/(a*E(a))];
+ let chi=reference.comovingMpc,t=0;const points=[];
+ for(let i=0;i<=steps;i++){
+  const a=a0+da*i;points.push({a,epochRedshift:1/a-1,elapsedGyr:t,photonComovingMpc:chi,photonProperMpc:a*chi,sourceProperMpc:a*reference.comovingMpc});
+  if(i<steps){const k1=slope(a),k2=slope(a+da/2),k4=slope(a+da);chi+=da*(k1[0]+4*k2[0]+k4[0])/6;t+=da*(k1[1]+4*k2[1]+k4[1])/6;}
+ }
+ return {reference,points,arrivalResidualMpc:chi,lookbackResidualGyr:t-reference.lookbackGyr,model:'radial-null-flat-LCDM',scope:'Light only; no rocket dynamics, peculiar velocities, lensing or radiation density'};
 }
