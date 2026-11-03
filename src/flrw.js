@@ -52,3 +52,19 @@ export function radialPhotonPath(z,parameters=FLRW_PLANCK_2018,steps=256){
  }
  return {reference,points,arrivalResidualMpc:chi,lookbackResidualGyr:t-reference.lookbackGyr,model:'radial-null-flat-LCDM',scope:'Light only; no rocket dynamics, peculiar velocities, lensing or radiation density'};
 }
+
+// Massive, freely falling radial test particle. Physical peculiar momentum a*gamma*beta is conserved.
+// Starts beside the photon at emission and heads toward the observer; it does NOT arrive by today.
+export function radialCoastingPath(z,beta0,parameters=FLRW_PLANCK_2018,steps=256){
+ const photon=radialPhotonPath(z,parameters,steps);if(!photon)return null;
+ if(!Number.isFinite(beta0)||beta0<0||beta0>.999999)throw Error('Coasting beta must be between 0 and 0.999999');
+ const {H0,omegaM,omegaLambda}=parameters,a0=1/(1+z),da=(1-a0)/steps,K=a0*beta0/Math.sqrt((1-beta0)*(1+beta0));
+ const th=MPC_KM/(H0*JULIAN_YEAR_SECONDS*1e9),E=a=>Math.sqrt(omegaM/a**3+omegaLambda);
+ const slope=a=>{const gamma=Math.hypot(1,K/a),beta=K/a/gamma;return [-C_KM_S*beta/(H0*a*a*E(a)),th/(a*E(a)*gamma)];};
+ let chi=photon.reference.comovingMpc,tau=0;const points=[];
+ for(let i=0;i<=steps;i++){const a=a0+i*da,gamma=Math.hypot(1,K/a),beta=K/a/gamma;
+  const hubbleRecessionBeta=H0*E(a)*a*chi/C_KM_S;points.push({a,elapsedGyr:photon.points[i].elapsedGyr,properGyr:tau,comovingMpc:chi,properMpc:a*chi,beta,gamma,hubbleRecessionBeta,properRateBeta:hubbleRecessionBeta-beta});
+  if(i<steps){const k1=slope(a),k2=slope(a+da/2),k4=slope(a+da);chi+=da*(k1[0]+4*k2[0]+k4[0])/6;tau+=da*(k1[1]+4*k2[1]+k4[1])/6;}
+ }
+ return {points,momentumInvariant:K,model:'radial-free-massive-flat-LCDM',scope:'Test particle only; no thrust, braking, rendezvous or local bound structures'};
+}
