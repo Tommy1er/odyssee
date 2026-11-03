@@ -1,0 +1,11 @@
+import {oppositeBurnBench} from './rocket-bench.js';
+const $=id=>document.getElementById(id),f=x=>x.toLocaleString('fr-FR',{maximumFractionDigits:5});let result;
+const speed=p=>p.u===0?'0 c':p.oneMinusAbsBeta<1e-6?`${p.u<0?'−':'+'}c × (1 − ${p.oneMinusAbsBeta.toExponential(3)})`:Math.abs(p.beta)<1e-6?`${p.beta.toExponential(3)} c`:`${f(p.beta)} c`;
+function cursor(){if(!result)return;const p=result.points[+$('rocket-epoch').value];$('rocket-readout').textContent=`Phase ${p.phase} · temps cosmique ${f(p.cosmicYears)} ans · temps propre ${f(p.properYears)} ans · vitesse locale ${speed(p)} · a = ${f(p.a)} · position propre ${f(p.a*p.comovingLy)} al.`;}
+function calculate(){const years=$('rocket-years').value.trim(),g=$('rocket-g').value.trim();try{if(!years||!g)throw Error('Champs requis');result=oppositeBurnBench({durationYears:Number(years),accelerationG:Number(g),model:$('rocket-model').value});$('rocket-error').hidden=true;}
+ catch(e){$('rocket-error').textContent='Saisir une durée de 0 à 1 milliard d’années et une accélération de 0 à 1 g.';$('rocket-error').hidden=false;return;}
+ $('rocket-result-title').textContent=result.model==='minkowski'?'Résultat · Minkowski':'Résultat · de Sitter idéal';const rows=[['Fin de la première poussée',result.points[64]],['Fin de la poussée opposée',result.end]];
+ $('rocket-results').replaceChildren(...rows.map(([label,p])=>{const tr=document.createElement('tr');for(const text of [label,speed(p),`${f(p.properYears)} ans`,`${f(p.comovingLy)} al`]){const td=document.createElement('td');td.textContent=text;if(tr.children.length)td.dataset.label=['','Vitesse locale','Temps propre','Position comobile'][tr.children.length];tr.append(td);}return tr;}));
+ $('rocket-warning').textContent=result.end.u< -1e-12?'La poussée opposée a dépassé le premier arrêt local : le mouvement final est vers −x. Aucun rendez-vous n’est calculé.':'Aucune cible ni arrivée calculée. Le résultat d’arrêt éventuel concerne seulement la vitesse locale dans ce cas idéal.';$('rocket-epoch').value=0;cursor();
+}
+$('rocket-calculate').onclick=calculate;$('rocket-epoch').oninput=cursor;calculate();

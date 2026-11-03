@@ -4,6 +4,7 @@ for (const file of ['index.html','app.js','style.css','catalogue.json']) await a
 await build({entryPoints:['src/cockpit.js'],outfile:'public/cockpit.js',bundle:true,minify:true,format:'esm',target:'es2022'});
 await build({entryPoints:['src/cosmos.js'],outfile:'public/cosmos.js',bundle:true,minify:true,format:'esm',target:'es2022'});
 await build({entryPoints:['src/cosmology.js'],outfile:'public/cosmology.js',bundle:true,minify:true,format:'esm',target:'es2022'});
+await build({entryPoints:['src/propulsion.js'],outfile:'public/propulsion.js',bundle:true,minify:true,format:'esm',target:'es2022'});
 await rm('dist',{recursive:true,force:true});
 await mkdir('dist',{recursive:true});
 await cp('public','dist',{recursive:true});

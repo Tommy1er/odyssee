@@ -14,6 +14,8 @@ on:
       - 'src/local-group.js'
       - 'src/flrw.js'
       - 'src/cosmology.js'
+      - 'src/rocket-bench.js'
+      - 'src/propulsion.js'
       - 'scripts/validate-photon-path.mjs'
       - 'src/extragalactic-nebulae.js'
       - 'src/nebulae.js'
@@ -73,6 +75,7 @@ jobs:
           node scripts/validate-nebula-points.mjs
           node scripts/validate-flrw.mjs
           node scripts/validate-photon-path.mjs
+          node scripts/validate-rocket-bench.mjs
           node scripts/validate-star-nurseries.mjs
           node scripts/validate-nebulae.mjs
           node scripts/validate-galaxy-spectra.mjs
@@ -86,7 +89,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/cockpit.js public/cosmos.js public/cosmology.js
+          git add public/cockpit.js public/cosmos.js public/cosmology.js public/propulsion.js
           if ! git diff --cached --quiet; then
             git fetch origin main
             if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
