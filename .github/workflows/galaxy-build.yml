@@ -15,8 +15,10 @@ on:
       - 'src/flrw.js'
       - 'src/cosmology.js'
       - 'src/rocket-bench.js'
+      - 'src/rocket-lcdm.js'
       - 'src/propulsion.js'
       - 'scripts/validate-photon-path.mjs'
+      - 'scripts/validate-rocket-lcdm.mjs'
       - 'src/extragalactic-nebulae.js'
       - 'src/nebulae.js'
       - 'src/nested-emission.js'
@@ -76,6 +78,7 @@ jobs:
           node scripts/validate-flrw.mjs
           node scripts/validate-photon-path.mjs
           node scripts/validate-rocket-bench.mjs
+          node scripts/validate-rocket-lcdm.mjs
           node scripts/validate-star-nurseries.mjs
           node scripts/validate-nebulae.mjs
           node scripts/validate-galaxy-spectra.mjs
