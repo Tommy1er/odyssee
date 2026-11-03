@@ -20,7 +20,7 @@ Le calcul de 1 − |β| utilise une expression stable, même lorsque β s’arro
 
 `validate-rocket-lcdm.mjs` compare les horloges et positions aux solutions Minkowski et de Sitter sur 0, 20, 10⁶ et 10⁹ ans, y compris le freinage ultrarelativiste. Comparaison au vol libre FLRW indépendant (invariant aγβ), intégration RK4 indépendante en temps cosmique pour trois poussées faibles signées, resserrement de tolérance, causalité, monotonie de l’horloge et entrées invalides.
 
-Les bancs H constant, photon/probe FLRW, référence FLRW, physique et navigation passent localement. Le build statique passe. La CI propulsion couvre le choix ΛCDM, le signe final, les diagnostics numériques, le domaine, le stockage inchangé et les vues desktop/mobile. Les captures CI doivent être examinées avant publication.
+Les bancs H constant, photon/probe FLRW, référence FLRW, physique et navigation passent localement. Le build statique passe. La CI propulsion couvre le choix ΛCDM, le signe final, les diagnostics numériques, le domaine, le stockage inchangé et les vues desktop/mobile. CI propulsion réussie : run 41629439566 sur 94be3b5, aucune erreur JavaScript. Captures ordinateur et mobile examinées : résultats lisibles, pas de débordement horizontal. CI numérique/build également réussie (41629439550).
 
 ## Suite
 
