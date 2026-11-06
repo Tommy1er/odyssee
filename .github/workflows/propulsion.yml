@@ -2,7 +2,7 @@ name: Independent relativistic rocket benchmarks
 on:
   push:
     branches: [main]
-    paths: ['src/rocket-bench.js', 'src/rocket-lcdm.js', 'src/propulsion.js', 'src/flrw.js', 'public/propulsion.*', 'public/cosmology.css', 'scripts/validate-rocket-bench.mjs', 'scripts/validate-rocket-lcdm.mjs', 'scripts/validate-propulsion-ui.cjs', 'build.mjs', '.github/workflows/propulsion.yml']
+    paths: ['src/rocket-transfer.js', 'src/cosmic-*.js', 'public/cosmic-flight.*', 'scripts/validate-rocket-transfer.mjs', 'scripts/validate-cosmic-journey.mjs', 'scripts/validate-cosmic-flight-ui.cjs', 'src/rocket-bench.js', 'src/rocket-lcdm.js', 'src/propulsion.js', 'src/flrw.js', 'public/propulsion.*', 'public/cosmology.css', 'scripts/validate-rocket-bench.mjs', 'scripts/validate-rocket-lcdm.mjs', 'scripts/validate-propulsion-ui.cjs', 'build.mjs', '.github/workflows/propulsion.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,12 +17,14 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: node scripts/validate-rocket-bench.mjs && node scripts/validate-rocket-lcdm.mjs && node scripts/validate-photon-path.mjs && node scripts/validate-physics.mjs && node scripts/validate-navigation.mjs
+      - run: node scripts/validate-rocket-transfer.mjs && node scripts/validate-cosmic-journey.mjs && node scripts/validate-rocket-bench.mjs && node scripts/validate-rocket-lcdm.mjs && node scripts/validate-photon-path.mjs && node scripts/validate-physics.mjs && node scripts/validate-navigation.mjs
       - run: npm run build
       - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
-      - run: node scripts/validate-propulsion-ui.cjs
+      - run: node scripts/validate-propulsion-ui.cjs && node scripts/validate-cosmic-flight-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: propulsion-benchmark
-          path: validation/v2-screenshots/propulsion*
+          path: |
+            validation/v2-screenshots/propulsion*
+            validation/v2-screenshots/cosmic-flight*

@@ -405,6 +405,7 @@ function setupGalaxy(){
  $('identify').onclick=()=>{const view=state.external?new T.Vector3(0,0,-1).applyQuaternion(renderer.spacecraft.camera.quaternion).toArray():forward();let nearest=null,score=0.97;for(const o of objects){if(o.type==='waypoint')continue;let n=P.unit(P.sub(o.lightXYZ||o.xyz,state.pos));if(state.relativistic)n=P.aberrateU(n,state.u);const dot=n.reduce((a,x,i)=>a+x*view[i],0);if(dot>score){score=dot;nearest=o;}}if(nearest){setTarget(nearest);info();}else showDialog('<h2>'+region(state.pos)+'</h2><p>Le réticule pointe la lumière diffuse du modèle galactique. Aucun objet catalogué à moins de 14° de cet axe.</p>');};$('basin-overlay').onchange=e=>{state.basinOverlay=e.target.checked;if(state.basinOverlay){if(basinData)renderer.basinOverlay.build(basinData);else ensureBasins();}};
 }
 function setup(){
+ $('cosmic-flight-link').onclick=()=>{state.paused=true;syncButtons();saveMission();};
  const graphics=$('graphics-profile');try{const saved=localStorage.getItem('odyssee-graphics-profile');if(['performance','balanced','quality'].includes(saved))graphics.value=saved;}catch{}
  graphics.onchange=()=>{renderer.setGraphicsProfile(graphics.value);try{localStorage.setItem('odyssee-graphics-profile',graphics.value);}catch{}};graphics.onchange();
 

@@ -16,6 +16,10 @@ on:
       - 'src/cosmology.js'
       - 'src/rocket-bench.js'
       - 'src/rocket-lcdm.js'
+      - 'src/rocket-transfer.js'
+      - 'src/cosmic-flight.js'
+      - 'src/cosmic-worker.js'
+      - 'src/cosmic-journey.js'
       - 'src/propulsion.js'
       - 'scripts/validate-photon-path.mjs'
       - 'scripts/validate-rocket-lcdm.mjs'
@@ -79,6 +83,8 @@ jobs:
           node scripts/validate-photon-path.mjs
           node scripts/validate-rocket-bench.mjs
           node scripts/validate-rocket-lcdm.mjs
+          node scripts/validate-rocket-transfer.mjs
+          node scripts/validate-cosmic-journey.mjs
           node scripts/validate-star-nurseries.mjs
           node scripts/validate-nebulae.mjs
           node scripts/validate-galaxy-spectra.mjs
@@ -92,7 +98,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/cockpit.js public/cosmos.js public/cosmology.js public/propulsion.js
+          git add public/cockpit.js public/cosmos.js public/cosmology.js public/propulsion.js public/cosmic-flight.js public/cosmic-worker.js
           if ! git diff --cached --quiet; then
             git fetch origin main
             if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then

@@ -32,6 +32,11 @@ try{
  await page.reload();await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},long);
  await page.click('#resume-mission');await page.waitForFunction(()=>window.flightSnapshot().arrival?.id==='solar:Terre',{},long);s=await snap();
  check('Rechargement : reprise Terre en pause, horloges et état orbital conservés',s.paused&&s.t===savedEarth.t&&s.tau===savedEarth.tau&&s.hold?.active&&JSON.stringify(s.pos)===JSON.stringify(savedEarth.pos)&&JSON.stringify(s.u)===JSON.stringify(savedEarth.u));
+ const localSave=await page.evaluate(()=>JSON.stringify(JSON.parse(localStorage.getItem('odyssee.mission.v1')).mission));
+ await page.click('#cosmic-flight-link');await page.waitForFunction(()=>typeof window.cosmicFlightSnapshot==='function',{},long);await page.click('#cosmic-plan');await page.waitForFunction(()=>window.cosmicFlightSnapshot().sample!==null,{},long);
+ check('Voyage cosmologique distinct : sauvegarde locale conservée',await page.evaluate(()=>JSON.stringify(JSON.parse(localStorage.getItem('odyssee.mission.v1')).mission))===localSave);
+ await page.click('a[href="./cockpit.html"]');await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},long);await page.click('#resume-mission');await page.waitForFunction(()=>window.flightSnapshot().arrival?.id==='solar:Terre',{},long);s=await snap();
+ check('Retour du mode cosmologique : mission locale inchangée en pause',s.paused&&s.t===savedEarth.t&&s.tau===savedEarth.tau&&JSON.stringify(s.pos)===JSON.stringify(savedEarth.pos)&&JSON.stringify(s.u)===JSON.stringify(savedEarth.u));
  await page.click('#prepare-moon');s=await snap();check('Préparer la Lune conserve le maintien terrestre',s.target==='moon:Lune'&&!s.autopilot&&s.hold?.active&&s.orbital.id==='solar:Terre');
  await choose('Terre','solar:Terre');
 
