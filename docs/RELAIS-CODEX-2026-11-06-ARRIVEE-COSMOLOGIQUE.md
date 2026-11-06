@@ -45,3 +45,13 @@ Références : Henriques & Natário, arXiv:1105.5235, cadre radial FLRW ; Planck
 Premier run dfd8c63 : calculs et build réussis, navigateurs non exécutés. Le runner `ubuntu-latest` a basculé sur Ubuntu 26.04, non pris en charge par Playwright 1.56.1. Les workflows sont fixés sur Ubuntu 24.04 pour conserver le navigateur de référence ; aucun contrôle n’est retiré. Les anciens JSON déjà présents dans le dépôt ne constituent pas une preuve de ce run interrompu.
 
 Le test navigateur de continuité au clic Engager lisait la vitesse après avoir rendu plusieurs images de freinage. Un run a donc comparé des événements séparés de 164 secondes simulées. Il capture maintenant le résultat dans le même tour JavaScript que le clic, sans modifier le moteur ni relâcher la tolérance. Même correction sur le départ lunaire.
+
+## Résultats confirmés
+
+- Propulsion et voyage cosmologique complet : run 42225614278 réussi sur 3b87f46 ; quatre contrôles navigateur, aucune erreur JavaScript, captures finales desktop/mobile examinées.
+- Six suites graphiques carte/cockpit : run 42225236525 réussi sur 351e915 (même code de cockpit, modifications suivantes limitées au voyage séparé et aux tests). Nuage, Groupe local, préparation trou noir, zoom, contexte WebGL et carte → cockpit.
+- Observatoire FLRW : 42225236401 réussi. Budget lumineux : 42225236427 réussi.
+- Mission Terre → mode cosmologique → reprise Terre → Lune : run 42225236622 réussi sur 351e915, sans erreur navigateur/shader, sauvegardes et horloges conservées. Le code de cockpit est identique au code final ; les modifications ultérieures concernent les données du diagramme et les tests.
+- Le relancement du test de départ avec capture atomique (42225755519) et le banc spectral élargi (42225236493) sont encore en cours à cet instant. Aucune modification du moteur spectral dans ce lot.
+
+La capture mobile du cockpit a révélé une colonne de régime trop comprimée. Le lien est réduit à « Voyage ΛCDM », avec une zone de clic bordée de taille contrôlée dans le test mobile ; les explications complètes restent sur la page du voyage.

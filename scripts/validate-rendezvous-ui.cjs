@@ -49,6 +49,7 @@ try{
  await page.screenshot({path:out+'/rdv-moon.png'});
  await page.setViewportSize({width:390,height:844});
  await page.locator('#choose-earth').scrollIntoViewIfNeeded();await page.screenshot({path:out+'/mission-mobile.png'});
+ const regimeBox=await page.locator('#cosmic-flight-link').boundingBox();check('Mobile : lien cosmologique lisible et cliquable sans colonne comprimée',regimeBox.width>120&&regimeBox.height>=32&&regimeBox.height<60);
  check('Mobile : commandes Terre et Lune accessibles',await page.locator('#choose-earth').isVisible()&&await page.locator('#choose-moon').isVisible());
  const widths=await page.evaluate(()=>({doc:document.documentElement.scrollWidth,view:innerWidth}));check('Mobile : pas de débordement horizontal',widths.doc<=widths.view+1);
  await page.setViewportSize({width:960,height:700});
