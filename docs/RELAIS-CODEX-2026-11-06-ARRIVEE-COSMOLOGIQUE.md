@@ -52,8 +52,21 @@ Le test navigateur de continuité au clic Engager lisait la vitesse après avoir
 - Six suites graphiques carte/cockpit : run 42225236525 réussi sur 351e915 (même code de cockpit, modifications suivantes limitées au voyage séparé et aux tests). Nuage, Groupe local, préparation trou noir, zoom, contexte WebGL et carte → cockpit.
 - Observatoire FLRW : 42225236401 réussi. Budget lumineux : 42225236427 réussi.
 - Mission Terre → mode cosmologique → reprise Terre → Lune : run 42225236622 réussi sur 351e915, sans erreur navigateur/shader, sauvegardes et horloges conservées. Le code de cockpit est identique au code final ; les modifications ultérieures concernent les données du diagramme et les tests.
-- Le relancement du test de départ avec capture atomique (42225755519) est encore en cours à cet instant. Le banc spectral élargi 42225236493 a été annulé par les publications de sources suivantes ; ses premiers contrôles numériques passent, mais il ne fournit pas un verdict graphique complet. Aucune modification du moteur spectral dans ce lot.
+- Relancement du départ avec capture atomique : 42225755519 réussi. Mission finale avec contrôle du lien mobile : 42227222096 réussi. Les deux conservent les horloges, la vitesse et la reprise après le changement de mode, puis atteignent Terre et Lune sans erreur navigateur/shader.
+- Banc spectral élargi final : 42227222710 réussi sur 8740550. Les tests spectraux numériques, l’intégration HDR, les nébuleuses imbriquées, les galaxies, les bassins, les pouponnières et la capture lunaire passent. Il remplace le run annulé 42225236493. Rapports et capture du comparateur examinés.
 
 La capture mobile du cockpit a révélé une colonne de régime trop comprimée. Le lien est réduit à « Voyage ΛCDM », avec une zone de clic bordée de taille contrôlée dans le test mobile ; les explications complètes restent sur la page du voyage.
 
 Dernière validation ciblée : 42227222485 réussi sur 8740550, voyage complet et contrôle CSS du cockpit mobile. Cinq contrôles, aucune erreur JavaScript ; capture du lien compact examinée. Ce contrôle CSS neutralise le module WebGL et ne mesure pas le rendu 3D. Le parcours 3D complet reste couvert par le run de mission et les six suites graphiques ci-dessus.
+
+## Limites spectrales et matérielles : à ne pas clôturer par confusion
+
+La suite graphique spectrale réussie teste les modes de rendu et le comparateur 0 / 0,99 c (γ ≈ 7,09), sans erreur JavaScript/GLSL. Ce test d’intégration n’est pas une validation photométrique exhaustive du ciel aux très grands gamma. Le curseur du laboratoire monte à β = 0,9999 (γ ≈ 70,71), mais le test actuel ne capture pas cette limite.
+
+Le domaine empirique de la table KC96 reste D ∈ [0,72 ; 1,09]. Au-delà, couleur et flux emploient une extrapolation thermique ancrée sur la frontière. Les volumes et le ciel diffus gardent également leurs approximations documentées. À 0,99 c déjà, les bandes émises devant et derrière peuvent sortir de l’archive. Aucun succès de CI ne transforme cette extrapolation en spectre mesuré.
+
+Le prochain contrôle spectral devra comparer les lois d’énergie, d’aberration et de flux à des références indépendantes, puis mesurer le HDR avant exposition pour des sources contrôlées à grands gamma, en distinguant sources ponctuelles, volumes et fond diffus. Une capture tonemappée seule ne suffit pas.
+
+Nouvel essai de connexion Chrome le 6 novembre : même erreur d’extension (« Browser access requires the originating browser context »). Aucun retest Iris Xe effectué ; autres PC et téléphone réel non testés. Le navigateur cloud ne remplace pas ces mesures et l’ancienne prévisualisation refusée n’est pas retentée.
+
+Priorité conservée : essais matériels et validation spectrale quantitative avant rapprochement des deux moteurs. Les horloges FLRW et le ciel 3D local restent deux expériences explicitement distinctes.
