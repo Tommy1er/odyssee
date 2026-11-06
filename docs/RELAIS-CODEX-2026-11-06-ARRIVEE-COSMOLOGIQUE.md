@@ -52,6 +52,8 @@ Le test navigateur de continuité au clic Engager lisait la vitesse après avoir
 - Six suites graphiques carte/cockpit : run 42225236525 réussi sur 351e915 (même code de cockpit, modifications suivantes limitées au voyage séparé et aux tests). Nuage, Groupe local, préparation trou noir, zoom, contexte WebGL et carte → cockpit.
 - Observatoire FLRW : 42225236401 réussi. Budget lumineux : 42225236427 réussi.
 - Mission Terre → mode cosmologique → reprise Terre → Lune : run 42225236622 réussi sur 351e915, sans erreur navigateur/shader, sauvegardes et horloges conservées. Le code de cockpit est identique au code final ; les modifications ultérieures concernent les données du diagramme et les tests.
-- Le relancement du test de départ avec capture atomique (42225755519) et le banc spectral élargi (42225236493) sont encore en cours à cet instant. Aucune modification du moteur spectral dans ce lot.
+- Le relancement du test de départ avec capture atomique (42225755519) est encore en cours à cet instant. Le banc spectral élargi 42225236493 a été annulé par les publications de sources suivantes ; ses premiers contrôles numériques passent, mais il ne fournit pas un verdict graphique complet. Aucune modification du moteur spectral dans ce lot.
 
 La capture mobile du cockpit a révélé une colonne de régime trop comprimée. Le lien est réduit à « Voyage ΛCDM », avec une zone de clic bordée de taille contrôlée dans le test mobile ; les explications complètes restent sur la page du voyage.
+
+Dernière validation ciblée : 42227222485 réussi sur 8740550, voyage complet et contrôle CSS du cockpit mobile. Cinq contrôles, aucune erreur JavaScript ; capture du lien compact examinée. Ce contrôle CSS neutralise le module WebGL et ne mesure pas le rendu 3D. Le parcours 3D complet reste couvert par le run de mission et les six suites graphiques ci-dessus.
