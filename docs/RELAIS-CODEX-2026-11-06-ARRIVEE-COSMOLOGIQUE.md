@@ -39,3 +39,7 @@ La CI étendue doit contrôler : calcul en worker, lecture/pause/rechargement, a
 L’extension Chrome renvoie « Browser access requires the originating browser context ». L’aperçu local vers le navigateur cloud a été refusé par la revue automatique (exposition du serveur local). Aucun contournement. Les captures et tests de CI ne sont pas une mesure sur l’Iris Xe, un autre ordinateur ou un téléphone réel.
 
 Références : Henriques & Natário, arXiv:1105.5235, cadre radial FLRW ; Planck 2018 VI, arXiv:1807.06209, paramètres. Les équations de ce profil prescrit et les contrôles de limites sont documentés ci-dessus ; le modèle optimal en carburant de l’article n’est pas implémenté.
+
+## Réparation du banc de CI
+
+Premier run dfd8c63 : calculs et build réussis, navigateurs non exécutés. Le runner `ubuntu-latest` a basculé sur Ubuntu 26.04, non pris en charge par Playwright 1.56.1. Les workflows sont fixés sur Ubuntu 24.04 pour conserver le navigateur de référence ; aucun contrôle n’est retiré. Les anciens JSON déjà présents dans le dépôt ne constituent pas une preuve de ce run interrompu.
