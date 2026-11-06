@@ -15,7 +15,7 @@ const fly=async()=>{await page.click('#engage');await page.selectOption('#time-r
 try{
  await page.goto('http://127.0.0.1:3031/cockpit.html');await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},{timeout:120000});
  await choose('Terre','solar:Terre');let s=await snap();const v0=s.speed;check('Sélectionner ne lance pas le vaisseau',!s.autopilot&&s.paused,'vitesse initiale '+(v0*299792.458).toFixed(2)+' km/s (orbite héliocentrique de départ)');
- await page.click('#engage');s=await snap();
+ s=await page.evaluate(()=>{document.getElementById('engage').click();return window.flightSnapshot();});
  check('Engager : la vitesse de départ est conservée (pas de remise à zéro)',Math.abs(s.speed-v0)*299792458<0.01&&s.navigationStage==='brake');
  check('Engager : trajet calculé dans le référentiel de la Terre',s.autopilot&&s.frameVelocity&&Math.hypot(...s.frameVelocity)*299792.458>29&&Math.hypot(...s.frameVelocity)*299792.458<31,(Math.hypot(...s.frameVelocity)*299792.458).toFixed(2)+' km/s');
  await setPaused(true);const inFlight=await snap();
@@ -42,7 +42,7 @@ try{
 
  const t0=s.t;await page.selectOption('#time-rate','0.00273785');await setPaused(false);await page.waitForFunction(t=>window.flightSnapshot().paused||window.flightSnapshot().t-t>1/365.25,t0,long);s=await snap();check('Le maintien poursuit le temps pendant une journée',s.t-t0>1/365.25,JSON.stringify({paused:s.paused,t:s.t,t0,orbital:s.orbital,events:s.events.slice(-3)}));await setPaused(true);s=await snap();
  const vHold=s.speed;check('Un jour simulé plus tard : toujours à 5 rayons, vitesse de la Terre',s.localRatio>4.99&&s.localRatio<5.01&&s.relativeSpeed<0.01&&s.hold?.active,'rapport '+s.localRatio.toFixed(4)+' après '+((s.t-t0)*365.25).toFixed(2)+' j');
- await choose('Lune','moon:Lune');await page.click('#engage');s=await snap();
+ await choose('Lune','moon:Lune');s=await page.evaluate(()=>{document.getElementById('engage').click();return window.flightSnapshot();});
  check('Départ vers la Lune : vitesse conservée, mise à la vitesse de la Lune simulée',s.navigationStage==='brake'&&Math.abs(s.speed-vHold)*299792458<0.01&&!s.hold,'vitesse au départ '+(s.speed*299792.458).toFixed(2)+' km/s');
  await page.selectOption('#time-rate','10000');await page.waitForFunction(()=>!!window.flightSnapshot().arrival,{},long);s=await snap();
  check('Rendez-vous Lune : 5 rayons, vitesse de la Lune, maintien actif',s.arrival.id==='moon:Lune'&&s.localRatio>4.99&&s.localRatio<5.01&&s.relativeSpeed<1&&s.hold?.active,s.relativeSpeed.toExponential(2)+' m/s');

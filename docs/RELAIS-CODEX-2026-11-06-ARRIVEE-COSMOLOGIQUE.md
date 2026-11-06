@@ -43,3 +43,5 @@ Références : Henriques & Natário, arXiv:1105.5235, cadre radial FLRW ; Planck
 ## Réparation du banc de CI
 
 Premier run dfd8c63 : calculs et build réussis, navigateurs non exécutés. Le runner `ubuntu-latest` a basculé sur Ubuntu 26.04, non pris en charge par Playwright 1.56.1. Les workflows sont fixés sur Ubuntu 24.04 pour conserver le navigateur de référence ; aucun contrôle n’est retiré. Les anciens JSON déjà présents dans le dépôt ne constituent pas une preuve de ce run interrompu.
+
+Le test navigateur de continuité au clic Engager lisait la vitesse après avoir rendu plusieurs images de freinage. Un run a donc comparé des événements séparés de 164 secondes simulées. Il capture maintenant le résultat dans le même tour JavaScript que le clic, sans modifier le moteur ni relâcher la tolérance. Même correction sur le départ lunaire.
