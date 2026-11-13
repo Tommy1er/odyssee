@@ -3977,8 +3977,10 @@ void main(){
  float Dobs=1.;vec3 shifted=n;
  if(optics>.5&&momentum>.000001){
   float mu=clamp(dot(n,axis),-1.,1.);
-  Dobs=max(1.e-9,g*(1.+mu)-mu/(g+momentum));
-  shifted=normalize((n-axis*mu+axis*(g*(1.+mu)-1./(g+momentum)))/Dobs);
+  // Chord norm retains the narrow rear cone after the Float32 dot product rounds to -1.
+  vec3 chord=n+axis;float onePlusMu=.5*dot(chord,chord);
+  Dobs=max(1.e-9,g*onePlusMu-mu/(g+momentum));
+  shifted=normalize((n-axis*mu+axis*(g*onePlusMu-1./(g+momentum)))/Dobs);
  }
  float Dtotal=dship*Dobs;
  // Independent of the source's intermediate Doppler factor: one spectrum at the catalogue
@@ -3998,7 +4000,8 @@ void main(){
  float size=clamp(2.*rad/distance/pix/Dobs*texelScale(mv.xyz),1.25,48.);
  // Long-exposure gain onset on the same angular size as the historical cube sprite (pixRef = its pix).
  soft=smoothstep(2.,5.,2.*rad/distance/pixRef/Dobs);flux*=mix(1.,gain,soft);
- psfS=psfSigma(size,soft,1.);// drawn on the screen grid itself: pixel-integrated, no resamplingpsfD=psfDraw(size,psfS);
+ // Drawn on the screen grid itself: pixel-integrated, no resampling.
+ psfS=psfSigma(size,soft,1.);psfD=psfDraw(size,psfS);
  light=seen.rgb*flux*pixScale*.818;
  if(band==0.){float y=dot(light,vec3(.2126,.7152,.0722));light=mix(vec3(y),light,smoothstep(.3,4.,flux));}
  light*=texelGain(mv.xyz);
