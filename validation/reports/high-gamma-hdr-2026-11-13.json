@@ -1,0 +1,1059 @@
+{
+  "date": "2026-11-13",
+  "source_sha": "acc1fac022ede99d0ad62edc201f1c14c1d0bf58",
+  "run_id": 43450822100,
+  "asserted_domain": "Aligned boosts gamma 1..1e6; oblique boosts gamma 1..1000; 8 KC96 classes at rest",
+  "tolerances": {
+    "relative_flux": 0.03,
+    "centroid_pixels": 0.35
+  },
+  "target": "RGBA16F, 128x128, FOV 40 degrees",
+  "fluxMeasure": "Sum of CIE luminance weighted by gnomonic pixel solid angle, divided by center pixel solid angle",
+  "scope": "KC96 rest calibration plus synthetic I_nu proportional to nu²; production point-galaxy HDR shader, aligned and oblique boosts (oblique extremes are precision probes), no exposure or tonemapping; not empirical extreme-gamma sky or hardware performance",
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "rows": [
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "rear",
+      "kind": 0,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "transverse",
+      "kind": 0,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": false,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 199.99499987499377,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": false,
+      "label": "rear",
+      "kind": 0,
+      "doppler": 0.00500012500625039,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": false,
+      "label": "transverse",
+      "kind": 0,
+      "doppler": 100,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": false,
+      "label": "rear cone 0.1/gamma",
+      "kind": 0,
+      "doppler": 0.005050122502021429,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": false,
+      "label": "rear cone 1/gamma",
+      "kind": 0,
+      "doppler": 0.009999833335555677,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": false,
+      "label": "rear cone 10/gamma",
+      "kind": 0,
+      "doppler": 0.5045586174055534,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": false,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 1999.9994999998748,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": false,
+      "label": "rear",
+      "kind": 0,
+      "doppler": 0.0005000001250000625,
+      "expectedSum": 16,
+      "sum": 16.116642516663966,
+      "pixelSum": 16.11724853515625,
+      "relativeFluxError": 0.007290157291497845,
+      "centroid": [
+        64,
+        64
+      ],
+      "centerErrorPixels": 0,
+      "nonfinite": 0,
+      "max": 3.494140625,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": false,
+      "label": "transverse",
+      "kind": 0,
+      "doppler": 1000,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": false,
+      "label": "rear cone 0.1/gamma",
+      "kind": 0,
+      "doppler": 0.0005050001224958952,
+      "expectedSum": 16,
+      "sum": 16.116642516663966,
+      "pixelSum": 16.11724853515625,
+      "relativeFluxError": 0.007290157291497845,
+      "centroid": [
+        64,
+        64
+      ],
+      "centerErrorPixels": 0,
+      "nonfinite": 0,
+      "max": 3.494140625,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": false,
+      "label": "rear cone 1/gamma",
+      "kind": 0,
+      "doppler": 0.0009999998333333556,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": false,
+      "label": "rear cone 10/gamma",
+      "kind": 0,
+      "doppler": 0.050499558459924355,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": false,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 1999999.9999994999,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": false,
+      "label": "rear",
+      "kind": 0,
+      "doppler": 5.00000000000125e-07,
+      "expectedSum": 16,
+      "sum": 15.900769259559498,
+      "pixelSum": 15.9013671875,
+      "relativeFluxError": -0.006201921277531386,
+      "centroid": [
+        64.00000000000001,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 2.0097183471152322e-14,
+      "nonfinite": 0,
+      "max": 3.447265625,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": false,
+      "label": "transverse",
+      "kind": 0,
+      "doppler": 1000000,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": false,
+      "label": "rear cone 0.1/gamma",
+      "kind": 0,
+      "doppler": 5.050000000001226e-07,
+      "expectedSum": 16,
+      "sum": 15.900769259559498,
+      "pixelSum": 15.9013671875,
+      "relativeFluxError": -0.006201921277531386,
+      "centroid": [
+        64.00000000000001,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 2.0097183471152322e-14,
+      "nonfinite": 0,
+      "max": 3.447265625,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": false,
+      "label": "rear cone 1/gamma",
+      "kind": 0,
+      "doppler": 9.999999999998333e-07,
+      "expectedSum": 16,
+      "sum": 15.918468812364491,
+      "pixelSum": 15.9190673828125,
+      "relativeFluxError": -0.005095699227219308,
+      "centroid": [
+        64.00000000000001,
+        64
+      ],
+      "centerErrorPixels": 1.4210854715202004e-14,
+      "nonfinite": 0,
+      "max": 3.4511718749999996,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": false,
+      "label": "rear cone 10/gamma",
+      "kind": 0,
+      "doppler": 5.049999999955846e-05,
+      "expectedSum": 16,
+      "sum": 16.04401346097067,
+      "pixelSum": 16.04461669921875,
+      "relativeFluxError": 0.0027508413106669405,
+      "centroid": [
+        64.00000000000001,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 2.0097183471152322e-14,
+      "nonfinite": 0,
+      "max": 3.4785156249999996,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": true,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": true,
+      "label": "rear",
+      "kind": 0,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": true,
+      "label": "transverse",
+      "kind": 0,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": true,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 199.99499987499377,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": true,
+      "label": "rear",
+      "kind": 0,
+      "doppler": 0.00500012500625039,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": true,
+      "label": "transverse",
+      "kind": 0,
+      "doppler": 100,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": true,
+      "label": "rear cone 0.1/gamma",
+      "kind": 0,
+      "doppler": 0.005050122502021429,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": true,
+      "label": "rear cone 1/gamma",
+      "kind": 0,
+      "doppler": 0.009999833335555677,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 100,
+      "oblique": true,
+      "label": "rear cone 10/gamma",
+      "kind": 0,
+      "doppler": 0.5045586174055534,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": true,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 1999.9994999998748,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": true,
+      "label": "rear",
+      "kind": 0,
+      "doppler": 0.0005000001250000625,
+      "expectedSum": 16,
+      "sum": 16.116642516663966,
+      "pixelSum": 16.11724853515625,
+      "relativeFluxError": 0.007290157291497845,
+      "centroid": [
+        64,
+        64
+      ],
+      "centerErrorPixels": 0,
+      "nonfinite": 0,
+      "max": 3.494140625,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": true,
+      "label": "transverse",
+      "kind": 0,
+      "doppler": 1000,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": true,
+      "label": "rear cone 0.1/gamma",
+      "kind": 0,
+      "doppler": 0.0005050001224958952,
+      "expectedSum": 16,
+      "sum": 16.116642516663966,
+      "pixelSum": 16.11724853515625,
+      "relativeFluxError": 0.007290157291497845,
+      "centroid": [
+        64,
+        64
+      ],
+      "centerErrorPixels": 0,
+      "nonfinite": 0,
+      "max": 3.494140625,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": true,
+      "label": "rear cone 1/gamma",
+      "kind": 0,
+      "doppler": 0.0009999998333333556,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000,
+      "oblique": true,
+      "label": "rear cone 10/gamma",
+      "kind": 0,
+      "doppler": 0.050499558459924355,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": true,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 1999999.9999994999,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": true,
+      "label": "rear",
+      "kind": 0,
+      "doppler": 5.00000000000125e-07,
+      "expectedSum": 16,
+      "sum": 15.900769259559498,
+      "pixelSum": 15.9013671875,
+      "relativeFluxError": -0.006201921277531386,
+      "centroid": [
+        64.00000000000001,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 2.0097183471152322e-14,
+      "nonfinite": 0,
+      "max": 3.447265625,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": true,
+      "label": "transverse",
+      "kind": 0,
+      "doppler": 1000000,
+      "expectedSum": 16,
+      "sum": 15.991036846223757,
+      "pixelSum": 15.99163818359375,
+      "relativeFluxError": -0.0005601971110151815,
+      "centroid": [
+        63.99999999999998,
+        63.99999999999998
+      ],
+      "centerErrorPixels": 3.0145775206728485e-14,
+      "nonfinite": 0,
+      "max": 3.466796875,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1000000,
+      "oblique": true,
+      "label": "rear cone 0.1/gamma",
+      "kind": 0,
+      "doppler": 5.050000000001226e-07,
+      "expectedSum": 16,
+      "sum": 15.946187807341511,
+      "pixelSum": 15.966621279716492,
+      "relativeFluxError": -0.003363262041155557,
+      "centroid": [
+        58.937256674398554,
+        64
+      ],
+      "centerErrorPixels": 5.062743325601446,
+      "nonfinite": 0,
+      "max": 3.724609375,
+      "fixture": "power-law",
+      "withinTolerance": false
+    },
+    {
+      "gamma": 1000000,
+      "oblique": true,
+      "label": "rear cone 1/gamma",
+      "kind": 0,
+      "doppler": 9.999999999998333e-07,
+      "expectedSum": 16,
+      "sum": 15.681765908477276,
+      "pixelSum": 15.81109619140625,
+      "relativeFluxError": -0.019889630720170248,
+      "centroid": [
+        76.99951384923858,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 12.999513849238582,
+      "nonfinite": 0,
+      "max": 3.427734375,
+      "fixture": "power-law",
+      "withinTolerance": false
+    },
+    {
+      "gamma": 1000000,
+      "oblique": true,
+      "label": "rear cone 10/gamma",
+      "kind": 0,
+      "doppler": 5.049999999955846e-05,
+      "expectedSum": 16,
+      "sum": 16.036201150472895,
+      "pixelSum": 16.03680419921875,
+      "relativeFluxError": 0.002262571904555921,
+      "centroid": [
+        64.00000000000001,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 2.0097183471152322e-14,
+      "nonfinite": 0,
+      "max": 3.4765625,
+      "fixture": "power-law",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 0,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.99182036818945,
+      "pixelSum": 15.992421728515627,
+      "relativeFluxError": -0.0005112269881594189,
+      "centroid": [
+        64,
+        64
+      ],
+      "centerErrorPixels": 0,
+      "nonfinite": 0,
+      "max": 3.466989453125,
+      "fixture": "KC96 rest",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 1,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.991380736072404,
+      "pixelSum": 15.991982012939456,
+      "relativeFluxError": -0.0005387039954747319,
+      "centroid": [
+        63.999999999999986,
+        63.99999999999999
+      ],
+      "centerErrorPixels": 1.5888218580782548e-14,
+      "nonfinite": 0,
+      "max": 3.4670636718750005,
+      "fixture": "KC96 rest",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 2,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.989793121286516,
+      "pixelSum": 15.990394366455076,
+      "relativeFluxError": -0.0006379299195927723,
+      "centroid": [
+        63.99999999999999,
+        63.999999999999986
+      ],
+      "centerErrorPixels": 1.5888218580782548e-14,
+      "nonfinite": 0,
+      "max": 3.46664921875,
+      "fixture": "KC96 rest",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 3,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.993153148639566,
+      "pixelSum": 15.99375450439453,
+      "relativeFluxError": -0.00042792821002712866,
+      "centroid": [
+        63.99999999999999,
+        63.99999999999999
+      ],
+      "centerErrorPixels": 1.0048591735576161e-14,
+      "nonfinite": 0,
+      "max": 3.467416796875,
+      "fixture": "KC96 rest",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 4,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.988121601939337,
+      "pixelSum": 15.988722827148436,
+      "relativeFluxError": -0.0007423998787914332,
+      "centroid": [
+        63.99999999999999,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 1.5888218580782548e-14,
+      "nonfinite": 0,
+      "max": 3.4661828124999996,
+      "fixture": "KC96 rest",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 5,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.991233132393035,
+      "pixelSum": 15.991834411621094,
+      "relativeFluxError": -0.0005479292254353396,
+      "centroid": [
+        64,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 1.4210854715202004e-14,
+      "nonfinite": 0,
+      "max": 3.46701484375,
+      "fixture": "KC96 rest",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 6,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.990280405121352,
+      "pixelSum": 15.990881713867187,
+      "relativeFluxError": -0.0006074746799155095,
+      "centroid": [
+        64.00000000000001,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 2.0097183471152322e-14,
+      "nonfinite": 0,
+      "max": 3.4666390624999996,
+      "fixture": "KC96 rest",
+      "withinTolerance": true
+    },
+    {
+      "gamma": 1,
+      "oblique": false,
+      "label": "forward",
+      "kind": 7,
+      "doppler": 1,
+      "expectedSum": 16,
+      "sum": 15.992513400190226,
+      "pixelSum": 15.99311472167969,
+      "relativeFluxError": -0.0004679124881108443,
+      "centroid": [
+        64.00000000000001,
+        63.99999999999999
+      ],
+      "centerErrorPixels": 1.5888218580782548e-14,
+      "nonfinite": 0,
+      "max": 3.4673015625000003,
+      "fixture": "KC96 rest",
+      "withinTolerance": true
+    }
+  ],
+  "errors": [],
+  "precisionLimits": [
+    {
+      "gamma": 1000000,
+      "oblique": true,
+      "label": "rear cone 0.1/gamma",
+      "kind": 0,
+      "doppler": 5.050000000001226e-07,
+      "expectedSum": 16,
+      "sum": 15.946187807341511,
+      "pixelSum": 15.966621279716492,
+      "relativeFluxError": -0.003363262041155557,
+      "centroid": [
+        58.937256674398554,
+        64
+      ],
+      "centerErrorPixels": 5.062743325601446,
+      "nonfinite": 0,
+      "max": 3.724609375,
+      "fixture": "power-law",
+      "withinTolerance": false
+    },
+    {
+      "gamma": 1000000,
+      "oblique": true,
+      "label": "rear cone 1/gamma",
+      "kind": 0,
+      "doppler": 9.999999999998333e-07,
+      "expectedSum": 16,
+      "sum": 15.681765908477276,
+      "pixelSum": 15.81109619140625,
+      "relativeFluxError": -0.019889630720170248,
+      "centroid": [
+        76.99951384923858,
+        64.00000000000001
+      ],
+      "centerErrorPixels": 12.999513849238582,
+      "nonfinite": 0,
+      "max": 3.427734375,
+      "fixture": "power-law",
+      "withinTolerance": false
+    }
+  ]
+}

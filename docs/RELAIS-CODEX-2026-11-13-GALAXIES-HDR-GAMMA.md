@@ -19,7 +19,7 @@ Le flux de référence et la normalisation de PSF restent ceux du modèle photom
 
 ## Oracle indépendant et mesure
 
-`scripts/high-gamma-hdr-entry.js` importe le vrai `GalaxySpectralOverlay`, son vertex/fragment et sa méthode de rendu dans une cible RGBA16F, sans exposition ni tonemapping. Les pixels sont lus et sommés en luminance CIE Y. La source de test reste très en dessous des plafonds de saturation du shader et de la cible.
+`scripts/high-gamma-hdr-entry.js` importe le vrai `GalaxySpectralOverlay`, son vertex/fragment et sa méthode de rendu dans une cible RGBA16F, sans exposition ni tonemapping. Les pixels sont lus en luminance CIE Y ; le dernier banc pondère chaque pixel par son angle solide gnomonique et divise par l’angle du pixel central. La somme brute est conservée séparément pour comparaison. La source de test reste très en dessous des plafonds de saturation du shader et de la cible.
 
 Une source synthétique suit Iν ∝ ν². L’invariance de Iν/ν³ donne Iν,obs(ν) = D³ Iν,cat(ν/D), et l’aberration donne dΩobs = dΩcat/D² : à bande observateur fixée, le flux ponctuel varie donc comme D⁻¹. Le jeu de textures du test encode cette loi, pas un spectre KC96 inventé hors de son archive. La magnitude d’entrée est ajustée pour que chaque mesure attendue soit 16, évitant la saturation et le sous-flux de la cible.
 
@@ -40,3 +40,13 @@ CI Chromium forcée sur SwiftShader. Ce sont des mesures de rendu logiciel, pas 
 ## Suite
 
 Préparation du repère de boost en précision double et quantification des entrées sur axes obliques : à étudier avec le banc du rayon commun, sans fusion des moteurs. Matériel réel : toujours ouvert. La disparition de tout gel Chrome n’est pas démontrée par ce lot.
+
+## Rapport final conservé
+
+Run 43450822100, source acc1fac : 50 cas, 44 régressions imposées, aucune erreur JavaScript/GLSL ni pixel non fini. Flux intégré avec l’angle solide : écart maximal de 0,7291 % dans le domaine imposé, et de 0,07424 % pour les huit classes KC96 au repos. Les deux écarts de direction obliques restent 5,063 et 13,000 pixels ; ils demeurent hors domaine validé. L’identité du moteur mesuré indique ANGLE/Vulkan SwiftShader Device (Subzero).
+
+Le rapport complet, avec source, run, fixture, valeurs mesurées, seuils et limites, est conservé dans `validation/reports/high-gamma-hdr-2026-11-13.json`. Ce fichier daté est une preuve de ce run, pas un résultat automatiquement valable pour les modifications futures.
+
+## Intégration de la version corrigée
+
+Run 43448483894 réussi sur b1f546d : spectres et photométrie numériques, nébuleuses imbriquées, galaxies, bassins, pouponnières, comparateur 0 / 0,99 c et capture lunaire finale. Pas d’erreur JavaScript ou GLSL. Run de mission 43448483942 également réussi, ainsi que construction/régressions rapides 43448483830. Le code de production testé est identique à celui livré ; les commits suivants ajoutent des sondes, des métadonnées et la documentation.
