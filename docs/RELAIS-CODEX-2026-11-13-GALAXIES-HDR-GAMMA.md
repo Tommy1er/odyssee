@@ -50,3 +50,17 @@ Le rapport complet, avec source, run, fixture, valeurs mesurées, seuils et limi
 ## Intégration de la version corrigée
 
 Run 43448483894 réussi sur b1f546d : spectres et photométrie numériques, nébuleuses imbriquées, galaxies, bassins, pouponnières, comparateur 0 / 0,99 c et capture lunaire finale. Pas d’erreur JavaScript ou GLSL. Run de mission 43448483942 également réussi, ainsi que construction/régressions rapides 43448483830. Le code de production testé est identique à celui livré ; les commits suivants ajoutent des sondes, des métadonnées et la documentation.
+
+## Publication : blocage de l’hébergement
+
+Les corrections sont poussées sur main et l’archive a été enregistrée comme version 48. Deux tentatives natives ont échoué ; ne pas annoncer ce correctif comme publié.
+
+- Site : `appgprj_6aaed9890f1c8191ac977fe0fadcc659`.
+- Version enregistrée : `appgprj_6aaed9890f1c8191ac977fe0fadcc659~appgver_caeaed68e23c8191b558e5a6f24baf28`.
+- Source Sites de cette version : `ccdcfc44a54b1cc4d347eb768f35830291c40c96`.
+- Premier déploiement : `appgdep_6af72b52c9dc8191a38b9d08851be232`, échec le 13 novembre à 15:23:17 UTC : « An unknown error has occurred … workers-sdk … ».
+- Deuxième déploiement, même version : `appgdep_6af72b9825908191ae66f07ecb1d71fa`, échec à 15:24:16 UTC : « Failed to publish the built site. ».
+
+La métadonnée native confirme l’archive tar enregistrée, 53 fichiers, et la source exacte. L’inspection locale montre la même organisation d’archive que celle déployée avec succès le 6 novembre ; aucune cause de code ou de configuration identifiée dans ces erreurs génériques. Le Site est toujours indiqué actif avec son URL conservée, mais cela ne confirme pas la mise en ligne du correctif.
+
+Pour reprendre : réutiliser la version 48 et `deploy_private_site_version`, sans la sauvegarder une seconde fois. Conserver l’audience privée et les identifiants ci-dessus. Ne pas modifier le code validé pour masquer un échec d’infrastructure.
