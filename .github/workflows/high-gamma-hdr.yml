@@ -1,0 +1,27 @@
+name: High-gamma controlled HDR validation
+on:
+  push:
+    branches: [main]
+    paths: ['src/galaxy-spectral-overlay.js', 'src/physics.js', 'src/photometry.js', 'scripts/validate-high-gamma.mjs', 'scripts/high-gamma-hdr-entry.js', 'scripts/validate-high-gamma-hdr-ui.cjs', '.github/workflows/high-gamma-hdr.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  controlled-hdr:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node scripts/validate-high-gamma.mjs && node scripts/validate-galaxy-spectral-overlay.mjs
+      - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
+      - run: node scripts/validate-high-gamma-hdr-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: controlled-high-gamma-hdr
+          path: validation/v2-screenshots/high-gamma-hdr-results.json
