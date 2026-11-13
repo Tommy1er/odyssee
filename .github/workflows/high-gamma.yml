@@ -1,0 +1,34 @@
+name: High gamma GPU boundaries
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/cloud-pass.js'
+      - 'src/physics.js'
+      - 'scripts/validate-high-gamma.mjs'
+      - 'scripts/validate-high-gamma-gpu.cjs'
+      - '.github/workflows/high-gamma.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gpu:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node scripts/validate-high-gamma.mjs
+      - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
+      - run: node scripts/validate-high-gamma-gpu.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: high-gamma-gpu
+          path: validation/v2-screenshots/high-gamma*.json
