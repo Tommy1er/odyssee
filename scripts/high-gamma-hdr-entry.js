@@ -11,9 +11,9 @@ const lutData=new Float32Array(512*4);for(let i=0;i<512;i++){lutData.set([1,1,1,
 const lut=new T.DataTexture(lutData,512,1,T.RGBAFormat,T.FloatType);lut.minFilter=lut.magFilter=T.LinearFilter;lut.needsUpdate=true;
 const source={status:'ready',rows:[{}],points:{geometry:new T.BufferGeometry()},material:{uniforms:{lut:{value:lut},pix:{value:pix},avScale:{value:1},band:{value:1},gain:{value:1}}}};
 const overlay=new GalaxySpectralOverlay(source),sed=new Float32Array(257*8*4);for(let c=0;c<8;c++)for(let i=0;i<257;i++){const D=.72+.37*i/256;sed.set([1,1,1,D**-3],4*(c*257+i));}
-const sedTex=new T.DataTexture(sed,257,8,T.RGBAFormat,T.FloatType);sedTex.minFilter=sedTex.magFilter=T.LinearFilter;sedTex.needsUpdate=true;overlay.material.uniforms.sedLut.value=sedTex;
+const sedTex=new T.DataTexture(sed,257,8,T.RGBAFormat,T.FloatType);sedTex.minFilter=sedTex.magFilter=T.LinearFilter;sedTex.needsUpdate=true;const realSED=overlay.material.uniforms.sedLut.value;overlay.material.uniforms.sedLut.value=sedTex;
 function half(v){return T.DataUtils.fromHalfFloat(v);}
-function runCase(gamma,n,label,rearAngle=null,oblique=false){
+function runCase(gamma,n,label,rearAngle=null,oblique=false,kind=0){
  const m=Math.sqrt((gamma-1)*(gamma+1)),u=[m,0,0],boost=gamma+m;let D,direction;
  // Independent half-angle identities; do not use production Doppler/aberration as the oracle.
  if(rearAngle!==null){const a=boost*Math.sin(rearAngle/2)**2,b=Math.cos(rearAngle/2)**2/boost;D=a+b;direction=[(a-b)/D,Math.sin(rearAngle)/D,0];}
@@ -24,12 +24,13 @@ function runCase(gamma,n,label,rearAngle=null,oblique=false){
  n=rotate(n);direction=rotate(direction);for(let i=0;i<3;i++)u[i]=axis[i]*m;
  const expectedSum=16;
  const flux0=expectedSum*D/(.818*pixScale),vmag=3-2.5*Math.log10(flux0),geo=source.points.geometry;
- const attrs={position:{array:n.map(x=>x*10),size:3},vmag:{array:[vmag]},dcat:{array:[10]},rad:{array:[0]},temp:{array:[1e9]},shown:{array:[1]},avfg:{array:[0]},dsun:{array:[1]},dship:{array:[1]},sclass:{array:[0]}};
+ const attrs={position:{array:n.map(x=>x*10),size:3},vmag:{array:[vmag]},dcat:{array:[10]},rad:{array:[0]},temp:{array:[1e9]},shown:{array:[1]},avfg:{array:[0]},dsun:{array:[1]},dship:{array:[1]},sclass:{array:[kind]}};
  for(const [name,a] of Object.entries(attrs))geo.setAttribute(name,new T.Float32BufferAttribute(a.array,a.size||1));
  camera.up.set(0,0,1);camera.lookAt(new T.Vector3(...direction));camera.updateMatrixWorld();
  overlay.render(renderer,camera,u,true);const data=new Uint16Array(128*128*4);renderer.readRenderTargetPixels(overlay.target,0,0,128,128,data);
- let sum=0,x=0,y=0,max=0,nonfinite=0;for(let i=0;i<128*128;i++){const v=half(data[i*4]);if(!Number.isFinite(v)){nonfinite++;continue;}sum+=v;x+=(i%128+.5)*v;y+=(Math.floor(i/128)+.5)*v;max=Math.max(max,v);}
- return {gamma,oblique,label,doppler:D,expectedSum,sum,relativeFluxError:sum/expectedSum-1,centroid:sum?[x/sum,y/sum]:null,centerErrorPixels:sum?Math.hypot(x/sum-64,y/sum-64):null,nonfinite,max};
+ let sum=0,x=0,y=0,max=0,nonfinite=0;for(let i=0;i<128*128;i++){const v=.2126*half(data[i*4])+.7152*half(data[i*4+1])+.0722*half(data[i*4+2]);if(!Number.isFinite(v)){nonfinite++;continue;}sum+=v;x+=(i%128+.5)*v;y+=(Math.floor(i/128)+.5)*v;max=Math.max(max,v);}
+ return {gamma,oblique,label,kind,doppler:D,expectedSum,sum,relativeFluxError:sum/expectedSum-1,centroid:sum?[x/sum,y/sum]:null,centerErrorPixels:sum?Math.hypot(x/sum-64,y/sum-64):null,nonfinite,max};
 }
 window.runHighGammaHDR=()=>{const rows=[];for(const oblique of [false,true])for(const g of [1,100,1000,1e6]){for(const [label,n] of [['forward',[1,0,0]],['rear',[-1,0,0]],['transverse',[0,1,0]]])rows.push(runCase(g,n,label,null,oblique));if(g>1)for(const q of [.1,1,10]){const theta=q/g;rows.push(runCase(g,unit([-Math.cos(theta),Math.sin(theta),0]),'rear cone '+q+'/gamma',theta,oblique));}}
- return {scope:'Synthetic I_nu proportional to nu²; production point-galaxy HDR shader, aligned and oblique boosts (oblique extremes are precision probes), no exposure or tonemapping; not empirical extreme-gamma sky or hardware performance',renderer:renderer.getContext().getParameter(renderer.getContext().RENDERER),rows};};
+ for(const row of rows)row.fixture='power-law';overlay.material.uniforms.sedLut.value=realSED;for(let kind=0;kind<8;kind++){const row=runCase(1,[1,0,0],'forward',null,false,kind);row.fixture='KC96 rest';rows.push(row);}
+ return {scope:'KC96 rest calibration plus synthetic I_nu proportional to nu²; production point-galaxy HDR shader, aligned and oblique boosts (oblique extremes are precision probes), no exposure or tonemapping; not empirical extreme-gamma sky or hardware performance',renderer:renderer.getContext().getParameter(renderer.getContext().RENDERER),rows};};
