@@ -1,0 +1,42 @@
+# Galaxies ponctuelles : flux HDR et cônes étroits — 13 novembre 2026
+
+## Périmètre
+
+Ce lot complète le banc du rayon observateur commun (`RELAIS-CODEX-2026-11-13-GAMMA-GPU.md`) par une mesure de la couche HDR des galaxies ponctuelles. Les workflows sont distincts (`high-gamma-hdr.yml` et `high-gamma.yml`) ; aucun résultat de l’autre banc n’est revendiqué comme mesure de flux. Le ciel diffus, les étoiles, les volumes, le pilote et le voyage ΛCDM ne sont pas modifiés par ce correctif.
+
+## Défauts reproduits avant correction
+
+Run 43447964863, source f96eeea : le shader de production restitue 6,484375 pour une somme de luminance attendue de 16, soit environ 40,5 % dans la source témoin centrée. Il dessine un pixel au lieu de la PSF prévue : l’affectation `psfD=psfDraw(size,psfS)` était absorbée dans un commentaire en fin de ligne. La suite d’intégration précédente vérifiait l’activation de la passe, pas sa lumière effectivement dessinée. Ce chiffre ne décrit pas une perte uniforme de tout le ciel : le résultat dépend de l’échantillonnage de la source.
+
+Le même banc montre des sources hors champ dans des cônes arrière d’ouverture 1/γ et 10/γ à γ = 10⁶. L’expression Float32 `1 + dot(n,axis)` perd le petit écart lorsque le produit scalaire est arrondi à −1.
+
+## Correction
+
+- Rétablir l’affectation de taille PSF hors du commentaire.
+- Utiliser `|n + axis|² / 2` pour calculer 1 + μ, puis les expressions stables de Doppler et d’aberration. Pour des directions unitaires, l’identité est exacte mathématiquement ; elle conserve une petite composante transverse encore représentable après arrondi du produit scalaire. Elle ne supprime pas la quantification des vecteurs d’entrée sur un axe quelconque.
+
+Le flux de référence et la normalisation de PSF restent ceux du modèle photométrique commun. Aucun gain arbitraire ajouté pour rendre le ciel plus lumineux.
+
+## Oracle indépendant et mesure
+
+`scripts/high-gamma-hdr-entry.js` importe le vrai `GalaxySpectralOverlay`, son vertex/fragment et sa méthode de rendu dans une cible RGBA16F, sans exposition ni tonemapping. Les pixels sont lus et sommés en luminance CIE Y. La source de test reste très en dessous des plafonds de saturation du shader et de la cible.
+
+Une source synthétique suit Iν ∝ ν². L’invariance de Iν/ν³ donne Iν,obs(ν) = D³ Iν,cat(ν/D), et l’aberration donne dΩobs = dΩcat/D² : à bande observateur fixée, le flux ponctuel varie donc comme D⁻¹. Le jeu de textures du test encode cette loi, pas un spectre KC96 inventé hors de son archive. La magnitude d’entrée est ajustée pour que chaque mesure attendue soit 16, évitant la saturation et le sous-flux de la cible.
+
+Les directions et Doppler attendus utilisent les identités de demi-angle, indépendamment des fonctions `dopplerU` et `aberrateU` du projet. Huit mesures supplémentaires utilisent les vraies classes KC96 au repos ; à D = 1, leur flux de catalogue doit être conservé. La mesure du centroïde reste limitée par la grille de pixels et la PSF ; un décalage mesuré nul n’est pas une preuve d’erreur angulaire nulle.
+
+Cadre : Urry & Padovani, annexe B, invariance d’intensité spécifique, https://ned.ipac.caltech.edu/level5/Urry1/UrryP_appenb.html . La loi D⁻¹ ci-dessus est dérivée pour un observateur mobile et une source de direction fixe au catalogue ; elle ne reprend pas la loi de flux d’une source mobile isotrope de type jet.
+
+## Résultats après correction
+
+Run 43448483786 sur b1f546d : 21 cas alignés réussis, γ = 1, 100, 1000, 10⁶, directions avant/arrière/latérale et cônes arrière 0,1/γ, 1/γ, 10/γ. Écart maximal de flux 0,733 %, aucune valeur non finie. Aucun déplacement du centroïde détecté dans ces cas.
+
+Run 43449193177 sur 5240700 : 50 cas mesurés, 44 dans le domaine de régression imposé. Ils réussissent : axes alignés jusqu’à γ = 10⁶, axes obliques jusqu’à γ = 1000, et huit classes KC96 au repos. Écart maximal dans ce domaine : 0,733 %. Écart maximal des huit classes KC96 : 0,0705 %. Aucun pixel non fini ni erreur JavaScript/GLSL.
+
+Les six sondes obliques à γ = 10⁶ sont enregistrées séparément : quatre satisfont les tolérances, deux échouent. Dans les cônes arrière 0,1/γ et 1/γ, les déplacements sont respectivement 5,06 et 13 pixels (image 128 × 128, champ vertical 40°). Le flux reste mesurable, mais la direction n’est pas validée. Ces limites ne sont ni effacées du rapport ni comptées dans les régressions réussies. Tolérances du banc : 3 % de flux et 0,35 pixel de centroïde.
+
+CI Chromium forcée sur SwiftShader. Ce sont des mesures de rendu logiciel, pas un essai Iris Xe, d’un autre PC ou d’un téléphone. La chaîne spectrale complète reste approximative hors de la plage empirique D ∈ [0,72 ; 1,09]. Le banc ne valide pas les saturations très lumineuses, tout le ciel diffus ou les angles arbitraires aux gamma extrêmes.
+
+## Suite
+
+Préparation du repère de boost en précision double et quantification des entrées sur axes obliques : à étudier avec le banc du rayon commun, sans fusion des moteurs. Matériel réel : toujours ouvert. La disparition de tout gel Chrome n’est pas démontrée par ce lot.
