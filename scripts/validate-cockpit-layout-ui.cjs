@@ -1,0 +1,22 @@
+const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
+const {openObservationTools}=require('./cockpit-ui-helpers.cjs');
+const root=path.resolve(__dirname,'../public'),out=path.resolve(__dirname,'../validation/v2-screenshots');fs.mkdirSync(out,{recursive:true});const errors=[],checks=[];
+const mime=p=>p.endsWith('.js')?'text/javascript':p.endsWith('.json')?'application/json':p.endsWith('.css')?'text/css':p.endsWith('.bin')?'application/octet-stream':p.endsWith('.jpg')?'image/jpeg':p.endsWith('.png')?'image/png':p.endsWith('.glb')?'model/gltf-binary':'text/html';
+const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURIComponent(req.url.split('?')[0]).replace(/^\//,''));if(!p.startsWith(root+path.sep)){res.writeHead(403).end();return;}try{res.setHeader('Content-Type',mime(p));res.end(fs.readFileSync(p));}catch{res.writeHead(404).end();}});
+(async()=>{await new Promise(r=>server.listen(3053,'127.0.0.1',r));let browser;
+try{
+ browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const page=await browser.newPage({viewport:{width:1440,height:900}});page.setDefaultTimeout(200000);page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+ await page.goto('http://127.0.0.1:3053/cockpit.html');await page.waitForFunction(()=>window.flightSnapshot?.().shipReady&&window.flightSnapshot().voyagerReady);const snapshot=()=>page.evaluate(()=>{const s=window.flightSnapshot();return {pos:s.pos,u:s.u,t:s.t,tau:s.tau,paused:s.paused};});
+ assert.equal(await page.locator('#observatory-controls').evaluate(el=>el.open),false);assert(await page.locator('#identify').isVisible());assert(await page.locator('#clean-view').isVisible());checks.push('Observation settings initially folded, identify and clean view directly available');
+ const before=await snapshot();await page.locator('#observatory-controls > summary').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#observatory-controls').evaluate(el=>el.open),true);assert.deepEqual(await snapshot(),before);checks.push('Keyboard disclosure opens actual instruments without changing ship or mission clocks');
+ await page.locator('#observatory-controls > summary').click();
+ for(const [w,h] of [[1440,900],[1200,780],[960,700]]){
+  await page.setViewportSize({width:w,height:h});await page.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
+  const boxes=await page.evaluate(()=>{const box=id=>{const r=document.querySelector(id).getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom};};return {docW:document.documentElement.scrollWidth,docH:document.documentElement.scrollHeight,viewW:innerWidth,viewH:innerHeight,space:box('#viewport'),controls:box('.flight-controls'),observatoryInView:document.querySelector('#viewport').contains(document.querySelector('#observatory-controls'))};});
+  assert(boxes.docW<=w+1,JSON.stringify(boxes));assert(boxes.docH<=h+1,JSON.stringify(boxes));assert(boxes.space.h>=h*.44,JSON.stringify(boxes));assert(boxes.controls.bottom<=h+1);assert.equal(boxes.observatoryInView,false);checks.push(`${w}x${h}: complete desktop shell fits viewport; sky >=44% of height, observation settings outside image`);
+  await page.screenshot({path:path.join(out,`cockpit-layout-${w}.png`),timeout:200000});
+ }
+ await openObservationTools(page);assert(await page.locator('#spectral-band').isVisible());await page.selectOption('#spectral-band','2');assert.equal((await page.evaluate(()=>flightSnapshot())).band,2);await page.selectOption('#spectral-band','1');await page.locator('#observatory-controls > summary').click();checks.push('Folded instrument retains real band controls');
+ await page.locator('#clean-view').click();assert(await page.locator('#restore-view').isVisible());await page.locator('#restore-view').click();assert(await page.locator('#identify').isVisible());assert.deepEqual(await snapshot(),before);checks.push('Clean-view round trip preserves mission');
+ assert.deepEqual(errors,[]);checks.push('No JavaScript or shader errors');console.log(JSON.stringify({checks,errors}));
+}catch(e){console.error(e);process.exitCode=1;}finally{fs.writeFileSync(path.join(out,'cockpit-layout-results.json'),JSON.stringify({checks,errors},null,2));await browser?.close();server.close();}})();

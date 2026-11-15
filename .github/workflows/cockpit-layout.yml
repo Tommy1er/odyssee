@@ -1,0 +1,26 @@
+name: Cockpit layout and observation instruments
+on:
+  push:
+    branches: [main]
+    paths: ['public/cockpit.html', 'public/cockpit.css', 'scripts/validate-cockpit-layout-ui.cjs', 'scripts/cockpit-ui-helpers.cjs', '.github/workflows/cockpit-layout.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cockpit-layout:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci && npm run build
+      - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
+      - run: node scripts/validate-cockpit-layout-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cockpit-layout
+          path: validation/v2-screenshots/cockpit-layout-*

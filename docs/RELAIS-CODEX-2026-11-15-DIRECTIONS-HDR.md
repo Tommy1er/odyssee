@@ -30,3 +30,11 @@ Rendu logiciel CI, pas une mesure de performance matérielle. Chrome utilisateur
 ## Résultat du banc graphique
 
 Run 43743284606 réussi sur f64de683 : 62 cas, tous imposés et réussis. Écart absolu maximal de flux 0,7291 %, aucun pixel non fini ni erreur JavaScript/GLSL. Les deux anciennes erreurs obliques ne sont plus détectables par le centroïde de cette image 128×128 ; cela ne prouve pas une erreur angulaire exactement nulle. Moteur : ANGLE/Vulkan SwiftShader Device (Subzero). Rapport complet daté dans `validation/reports/high-gamma-hdr-2026-11-15.json`.
+
+## Intégration et publication
+
+Suite graphique 43743284589 réussie (spectres, nébuleuses imbriquées, galaxies, bassins, pouponnières, comparaison 0/0,99 c et capture lunaire). Mission/rendez-vous 43743284590 réussis ; construction rapide 43743284577 réussie.
+
+Version 49 publiée : source Sites `def53c9fff6d10fd73e1b57361a75662564ff546`, déploiement `appgdep_6af9f47c82688191a4010fb8d7a95d44`, statut natif `succeeded` le 15 novembre à 18:06:03 UTC. Audience privée conservée.
+
+Vérification CPU complémentaire dans ce conteneur : 20 mises à jour alternées après échauffement, 44 188 galaxies, médiane précédente 3,03 ms, nouvelle médiane 3,42 ms (min 2,79/2,93 ms, max 4,56/6,24 ms). Ce petit surcoût concerne la boucle existante à 4 Hz, pas chaque image. Ce n'est ni un benchmark GPU ni une mesure Iris Xe.

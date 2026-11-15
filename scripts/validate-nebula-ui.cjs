@@ -1,3 +1,4 @@
+const {openObservationTools}=require('./cockpit-ui-helpers.cjs');
 // Browser integration of the physical nebula model: per-pixel cloud with calibrated uniforms, colours actually rendered
 // (pink Balmer + [N II] envelope, teal [O III] core for M 42; teal centre and red ring for M 57), eye versus long-exposure
 // rendering, the nebula info sheet, and the Magellanic Clouds. Waits for simulation states, not frame rates.
@@ -33,10 +34,10 @@ const ring=(img,cx,cy,r0,r1)=>{let s=[0,0,0],n=0;for(let y=cy-r1;y<=cy+r1;y+=2)f
   let img=await shot('nebula-orion.png');const cx=Math.round(img.w/2),cy=Math.round(img.h/2)+38,core=ring(img,cx,cy,0,40),env=ring(img,cx,cy,150,200);
   check('M 42 rendered: teal [O III] core, pink envelope (R and B above G)',core[1]>=core[0]&&env[0]>env[1]&&env[2]>env[1]);
   console.log('   core',core.map(Math.round),'envelope',env.map(Math.round));
-  await page.selectOption('#spectral-band','0');await page.waitForFunction(()=>window.flightSnapshot().nebula?.gain===1);
+  await openObservationTools(page);await page.selectOption('#spectral-band','0');await page.waitForFunction(()=>window.flightSnapshot().nebula?.gain===1);
   const eye=await shot('nebula-orion-eye.png'),envEye=ring(eye,cx,cy,150,200),sat=c=>(Math.max(...c)-Math.min(...c))/Math.max(1,Math.max(...c));
   check('Eye: physical surface brightness (gain 1), dimmer and greyer',envEye.reduce((a,b)=>a+b)<env.reduce((a,b)=>a+b)&&sat(envEye)<sat(env));
-  await page.selectOption('#spectral-band','1');
+  await openObservationTools(page);await page.selectOption('#spectral-band','1');
   await page.click('#object-info');const sheet=await page.locator('#flight-dialog-body').textContent();await page.click('#close-flight-dialog');
   check('Info sheet: Balmer decrement, [O III] line, foreground extinction, references',sheet.includes('Hα/Hβ = 2,86')&&sheet.includes('[O III] 5007')&&sheet.includes('avant-plan')&&sheet.includes('Esteban'));
   await go('Lyre','ring');await page.waitForFunction(()=>window.flightSnapshot().nebula?.shape===4);

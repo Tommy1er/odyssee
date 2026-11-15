@@ -1,3 +1,4 @@
+const {openObservationTools}=require('./cockpit-ui-helpers.cjs');
 // Dedicated browser smoke test for the individual galactic SED HDR pass.
 // Validates toggles, browser GLSL, split 0 / .99c optical comparison and a capture.
 const {chromium}=require('playwright');
@@ -21,10 +22,10 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
   check('LMC debit uses observed V ratio',Math.abs(state.emissionBudget.hosts.lmc-0.9636921945229899)<1e-10);
   check('Tarantula intrinsic calibration receives foreground V attenuation',Math.abs(state.emissionBudget.children.tarantula-Math.pow(10,-.1))<1e-10);
   await page.screenshot({path:path.join(out,'nested-emission-reference.png'),timeout:180000});
-  await page.selectOption('#spectral-band','2');
+  await openObservationTools(page);await page.selectOption('#spectral-band','2');
   await page.waitForFunction(()=>window.flightSnapshot().emissionBudget.strength===0);
   check('Infrared retains legacy renderer',Object.keys((await snapshot()).emissionBudget.hosts).length===0);
-  await page.selectOption('#spectral-band','1');
+  await openObservationTools(page);await page.selectOption('#spectral-band','1');
   await page.waitForFunction(()=>window.flightSnapshot().emissionBudget.hosts.lmc<1);
   // Select NGC604 by URL: at 640×480 the navigation panel (filters, search) is collapsed and not clickable.
   await page.waitForFunction(()=>window.flightSnapshot?.().shipReady&&window.flightSnapshot().voyagerReady);await page.waitForTimeout(3000);// GLTF textures (blob URLs) must finish before navigating, or the unload reports them as load errors

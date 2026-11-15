@@ -1,3 +1,4 @@
+const {openObservationTools}=require('./cockpit-ui-helpers.cjs');
 // Dedicated browser smoke test for the individual galactic SED HDR pass.
 // Validates toggles, browser GLSL, split 0 / .99c optical comparison and a capture.
 const {chromium}=require('playwright');
@@ -28,7 +29,7 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
   check('Disabling Doppler restores original unshifted photometry',(await snapshot()).galaxyLight.spectralPoints===false);
   await page.locator('#doppler').check();
   await page.waitForFunction(()=>window.flightSnapshot().galaxyLight.spectralPoints===true);
-  await page.locator('#compare-physics').click();
+  await openObservationTools(page);await page.locator('#compare-physics').click();
   // #ship-frame lives in the hidden external-camera options in cockpit view; set it without a visibility wait.
   await page.evaluate(()=>{const f=document.getElementById('ship-frame');f.value='comoving';f.dispatchEvent(new Event('change'));});
   await page.waitForFunction(()=>window.flightSnapshot().galaxyLight.spectralPoints===true);
