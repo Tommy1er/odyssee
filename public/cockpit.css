@@ -125,3 +125,8 @@ body{color:#edf3f7}.section-title{color:var(--muted)}
  #navigation-hud strong,#navigation-hud p,#navigation-hud button{font-size:12px}
  .primary{font-size:14px}.glass-top small{font-size:12px;letter-spacing:0}
 }
+
+/* Nearby suggestions belong to the instruments, never on top of the viewport action bar. */
+#nearby-object{position:static;margin:12px 0}
+#nearby-select{width:100%;max-width:100%;white-space:normal;font-size:12px;padding:9px;text-align:left}
+@media(max-width:620px){#nearby-object{grid-column:1/-1}}
