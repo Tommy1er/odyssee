@@ -64,3 +64,7 @@ Les corrections sont poussées sur main et l’archive a été enregistrée comm
 La métadonnée native confirme l’archive tar enregistrée, 53 fichiers, et la source exacte. L’inspection locale montre la même organisation d’archive que celle déployée avec succès le 6 novembre ; aucune cause de code ou de configuration identifiée dans ces erreurs génériques. Le Site est toujours indiqué actif avec son URL conservée, mais cela ne confirme pas la mise en ligne du correctif.
 
 Pour reprendre : réutiliser la version 48 et `deploy_private_site_version`, sans la sauvegarder une seconde fois. Conserver l’audience privée et les identifiants ci-dessus. Ne pas modifier le code validé pour masquer un échec d’infrastructure.
+
+## Reprise du 15 novembre : publication confirmée
+
+La relance native de la même version 48 a retourné `succeeded` à 17:42:46 UTC, déploiement `appgdep_6af9ef0953588191ac3abc39b04796ab`, URL et audience privée conservées. Cette confirmation remplace le statut bloqué ci-dessus ; les deux échecs du 13 novembre restent dans l'historique. Le relais matériel de Claude du 15 novembre confirme aussi le code servi et l'échauffement sur Iris Xe. Sa lecture suppose qu'une tentative précédente avait finalement servi les fichiers ; cela ne change pas les résultats terminaux renvoyés par le service ni la confirmation native obtenue aujourd'hui.
