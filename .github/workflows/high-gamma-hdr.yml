@@ -2,7 +2,7 @@ name: High-gamma controlled HDR validation
 on:
   push:
     branches: [main]
-    paths: ['src/galaxy-spectral-overlay.js', 'src/physics.js', 'src/photometry.js', 'scripts/validate-high-gamma.mjs', 'scripts/high-gamma-hdr-entry.js', 'scripts/validate-high-gamma-hdr-ui.cjs', '.github/workflows/high-gamma-hdr.yml']
+    paths: ['src/galaxy-photometry.js', 'src/galaxy-spectral-overlay.js', 'src/physics.js', 'src/photometry.js', 'scripts/validate-galaxy-photometry.mjs', 'scripts/validate-high-gamma.mjs', 'scripts/high-gamma-hdr-entry.js', 'scripts/validate-high-gamma-hdr-ui.cjs', '.github/workflows/high-gamma-hdr.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,7 +17,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: node scripts/validate-high-gamma.mjs && node scripts/validate-galaxy-spectral-overlay.mjs
+      - run: node scripts/validate-galaxy-photometry.mjs && node scripts/validate-high-gamma.mjs && node scripts/validate-galaxy-spectral-overlay.mjs
       - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
       - run: node scripts/validate-high-gamma-hdr-ui.cjs
       - uses: actions/upload-artifact@v4

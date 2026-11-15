@@ -119,4 +119,19 @@ const cf4 = decodeCatalogue("cf4", JSON.parse(fs.readFileSync(new URL("../public
     gaps.push([o.id, Math.hypot(...p.map((x, j) => x - X[j])) / o.radiusLy]); }
   check("4 · Point photométrique et volume d’une même galaxie du Groupe local au même endroit (écart < 0,45 rayon ; M33 aligné sur UNGC)", gaps.every(([, g]) => g < 0.45) && gaps.find(([id]) => id === "m33")[1] < 0.1, gaps.map(([id, g]) => id + " " + g.toFixed(3)).join(", "));
 }
+// Precision must be retained from the real double worldline update, before position is rounded.
+{ const layer = new GalaxyLightLayer(new Float32Array(2048));
+  layer.setData({count:1,meta:{ids:['precision']},col:{V:[3],ra:[0],dec:[0],mly:[1],av:[0],radiusKpc:[1],T:[4],vh:[0]}});
+  const theta=1e-7, direction=[-.6*Math.cos(theta)-.8*Math.sin(theta),-.8*Math.cos(theta)+.6*Math.sin(theta),0];
+  layer.base.set(direction.map(x=>x*1e6)); layer.vel.fill(0);
+  const state={pos:[0,0,0],t:0,retarded:false,band:1};
+  layer.update(state,new Map(),0);
+  const a=layer.points.geometry.attributes, reconstructed=direction.map((_,j)=>a.directionHigh.array[j]+a.directionLow.array[j]);
+  check('Double light-cone direction survives Float32 split to <1e-14 (oblique rear cone)', reconstructed.every((x,j)=>Math.abs(x-direction[j])<1e-14));
+  const version=a.directionLow.version;
+  check('Precision update retains existing 4 Hz throttle',layer.update(state,new Map(),.1)===false&&a.directionLow.version===version);
+  state.pos=[100,200,300];layer.update(state,new Map(),1);
+  const relative=direction.map((x,j)=>x*1e6-state.pos[j]),length=Math.hypot(...relative);
+  check('Split direction follows ship motion, not a fixed catalogue direction',relative.every((x,j)=>Math.abs(a.directionHigh.array[j]+a.directionLow.array[j]-x/length)<1e-14));
+}
 console.log(JSON.stringify({ passed: n }));

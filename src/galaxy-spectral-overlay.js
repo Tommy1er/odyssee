@@ -23,7 +23,9 @@ export function overlayPixelScale(pixScreen){return pixScreen>0&&Number.isFinite
 export const spectralPointVertex=`
 attribute float vmag,dcat,rad,temp,shown,avfg,dsun,dship,sclass;
 uniform float pix,pixRef,pixScale,avScale,band,gain,g,momentum,optics;
-uniform vec3 axis;
+attribute vec3 directionHigh,directionLow;
+uniform vec3 axis,axisLow;
+uniform float splitDirections;
 uniform sampler2D lut,sedLut;
 varying vec3 light;varying float soft;
 vec4 thermal(float t){
@@ -55,11 +57,12 @@ void main(){
  float distance=max(length(position),1.e-6);vec3 n=position/distance;
  float Dobs=1.;vec3 shifted=n;
  if(optics>.5&&momentum>.000001){
-  float mu=clamp(dot(n,axis),-1.,1.);
-  // Chord norm retains the narrow rear cone after the Float32 dot product rounds to -1.
-  vec3 chord=n+axis;float onePlusMu=.5*dot(chord,chord);
+  // Add high parts BEFORE residuals: combining each split first would discard the tiny
+  // oblique rear angle again. Chord identity assumes unit source and boost directions.
+  vec3 chord=splitDirections>.5?(directionHigh+axis)+(directionLow+axisLow):n+axis;
+  float onePlusMu=.5*dot(chord,chord),mu=onePlusMu-1.;
   Dobs=max(1.e-9,g*onePlusMu-mu/(g+momentum));
-  shifted=normalize((n-axis*mu+axis*(g*onePlusMu-1./(g+momentum)))/Dobs);
+  shifted=normalize((chord-axis*onePlusMu+axis*(g*onePlusMu-1./(g+momentum)))/Dobs);
  }
  float Dtotal=dship*Dobs;
  // Independent of the source's intermediate Doppler factor: one spectrum at the catalogue
@@ -99,7 +102,7 @@ export class GalaxySpectralOverlay {
    uniforms:{
     sedLut:{value:sed},lut:{value:source.material.uniforms.lut.value},
     pix:{value:.001},psfMin:{value:0},pixRef:{value:source.material.uniforms.pix.value},pixScale:{value:1},avScale:{value:1},band:{value:1},gain:{value:1},
-    g:{value:1},momentum:{value:0},axis:{value:new T.Vector3(0,0,-1)},optics:{value:0}
+    g:{value:1},momentum:{value:0},axis:{value:new T.Vector3(0,0,-1)},axisLow:{value:new T.Vector3()},splitDirections:{value:0},optics:{value:0}
    },transparent:true,depthWrite:false,depthTest:false,blending:T.AdditiveBlending
   });
   this.points=new T.Points(source.points.geometry,this.material);this.points.frustumCulled=false;
@@ -120,7 +123,9 @@ export class GalaxySpectralOverlay {
   if(this.target.width!==width||this.target.height!==height)this.target.setSize(width,height);
   this.points.geometry=this.source.points.geometry;
   const U=this.material.uniforms,root=this.source.material.uniforms,m=norm(u),gg=gammaU(u);
-  U.g.value=gg;U.momentum.value=m;U.axis.value.set(...unit(u));U.optics.value=+optics;
+  const a=unit(u),h=a.map(Math.fround);
+  U.g.value=gg;U.momentum.value=m;U.axis.value.set(...h);U.axisLow.value.set(...a.map((x,i)=>x-h[i]));U.optics.value=+optics;
+  U.splitDirections.value=+(!!this.points.geometry.attributes.directionHigh&&!!this.points.geometry.attributes.directionLow);
   U.avScale.value=root.avScale.value;U.band.value=root.band.value;U.gain.value=root.gain.value;
   U.pix.value=2*Math.tan(camera.fov*Math.PI/360)/height;U.pixScale.value=overlayPixelScale(U.pix.value);U.pixRef.value=root.pix.value;
   try{

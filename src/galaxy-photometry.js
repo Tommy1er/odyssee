@@ -116,6 +116,10 @@ export class GalaxyLightLayer {
     this.rows = rows; this.data = data;
     const n = rows.length, g = new T.BufferGeometry();
     g.setAttribute('position', new T.BufferAttribute(new Float32Array(3 * n), 3));
+    // Preserve tiny rear-cone angles before the HDR observer boost. Split the DOUBLE light-cone
+    // direction here, not the already rounded position. Updated in the existing 4 Hz loop.
+    g.setAttribute('directionHigh', new T.BufferAttribute(new Float32Array(3 * n), 3));
+    g.setAttribute('directionLow', new T.BufferAttribute(new Float32Array(3 * n), 3));
     g.setAttribute('vmag', new T.Float32BufferAttribute(rows.map((r) => r.V), 1));
     g.setAttribute('dcat', new T.Float32BufferAttribute(rows.map((r) => r.d), 1));
     g.setAttribute('rad', new T.Float32BufferAttribute(rows.map((r) => r.rad), 1));
@@ -147,14 +151,18 @@ export class GalaxyLightLayer {
     const moved = !this.lastPos || Math.hypot(...s.pos.map((x, k) => x - this.lastPos[k])) > 0.01 * Math.max(far, 1e5);
     if (key === this.key && !moved && now < this.next) return false;
     this.key = key; this.next = now + 0.25; this.lastPos = [...s.pos];
+    const hi = this.points.geometry.attributes.directionHigh, lo = this.points.geometry.attributes.directionLow;
     const p = this.points.geometry.attributes.position, sh = this.points.geometry.attributes.shown, ds = this.points.geometry.attributes.dship, q = [0, 0, 0], b = [0, 0, 0], v = [0, 0, 0];
     for (let k = 0; k < this.rows.length; k++) {
       for (let j = 0; j < 3; j++) { b[j] = this.base[3 * k + j]; v[j] = this.vel[3 * k + j]; }
       if (s.retarded) receivedLinear(b, v, s.pos, s.t, q); else for (let j = 0; j < 3; j++) q[j] = b[j] + v[j] * s.t;
       const rx = q[0] - s.pos[0], ry = q[1] - s.pos[1], rz = q[2] - s.pos[2], rd = Math.hypot(rx, ry, rz) || 1;
+      const nx = rx / rd, ny = ry / rd, nz = rz / rd;
+      const hx = Math.fround(nx), hy = Math.fround(ny), hz = Math.fround(nz);
+      hi.setXYZ(k, hx, hy, hz); lo.setXYZ(k, nx - hx, ny - hy, nz - hz);
       p.setXYZ(k, rx, ry, rz); sh.setX(k, weights.get(this.rows[k].id) ?? 1); ds.setX(k, doppler(v, [-rx / rd, -ry / rd, -rz / rd]));
     }
-    p.needsUpdate = sh.needsUpdate = ds.needsUpdate = true;
+    p.needsUpdate = hi.needsUpdate = lo.needsUpdate = sh.needsUpdate = ds.needsUpdate = true;
     // Foreground extinction of the Milky Way (included in the catalogue magnitudes) removed progressively when leaving
     // the Galaxy: full within 3 000 ly of the Sun, none beyond 150 000 ly (logarithmic in between; approximation).
     this.material.uniforms.avScale.value = foregroundScale(far);
