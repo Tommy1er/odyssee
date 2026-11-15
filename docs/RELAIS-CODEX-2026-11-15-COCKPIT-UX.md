@@ -12,6 +12,7 @@ On conserve les vues existantes et leurs domaines physiques. Un onglet « Observ
 - Les réglages de graphismes, vision, exposition, animation et comparaison passent dans « Instruments d'observation », volet natif repliable de la colonne droite. « Qu'est-ce que je regarde ? » et « Vue dégagée » restent sur l'image. La préparation graphique reste visible même quand les instruments sont fermés.
 - La séparation « Vol local · 3D » / « Mission cosmologique » est explicite. Le lien garde son comportement : mission locale en pause et sauvegardée, expérience cosmologique distincte.
 - Palette d'instrumentation sobre ; couleurs des panneaux distinctes de la physique des émissions. Plusieurs annotations importantes remontent à 12 px sur PC ; cette tranche n'est pas un audit WCAG AA complet ni la suppression de tout petit texte historique.
+- Les raccourcis de pilotage ne captent plus Espace sur les boutons, liens et volets : le clavier agit sur le contrôle focalisé. Le relâchement W/Z/S ne coupe la poussée que si la touche avait effectivement été engagée par le pilote.
 - Aucune modification des moteurs, des sauvegardes, des accélérations, des horloges ou des lois spectrales. Les identifiants des commandes restent conservés. Les tests touchés ouvrent réellement le volet avant de manipuler ses commandes, au lieu de contourner leur visibilité.
 
 ## Critères de validation
