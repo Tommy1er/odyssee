@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "Minkowski two burns return to local rest with analytic clock",
+    "de Sitter opposite burn can reverse motion; event cursor remains finite",
+    "Variable-H LCDM, reversal, convergence and floating-point diagnostic, desktop and mobile",
+    "Domain validation, storage unchanged, mobile layout"
+  ],
+  "errors": []
+}

@@ -5,3 +5,10 @@
 #rocket-model{display:block;max-width:100%;padding:8px;background:#07141b;color:#fff;border:1px solid #5b798a;border-radius:6px}
 
 @media(max-width:600px){#rocket-results td[data-label]::before{content:attr(data-label) " : ";font-size:12px;color:#afc6d4}}
+/* Navigation commune des pages du laboratoire (observatoire, voyage, banc) : mêmes entrées, même ordre, page courante marquée. */
+nav.lab-nav{align-items:center;gap:6px 20px;margin-bottom:30px;padding:10px 0;border-bottom:1px solid #22323f;font-size:13px}
+nav.lab-nav .lab-brand{margin-right:auto;color:#9ce8ce;font-size:11px;letter-spacing:.14em;text-decoration:none}
+nav.lab-nav a{color:#bfd6dc;text-decoration:none;padding:3px 0;border-bottom:1px solid transparent}
+nav.lab-nav a:hover{color:#fff;border-bottom-color:#9ce8ce}
+nav.lab-nav a[aria-current=page]{color:#f2d0a2;border-bottom-color:#f2d0a2}
+@media(max-width:620px){nav.lab-nav{gap:4px 14px;font-size:12px}nav.lab-nav .lab-brand{flex-basis:100%;margin:0 0 4px}}

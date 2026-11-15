@@ -1,0 +1,10 @@
+{
+  "checks": [
+    "Worker plans variable-H arrival; separate acceleration and braking durations",
+    "Playback, pause and reload preserve cosmic epoch without changing local mission",
+    "Complete playback from departure through braking to rest arrival and chronological journal",
+    "Mobile layout, domain failure distinct from physical impossibility, local mission intact",
+    "Mobile cockpit CSS: cosmic mode link has a readable single-row touch target"
+  ],
+  "errors": []
+}

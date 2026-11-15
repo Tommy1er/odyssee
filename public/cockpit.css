@@ -130,3 +130,27 @@ body{color:#edf3f7}.section-title{color:var(--muted)}
 #nearby-object{position:static;margin:12px 0}
 #nearby-select{width:100%;max-width:100%;white-space:normal;font-size:12px;padding:9px;text-align:left}
 @media(max-width:620px){#nearby-object{grid-column:1/-1}}
+
+/* Écran court sur ordinateur (portable 1080p à 150 % : ≈ 585–720 px CSS de haut). Complète la mise en page du 15/11 :
+   en-tête et barre de commandes compacts sur une rangée, pied masqué, suivi du trajet au-dessus de la manœuvre locale
+   (sans plafond de hauteur qui l'écrasait), afin que le ciel garde l'essentiel de la fenêtre. */
+@media (min-width:901px) and (max-height:760px){
+ #flight-app{grid-template-rows:50px minmax(0,1fr) auto 0;min-height:0}
+ .flight-header{height:50px;padding:0 16px;gap:14px}.flight-brand{font-size:22px;gap:8px}.flight-brand>span{font-size:12px;letter-spacing:2.5px;line-height:1.1}.flight-brand small{display:none}
+ .view-switch button{padding:6px 12px;font-size:11px}
+ .flight-footer{display:none}
+ .clean-view#flight-app{grid-template-rows:50px minmax(0,1fr)}.clean-view .flight-header{height:50px}
+ .flight-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 10px 9px}
+ .flight-controls .control-group,.flight-controls .mission-controls,.flight-controls .regime-controls{grid-column:auto;flex:0 1 auto;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+ .flight-controls .control-group>span,.flight-controls .control-group>label{width:auto;min-width:0;max-width:260px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;letter-spacing:.8px;color:#8fa9b7}
+ .flight-controls .control-group>div{flex-wrap:nowrap;gap:4px}
+ .flight-controls button{font-size:11px;padding:6px 7px;min-height:30px}.regime-controls a{font-size:11px;min-height:30px;padding:5px 8px}
+ .flight-controls .mission-controls small,.flight-controls .time-control small{display:none}
+ .flight-controls .time-control{flex:1 1 170px;min-width:170px;max-width:250px}.time-control select{width:100%;font-size:11px;padding:5px 6px}
+ .dest-panel{padding:12px 12px 10px}.instruments{padding:12px}
+ .glass-top{top:12px}.view-options{top:44px;left:16px}.viewport-actions{top:78px;left:16px;right:16px}
+ #navigation-hud,#navigation-hud.compact{bottom:84px;max-height:none;overflow:visible;padding:8px 11px}
+ #navigation-hud.compact{max-width:min(600px,calc(100% - 28px))}#navigation-hud.compact strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .flight-context{bottom:44px}.local-tools{bottom:8px}
+ #passage-overlay{top:12%}
+}

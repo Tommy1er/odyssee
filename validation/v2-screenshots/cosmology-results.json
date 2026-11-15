@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "Free massive probe: local speed, proper clock, no false arrival, c rejected",
+    "Distances and path for z 0 through 2; reception cursor and finite curves",
+    "Invalid inputs do not fabricate results; presets restore calculation",
+    "Mission storage unchanged; scope explicit; mobile has no overflow"
+  ],
+  "errors": []
+}

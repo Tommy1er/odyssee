@@ -1,0 +1,1085 @@
+{
+  "gpuTimers": true,
+  "note": "CPU = soumission/attente ; GPU = dessins échantillonnés 1 image sur 10, pas toute la trame",
+  "frame": {
+    "n": 28,
+    "meanMs": 243.43928571428575,
+    "p50Ms": 16.799999999999272,
+    "p95Ms": 600,
+    "p99Ms": 3649.8999999999996,
+    "maxMs": 3649.8999999999996
+  },
+  "frameWork": {
+    "n": 29,
+    "meanMs": 169.8965517240737,
+    "p50Ms": 4.2000000001862645,
+    "p95Ms": 303,
+    "p99Ms": 3658.9000000003725,
+    "maxMs": 3658.9000000003725
+  },
+  "pending": 2,
+  "discarded": 0,
+  "passes": {
+    "Simulation et commandes": {
+      "calls": 29,
+      "cpu": {
+        "n": 29,
+        "meanMs": 0.06896551724137931,
+        "p50Ms": 0,
+        "p95Ms": 0.2999999998137355,
+        "p99Ms": 0.3000000002793968,
+        "maxMs": 0.3000000002793968
+      },
+      "gpu": null
+    },
+    "Éphémérides": {
+      "calls": 29,
+      "cpu": {
+        "n": 29,
+        "meanMs": 7.679310344834009,
+        "p50Ms": 0,
+        "p95Ms": 0.10000000009313226,
+        "p99Ms": 222.3000000002794,
+        "maxMs": 222.3000000002794
+      },
+      "gpu": null
+    },
+    "Groupe local : grands volumes 1×1": {
+      "calls": 1,
+      "cpu": {
+        "n": 1,
+        "meanMs": 3.8000000002793968,
+        "p50Ms": 3.8000000002793968,
+        "p95Ms": 3.8000000002793968,
+        "p99Ms": 3.8000000002793968,
+        "maxMs": 3.8000000002793968
+      },
+      "gpu": null
+    },
+    "Optique ordinaire (ciel profond)": {
+      "calls": 2,
+      "cpu": {
+        "n": 2,
+        "meanMs": 0.35000000009313226,
+        "p50Ms": 0.39999999990686774,
+        "p95Ms": 0.39999999990686774,
+        "p99Ms": 0.39999999990686774,
+        "maxMs": 0.39999999990686774
+      },
+      "gpu": null
+    },
+    "Rendu et préparation des scènes": {
+      "calls": 29,
+      "cpu": {
+        "n": 29,
+        "meanMs": 158.40344827583638,
+        "p50Ms": 2.8000000002793968,
+        "p95Ms": 302.70000000018626,
+        "p99Ms": 3654,
+        "maxMs": 3654
+      },
+      "gpu": null
+    },
+    "Interface et sauvegarde": {
+      "calls": 29,
+      "cpu": {
+        "n": 29,
+        "meanMs": 3.6931034482630163,
+        "p50Ms": 0,
+        "p95Ms": 27.59999999962747,
+        "p99Ms": 29.100000000093132,
+        "maxMs": 29.100000000093132
+      },
+      "gpu": null
+    },
+    "Optique ordinaire (corps du système)": {
+      "calls": 28,
+      "cpu": {
+        "n": 28,
+        "meanMs": 6.996428571391983,
+        "p50Ms": 0.2999999998137355,
+        "p95Ms": 10.699999999720603,
+        "p99Ms": 166.79999999981374,
+        "maxMs": 166.79999999981374
+      },
+      "gpu": null
+    },
+    "Nuage : émission 1×1": {
+      "calls": 1,
+      "cpu": {
+        "n": 1,
+        "meanMs": 14.100000000093132,
+        "p50Ms": 14.100000000093132,
+        "p95Ms": 14.100000000093132,
+        "p99Ms": 14.100000000093132,
+        "maxMs": 14.100000000093132
+      },
+      "gpu": null
+    },
+    "Optique ordinaire (nuage)": {
+      "calls": 1,
+      "cpu": {
+        "n": 1,
+        "meanMs": 300.8000000002794,
+        "p50Ms": 300.8000000002794,
+        "p95Ms": 300.8000000002794,
+        "p99Ms": 300.8000000002794,
+        "maxMs": 300.8000000002794
+      },
+      "gpu": null
+    },
+    "Optique ordinaire (corps du système + nuage)": {
+      "calls": 1,
+      "cpu": {
+        "n": 1,
+        "meanMs": 2.3000000002793968,
+        "p50Ms": 2.3000000002793968,
+        "p95Ms": 2.3000000002793968,
+        "p99Ms": 2.3000000002793968,
+        "maxMs": 2.3000000002793968
+      },
+      "gpu": null
+    },
+    "Fond diffus 256×256": {
+      "calls": 6,
+      "cpu": {
+        "n": 6,
+        "meanMs": 0.13333333330228925,
+        "p50Ms": 0.20000000018626451,
+        "p95Ms": 0.2999999998137355,
+        "p99Ms": 0.2999999998137355,
+        "maxMs": 0.2999999998137355
+      },
+      "gpu": null
+    },
+    "Ciel ponctuel 1024×1024": {
+      "calls": 6,
+      "cpu": {
+        "n": 6,
+        "meanMs": 0.38333333330228925,
+        "p50Ms": 0.2999999998137355,
+        "p95Ms": 1.1000000000931323,
+        "p99Ms": 1.1000000000931323,
+        "maxMs": 1.1000000000931323
+      },
+      "gpu": null
+    },
+    "Cible hors écran 552×600": {
+      "calls": 4,
+      "cpu": {
+        "n": 4,
+        "meanMs": 895.800000000163,
+        "p50Ms": 1.1000000000931323,
+        "p95Ms": 3581.2000000001863,
+        "p99Ms": 3581.2000000001863,
+        "maxMs": 3581.2000000001863
+      },
+      "gpu": null
+    }
+  },
+  "optics": "Optique ordinaire (corps du système)",
+  "pendingOptics": [],
+  "variantError": null,
+  "blackHolePreparation": {
+    "status": "idle"
+  },
+  "cloudPixels": [
+    1,
+    1
+  ],
+  "groupPixels": [
+    1,
+    1
+  ],
+  "groupReduced": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "groupPassReady": true,
+  "groupPassError": null,
+  "environmentPreparation": null,
+  "graphics": {
+    "profile": "balanced",
+    "cloud": {
+      "profile": "balanced",
+      "pixelBudget": 262144,
+      "scale": 0.5,
+      "sampleIntervalMs": 500,
+      "gpuTimers": false,
+      "medianGpuMs": null
+    },
+    "group": {
+      "profile": "balanced",
+      "pixelBudget": 262144,
+      "scale": 0.5,
+      "sampleIntervalMs": 500,
+      "gpuTimers": false,
+      "medianGpuMs": null
+    },
+    "environmentCache": 15,
+    "environmentEvictions": 0,
+    "volumeTargetBytesEstimate": 24
+  },
+  "drawWarmup": {
+    "pending": [],
+    "active": null,
+    "history": [
+      {
+        "label": "Groupe local HDR",
+        "wallMs": 4.099999999627471,
+        "status": "ready"
+      },
+      {
+        "label": "Optique ordinaire (corps du système)",
+        "wallMs": 167,
+        "status": "ready"
+      },
+      {
+        "label": "Nuage HDR émission/transmission",
+        "wallMs": 14.600000000093132,
+        "status": "ready"
+      },
+      {
+        "label": "Optique ordinaire (nuage)",
+        "wallMs": 300.90000000037253,
+        "status": "ready"
+      },
+      {
+        "label": "Optique ordinaire (corps du système + nuage)",
+        "wallMs": 2.5,
+        "status": "ready"
+      }
+    ]
+  },
+  "ordinaryPreparation": {
+    "status": "ready"
+  },
+  "sceneTimings": {
+    "note": "Temps écoulé par étape, attentes comprises ; ne pas additionner aux mesures GPU des dessins.",
+    "last": {
+      "target": "h70666",
+      "pos": [
+        0,
+        0,
+        0.00003162501481964132
+      ],
+      "transition": false,
+      "stages": [
+        {
+          "label": "Galaxies : sélection et photométrie",
+          "ms": 0.10000000009313226
+        },
+        {
+          "label": "Caméra et repères",
+          "ms": 0
+        },
+        {
+          "label": "Voie lactée : cube 128",
+          "ms": 0.09999999962747097
+        },
+        {
+          "label": "Environnements : création et mise à jour",
+          "ms": 0
+        },
+        {
+          "label": "Budget lumineux et relais points-volumes",
+          "ms": 0.20000000018626451
+        },
+        {
+          "label": "Recherche des corps proches",
+          "ms": 0
+        },
+        {
+          "label": "Gros plan : paramètres et textures",
+          "ms": 0
+        },
+        {
+          "label": "Géométrie locale",
+          "ms": 0
+        },
+        {
+          "label": "Repères de navigation",
+          "ms": 0
+        },
+        {
+          "label": "Catalogue des galaxies ponctuelles",
+          "ms": 0.10000000009313226
+        },
+        {
+          "label": "Captures des cubes de ciel et distances",
+          "ms": 0
+        },
+        {
+          "label": "Préparation des programmes optiques",
+          "ms": 0
+        },
+        {
+          "label": "Couche spectrale HDR",
+          "ms": 0.5
+        },
+        {
+          "label": "Uniformes optiques et corps secondaires",
+          "ms": 0.10000000009313226
+        },
+        {
+          "label": "Dessin Groupe local",
+          "ms": 0
+        },
+        {
+          "label": "Dessin nuage",
+          "ms": 0
+        },
+        {
+          "label": "Composition optique finale",
+          "ms": 0.19999999972060323
+        },
+        {
+          "label": "Repères et surcouches",
+          "ms": 0
+        },
+        {
+          "label": "Vaisseau 3D",
+          "ms": 0
+        },
+        {
+          "label": "Affichage final et vaisseau",
+          "ms": 0
+        }
+      ],
+      "composite": {
+        "variant": "Optique ordinaire (corps du système)",
+        "wallMs": 0.19999999972060323,
+        "programsBefore": 13,
+        "programsAfter": 13
+      },
+      "totalMs": 1.2999999998137355,
+      "error": null
+    },
+    "slowFrames": [
+      {
+        "target": "h70666",
+        "pos": [
+          0,
+          0,
+          0.00003162501481964132
+        ],
+        "transition": true,
+        "stages": [
+          {
+            "label": "Galaxies : sélection et photométrie",
+            "ms": 0.6000000000931323
+          },
+          {
+            "label": "Caméra et repères",
+            "ms": 0.3000000002793968
+          },
+          {
+            "label": "Voie lactée : cube 128",
+            "ms": 2331.0999999996275
+          },
+          {
+            "label": "Environnements : création et mise à jour",
+            "ms": 1979.6000000000931
+          },
+          {
+            "label": "Budget lumineux et relais points-volumes",
+            "ms": 139.20000000018626
+          },
+          {
+            "label": "Recherche des corps proches",
+            "ms": 22.299999999813735
+          },
+          {
+            "label": "Gros plan : paramètres et textures",
+            "ms": 0.6000000000931323
+          },
+          {
+            "label": "Géométrie locale",
+            "ms": 0
+          },
+          {
+            "label": "Repères de navigation",
+            "ms": 0.5
+          },
+          {
+            "label": "Catalogue des galaxies ponctuelles",
+            "ms": 0.2999999998137355
+          },
+          {
+            "label": "Positions des étoiles",
+            "ms": 6
+          },
+          {
+            "label": "Captures des cubes de ciel et distances",
+            "ms": 2262
+          },
+          {
+            "label": "Préparation des programmes optiques",
+            "ms": 54.8000000002794
+          },
+          {
+            "label": "Couche spectrale HDR",
+            "ms": 1
+          },
+          {
+            "label": "Uniformes optiques et corps secondaires",
+            "ms": 1.1000000000931323
+          },
+          {
+            "label": "Dessin Groupe local",
+            "ms": 0.09999999962747097
+          },
+          {
+            "label": "Dessin nuage",
+            "ms": 0
+          },
+          {
+            "label": "Composition optique finale",
+            "ms": 5
+          },
+          {
+            "label": "Repères et surcouches",
+            "ms": 0
+          },
+          {
+            "label": "Vaisseau 3D",
+            "ms": 0
+          },
+          {
+            "label": "Affichage final et vaisseau",
+            "ms": 0.10000000009313226
+          }
+        ],
+        "composite": {
+          "variant": "Optique ordinaire (ciel profond)",
+          "wallMs": 5,
+          "programsBefore": 9,
+          "programsAfter": 9
+        },
+        "totalMs": 6804.600000000093,
+        "error": null
+      },
+      {
+        "target": "h70666",
+        "pos": [
+          0,
+          0,
+          0.00003162501481964132
+        ],
+        "transition": false,
+        "stages": [
+          {
+            "label": "Galaxies : sélection et photométrie",
+            "ms": 0.20000000018626451
+          },
+          {
+            "label": "Caméra et repères",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Voie lactée : cube 128",
+            "ms": 0
+          },
+          {
+            "label": "Environnements : création et mise à jour",
+            "ms": 0.09999999962747097
+          },
+          {
+            "label": "Budget lumineux et relais points-volumes",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Recherche des corps proches",
+            "ms": 0
+          },
+          {
+            "label": "Gros plan : paramètres et textures",
+            "ms": 0
+          },
+          {
+            "label": "Géométrie locale",
+            "ms": 0
+          },
+          {
+            "label": "Repères de navigation",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Catalogue des galaxies ponctuelles",
+            "ms": 0
+          },
+          {
+            "label": "Captures des cubes de ciel et distances",
+            "ms": 0
+          },
+          {
+            "label": "Préparation des programmes optiques",
+            "ms": 167.10000000009313
+          },
+          {
+            "label": "Couche spectrale HDR",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Uniformes optiques et corps secondaires",
+            "ms": 0.19999999972060323
+          },
+          {
+            "label": "Dessin Groupe local",
+            "ms": 0
+          },
+          {
+            "label": "Dessin nuage",
+            "ms": 0
+          },
+          {
+            "label": "Composition optique finale",
+            "ms": 0.39999999990686774
+          },
+          {
+            "label": "Repères et surcouches",
+            "ms": 0
+          },
+          {
+            "label": "Vaisseau 3D",
+            "ms": 0
+          },
+          {
+            "label": "Affichage final et vaisseau",
+            "ms": 0
+          }
+        ],
+        "composite": {
+          "variant": "Optique ordinaire (ciel profond)",
+          "wallMs": 0.39999999990686774,
+          "programsBefore": 9,
+          "programsAfter": 9
+        },
+        "totalMs": 168.39999999990687,
+        "error": null
+      },
+      {
+        "target": "h70666",
+        "pos": [
+          0,
+          0,
+          0.00003162501481964132
+        ],
+        "transition": false,
+        "stages": [
+          {
+            "label": "Galaxies : sélection et photométrie",
+            "ms": 0.2999999998137355
+          },
+          {
+            "label": "Caméra et repères",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Voie lactée : cube 128",
+            "ms": 0
+          },
+          {
+            "label": "Environnements : création et mise à jour",
+            "ms": 0
+          },
+          {
+            "label": "Budget lumineux et relais points-volumes",
+            "ms": 0.2999999998137355
+          },
+          {
+            "label": "Recherche des corps proches",
+            "ms": 72.39999999990687
+          },
+          {
+            "label": "Gros plan : paramètres et textures",
+            "ms": 0
+          },
+          {
+            "label": "Géométrie locale",
+            "ms": 0
+          },
+          {
+            "label": "Repères de navigation",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Catalogue des galaxies ponctuelles",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Captures des cubes de ciel et distances",
+            "ms": 0
+          },
+          {
+            "label": "Préparation des programmes optiques",
+            "ms": 63.60000000009313
+          },
+          {
+            "label": "Couche spectrale HDR",
+            "ms": 0
+          },
+          {
+            "label": "Uniformes optiques et corps secondaires",
+            "ms": 0.2999999998137355
+          },
+          {
+            "label": "Dessin Groupe local",
+            "ms": 0
+          },
+          {
+            "label": "Dessin nuage",
+            "ms": 0
+          },
+          {
+            "label": "Composition optique finale",
+            "ms": 0.5
+          },
+          {
+            "label": "Repères et surcouches",
+            "ms": 0
+          },
+          {
+            "label": "Vaisseau 3D",
+            "ms": 0
+          },
+          {
+            "label": "Affichage final et vaisseau",
+            "ms": 0
+          }
+        ],
+        "composite": {
+          "variant": "Optique ordinaire (corps du système)",
+          "wallMs": 0.5,
+          "programsBefore": 10,
+          "programsAfter": 10
+        },
+        "totalMs": 137.6999999997206,
+        "error": null
+      },
+      {
+        "target": "h70666",
+        "pos": [
+          0,
+          0,
+          0.00003162501481964132
+        ],
+        "transition": false,
+        "stages": [
+          {
+            "label": "Galaxies : sélection et photométrie",
+            "ms": 0.20000000018626451
+          },
+          {
+            "label": "Caméra et repères",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Voie lactée : cube 128",
+            "ms": 0
+          },
+          {
+            "label": "Environnements : création et mise à jour",
+            "ms": 0
+          },
+          {
+            "label": "Budget lumineux et relais points-volumes",
+            "ms": 0.6000000000931323
+          },
+          {
+            "label": "Recherche des corps proches",
+            "ms": 0
+          },
+          {
+            "label": "Gros plan : paramètres et textures",
+            "ms": 0
+          },
+          {
+            "label": "Géométrie locale",
+            "ms": 0
+          },
+          {
+            "label": "Repères de navigation",
+            "ms": 0
+          },
+          {
+            "label": "Catalogue des galaxies ponctuelles",
+            "ms": 0
+          },
+          {
+            "label": "Captures des cubes de ciel et distances",
+            "ms": 0.09999999962747097
+          },
+          {
+            "label": "Préparation des programmes optiques",
+            "ms": 301.10000000009313
+          },
+          {
+            "label": "Couche spectrale HDR",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Uniformes optiques et corps secondaires",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Dessin Groupe local",
+            "ms": 0
+          },
+          {
+            "label": "Dessin nuage",
+            "ms": 0
+          },
+          {
+            "label": "Composition optique finale",
+            "ms": 0.2999999998137355
+          },
+          {
+            "label": "Repères et surcouches",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Vaisseau 3D",
+            "ms": 0
+          },
+          {
+            "label": "Affichage final et vaisseau",
+            "ms": 0
+          }
+        ],
+        "composite": {
+          "variant": "Optique ordinaire (corps du système)",
+          "wallMs": 0.2999999998137355,
+          "programsBefore": 11,
+          "programsAfter": 11
+        },
+        "totalMs": 302.70000000018626,
+        "error": null
+      },
+      {
+        "target": "h70666",
+        "pos": [
+          0,
+          0,
+          0.00003162501481964132
+        ],
+        "transition": false,
+        "stages": [
+          {
+            "label": "Galaxies : sélection et photométrie",
+            "ms": 0.19999999972060323
+          },
+          {
+            "label": "Caméra et repères",
+            "ms": 0.20000000018626451
+          },
+          {
+            "label": "Voie lactée : cube 128",
+            "ms": 0
+          },
+          {
+            "label": "Environnements : création et mise à jour",
+            "ms": 0
+          },
+          {
+            "label": "Budget lumineux et relais points-volumes",
+            "ms": 0.2999999998137355
+          },
+          {
+            "label": "Recherche des corps proches",
+            "ms": 52.200000000186265
+          },
+          {
+            "label": "Gros plan : paramètres et textures",
+            "ms": 0
+          },
+          {
+            "label": "Géométrie locale",
+            "ms": 0
+          },
+          {
+            "label": "Repères de navigation",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Catalogue des galaxies ponctuelles",
+            "ms": 0
+          },
+          {
+            "label": "Captures des cubes de ciel et distances",
+            "ms": 0
+          },
+          {
+            "label": "Préparation des programmes optiques",
+            "ms": 54.59999999962747
+          },
+          {
+            "label": "Couche spectrale HDR",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Uniformes optiques et corps secondaires",
+            "ms": 7.600000000093132
+          },
+          {
+            "label": "Dessin Groupe local",
+            "ms": 0
+          },
+          {
+            "label": "Dessin nuage",
+            "ms": 0
+          },
+          {
+            "label": "Composition optique finale",
+            "ms": 0.2999999998137355
+          },
+          {
+            "label": "Repères et surcouches",
+            "ms": 0
+          },
+          {
+            "label": "Vaisseau 3D",
+            "ms": 0
+          },
+          {
+            "label": "Affichage final et vaisseau",
+            "ms": 0.10000000009313226
+          }
+        ],
+        "composite": {
+          "variant": "Optique ordinaire (corps du système)",
+          "wallMs": 0.2999999998137355,
+          "programsBefore": 12,
+          "programsAfter": 12
+        },
+        "totalMs": 115.6999999997206,
+        "error": null
+      },
+      {
+        "target": "h70666",
+        "pos": [
+          0,
+          0,
+          0.00003162501481964132
+        ],
+        "transition": false,
+        "stages": [
+          {
+            "label": "Galaxies : sélection et photométrie",
+            "ms": 15.399999999906868
+          },
+          {
+            "label": "Caméra et repères",
+            "ms": 0.20000000018626451
+          },
+          {
+            "label": "Voie lactée : cube 128",
+            "ms": 0
+          },
+          {
+            "label": "Environnements : création et mise à jour",
+            "ms": 0.19999999972060323
+          },
+          {
+            "label": "Budget lumineux et relais points-volumes",
+            "ms": 0.10000000009313226
+          },
+          {
+            "label": "Recherche des corps proches",
+            "ms": 12.899999999906868
+          },
+          {
+            "label": "Gros plan : paramètres et textures",
+            "ms": 0
+          },
+          {
+            "label": "Géométrie locale",
+            "ms": 0
+          },
+          {
+            "label": "Repères de navigation",
+            "ms": 0
+          },
+          {
+            "label": "Catalogue des galaxies ponctuelles",
+            "ms": 21.899999999906868
+          },
+          {
+            "label": "Positions des étoiles",
+            "ms": 0
+          },
+          {
+            "label": "Captures des cubes de ciel et distances",
+            "ms": 13
+          },
+          {
+            "label": "Préparation des programmes optiques",
+            "ms": 6.600000000093132
+          },
+          {
+            "label": "Couche spectrale HDR",
+            "ms": 3581.899999999907
+          },
+          {
+            "label": "Uniformes optiques et corps secondaires",
+            "ms": 1.400000000372529
+          },
+          {
+            "label": "Dessin Groupe local",
+            "ms": 0
+          },
+          {
+            "label": "Dessin nuage",
+            "ms": 0
+          },
+          {
+            "label": "Composition optique finale",
+            "ms": 0.39999999990686774
+          },
+          {
+            "label": "Repères et surcouches",
+            "ms": 0
+          },
+          {
+            "label": "Vaisseau 3D",
+            "ms": 0
+          },
+          {
+            "label": "Affichage final et vaisseau",
+            "ms": 0
+          }
+        ],
+        "composite": {
+          "variant": "Optique ordinaire (corps du système)",
+          "wallMs": 0.2999999998137355,
+          "programsBefore": 13,
+          "programsAfter": 13
+        },
+        "totalMs": 3654,
+        "error": null
+      }
+    ],
+    "transitions": [
+      {
+        "target": "h70666",
+        "pos": [
+          0,
+          0,
+          0.00003162501481964132
+        ],
+        "transition": true,
+        "stages": [
+          {
+            "label": "Galaxies : sélection et photométrie",
+            "ms": 0.6000000000931323
+          },
+          {
+            "label": "Caméra et repères",
+            "ms": 0.3000000002793968
+          },
+          {
+            "label": "Voie lactée : cube 128",
+            "ms": 2331.0999999996275
+          },
+          {
+            "label": "Environnements : création et mise à jour",
+            "ms": 1979.6000000000931
+          },
+          {
+            "label": "Budget lumineux et relais points-volumes",
+            "ms": 139.20000000018626
+          },
+          {
+            "label": "Recherche des corps proches",
+            "ms": 22.299999999813735
+          },
+          {
+            "label": "Gros plan : paramètres et textures",
+            "ms": 0.6000000000931323
+          },
+          {
+            "label": "Géométrie locale",
+            "ms": 0
+          },
+          {
+            "label": "Repères de navigation",
+            "ms": 0.5
+          },
+          {
+            "label": "Catalogue des galaxies ponctuelles",
+            "ms": 0.2999999998137355
+          },
+          {
+            "label": "Positions des étoiles",
+            "ms": 6
+          },
+          {
+            "label": "Captures des cubes de ciel et distances",
+            "ms": 2262
+          },
+          {
+            "label": "Préparation des programmes optiques",
+            "ms": 54.8000000002794
+          },
+          {
+            "label": "Couche spectrale HDR",
+            "ms": 1
+          },
+          {
+            "label": "Uniformes optiques et corps secondaires",
+            "ms": 1.1000000000931323
+          },
+          {
+            "label": "Dessin Groupe local",
+            "ms": 0.09999999962747097
+          },
+          {
+            "label": "Dessin nuage",
+            "ms": 0
+          },
+          {
+            "label": "Composition optique finale",
+            "ms": 5
+          },
+          {
+            "label": "Repères et surcouches",
+            "ms": 0
+          },
+          {
+            "label": "Vaisseau 3D",
+            "ms": 0
+          },
+          {
+            "label": "Affichage final et vaisseau",
+            "ms": 0.10000000009313226
+          }
+        ],
+        "composite": {
+          "variant": "Optique ordinaire (ciel profond)",
+          "wallMs": 5,
+          "programsBefore": 9,
+          "programsAfter": 9
+        },
+        "totalMs": 6804.600000000093,
+        "error": null
+      }
+    ]
+  },
+  "skyCapture": {
+    "key": "true|h70666|1|true|true||true",
+    "pos": [
+      0,
+      0,
+      0.00003162501481964132
+    ],
+    "t": 0,
+    "wall": 1.249900000000002,
+    "nearest": 0.00003162501481964132
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "Observation settings initially folded, identify and clean view directly available",
+    "Keyboard disclosure opens actual instruments without changing ship or mission clocks",
+    "Space on focused disclosure toggles the instrument without pausing or piloting the ship",
+    "1440x900: complete desktop shell fits viewport; sky >=44% of height, observation settings outside image",
+    "1200x780: complete desktop shell fits viewport; sky >=44% of height, observation settings outside image",
+    "960x700: complete desktop shell fits viewport; sky >=44% of height, observation settings outside image",
+    "Folded instrument retains real band controls",
+    "Clean-view round trip preserves mission",
+    "No JavaScript or shader errors"
+  ],
+  "errors": []
+}

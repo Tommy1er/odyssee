@@ -30,6 +30,8 @@ import {galactocentric,fromGalactocentric,region,GAL_CENTER} from './galaxy.js';
 import {s2Position} from './environments.js';
 import {catalogObjects,radiusLy} from './body-data.js';
 const norm3=v=>v?Math.hypot(...v):0,$=id=>document.getElementById(id),$$=s=>[...document.querySelectorAll(s)],fmt=(n,p=2)=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:p}).format(n);
+// Écran court (voir cockpit.css) : le suivi du trajet s'ouvre replié à l'arrivée pour laisser la vue libre.
+const shortScreen=()=>matchMedia('(min-width:901px) and (max-height:760px)').matches;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const normalize=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const length=d=>d<.00000001?fmt(d*P.LY/1000,1)+' km':d<.01?fmt(d/P.AU,3)+' ua':fmt(d,d<10?3:1)+' al';
@@ -153,7 +155,7 @@ function startGoal(goal,missionStart=state.t){
   if(c.min<CLEARANCE){const d=P.sub(P.sub(c.at.x,positionAt(leaving,c.at.t)),P.sub(state.pos,positionAt(leaving,state.t))),p=sidestep(leaving,state.pos,state.t,d);
    record('Trajet direct vers '+goal.name+' : passage prévu à '+fmt(c.min,2)+' rayons du centre de '+leaving.name+'. Dégagement latéral d’abord.');toast('Dégagement autour de '+leaving.name+' avant le départ : le trajet direct traverserait l’astre.');
    goal={end:P.add(leaving.xyz,p),name:leaving.name+' · dégagement',object:leaving,local:true,offset:p,then:goal};estimate=rendezvousEstimate(goal,state.pos,state.u,state.t,state.cap);}}
- state.arrival=null;state.navCompact=false;state.navPinned=false;state.trackTarget=true;state.autoPlayback=true;state.engine='coast';
+ state.arrival=null;state.navCompact=shortScreen();state.navPinned=false;state.trackTarget=true;state.autoPlayback=true;state.engine='coast';
  const F=estimate.F,relative=P.norm(estimate.stop.u);
  if(relative>1e-12)state.ap={stage:'brake',goal,F,end:estimate.route.end,name:goal.name,missionStart};else prepareRoute(goal,F,state.t,missionStart);
  state.paused=false;state.rate=Math.max(1/P.YEAR,estimate.t/(goal.local?8:75));setRateOption(state.rate,goal.local?'Manœuvre locale (~8 s)':'Trajet + approche ralentie');syncButtons();ui();
@@ -169,7 +171,7 @@ function holdNear(o){
 function arrive(a,before){
  state.ap=null;state.engine='coast';updateEphemeris(objects,state);state.odometer+=P.norm(P.sub(state.pos,before));
  if(a.goal.then){record('Dégagement terminé · départ vers '+a.goal.then.name);startGoal(a.goal.then,a.missionStart);return;}
- const o=a.goal.object;if(o)setTarget(o);aimTarget();state.trackTarget=true;state.navCompact=false;state.navPinned=false;state.autoPlayback=false;state.paused=true;
+ const o=a.goal.object;if(o)setTarget(o);aimTarget();state.trackTarget=true;state.navCompact=shortScreen();state.navPinned=false;state.autoPlayback=false;state.paused=true;
  const {r,need,hold}=holdNear(o);
  state.arrival={id:o?.id,name:a.name,t:state.t,wall:state.wall,contract:'rendezvous',distance:r,relativeSpeed:relativeSpeed(o),hold,need};
  record('Rendez-vous : '+a.name+' · '+length(r)+' du centre · vitesse relative '+fmt(state.arrival.relativeSpeed,3)+' m/s'+(hold==='active'?' · maintien '+fmt(need,3)+' g':hold==='impossible'?' · maintien impossible ('+fmt(need,1)+' g) : chute libre':''));
@@ -196,7 +198,7 @@ function tickPassage(now){
  if(p.unstable&&p.progress>=.44&&!p.transferred){abortPassage('Instabilité du scénario : ouverture effondrée');toast('Passage instable fermé : position inchangée. Choisis Stable ou stabilise avant la traversée.');return;}
  if(p.progress>=.5&&!p.transferred){
   p.transferred=true;state.target=p.target;state.pos=targetEnd(p.target);{const v=velocityAt(p.target,state.t);state.u=P.mul(v,P.gamma(P.norm(v)));}updateEphemeris(objects,state);aimTarget();state.trackTarget=true;
-  state.arrival={id:p.target.id,name:p.target.name,t:state.t,wall:state.wall,method:'passage',contract:'passage',relativeSpeed:0,...holdNear(p.target)};state.navCompact=false;state.navPinned=false;
+  state.arrival={id:p.target.id,name:p.target.name,t:state.t,wall:state.wall,method:'passage',contract:'passage',relativeSpeed:0,...holdNear(p.target)};state.navCompact=shortScreen();state.navPinned=false;
   state.lastJump={id:p.target.id,from:p.from,to:[...state.pos],separation:P.norm(P.sub(state.pos,p.from))};record('SORTIE DU SAUT FICTIF : '+p.target.name,true);
   state.rate=60/P.YEAR;setRateOption(state.rate,'Observation · 1 min / seconde');$('passage-cancel').hidden=true;$('passage-stabilize').hidden=true;
   $('wormhole-status').textContent='Sortie confirmée : '+p.target.name+' · déplacement '+length(state.lastJump.separation)+'. Horloges inchangées.';
