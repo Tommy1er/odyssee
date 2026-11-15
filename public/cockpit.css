@@ -111,3 +111,17 @@ body{font-size:14px}.flight-workspace{grid-template-columns:278px minmax(350px,1
  #observatory-controls{grid-column:1/-1;margin:4px 0}#observatory-controls .observation-settings{grid-template-columns:1fr}
 }
 @media(min-width:901px){#navigation-hud{max-height:calc(100% - 260px);overflow-y:auto}}
+/* Scientific instrument palette; these colors qualify interface state, never astrophysical emission. */
+:root{--bg:#070d16;--panel:#111f2c;--muted:#a7bbcb;--mint:#8ee2cc;--gold:#f0b56b;--observation:#76b9f5;--error:#ec807d;--speculative:#bba5e7}
+body{color:#edf3f7}.section-title{color:var(--muted)}
+@media(min-width:901px){
+ .flight-brand small{font-size:11px;letter-spacing:.8px}.section-title{font-size:12px;letter-spacing:1px}
+ .destination small,.route-values,.route-card>p,.route-card #route-status{font-size:12px}
+ .clock-row>span,.clock-row small,.speed-dial>span,.speed-dial p{font-size:12px;letter-spacing:.2px}
+ .coordinate-card .section-title,.coordinate-card>small,.coordinate-card p,.vector-stats>span{font-size:12px}
+ .physics-switches,.sandbox label,.sandbox button,.sandbox small,.optical-summary,.optical-summary p{font-size:12px}
+ .flight-controls .control-group>span,.flight-controls .control-group>label,.control-group small,.mission-controls small,.time-control small{font-size:12px;letter-spacing:.4px}
+ .flight-footer{font-size:12px;letter-spacing:0}.canvas-foot{font-size:12px}
+ #navigation-hud strong,#navigation-hud p,#navigation-hud button{font-size:12px}
+ .primary{font-size:14px}.glass-top small{font-size:12px;letter-spacing:0}
+}
