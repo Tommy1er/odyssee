@@ -21,6 +21,12 @@ export function observerProjectionUniforms(){return {
  observerBasis:{value:new T.Matrix3()},observerSteps:{value:new T.Matrix3()}
 };}
 
+// Standalone CloudPass/GroupPass users also need the new defaults. Reuse the
+// existing entries when passes share the main optical uniforms.
+export function ensureObserverProjectionUniforms(uniforms){
+ if(!uniforms.observerPrecise)Object.assign(uniforms,observerProjectionUniforms());
+}
+
 const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 const unit=a=>{const m=Math.hypot(...a);return a.map(v=>v/m);};

@@ -1,4 +1,4 @@
-import {observerProjectionGLSL,updateObserverProjection} from './observer-projection.js';
+import {ensureObserverProjectionUniforms,observerProjectionGLSL,updateObserverProjection} from './observer-projection.js';
 import {VolumeBudget} from './graphics-quality.js';
 import * as T from 'three';
 import {localGroupGLSL,GROUP_SLOTS} from './local-group.js';
@@ -10,7 +10,7 @@ export const groupSampleGLSL=filtered('if(groupReduced[j]>.5)continue;').replace
 uniform sampler2D groupLight;uniform float groupLightScale,groupReducedOn;
 vec3 groupRadiance(vec3 ray){vec3 L=groupDirectRadiance(ray);if(groupReducedOn>.5)L+=texture2D(groupLight,uvp*.5+.5).rgb*groupLightScale;return L;}`;
 export class GroupPass{
- constructor(uniforms){this.budget=new VolumeBudget();this.uniforms=uniforms;this.ready=false;
+ constructor(uniforms){ensureObserverProjectionUniforms(uniforms);this.budget=new VolumeBudget();this.uniforms=uniforms;this.ready=false;
   this.target=new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,minFilter:T.LinearFilter,magFilter:T.LinearFilter,depthBuffer:false,stencilBuffer:false,generateMipmaps:false});this.target.texture.name='Groupe local : grands volumes';
   Object.assign(uniforms,{groupReduced:{value:Array(GROUP_SLOTS).fill(0)},groupReducedOn:{value:0},groupLight:{value:this.target.texture},groupLightScale:{value:1}});
   this.material=new T.ShaderMaterial({name:'Groupe local HDR demi-résolution',uniforms,depthTest:false,depthWrite:false,

@@ -1,4 +1,4 @@
-import {observerProjectionGLSL,observerProjectedBoostGLSL,updateObserverProjection} from './observer-projection.js';
+import {ensureObserverProjectionUniforms,observerProjectionGLSL,observerProjectedBoostGLSL,updateObserverProjection} from './observer-projection.js';
 import {VolumeBudget} from './graphics-quality.js';
 import * as T from 'three';
 import {cloudGLSL} from './environments.js';
@@ -31,7 +31,7 @@ export function drawForTarget(renderer,scene,camera,target){
  finally{renderer.autoClear=clear;renderer.setRenderTarget(previous,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
 }
 export class CloudPass{
- constructor(uniforms){this.budget=new VolumeBudget();
+ constructor(uniforms){ensureObserverProjectionUniforms(uniforms);this.budget=new VolumeBudget();
   this.target=new T.WebGLRenderTarget(1,1,{count:2,type:T.HalfFloatType,minFilter:T.LinearFilter,magFilter:T.LinearFilter,depthBuffer:false,stencilBuffer:false,generateMipmaps:false});
   this.target.textures[0].name='Nuage : émission';this.target.textures[1].name='Nuage : transmission';
   uniforms.cloudRadianceScale={value:1};this.uniforms=uniforms;

@@ -8,6 +8,7 @@ on:
       - 'src/sky-optics.js'
       - 'src/group-pass.js'
       - 'scripts/validate-observer-projection-gpu.cjs'
+      - 'scripts/validate-observer-projection.mjs'
       - 'src/physics.js'
       - 'scripts/validate-high-gamma.mjs'
       - 'scripts/validate-high-gamma-gpu.cjs'
@@ -29,6 +30,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node scripts/validate-high-gamma.mjs
+      - run: node scripts/validate-observer-projection.mjs
       - run: npm run test:ui:install:ci
       - run: node scripts/validate-high-gamma-gpu.cjs
       - run: node scripts/validate-observer-projection-gpu.cjs
