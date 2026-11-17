@@ -62,15 +62,26 @@ contrats d'initialisation passent localement. La construction est réussie.
 Les résultats finaux de CI et la publication sont consignés ci-dessous une fois
 terminés. Aucune réussite du cockpit complet n'est déduite du seul banc GPU.
 
-## Résultats enregistrés pendant la validation
+## Résultats finaux
 
 - Le dernier banc GPU, sur `07196ca`, passe 750/750 : run 44189794302, job 134415823608, artifact 14376650694. Rapport complet archivé dans `validation/reports/observer-projection-gpu-2026-11-17.json`.
 - Les six jobs de carte/cockpit spécialisés passent sur `07196ca` : run 44189794417, dont CloudPass et GroupPass. Les échecs initiaux d’initialisation standalone sur e75397d sont corrigés ; ils ne sont pas ignorés.
 - La suite spectrale complète et la capture lunaire passent sur `e75397d` : run 44188860386. Le correctif suivant ne change que l’initialisation des uniformes dans les passes standalone et les tests ; les uniformes du cockpit sont déjà créés par SkyOptics.
 - Le relais de chute radiale `9aacd0a` confirme 17 contrôles sur `ee6fbe4`, et la publication réussie de la version 52 avec l’empilement de Claude.
 
-La version 53 est enregistrée (source Sites `fcbbe1f353cbba9ac115b1f7a0d58f953f71fa0c`). Son déploiement attend les régressions restantes.
+La version 53 est publiée (source Sites `fcbbe1f353cbba9ac115b1f7a0d58f953f71fa0c`). Le résultat natif est `succeeded` le 17 novembre 2026 à 22:35:28 UTC. Audience publique conservée.
 
 - Sauvegarde/reprise, directions des nébuleuses et rendez-vous : success sur `07196ca`, run 44189794288.
 - Cinq jobs de validation reproductible sur `e75397d` : success, run 44188860197. Le cockpit (job 134412562098) termine les 17 contrôles sans erreur navigateur/shader, dont chute radiale, solution analytique, énergie géodésique, reprise manuelle et vue mobile.
-- Sur `07196ca`, numérique, propulsion, voyage cosmologique et cosmos passent (run 44189794322) ; le dernier passage cockpit est encore en cours à cette étape de consignation.
+- Sur `07196ca`, les cinq jobs numérique, propulsion, voyage cosmologique, cosmos et cockpit passent : run 44189794322. Le cockpit (job 134415824367) termine les 17 contrôles, sans erreur navigateur ou shader.
+
+## Publication confirmée
+
+- URL : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site
+- Version : 53 (`appgprj_6aaed9890f1c8191ac977fe0fadcc659~appgver_d898fbab06e48191b891428754d677b5`).
+- Déploiement : `appgdep_6afcd6a482b8819182b9976d8fb02a6c`, statut `succeeded`.
+- Code applicatif validé : `07196ca4f12a3b338a780c8d2aef76845668080a` ; les commits suivants de ce lot ajoutent les rapports et la documentation, sans modifier le rendu.
+- Source Sites : `fcbbe1f353cbba9ac115b1f7a0d58f953f71fa0c`. Son archive contient le même code applicatif et les rapports alors disponibles.
+- Exemple de chute mesuré sur le code final : r0 = 15.504167445938892 Rs ; r = 15.497506546681176 Rs ; t = 2.6163502951879916 Rs/c ; tau = 2.530543331951475 Rs/c, contre 2.5305433319520327 pour la solution analytique ; vitesse locale 0.005443636481678695 c.
+
+La refonte UI V3 reste sous le lead de Claude. Pas de nouvelle mesure matérielle Iris Xe ou téléphone ; Claude peut maintenant contrôler cette publication sur le PC. Les limites spectrales et le domaine échantillonné du banc restent ceux explicités plus haut.
