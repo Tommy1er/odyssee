@@ -4,7 +4,16 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "node scripts/serve.mjs",
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "test:physics": "node scripts/validate-physics.mjs && node scripts/validate-optics.mjs && node scripts/validate-navigation.mjs && node scripts/validate-orbits.mjs && node scripts/validate-gravity.mjs",
+    "test:ui:install": "playwright install chromium",
+    "test:ui:install:ci": "playwright install --with-deps chromium",
+    "test:ui:cockpit": "node scripts/validate-physics-ui.cjs",
+    "test:ui:cosmos": "node scripts/validate-cosmos.cjs",
+    "test:ui:propulsion": "node scripts/validate-propulsion-ui.cjs",
+    "test:ui:journey": "node scripts/validate-cosmic-flight-ui.cjs",
+    "test:ui": "npm run build && npm run test:ui:cockpit && npm run test:ui:cosmos && npm run test:ui:propulsion && npm run test:ui:journey",
+    "test:all": "npm run test:physics && npm run test:ui"
   },
   "dependencies": {
     "esbuild": "^0.25.10",
@@ -12,6 +21,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "jsdom": "^26.1.0"
+    "jsdom": "^26.1.0",
+    "playwright": "1.56.1"
   }
 }

@@ -19,7 +19,7 @@ jobs:
       - run: npm ci
       - run: node scripts/validate-rocket-transfer.mjs && node scripts/validate-cosmic-journey.mjs && node scripts/validate-rocket-bench.mjs && node scripts/validate-rocket-lcdm.mjs && node scripts/validate-photon-path.mjs && node scripts/validate-physics.mjs && node scripts/validate-navigation.mjs
       - run: npm run build
-      - run: npm install --no-save playwright@1.56.1 && npx playwright install --with-deps chromium
+      - run: npm run test:ui:install:ci
       - run: node scripts/validate-propulsion-ui.cjs && node scripts/validate-cosmic-flight-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()

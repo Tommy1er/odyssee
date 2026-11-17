@@ -1,0 +1,42 @@
+name: Reproducible validation from npm ci
+on:
+  push:
+    branches: [main]
+    paths: ['package.json', 'package-lock.json', '.github/workflows/reproducible-tests.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  numerical:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:physics
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [cockpit, cosmos, propulsion, journey]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:ui:install:ci
+      - run: npm run test:ui:${{ matrix.suite }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reproducible-${{ matrix.suite }}
+          path: validation/v2-screenshots/

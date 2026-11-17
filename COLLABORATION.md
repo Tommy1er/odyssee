@@ -28,7 +28,7 @@ Autoriser ce dépôt dans les intégrations GitHub de Claude et de ChatGPT/Codex
 
 Adresse : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site
 
-Le site reste sur **ChatGPT Sites**. Aucune migration vers Netlify, Vercel ou Cloudflare Pages. Après un changement envoyé par Claude sur GitHub, Abdoulaye demande à Codex de publier la dernière version. Codex récupère le dernier `main`, construit et vérifie le projet, puis publie sur le Site existant en conservant son identité et son audience privée. GitHub → Sites n’est pas automatiquement synchronisé.
+Le site reste sur **ChatGPT Sites**. Aucune migration vers Netlify, Vercel ou Cloudflare Pages. Après un changement envoyé par Claude sur GitHub, Abdoulaye demande à Codex de publier la dernière version. Codex récupère le dernier `main`, construit et vérifie le projet, puis publie sur le Site existant en conservant son identité et son audience actuelle. Depuis le 17 novembre 2026, Abdoulaye a explicitement demandé un accès public par lien pour la revue externe ; conserver cette audience sauf nouvelle instruction. GitHub → Sites n’est pas automatiquement synchronisé.
 
 La configuration interne Sites reste gérée dans le projet d’hébergement existant et n’est pas nécessaire pour exécuter le dépôt localement. La visibilité du dépôt GitHub et celle du site sont deux réglages indépendants ; ne pas les modifier pendant ce relais.
 
@@ -90,11 +90,21 @@ python scripts/validate-textures.py   # Pillow : décodage complet, tailles et h
 npm run build
 ```
 
-Pour les tests navigateur, installer Playwright localement sans modifier le verrouillage des dépendances de production :
+Playwright 1.56.1 est épinglé dans les dépendances de développement et le verrouillage npm. Après une installation propre :
 
 ```sh
-npm install --no-save --package-lock=false playwright
-npx playwright install chromium
+npm ci
+npm run test:physics
+npm run test:ui:install
+npm run test:ui
+# Ou les deux groupes : npm run test:all
+```
+
+`test:physics` couvre les cinq suites cœur (physics, optics, navigation, orbits, gravity). `test:ui` construit puis exécute séquentiellement quatre parcours : cockpit/physics, cosmos, propulsion et voyage cosmologique. `test:all` désigne ces deux groupes, pas tous les validateurs spécialisés du dépôt et pas une validation exhaustive du modèle. Le navigateur reste une installation distincte de `npm ci`. Sous Linux CI, utiliser `npm run test:ui:install:ci` pour installer aussi les bibliothèques système ; cette commande peut demander les droits système. Les workflows utilisent le même Playwright verrouillé, sans installation npm temporaire supplémentaire.
+
+Les autres régressions spécialisées restent exécutables individuellement :
+
+```sh
 node scripts/validate-cosmos.cjs
 node scripts/validate-comet-ui.cjs   # filtre Comètes, fiche, saut au périhélie, cartes 100 ua et Oort
 node scripts/validate-nebula-ui.cjs  # couleurs rendues d'Orion et M 57, œil / pose longue, fiche, Nuages de Magellan

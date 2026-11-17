@@ -3,6 +3,10 @@
 **Démarrage et reprise par Claude Code / Codex : [COLLABORATION.md](COLLABORATION.md).**
 Application statique Three.js : `npm ci`, `npm run build`, `npm run dev` (Node.js 20+, Python 3 pour le serveur). Ouvrir http://localhost:3000. Aucun compte ni clé API nécessaire en local.
 
+## Vérifications reproductibles
+
+Après `npm ci`, lancer `npm run test:physics` pour les cinq suites numériques cœur. Pour les quatre parcours UI de référence : `npm run test:ui:install`, puis `npm run test:ui` (construction incluse). `npm run test:all` enchaîne ces deux groupes ; les validateurs spécialisés restent documentés dans [COLLABORATION.md](COLLABORATION.md). Playwright est épinglé dans les dépendances de développement ; Chromium s’installe séparément. En CI Linux : `npm run test:ui:install:ci`.
+
 ## Cosmic structures and progressive exploration — 4 October 2026
 
 - `/cosmos.html`: four scale levels, explicit containment vs neighbouring structures, 19 named landmarks including distinct Virgo/Hercules clusters and superclusters, Laniakea, Norma/Great Attractor, Coma, Perseus–Pisces, Shapley and Boötes void. Search, 3D picking, smooth focus, free camera immersion, touch controls, clean view, sources and model-size toggle.
@@ -113,7 +117,7 @@ Sources de référence :
 
 Les rapports sous `validation/` documentent les contrôles du cockpit et de l'atlas. Tests de navigateur : navigation, reprise d'impulsion, pilotage sans destination, arrivée locale, planètes, lunes, trous noirs, sauts spéculatifs, carte 3D, sources et affichage mobile. Les tests mathématiques couvrent les horloges, l'accélération, l'inertie, le freinage, le plafond, l'aberration/Doppler et les transformations de coordonnées.
 
-Accès Sites limité au propriétaire Abdoulaye. Ne pas élargir l'audience. `noindex` complète l'authentification de l'hébergeur et ne la remplace pas. Aucun secret dans le bundle ou le dépôt.
+Depuis le 17 novembre 2026, accès Sites public par lien à la demande explicite d’Abdoulaye pour la revue externe. `noindex,nofollow` est conservé : l’accès public n’implique pas une demande d’indexation. Ne pas modifier cette audience sans nouvelle instruction. Aucun secret dans le bundle ou le dépôt.
 
 ## Galactic and optical extension — 2026-10-01
 
