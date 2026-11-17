@@ -9,10 +9,11 @@ const out=path.resolve(__dirname,'../validation/v2-screenshots');
  const {observerProjectionGLSL:declarations,observerProjectionUniforms,updateObserverProjection}=await import('../src/observer-projection.js');
  const cases=[];
  for(const gamma of [1,1.000001,100,1e4,1e6,1e8,1e12])
- for(const av of [[0,0,-1],[.6,0,-.8],[.3,.5,-.8]])
+ for(const [av,sv] of [[[0,0,-1],[1,0,0]],[[.6,0,-.8],[.8,0,.6]],[[.3,.5,-.8],[1,.2,.1]],[[0,0,-1],[1,.2,.1]],[[.6,0,-.8],[1,.2,.1]]])
  for(const [width,height,ix,iy] of [[961,701,480,350],[1280,585,640,292],[403,257,57,200]])
  for(const theta of [0,.1/gamma,1/gamma,10/gamma,Math.PI/4,Math.PI/2,Math.PI]){
-  const axis=new T.Vector3(...av).normalize(),side=new T.Vector3(1,.2,.1).addScaledVector(axis,-new T.Vector3(1,.2,.1).dot(axis)).normalize();
+  // Include the two original boundary-bench planes as well as out-of-plane rays.
+  const axis=new T.Vector3(...av).normalize(),side=new T.Vector3(...sv).addScaledVector(axis,-new T.Vector3(...sv).dot(axis)).normalize();
   const n=axis.clone().multiplyScalar(Math.cos(theta)).addScaledVector(side,theta===Math.PI?0:Math.sin(theta)).normalize();
   const aspect=width/height,tanFov=Math.tan(.6);
   const q=new T.Vector3((2*(ix+.5)/width-1)*aspect*tanFov,(2*(iy+.5)/height-1)*tanFov,-1).normalize();
