@@ -1,7 +1,8 @@
+import {observerProjectionGLSL,updateObserverProjection} from './observer-projection.js';
 import {VolumeBudget} from './graphics-quality.js';
 import * as T from 'three';
 import {localGroupGLSL,GROUP_SLOTS} from './local-group.js';
-import {observerRayGLSL,cloudSize,compileForTarget,drawForTarget} from './cloud-pass.js';
+import {projectedObserverRayGLSL as observerRayGLSL,cloudSize,compileForTarget,drawForTarget} from './cloud-pass.js';
 const mask='uniform float groupReduced[8];';
 const filtered=condition=>mask+localGroupGLSL.replace('float sh=groupShapes[j];',condition+'float sh=groupShapes[j];');
 // Small/distant galaxies retain the exact full-resolution march, including their point/volume handoff.
@@ -15,6 +16,7 @@ export class GroupPass{
   this.material=new T.ShaderMaterial({name:'Groupe local HDR demi-résolution',uniforms,depthTest:false,depthWrite:false,
    vertexShader:'varying vec2 uvp;void main(){uvp=position.xy;gl_Position=vec4(position.xy,0.,1.);}',
    fragmentShader:`precision highp float;varying vec2 uvp;uniform mat3 rotation;uniform vec3 axis;uniform float g,momentum,optics,aspect,tanFov,groupLightScale;
+${observerProjectionGLSL}
 ${filtered('if(groupReduced[j]<.5)continue;')}
 void main(){${observerRayGLSL}gl_FragColor=vec4(groupRadiance(ray)/groupLightScale,1.);}`});
   this.scene=new T.Scene();this.scene.add(new T.Mesh(new T.PlaneGeometry(2,2),this.material));this.camera=new T.OrthographicCamera(-1,1,1,-1,0,1);
@@ -34,7 +36,7 @@ void main(){${observerRayGLSL}gl_FragColor=vec4(groupRadiance(ray)/groupLightSca
   const viewport=renderer.getViewport(new T.Vector4()),scissor=renderer.getScissor(new T.Vector4()),test=renderer.getScissorTest(),target=renderer.getRenderTarget(),face=renderer.getActiveCubeFace(),mip=renderer.getActiveMipmapLevel();
   const [w,h]=cloudSize(physical.z,physical.w,this.budget.scale,this.budget.limit);this.target.setSize(w,h);
   const query=this.budget.begin(renderer);
-  try{renderer.setRenderTarget(this.target);renderer.setScissorTest(false);renderer.render(this.scene,this.camera);}
+  try{renderer.setRenderTarget(this.target);renderer.setScissorTest(false);updateObserverProjection(this.uniforms,new T.Vector4(0,0,w,h));renderer.render(this.scene,this.camera);}
   finally{this.budget.end(query);renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
  }
 }

@@ -1,8 +1,11 @@
+import {observerProjectionGLSL,observerProjectedBoostGLSL,updateObserverProjection} from './observer-projection.js';
 import {VolumeBudget} from './graphics-quality.js';
 import * as T from 'three';
 import {cloudGLSL} from './environments.js';
 // Same observer ray as the full-resolution optics, shared so relativistic aberration cannot diverge.
 export const observerRayGLSL=`vec3 n=normalize(rotation*vec3(uvp.x*aspect*tanFov,uvp.y*tanFov,-1.));vec3 ray=n;float D=1.;if(optics>.5&&momentum>.000001){float mu=clamp(dot(n,axis),-1.,1.);vec3 perpendicular=n-axis*mu;float oneMinus=mu>0.?dot(perpendicular,perpendicular)/(1.+mu):1.-mu;float inverseD=g*oneMinus+mu/(g+momentum);D=1./max(inverseD,1.e-20);ray=normalize((perpendicular+axis*(1./(g+momentum)-g*oneMinus))*D);}`;
+// The original snippet remains the legacy boundary bench; production adds the projected path.
+export const projectedObserverRayGLSL=observerRayGLSL.replace('if(optics>.5', 'if(observerPrecise<.5&&optics>.5')+observerProjectedBoostGLSL;
 export const cloudSampleGLSL=`uniform float cloudActive,cloudRadianceScale;uniform sampler2D cloudLight,cloudTransmission;
 vec3 cloudRadiance(vec3 ray,vec3 background){return texture2D(cloudLight,uvp*.5+.5).rgb*cloudRadianceScale+background*texture2D(cloudTransmission,uvp*.5+.5).rgb;}`;
 // Per-pass pixel budget, independent of monitor DPI and GPU brand. Small clouds retain full resolution.
@@ -37,8 +40,9 @@ export class CloudPass{
    vertexShader:'varying vec2 uvp;void main(){uvp=position.xy;gl_Position=vec4(position.xy,0.,1.);}',
    fragmentShader:`precision highp float;varying vec2 uvp;uniform mat3 rotation;uniform vec3 axis;uniform float g,momentum,optics,aspect,tanFov,band,cloudRadianceScale;
 layout(location=0) out vec4 emission;layout(location=1) out vec4 transmission;
+${observerProjectionGLSL}
 ${cloudGLSL}
-void main(){${observerRayGLSL}vec3 T;vec3 L=nebulaMarch(cloudRotation*(-cloudCenter),cloudRotation*ray,vec3(0.),T);
+void main(){${projectedObserverRayGLSL}vec3 T;vec3 L=nebulaMarch(cloudRotation*(-cloudCenter),cloudRotation*ray,vec3(0.),T);
 emission=vec4(L/cloudRadianceScale,1.);transmission=vec4(mix(vec3(1.),T,cloudOpacity),1.);}`});
   this.scene=new T.Scene();this.scene.add(new T.Mesh(new T.PlaneGeometry(2,2),this.material));this.camera=new T.OrthographicCamera(-1,1,1,-1,0,1);
  }
@@ -47,7 +51,7 @@ emission=vec4(L/cloudRadianceScale,1.);transmission=vec4(mix(vec3(1.),T,cloudOpa
   if(this.target.width!==w||this.target.height!==h)this.target.setSize(w,h);
   // setRenderTarget applies the target's physical viewport. setViewport would multiply it by DPR again.
   const query=scale<1?this.budget.begin(renderer):null;
-  try{renderer.setRenderTarget(this.target);renderer.setScissorTest(false);renderer.render(this.scene,this.camera);}
+  try{renderer.setRenderTarget(this.target);renderer.setScissorTest(false);updateObserverProjection(u,new T.Vector4(0,0,w,h));renderer.render(this.scene,this.camera);}
   finally{this.budget.end(query);renderer.setRenderTarget(target,face,mip);renderer.setViewport(viewport);renderer.state.viewport(physical);renderer.setScissor(scissor);renderer.setScissorTest(test);}
  }
 }

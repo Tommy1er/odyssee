@@ -2,7 +2,7 @@ name: Reproducible validation from npm ci
 on:
   push:
     branches: [main]
-    paths: ['package.json', 'package-lock.json', 'scripts/validate-physics-ui.cjs', '.github/workflows/reproducible-tests.yml']
+    paths: ['src/**', 'public/cockpit.js', 'package.json', 'package-lock.json', 'scripts/validate-physics-ui.cjs', '.github/workflows/reproducible-tests.yml']
   workflow_dispatch:
 permissions:
   contents: read

@@ -47,7 +47,7 @@ for(const gamma of [1,100,1000,10000,1e6,1e8,1e12])for(const oblique of [false,t
   // report the input-direction precision boundary, rather than silently granting validation.
   if(!c.oblique||c.gamma<=10000)assert(withinTolerance,JSON.stringify({gamma:c.gamma,oblique:c.oblique,theta:c.theta,rayError,logDError}));
   return {gamma:c.gamma,oblique:c.oblique,theta:c.theta,rayError,logDError,withinTolerance};});
- const report={source:'src/cloud-pass.js observerRayGLSL',renderer:measured.renderer,scope:'Float32 ray direction and inverse observer Doppler only; not spectral flux, full cockpit, image quality or real GPU performance',rows,precisionLimits:rows.filter(r=>!r.withinTolerance),errors};
+ const report={source:'src/cloud-pass.js observerRayGLSL legacy fallback; projected production path has a separate camera/pixel bench',renderer:measured.renderer,scope:'Float32 ray direction and inverse observer Doppler only; not spectral flux, full cockpit, image quality or real GPU performance',rows,precisionLimits:rows.filter(r=>!r.withinTolerance),errors};
  fs.writeFileSync(path.join(out,'high-gamma-gpu.json'),JSON.stringify(report,null,2));assert.deepEqual(errors,[]);
  console.log(JSON.stringify({evaluated:rows.length,withinTolerance:rows.filter(r=>r.withinTolerance).length,renderer:report.renderer,precisionLimits:report.precisionLimits},null,2));
  }catch(e){fs.writeFileSync(path.join(out,'high-gamma-failure.json'),JSON.stringify({error:String(e),errors},null,2));console.error(e);process.exitCode=1;}
