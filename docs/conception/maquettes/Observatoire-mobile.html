@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Observatoire — téléphone</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#070d16;color:#edf3f7;font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.45}
+a{color:#8ee2cc}a:hover{color:#bff0e2}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:#111f2c;border:1px solid #2b3f4e;border-radius:8px;padding:10px 12px;font-size:14px;min-height:44px}
+.btn.primary{background:#8ee2cc;color:#07141b;border-color:#8ee2cc;font-weight:600}
+.btn.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:500}
+.chip.model{background:#1b2a3d;color:#9fcbf6}.chip.recon{background:#2a2630;color:#d7c8f3}.chip.obs{background:#17322a;color:#9fe8cf}
+.label{font-size:12px;color:#a7bbcb;letter-spacing:.06em;text-transform:uppercase}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:13px}dt{color:#a7bbcb}dd{margin:0}
+</style>
+<div style="width:390px;height:844px;box-sizing:border-box;display:flex;flex-direction:column;background:#070d16;overflow:hidden">
+<header style="padding:12px 12px 8px;display:flex;flex-direction:column;gap:8px;background:#0a1420;border-bottom:1px solid #1f2f3c">
+<nav aria-label="Espaces" style="display:flex;gap:3px;background:#0f1b27;border:1px solid #233442;border-radius:10px;padding:3px">
+<a href="Explorer-mobile.html" class="btn" style="flex:1;min-height:38px;padding:6px 8px;border:0;background:transparent;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center">Explorer</a>
+<button class="btn on" style="flex:1;min-height:38px;padding:6px 8px;border-radius:7px;font-size:13px">Observatoire</button>
+<a href="Carte-mobile.html" class="btn" style="flex:1;min-height:38px;padding:6px 8px;border:0;background:transparent;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center">Carte</a>
+</nav>
+</header>
+
+<!-- Visualiseur en haut, 16:10 -->
+<section aria-label="Visualiseur" style="position:relative;height:200px;background:radial-gradient(ellipse 30% 40% at 50% 50%,#d9c9a3 0%,#6f5f52 18%,#241f27 50%,transparent 72%),#03070d">
+<div aria-hidden="true" style="position:absolute;left:50%;top:50%;width:2px;height:100px;background:linear-gradient(#bcd7ff,transparent);transform:translate(-50%,-100%) rotate(-62deg);transform-origin:bottom"></div>
+<div style="position:absolute;top:10px;left:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap"><span class="chip recon">Reconstitution</span><span class="chip model">Lumière · modèle</span></div>
+<div style="position:absolute;left:10px;right:10px;bottom:10px;display:flex;gap:6px;overflow:hidden">
+<button class="btn on" style="min-height:36px;padding:6px 10px;font-size:13px">Visible</button><button class="btn" style="min-height:36px;padding:6px 10px;font-size:13px;background:#111f2cf2">IR · modèle</button><button class="btn" style="min-height:36px;padding:6px 10px;font-size:13px;background:#111f2cf2">Radio · modèle</button><button class="btn" style="min-height:36px;padding:6px 10px;font-size:13px;background:#111f2cf2">X</button>
+</div>
+</section>
+
+<!-- Fiche -->
+<main style="flex:1;min-height:0;overflow:hidden;padding:14px 14px 0;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+<h1 style="margin:0;font-size:24px;font-weight:600;line-height:1.15">M87<br><span style="font-size:14px;font-weight:500;color:#a7bbcb">Virgo A · NGC 4486</span></h1>
+<span class="chip obs" style="margin-top:4px">● Observé</span>
+</div>
+<nav aria-label="Niveau de lecture" style="display:flex;background:#0f1b27;border:1px solid #233442;border-radius:8px;padding:3px">
+<button class="btn on" style="flex:1;min-height:38px;border-radius:6px">Découverte</button><button class="btn" style="flex:1;min-height:38px;border:0;background:transparent">Scientifique</button>
+</nav>
+<p style="margin:0;color:#d6e2ea">Galaxie elliptique géante au cœur de l'amas de la Vierge. Son trou noir central, M87*, est le premier dont l'ombre a été imagée (EHT, 2019).</p>
+<dl class="mono">
+<dt>Distance</dt><dd>16,4 ± 0,5 Mpc · 54 Mal</dd>
+<dt>Trajet 1 g</dt><dd>34,6 ans à bord</dd>
+<dt>Forme 3D</dt><dd><span class="chip recon" style="padding:1px 6px">Reconstitution</span></dd>
+</dl>
+<div style="background:#07141b;border:1px solid #2b3f4e;border-radius:8px;padding:10px 12px;font-size:13px;color:#d6e2ea"><strong style="color:#9fcbf6">Observation réelle</strong> · aucune image de télescope affichée tant qu'une source HiPS n'est pas chargée. <a href="#">Aladin Lite →</a></div>
+</main>
+
+<footer style="padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(transparent,#070d16 25%)">
+<a href="Explorer-mobile.html" class="btn primary" style="text-decoration:none;display:flex;align-items:center;justify-content:center">Engager le trajet</a>
+<div style="display:flex;gap:8px"><button class="btn" style="flex:1">Observer</button><a href="Carte-mobile.html" class="btn" style="flex:1;text-decoration:none;display:flex;align-items:center;justify-content:center">Situer</a></div>
+</footer>
+</div>
+</body>
+</html>

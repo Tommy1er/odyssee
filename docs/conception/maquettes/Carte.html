@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Carte cosmique — échelle continue</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#070d16;color:#edf3f7;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.45}
+a{color:#8ee2cc}a:hover{color:#bff0e2}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:#111f2c;border:1px solid #2b3f4e;border-radius:6px;padding:8px 12px;font-size:13px;min-height:36px}
+.btn.primary{background:#8ee2cc;color:#07141b;border-color:#8ee2cc;font-weight:600}
+.btn.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:500}
+.chip.model{background:#1b2a3d;color:#9fcbf6}.chip.recon{background:#2a2630;color:#d7c8f3}.chip.obs{background:#17322a;color:#9fe8cf}
+.label{font-size:12px;color:#a7bbcb;letter-spacing:.06em;text-transform:uppercase}
+.rung{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;font-size:13px;color:#a7bbcb;position:relative}
+.rung .dot{width:9px;height:9px;border-radius:50%;border:2px solid #3a5263;background:#0a1420;flex:none;z-index:1}
+.rung.on{background:#1b3a35;color:#bff0e2}.rung.on .dot{border-color:#8ee2cc;background:#8ee2cc}
+.rung .mono{margin-left:auto;font-size:12px;color:#7f97a8;white-space:nowrap}
+.layer{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px}
+.sw{width:30px;height:18px;border-radius:9px;background:#233442;position:relative;flex:none}.sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#7f97a8}
+.sw.on{background:#2d6b5d}.sw.on::after{left:14px;background:#bff0e2}
+</style>
+<div style="width:1280px;height:760px;box-sizing:border-box;display:grid;grid-template-rows:48px minmax(0,1fr);background:#070d16;overflow:hidden">
+
+<header style="display:flex;align-items:center;gap:16px;padding:0 16px;border-bottom:1px solid #1f2f3c;background:#0a1420">
+<a href="#" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#8ee2cc;font-weight:600;letter-spacing:.12em;font-size:13px">✧ ODYSSÉE</a>
+<nav aria-label="Espaces" style="display:flex;gap:4px;margin-left:16px;background:#0f1b27;border:1px solid #233442;border-radius:8px;padding:3px">
+<a href="Explorer.html" class="btn" style="min-height:32px;padding:5px 14px;border:0;background:transparent;text-decoration:none;display:inline-flex;align-items:center">Explorer</a>
+<a href="Observatoire.html" class="btn" style="min-height:32px;padding:5px 14px;border:0;background:transparent;text-decoration:none;display:inline-flex;align-items:center">Observatoire</a>
+<button class="btn on" style="min-height:32px;padding:5px 14px;border-radius:6px">Carte cosmique</button>
+</nav>
+<label style="margin-left:auto;display:flex;align-items:center;gap:8px;background:#0f1b27;border:1px solid #233442;border-radius:8px;padding:0 10px;height:34px;width:300px">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a7bbcb" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input type="search" value="M87" aria-label="Recherche globale" style="flex:1;background:transparent;border:0;color:#edf3f7;font:inherit;outline:0">
+</label>
+<button class="btn" style="min-height:34px">Laboratoire ▾</button>
+<span class="label" style="font-size:11px">◈ Privé</span>
+</header>
+
+<div style="display:grid;grid-template-columns:232px minmax(0,1fr) 264px;min-height:0">
+
+<!-- Rail d'échelle continue -->
+<aside aria-label="Échelle" style="border-right:1px solid #1f2f3c;background:#0a1420;padding:16px 12px;display:flex;flex-direction:column;gap:2px;min-height:0;overflow:hidden">
+<span class="label" style="padding:0 10px 8px">Échelle</span>
+<div style="position:relative">
+<div aria-hidden="true" style="position:absolute;left:14px;top:14px;bottom:14px;width:2px;background:#233442"></div>
+<div class="rung"><span class="dot"></span>Système solaire<span class="mono">100 ua</span></div>
+<div class="rung"><span class="dot"></span>Voisinage solaire<span class="mono">50 al</span></div>
+<div class="rung"><span class="dot"></span>Voie lactée<span class="mono">100 kal</span></div>
+<div class="rung"><span class="dot"></span>Groupe local<span class="mono">10 Mal</span></div>
+<div class="rung on"><span class="dot"></span>Amas de la Vierge<span class="mono">100 Mal</span></div>
+<div class="rung"><span class="dot"></span>Laniakea<span class="mono">500 Mal</span></div>
+<div class="rung"><span class="dot"></span>Toile cosmique<span class="mono">3 Gal</span></div>
+<div class="rung"><span class="dot"></span>Univers observable<span class="mono">93 Gal</span></div>
+</div>
+<p style="margin:12px 10px 0;font-size:12px;color:#a7bbcb">Molette ou pincement : zoom continu. Les crans ne sont que des repères.</p>
+<div style="margin-top:auto;padding:0 10px;display:flex;flex-direction:column;gap:6px">
+<span class="label">Référentiel</span>
+<div class="mono" style="font-size:12px;color:#d6e2ea">Supergalactique (SGX, SGY, SGZ)<br>Origine : Voie lactée</div>
+<button class="btn" style="font-size:12px;min-height:32px">Centrer sur le vaisseau</button>
+</div>
+</aside>
+
+<!-- Vue carte -->
+<section aria-label="Carte" style="position:relative;min-width:0;min-height:0;overflow:hidden;background:radial-gradient(ellipse 55% 45% at 46% 52%,#0f1a2a 0%,#070d16 70%),#03070d">
+<!-- plan supergalactique en perspective -->
+<svg aria-hidden="true" width="100%" height="100%" viewBox="0 0 784 712" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0">
+<g stroke="#1d3040" stroke-width="1" fill="none">
+<ellipse cx="380" cy="380" rx="330" ry="120"></ellipse>
+<ellipse cx="380" cy="380" rx="220" ry="80"></ellipse>
+<ellipse cx="380" cy="380" rx="110" ry="40"></ellipse>
+<path d="M50 380H710M380 260V500"></path>
+</g>
+<!-- bassins : surcouche reconstruite, traits pointillés violets -->
+<g stroke="#bba5e7" stroke-opacity=".55" stroke-width="1.2" stroke-dasharray="4 5" fill="#bba5e7" fill-opacity=".05">
+<path d="M150 360C190 250 330 220 450 250C560 280 640 330 620 410C600 480 470 520 340 500C220 485 120 450 150 360Z"></path>
+</g>
+<!-- galaxies (repères CF4) -->
+<g fill="#76b9f5">
+<circle cx="380" cy="380" r="4"></circle>
+<circle cx="296" cy="352" r="2"></circle><circle cx="318" cy="401" r="2"></circle><circle cx="270" cy="420" r="1.6"></circle>
+<circle cx="520" cy="318" r="5.5" fill="#f0b56b"></circle>
+<circle cx="535" cy="305" r="1.8"></circle><circle cx="548" cy="330" r="1.8"></circle><circle cx="506" cy="300" r="1.6"></circle><circle cx="560" cy="312" r="1.4"></circle><circle cx="512" cy="338" r="1.6"></circle>
+<circle cx="210" cy="300" r="1.6"></circle><circle cx="610" cy="440" r="1.6"></circle><circle cx="470" cy="470" r="1.8"></circle><circle cx="440" cy="270" r="1.6"></circle>
+</g>
+<!-- trajet -->
+<path d="M380 380C420 360 470 335 520 318" stroke="#8ee2cc" stroke-width="2" fill="none"></path>
+<g transform="translate(436 354) rotate(-24)"><path d="M-7 -5L8 0L-7 5L-4 0Z" fill="#8ee2cc"></path></g>
+</svg>
+
+<!-- étiquettes -->
+<div class="mono" style="position:absolute;left:calc(48.5% - 4px);top:calc(53.4% + 8px);font-size:12px;color:#d6e2ea">Voie lactée · origine</div>
+<div style="position:absolute;left:calc(66.3% + 12px);top:calc(44.7% - 26px);background:#07141bd9;border:1px solid #4f8f80;border-radius:6px;padding:6px 9px;font-size:12px">
+<strong>M87</strong> · amas de la Vierge<br><span class="mono" style="color:#a7bbcb">16,4 Mpc · cible</span>
+</div>
+<div class="mono" style="position:absolute;left:calc(55.6% + 10px);top:calc(49.7% - 4px);font-size:12px;color:#bff0e2">▲ Vaisseau · 0,9831 c</div>
+<div style="position:absolute;left:24%;top:36%;font-size:12px;color:#cdb8f3">Bassin de Laniakea <span class="chip recon" style="padding:1px 6px;margin-left:4px">surcouche reconstruite</span></div>
+
+<!-- barre haute de la vue -->
+<div style="position:absolute;top:12px;left:14px;right:14px;display:flex;align-items:center;gap:8px">
+<div class="mono" style="font-size:12px;color:#d6e2ea;background:#07141bd9;border:1px solid #2b3f4e;border-radius:6px;padding:6px 10px">Cadre 100 Mal · plan SGZ = 0 · époque : aujourd'hui</div>
+<span style="flex:1"></span>
+<button class="btn" style="min-height:32px;font-size:12px">Vue 2D</button><button class="btn on" style="min-height:32px;font-size:12px">Vue 3D</button>
+</div>
+
+<!-- échelle graphique -->
+<div class="mono" style="position:absolute;right:16px;bottom:16px;font-size:12px;color:#a7bbcb;display:flex;align-items:center;gap:8px">
+<span style="display:inline-block;width:96px;height:6px;border:2px solid #a7bbcb;border-top:0"></span>10 Mpc · 32,6 Mal
+</div>
+<div style="position:absolute;left:14px;bottom:14px;display:flex;gap:6px"><span class="chip obs">Positions : observé + CF4</span><span class="chip model">Distances lointaines : modèle</span></div>
+</section>
+
+<!-- Couches + sélection -->
+<aside style="border-left:1px solid #1f2f3c;background:#0a1420;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:hidden">
+<span class="label">Couches</span>
+<div class="layer"><span class="sw on"></span>Plans de référence</div>
+<div class="layer"><span class="sw on"></span>Trajet du vaisseau</div>
+<div class="layer"><span class="sw on"></span>Repères Cosmicflows-4</div>
+<div class="layer"><span class="sw on"></span>Bassins d'attraction <span class="chip recon" style="padding:1px 6px">reconstruit</span></div>
+<div class="layer"><span class="sw"></span>Champ de vitesses <span class="chip model" style="padding:1px 6px">modèle</span></div>
+<div class="layer"><span class="sw"></span>Noms des amas</div>
+<div style="border-top:1px solid #1f2f3c;margin-top:4px;padding-top:12px;display:flex;flex-direction:column;gap:8px">
+<span class="label">Sélection</span>
+<div style="font-size:16px;font-weight:600">M87 <span style="font-size:13px;font-weight:500;color:#a7bbcb">· Virgo A</span></div>
+<dl class="mono" style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:12px">
+<dt style="color:#a7bbcb">Distance</dt><dd style="margin:0">16,4 Mpc</dd>
+<dt style="color:#a7bbcb">Restant</dt><dd style="margin:0">31,2 Mal</dd>
+<dt style="color:#a7bbcb">SGX/SGY/SGZ</dt><dd style="margin:0">−3,7 / 15,9 / −0,6</dd>
+</dl>
+</div>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+<a href="Explorer.html" class="btn primary" style="text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:40px">Ouvrir dans le cockpit</a>
+<a href="Observatoire.html" class="btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center">Fiche dans l'Observatoire</a>
+</div>
+</aside>
+</div>
+</div>
+</body>
+</html>

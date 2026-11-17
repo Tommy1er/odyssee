@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Carte cosmique — téléphone</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#070d16;color:#edf3f7;font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.4}
+a{color:#8ee2cc}a:hover{color:#bff0e2}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:#111f2cf2;border:1px solid #2b3f4e;border-radius:8px;padding:10px 12px;font-size:14px;min-height:44px}
+.btn.primary{background:#8ee2cc;color:#07141b;border-color:#8ee2cc;font-weight:600}
+.btn.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:500}
+.chip.model{background:#1b2a3d;color:#9fcbf6}.chip.recon{background:#2a2630;color:#d7c8f3}.chip.obs{background:#17322a;color:#9fe8cf}
+.label{font-size:12px;color:#a7bbcb;letter-spacing:.06em;text-transform:uppercase}
+</style>
+<div style="width:390px;height:844px;box-sizing:border-box;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 40% at 50% 42%,#0f1a2a 0%,#070d16 70%),#03070d">
+
+<svg aria-hidden="true" width="390" height="844" viewBox="0 0 390 844" style="position:absolute;inset:0">
+<g stroke="#1d3040" fill="none"><ellipse cx="180" cy="370" rx="170" ry="70"></ellipse><ellipse cx="180" cy="370" rx="90" ry="38"></ellipse><path d="M10 370H370M180 300V440"></path></g>
+<path d="M50 360C70 290 170 270 240 285C310 300 350 330 335 385C320 430 250 450 170 440C100 432 40 410 50 360Z" stroke="#bba5e7" stroke-opacity=".55" stroke-width="1.2" stroke-dasharray="4 5" fill="#bba5e7" fill-opacity=".05"></path>
+<g fill="#76b9f5"><circle cx="180" cy="370" r="4"></circle><circle cx="140" cy="352" r="1.8"></circle><circle cx="150" cy="392" r="1.6"></circle><circle cx="275" cy="320" r="5.5" fill="#f0b56b"></circle><circle cx="286" cy="309" r="1.6"></circle><circle cx="294" cy="330" r="1.6"></circle><circle cx="262" cy="306" r="1.4"></circle><circle cx="90" cy="320" r="1.4"></circle><circle cx="320" cy="410" r="1.6"></circle></g>
+<path d="M180 370C205 355 240 335 275 320" stroke="#8ee2cc" stroke-width="2" fill="none"></path>
+<g transform="translate(222 348) rotate(-26)"><path d="M-7 -5L8 0L-7 5L-4 0Z" fill="#8ee2cc"></path></g>
+</svg>
+
+<header style="position:absolute;top:0;left:0;right:0;padding:12px 12px 0;display:flex;flex-direction:column;gap:8px">
+<nav aria-label="Espaces" style="display:flex;gap:3px;background:#0f1b27e6;border:1px solid #233442;border-radius:10px;padding:3px">
+<a href="Explorer-mobile.html" class="btn" style="flex:1;min-height:38px;padding:6px 8px;border:0;background:transparent;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center">Explorer</a>
+<a href="Observatoire-mobile.html" class="btn" style="flex:1;min-height:38px;padding:6px 8px;border:0;background:transparent;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center">Observatoire</a>
+<button class="btn on" style="flex:1;min-height:38px;padding:6px 8px;border-radius:7px;font-size:13px">Carte</button>
+</nav>
+<!-- rail d'échelle horizontal -->
+<div aria-label="Échelle" style="display:flex;gap:6px;overflow:hidden">
+<button class="btn" style="min-height:36px;padding:6px 10px;font-size:13px;white-space:nowrap">Voie lactée</button>
+<button class="btn" style="min-height:36px;padding:6px 10px;font-size:13px;white-space:nowrap">Groupe local</button>
+<button class="btn on" style="min-height:36px;padding:6px 10px;font-size:13px;white-space:nowrap">Vierge</button>
+<button class="btn" style="min-height:36px;padding:6px 10px;font-size:13px;white-space:nowrap">Laniakea</button>
+<button class="btn" style="min-height:36px;padding:6px 10px;font-size:13px;white-space:nowrap">Toile</button>
+</div>
+<div class="mono" style="font-size:12px;color:#a7bbcb">Cadre 100 Mal · origine Voie lactée · aujourd'hui</div>
+</header>
+
+<div class="mono" style="position:absolute;left:150px;top:384px;font-size:12px;color:#d6e2ea">Voie lactée</div>
+<div style="position:absolute;left:196px;top:262px;background:#07141bd9;border:1px solid #4f8f80;border-radius:6px;padding:5px 8px;font-size:12px"><strong>M87</strong> <span class="mono" style="color:#a7bbcb">16,4 Mpc</span></div>
+<div style="position:absolute;left:60px;top:300px;font-size:12px;color:#cdb8f3">Laniakea · reconstruit</div>
+
+<div style="position:absolute;right:12px;top:470px;display:flex;flex-direction:column;gap:8px">
+<button class="btn" style="width:44px;padding:0" aria-label="Couches">◫</button>
+<button class="btn" style="width:44px;padding:0" aria-label="Centrer sur le vaisseau">◎</button>
+</div>
+<div class="mono" style="position:absolute;left:14px;top:500px;font-size:12px;color:#a7bbcb;display:flex;align-items:center;gap:8px"><span style="display:inline-block;width:60px;height:6px;border:2px solid #a7bbcb;border-top:0"></span>10 Mpc</div>
+
+<!-- feuille de sélection (bottom sheet) -->
+<section aria-label="Sélection" style="position:absolute;left:0;right:0;bottom:0;background:#0a1420;border-top:1px solid #2b3f4e;border-radius:16px 16px 0 0;padding:8px 14px 14px;display:flex;flex-direction:column;gap:10px">
+<div aria-hidden="true" style="align-self:center;width:40px;height:4px;border-radius:2px;background:#3a5263"></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:18px;font-weight:600">M87 <span style="font-size:14px;font-weight:500;color:#a7bbcb">· Virgo A</span></div><span class="chip obs">Observé</span></div>
+<div class="mono" style="display:flex;justify-content:space-between;font-size:13px;color:#d6e2ea"><span>16,4 Mpc</span><span>restant 31,2 Mal</span><span>▲ 0,9831 c</span></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip model">Distances lointaines : modèle</span><span class="chip recon">Bassins : surcouche</span></div>
+<a href="Explorer-mobile.html" class="btn primary" style="text-decoration:none;display:flex;align-items:center;justify-content:center">Ouvrir dans le cockpit</a>
+<a href="Observatoire-mobile.html" class="btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center">Fiche dans l'Observatoire</a>
+</section>
+</div>
+</body>
+</html>

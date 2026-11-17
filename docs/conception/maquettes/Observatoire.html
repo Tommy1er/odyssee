@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Observatoire — fiche d'objet à deux niveaux</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#070d16;color:#edf3f7;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.45}
+a{color:#8ee2cc}a:hover{color:#bff0e2}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:#111f2c;border:1px solid #2b3f4e;border-radius:6px;padding:8px 12px;font-size:13px;min-height:36px}
+.btn.primary{background:#8ee2cc;color:#07141b;border-color:#8ee2cc;font-weight:600}
+.btn.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:500}
+.chip.model{background:#1b2a3d;color:#9fcbf6}.chip.recon{background:#2a2630;color:#d7c8f3}.chip.obs{background:#17322a;color:#9fe8cf}.chip.fiction{background:#2d2440;color:#cdb8f3}
+.label{font-size:12px;color:#a7bbcb;letter-spacing:.06em;text-transform:uppercase}
+.row{display:flex;align-items:center;gap:8px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{padding:7px 6px;border-bottom:1px solid #1f2f3c;text-align:left;vertical-align:top}th{color:#a7bbcb;font-weight:500;font-size:12px}
+td.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+</style>
+<div style="width:1280px;height:760px;box-sizing:border-box;display:grid;grid-template-rows:48px minmax(0,1fr);background:#070d16;overflow:hidden">
+
+<header style="display:flex;align-items:center;gap:16px;padding:0 16px;border-bottom:1px solid #1f2f3c;background:#0a1420">
+<a href="#" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#8ee2cc;font-weight:600;letter-spacing:.12em;font-size:13px">✧ ODYSSÉE</a>
+<nav aria-label="Espaces" style="display:flex;gap:4px;margin-left:16px;background:#0f1b27;border:1px solid #233442;border-radius:8px;padding:3px">
+<a href="Explorer.html" class="btn" style="min-height:32px;padding:5px 14px;border:0;background:transparent;text-decoration:none;display:inline-flex;align-items:center">Explorer</a>
+<button class="btn on" style="min-height:32px;padding:5px 14px;border-radius:6px">Observatoire</button>
+<a href="Carte.html" class="btn" style="min-height:32px;padding:5px 14px;border:0;background:transparent;text-decoration:none;display:inline-flex;align-items:center">Carte cosmique</a>
+</nav>
+<label style="margin-left:auto;display:flex;align-items:center;gap:8px;background:#0f1b27;border:1px solid #233442;border-radius:8px;padding:0 10px;height:34px;width:300px">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a7bbcb" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input type="search" value="M87" aria-label="Recherche globale" style="flex:1;background:transparent;border:0;color:#edf3f7;font:inherit;outline:0">
+</label>
+<button class="btn" style="min-height:34px">Laboratoire ▾</button>
+<span class="label" style="font-size:11px">◈ Privé</span>
+</header>
+
+<div style="display:grid;grid-template-columns:300px minmax(0,1fr) 340px;min-height:0">
+
+<!-- Colonne gauche : identité + niveau de lecture -->
+<aside style="border-right:1px solid #1f2f3c;background:#0a1420;padding:18px 16px;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden">
+<span class="label">Objet sélectionné</span>
+<h1 style="margin:0;font-size:26px;font-weight:600;line-height:1.15">M87<br><span style="font-size:15px;font-weight:500;color:#a7bbcb">Virgo A · NGC 4486</span></h1>
+<div class="row" style="flex-wrap:wrap;gap:6px"><span class="chip obs">● Observé</span><span class="chip model">Distance : modèle CF4</span></div>
+<nav aria-label="Niveau de lecture" style="display:flex;background:#0f1b27;border:1px solid #233442;border-radius:8px;padding:3px;margin-top:4px">
+<button class="btn on" style="flex:1;min-height:34px;border-radius:6px">Découverte</button><button class="btn" style="flex:1;min-height:34px;border:0;background:transparent">Scientifique</button>
+</nav>
+<p style="margin:4px 0 0;font-size:14px;color:#d6e2ea">Galaxie elliptique géante au cœur de l'amas de la Vierge. Son trou noir central, M87*, est le premier dont l'ombre a été imagée (EHT, 2019). Un jet de matière s'en échappe sur des milliers d'années-lumière.</p>
+<dl class="mono" style="display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:6px 0 0;font-size:13px">
+<dt style="color:#a7bbcb">Distance</dt><dd style="margin:0">16,4 Mpc · 54 Mal</dd>
+<dt style="color:#a7bbcb">Type</dt><dd style="margin:0">E0–E1 (cD)</dd>
+<dt style="color:#a7bbcb">Magnitude V</dt><dd style="margin:0">8,6</dd>
+<dt style="color:#a7bbcb">Trajet 1 g</dt><dd style="margin:0">34,6 ans à bord</dd>
+</dl>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+<a href="Explorer.html" class="btn primary" style="text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:40px">Engager le trajet</a>
+<div class="row"><button class="btn" style="flex:1;font-size:12px">Observer depuis le vaisseau</button><button class="btn" style="flex:1;font-size:12px">Passage <span class="chip fiction" style="margin-left:4px;padding:1px 6px">fiction</span></button></div>
+</div>
+</aside>
+
+<!-- Centre : visualiseur -->
+<section aria-label="Visualiseur" style="display:flex;flex-direction:column;min-width:0;min-height:0;background:#03070d">
+<div style="display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid #1f2f3c;background:#0a1420">
+<span class="label" style="margin-right:6px">Bande</span>
+<button class="btn on" style="min-height:32px;padding:5px 10px;font-size:12px">Visible</button>
+<button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Infrarouge <span class="chip model" style="margin-left:4px;padding:1px 6px">modèle</span></button>
+<button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Radio <span class="chip model" style="margin-left:4px;padding:1px 6px">modèle</span></button>
+<button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Rayons X <span class="chip model" style="margin-left:4px;padding:1px 6px">modèle</span></button>
+<span style="flex:1"></span>
+<button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Comparer 0 / 0,99 c</button>
+<button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Exposition</button>
+</div>
+<div style="position:relative;flex:1;min-height:0;background:radial-gradient(ellipse 30% 30% at 50% 50%,#d9c9a3 0%,#6f5f52 18%,#241f27 50%,transparent 72%),#03070d">
+<div aria-hidden="true" style="position:absolute;left:50%;top:50%;width:2px;height:150px;background:linear-gradient(#bcd7ff,transparent);transform:translate(-50%,-100%) rotate(-62deg);transform-origin:bottom"></div>
+<div style="position:absolute;top:12px;left:14px;display:flex;gap:6px"><span class="chip recon">Reconstitution · morphologie et jet illustratifs</span><span class="chip model">Lumière intégrée · modèle</span></div>
+<div class="mono" style="position:absolute;right:14px;bottom:12px;font-size:12px;color:#a7bbcb;text-align:right">Champ 0,6° · nord en haut<br>Échelle : <span style="display:inline-block;width:60px;border-bottom:2px solid #a7bbcb;vertical-align:middle;margin:0 4px"></span> 10 kpc</div>
+<div style="position:absolute;left:14px;bottom:12px;max-width:380px;background:#07141bd9;border:1px solid #2b3f4e;border-radius:8px;padding:10px 12px;font-size:12px;color:#d6e2ea">
+<strong style="display:block;color:#9fcbf6;margin-bottom:4px">Observation réelle</strong>
+Aucune image de télescope n'est affichée ici tant qu'une source HiPS n'est pas chargée. <a href="#">Ouvrir dans Aladin Lite (à la demande) →</a>
+</div>
+</div>
+</section>
+
+<!-- Droite : valeurs, incertitudes, sources -->
+<aside style="border-left:1px solid #1f2f3c;background:#0a1420;padding:18px 16px;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:hidden">
+<span class="label">Mesures et provenance</span>
+<table>
+<thead><tr><th>Grandeur</th><th style="text-align:right">Valeur</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td>Distance (module)</td><td class="num">16,4 ± 0,5 Mpc</td><td><span class="chip obs" style="padding:1px 6px">Observé</span></td></tr>
+<tr><td>Vitesse radiale</td><td class="num">1 284 km/s</td><td><span class="chip obs" style="padding:1px 6px">Observé</span></td></tr>
+<tr><td>Position 3D</td><td class="num">CF4 · H₀ 74,6</td><td><span class="chip model" style="padding:1px 6px">Modèle</span></td></tr>
+<tr><td>Masse de M87*</td><td class="num">6,5 × 10⁹ M☉</td><td><span class="chip obs" style="padding:1px 6px">EHT 2019</span></td></tr>
+<tr><td>Forme 3D</td><td class="num">—</td><td><span class="chip recon" style="padding:1px 6px">Reconstitution</span></td></tr>
+<tr><td>Couleur affichée</td><td class="num">SED KC96 · E</td><td><span class="chip model" style="padding:1px 6px">Modèle</span></td></tr>
+</tbody>
+</table>
+<p style="margin:4px 0 0;font-size:12px;color:#a7bbcb">Les valeurs mesurées portent leur incertitude et leur référence. Les paramètres supposés sont dits tels. Aucune reconstitution n'est présentée comme une photographie.</p>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:6px">
+<a href="#" style="font-size:13px">Références : NASA/ESA, SIMBAD, Cosmicflows-4, EHT Collaboration →</a>
+<a href="Carte.html" style="font-size:13px">Situer dans la carte cosmique →</a>
+</div>
+</aside>
+</div>
+</div>
+</body>
+</html>

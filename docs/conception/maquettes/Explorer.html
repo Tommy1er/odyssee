@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Explorer — cockpit immersif</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#070d16;color:#edf3f7;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.4}
+a{color:#8ee2cc}a:hover{color:#bff0e2}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:#111f2c;border:1px solid #2b3f4e;border-radius:6px;padding:8px 12px;font-size:13px;min-height:36px}
+.btn.primary{background:#8ee2cc;color:#07141b;border-color:#8ee2cc;font-weight:600}
+.btn.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:500;letter-spacing:.02em}
+.chip.model{background:#1b2a3d;color:#9fcbf6}.chip.recon{background:#2a2630;color:#d7c8f3}.chip.obs{background:#17322a;color:#9fe8cf}.chip.fiction{background:#2d2440;color:#cdb8f3}
+.label{font-size:12px;color:#a7bbcb;letter-spacing:.06em;text-transform:uppercase}
+.row{display:flex;align-items:center;gap:8px}
+.fold{border-top:1px solid #1f2f3c;padding:10px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#d6e2ea}
+.fold span:last-child{color:#a7bbcb}
+</style>
+<div style="width:1280px;height:760px;box-sizing:border-box;display:grid;grid-template-rows:48px minmax(0,1fr) 56px;background:#070d16;overflow:hidden">
+
+<!-- Barre supérieure commune aux trois espaces -->
+<header style="display:flex;align-items:center;gap:16px;padding:0 16px;border-bottom:1px solid #1f2f3c;background:#0a1420">
+<a href="#" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#8ee2cc;font-weight:600;letter-spacing:.12em;font-size:13px">✧ ODYSSÉE</a>
+<nav aria-label="Espaces" style="display:flex;gap:4px;margin-left:16px;background:#0f1b27;border:1px solid #233442;border-radius:8px;padding:3px">
+<button class="btn on" style="min-height:32px;padding:5px 14px;border-radius:6px">Explorer</button>
+<a href="Observatoire.html" class="btn" style="min-height:32px;padding:5px 14px;border:0;background:transparent;text-decoration:none;display:inline-flex;align-items:center">Observatoire</a>
+<a href="Carte.html" class="btn" style="min-height:32px;padding:5px 14px;border:0;background:transparent;text-decoration:none;display:inline-flex;align-items:center">Carte cosmique</a>
+</nav>
+<label style="margin-left:auto;display:flex;align-items:center;gap:8px;background:#0f1b27;border:1px solid #233442;border-radius:8px;padding:0 10px;height:34px;width:300px">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a7bbcb" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input type="search" placeholder="Rechercher un objet · M87, NGC 4486, Virgo A…" aria-label="Recherche globale" style="flex:1;background:transparent;border:0;color:#edf3f7;font:inherit;outline:0">
+</label>
+<button class="btn" style="min-height:34px">Laboratoire ▾</button>
+<button class="btn" style="min-height:34px" aria-label="Physique et commandes">?</button>
+<span class="label" style="font-size:11px">◈ Privé</span>
+</header>
+
+<!-- Corps : tiroir navigation · ciel · télémétrie -->
+<div style="display:grid;grid-template-columns:236px minmax(0,1fr) 248px;min-height:0">
+
+<aside aria-label="Navigation" style="border-right:1px solid #1f2f3c;background:#0a1420;padding:14px 12px;display:flex;flex-direction:column;gap:10px;min-height:0">
+<div class="row" style="justify-content:space-between"><span class="label">Navigation</span><button class="btn" style="min-height:28px;padding:3px 8px;font-size:12px" aria-label="Replier le tiroir">◀</button></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px">
+<button class="btn on" style="min-height:30px;padding:5px 9px;font-size:12px">Repères</button><button class="btn" style="min-height:30px;padding:5px 9px;font-size:12px">Étoiles</button><button class="btn" style="min-height:30px;padding:5px 9px;font-size:12px">Galaxies</button><button class="btn" style="min-height:30px;padding:5px 9px;font-size:12px">Nébuleuses</button><button class="btn" style="min-height:30px;padding:5px 9px;font-size:12px">Trous noirs</button><button class="btn" style="min-height:30px;padding:5px 9px;font-size:12px">Plus ▾</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;overflow:hidden;flex:1;min-height:0">
+<button class="btn" style="text-align:left;display:flex;justify-content:space-between;min-height:40px"><span>Andromède · M31</span><span class="mono" style="color:#a7bbcb">2,5 Mal</span></button>
+<button class="btn" style="text-align:left;display:flex;justify-content:space-between;min-height:40px"><span>Triangle · M33</span><span class="mono" style="color:#a7bbcb">2,7 Mal</span></button>
+<button class="btn on" style="text-align:left;display:flex;justify-content:space-between;min-height:40px"><span>M87 · Virgo A</span><span class="mono">54 Mal</span></button>
+<button class="btn" style="text-align:left;display:flex;justify-content:space-between;min-height:40px"><span>Amas de la Vierge</span><span class="mono" style="color:#a7bbcb">54 Mal</span></button>
+<button class="btn" style="text-align:left;display:flex;justify-content:space-between;min-height:40px"><span>Centaurus A</span><span class="mono" style="color:#a7bbcb">12 Mal</span></button>
+</div>
+<section aria-label="Cible sélectionnée" style="border-top:1px solid #1f2f3c;padding-top:10px;display:flex;flex-direction:column;gap:8px">
+<span class="label">Cible sélectionnée</span>
+<strong style="font-size:16px;font-weight:600;line-height:1.25">M87 · Virgo A</strong>
+<span class="chip obs" style="align-self:flex-start">● Observé · galaxie elliptique</span>
+<div class="mono" style="display:grid;grid-template-columns:auto auto;gap:3px 12px;font-size:12px;color:#a7bbcb"><span>Depuis le vaisseau</span><span style="color:#edf3f7;text-align:right">54,0 Mal</span><span>Trajet 1 g, à bord</span><span style="color:#edf3f7;text-align:right">34,6 ans</span></div>
+<button class="btn primary" style="min-height:40px">Engager le trajet</button>
+<div class="row"><button class="btn" style="flex:1;min-height:34px;font-size:12px">Observer</button><button class="btn" style="flex:1;min-height:34px;font-size:12px">Orienter le nez</button></div>
+<a href="Observatoire.html" style="font-size:12px">Fiche &amp; données →</a>
+</section>
+</aside>
+
+<!-- Ciel -->
+<section aria-label="Vue de l'espace" style="position:relative;min-width:0;min-height:0;background:radial-gradient(ellipse 36% 28% at 52% 47%,#4a3b63 0%,#1b1626 38%,transparent 70%),radial-gradient(circle at 20% 80%,#0d1a2a,transparent 40%),#03070d;overflow:hidden">
+<div aria-hidden="true" style="position:absolute;inset:0;background-image:radial-gradient(1px 1px at 12% 18%,#fff 60%,transparent 61%),radial-gradient(1px 1px at 78% 22%,#dfe9ff 60%,transparent 61%),radial-gradient(1.5px 1.5px at 34% 72%,#ffe7c2 60%,transparent 61%),radial-gradient(1px 1px at 88% 66%,#fff 60%,transparent 61%),radial-gradient(1px 1px at 62% 88%,#cfe0ff 60%,transparent 61%),radial-gradient(1px 1px at 8% 50%,#fff 60%,transparent 61%),radial-gradient(1.5px 1.5px at 70% 40%,#fff 60%,transparent 61%),radial-gradient(1px 1px at 44% 12%,#fff 60%,transparent 61%)"></div>
+<!-- Statut de navigation -->
+<div class="mono" style="position:absolute;top:14px;left:16px;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#d6e2ea">
+<span><span style="color:#8ee2cc">●</span> TRAJET · M87 · freinage dans 17,2 ans à bord</span>
+<span style="color:#a7bbcb">Vision relativiste · aberration + Doppler</span>
+</div>
+<!-- Actions de vue -->
+<div style="position:absolute;top:14px;right:16px;display:flex;gap:6px">
+<button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px;background:#091822e8">Qu'est-ce que je regarde ?</button>
+<button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px;background:#091822e8" aria-label="Vue dégagée">⤢</button>
+</div>
+<!-- Réticule et étiquette -->
+<div aria-hidden="true" style="position:absolute;left:50%;top:47%;width:34px;height:34px;transform:translate(-50%,-50%) rotate(45deg);border:1px solid #8ee2cc99"></div>
+<div class="mono" style="position:absolute;left:calc(50% + 28px);top:calc(47% + 20px);background:#07141bd9;border:1px solid #2b3f4e;border-radius:6px;padding:6px 9px;font-size:12px;line-height:1.35">M87 · Virgo A<br><span style="color:#a7bbcb">31,2 Mal restants · apparent 0,9°</span></div>
+<!-- Bandeau de trajet replié -->
+<div style="position:absolute;left:16px;right:16px;bottom:52px;display:flex;align-items:center;gap:12px;background:#081620e6;border:1px solid #2b3f4e;border-radius:8px;padding:8px 12px;max-width:620px">
+<span style="color:#f0b56b;font-weight:600;font-size:13px">ACCÉLÉRATION · 1 g</span>
+<div style="flex:1;height:4px;background:#1f2f3c;border-radius:2px;overflow:hidden"><div style="width:42%;height:100%;background:#8ee2cc"></div></div>
+<span class="mono" style="font-size:12px;color:#d6e2ea">42 % · 31,2 Mal</span>
+<button class="btn" style="min-height:30px;padding:4px 10px;font-size:12px">Détails</button>
+</div>
+<!-- Provenance de la scène -->
+<div style="position:absolute;right:16px;bottom:14px;display:flex;gap:6px">
+<span class="chip model">Modèle calculé · ciel relativiste</span>
+<span class="chip recon">Reconstitution · morphologie de M87</span>
+</div>
+<span class="mono" style="position:absolute;left:16px;bottom:16px;font-size:12px;color:#a7bbcb">Champ 70° · lumière retardée</span>
+</section>
+
+<!-- Télémétrie essentielle + détails repliés -->
+<aside aria-label="Télémétrie" style="border-left:1px solid #1f2f3c;background:#0a1420;padding:14px 14px 8px;display:flex;flex-direction:column;min-height:0;overflow:hidden">
+<span class="label">Vitesse · référentiel du Soleil</span>
+<div class="mono" style="font-size:30px;font-weight:500;line-height:1.1;margin:4px 0 2px">0,9831 <span style="font-size:14px;color:#a7bbcb">c</span></div>
+<span class="mono" style="font-size:12px;color:#a7bbcb">γ 5,44 · moteur : poussée +1 g</span>
+<div class="mono" style="display:grid;grid-template-columns:1fr auto;gap:7px 10px;margin:14px 0 6px;font-size:12px">
+<span style="color:#a7bbcb">Distance restante</span><span>31,2 Mal</span>
+<span style="color:#a7bbcb">Temps propre (bord)</span><span>8 a 114 j</span>
+<span style="color:#a7bbcb">Temps de référence</span><span>22,8 Mans</span>
+<span style="color:#a7bbcb">Arrivée au repos</span><span style="color:#8ee2cc">calculée</span>
+</div>
+<div style="display:flex;flex-direction:column;margin-top:6px">
+<button class="fold" style="background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%"><span>Relativité &amp; lumière</span><span>▸</span></button>
+<button class="fold" style="background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%"><span>Instruments d'observation</span><span>▸</span></button>
+<button class="fold" style="background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%"><span>Gravitation</span><span>▸</span></button>
+<button class="fold" style="background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%"><span>Risques du milieu</span><span>▸</span></button>
+<button class="fold" style="background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%"><span>Laboratoire <span class="chip fiction" style="margin-left:4px">fiction</span></span><span>▸</span></button>
+<button class="fold" style="background:none;border-left:0;border-right:0;text-align:left;width:100%"><span>Journal de voyage</span><span>▸</span></button>
+</div>
+</aside>
+</div>
+
+<!-- Barre de commandes : une rangée, toujours visible -->
+<footer style="display:flex;align-items:center;gap:18px;padding:0 16px;border-top:1px solid #1f2f3c;background:#0a1420">
+<div style="display:flex;flex-direction:column;gap:3px"><span class="label" style="font-size:11px">Mission</span><div class="row"><button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Terre</button><button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Lune</button></div></div>
+<div style="display:flex;flex-direction:column;gap:3px"><span class="label" style="font-size:11px">Régime</span><div class="row"><span style="font-size:13px">Local 3D</span><a href="#" class="btn" style="min-height:32px;padding:5px 10px;font-size:12px;text-decoration:none;display:inline-flex;align-items:center">Voyage ΛCDM ↗</a></div></div>
+<div style="display:flex;flex-direction:column;gap:3px"><span class="label" style="font-size:11px">Commandes</span><div class="row"><button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Reprendre les commandes</button><button class="btn on" style="min-height:32px;padding:5px 10px;font-size:12px">❚❚ Pause</button><button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Nouvelle mission</button></div></div>
+<div style="display:flex;flex-direction:column;gap:3px"><span class="label" style="font-size:11px">Propulsion · 1 g</span><div class="row"><button class="btn on" style="min-height:32px;padding:5px 10px;font-size:12px">↑ Poussée</button><button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">Inertie</button><button class="btn" style="min-height:32px;padding:5px 10px;font-size:12px">↓ Freiner</button></div></div>
+<div style="display:flex;flex-direction:column;gap:3px;margin-left:auto"><span class="label" style="font-size:11px">Vitesse de lecture</span><select aria-label="Vitesse de lecture du voyage" style="font:inherit;font-size:12px;background:#111f2c;color:#edf3f7;border:1px solid #2b3f4e;border-radius:6px;padding:6px 8px;min-height:32px"><option>1 an / seconde</option><option>Temps réel</option><option>1 jour / seconde</option></select></div>
+</footer>
+</div>
+</body>
+</html>
