@@ -32,6 +32,14 @@ import {catalogObjects,radiusLy} from './body-data.js';
 const norm3=v=>v?Math.hypot(...v):0,$=id=>document.getElementById(id),$$=s=>[...document.querySelectorAll(s)],fmt=(n,p=2)=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:p}).format(n);
 // Écran court (voir cockpit.css) : le suivi du trajet s'ouvre replié à l'arrivée pour laisser la vue libre.
 const shortScreen=()=>matchMedia('(min-width:901px) and (max-height:760px)').matches;
+// Bureau : les couches ancrées en bas du ciel (légende, manœuvre locale, suivi du trajet,
+// options du vaisseau) s'empilent selon leur hauteur réelle au lieu de décalages fixes qui se chevauchent.
+const desktopStack=matchMedia('(min-width:901px)');
+function stackViewportBottom(){const viewport=$('viewport'),foot=viewport?.querySelector('.canvas-foot'),layers=[$('local-tools'),$('navigation-hud'),$('ship-options')];if(!viewport)return;
+ if(!desktopStack.matches){for(const el of layers)if(el)el.style.bottom='';return;}
+ const shown=el=>el&&el.getClientRects().length>0,box=viewport.getBoundingClientRect();let base=shown(foot)?Math.round(box.bottom-foot.getBoundingClientRect().top)+6:12;
+ for(const el of layers)if(shown(el)){el.style.bottom=base+'px';base+=Math.ceil(el.getBoundingClientRect().height)+6;}}
+{const observer=new ResizeObserver(stackViewportBottom);for(const el of [$('viewport'),$('viewport')?.querySelector('.canvas-foot'),$('local-tools'),$('navigation-hud'),$('ship-options')])if(el)observer.observe(el);desktopStack.addEventListener('change',stackViewportBottom);}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const normalize=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const length=d=>d<.00000001?fmt(d*P.LY/1000,1)+' km':d<.01?fmt(d/P.AU,3)+' ua':fmt(d,d<10?3:1)+' al';
