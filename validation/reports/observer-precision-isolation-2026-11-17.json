@@ -1,0 +1,2987 @@
+{
+  "scope": "CPU numerical isolation, 98 intended rays; not GPU execution, shader validation, full camera projection, spectral flux or performance",
+  "sourceCommit": "b614e6e3d8870ce3b7a1a03bc2f05ed7e4fc094d",
+  "tolerances": {
+    "ray": 0.005,
+    "logD": 0.005
+  },
+  "evaluated": 98,
+  "summary": {
+    "float64": {
+      "passed": 98,
+      "maxRayError": 0.000044325190834332386,
+      "maxLogDError": 0.000006579814062490641
+    },
+    "uploadOnly": {
+      "passed": 88,
+      "maxRayError": 2.0000000000000004,
+      "maxLogDError": 29.082418100274083
+    },
+    "roundedArithmetic": {
+      "passed": 90,
+      "maxRayError": 1.990074402957337,
+      "maxLogDError": 6.658211476842517
+    },
+    "frameCandidate": {
+      "passed": 98,
+      "maxRayError": 0.00006156533931120028,
+      "maxLogDError": 0.00003195111713694132
+    }
+  },
+  "collision": {
+    "gamma": 100000000,
+    "axis": "oblique",
+    "theta": [
+      0,
+      1e-9,
+      1e-8
+    ],
+    "uploadedDirection": [
+      0.6000000238418579,
+      0,
+      -0.800000011920929
+    ]
+  },
+  "rows": [
+    {
+      "gamma": 1,
+      "axis": "aligned",
+      "theta": 0,
+      "uploadedDirection": [
+        0,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "aligned",
+      "theta": 0.1,
+      "uploadedDirection": [
+        0.0998334139585495,
+        0,
+        -0.9950041770935059
+      ],
+      "float64": {
+        "rayError": 1.3877787807814457e-17,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 3.854428156308623e-9,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 1.2117442417870392e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.85442817011708e-9,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "aligned",
+      "theta": 1,
+      "uploadedDirection": [
+        0.8414709568023682,
+        0,
+        -0.5403022766113281
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 9.487306854143985e-9,
+        "logDError": 3.203426503814917e-16,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.306350179426932e-8,
+        "logDError": 1.7198266111377426e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 4.1691833091652515e-8,
+        "logDError": 1.7198266111377426e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "aligned",
+      "theta": 10,
+      "uploadedDirection": [
+        -0.5440211296081543,
+        0,
+        0.83907151222229
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.4875419364241992e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.5188403763841834e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.487541933148482e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "aligned",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.7071067690849304,
+        0,
+        -0.7071067690849304
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 3.203426503814917e-16,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.902026906173762e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 4.214684749033394e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "aligned",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        1,
+        0,
+        -6.123234262925839e-17
+      ],
+      "float64": {
+        "rayError": 1.1102230246251568e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1102230246251568e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 1.1102230246251568e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1102230246251568e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "aligned",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        0,
+        0,
+        1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "oblique",
+      "theta": 0,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928688624599e-8,
+        "logDError": 3.203426503814918e-16,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "oblique",
+      "theta": 0.1,
+      "uploadedDirection": [
+        0.6768692135810852,
+        0,
+        -0.7361032962799072
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.105933393534285e-8,
+        "logDError": 3.413898793131658e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.35501403974487e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.3421725640911352e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "oblique",
+      "theta": 1,
+      "uploadedDirection": [
+        0.9973581433296204,
+        0,
+        0.07264074683189392
+      ],
+      "float64": {
+        "rayError": 5.551115123125783e-17,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.028125372579246e-8,
+        "logDError": 1.3038040911036775e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 7.469503926633325e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 5.77940950702025e-8,
+        "logDError": 1.7198266111377426e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "oblique",
+      "theta": 10,
+      "uploadedDirection": [
+        -0.9386597871780396,
+        0,
+        0.3448445498943329
+      ],
+      "float64": {
+        "rayError": 1.2412670766236366e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.3086080140063549e-10,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.666901155208811e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 4.8397717416429634e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "oblique",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.9899494647979736,
+        0,
+        -0.1414213627576828
+      ],
+      "float64": {
+        "rayError": 1.5700924586837752e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 6.610904443063309e-10,
+        "logDError": 2.0149022362269822e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 3.8562754354535236e-8,
+        "logDError": 1.7198266111377426e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.2644054243174948e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "oblique",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        0.800000011920929,
+        0,
+        0.6000000238418579
+      ],
+      "float64": {
+        "rayError": 1.5700924586837752e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928821851364e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007548150906e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928821851364e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1,
+      "axis": "oblique",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        -0.6000000238418579,
+        0,
+        0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "aligned",
+      "theta": 0,
+      "uploadedDirection": [
+        0,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 2.0714648663044954e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 3.4321176123341957e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 3.4321176123341957e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "aligned",
+      "theta": 0.001,
+      "uploadedDirection": [
+        0.0009999998146668077,
+        0,
+        -0.9999995231628418
+      ],
+      "float64": {
+        "rayError": 1.1443916996305594e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 5.467822524025703e-9,
+        "logDError": 2.1704457786597686e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.254618623762867e-8,
+        "logDError": 1.0517727755399164e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.4099275443424214e-8,
+        "logDError": 1.0517727755399164e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "aligned",
+      "theta": 0.01,
+      "uploadedDirection": [
+        0.009999833069741726,
+        0,
+        -0.9999499917030334
+      ],
+      "float64": {
+        "rayError": 1.1133624697908395e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.0548531631165264e-8,
+        "logDError": 3.593160347037383e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.996492615278387e-8,
+        "logDError": 6.008986641603542e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 4.9964730745268375e-8,
+        "logDError": 6.008986641603542e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "aligned",
+      "theta": 0.1,
+      "uploadedDirection": [
+        0.0998334139585495,
+        0,
+        -0.9950041770935059
+      ],
+      "float64": {
+        "rayError": 5.551115123125783e-17,
+        "logDError": 3.3306690738754696e-16,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 7.611054424761483e-9,
+        "logDError": 1.102256361740217e-7,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6482530698756024e-8,
+        "logDError": 1.4851046503672194e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.226467250331861e-9,
+        "logDError": 1.4851046503672194e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "aligned",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.7071067690849304,
+        0,
+        -0.7071067690849304
+      ],
+      "float64": {
+        "rayError": 1.1123893155135927e-16,
+        "logDError": 8.881784197001252e-16,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 5.915780154389777e-14,
+        "logDError": 2.5011104298755527e-12,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.600384538746898e-8,
+        "logDError": 8.53821857660364e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 8.2115324822568e-10,
+        "logDError": 8.53821857660364e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "aligned",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        1,
+        0,
+        -6.123234262925839e-17
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 7.17914425041736e-15,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 7.0504479908027806e-9,
+        "logDError": 3.2246747494468764e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.530372013719215e-10,
+        "logDError": 3.2246747494468764e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "aligned",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        0,
+        0,
+        1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 5.17808018685173e-13,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 4.1801674122154964e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 4.1801674122154964e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "oblique",
+      "theta": 0,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920919074093206e-8,
+        "logDError": 2.0706448111695863e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 3.4321176123341957e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 3.4321176123341957e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "oblique",
+      "theta": 0.001,
+      "uploadedDirection": [
+        0.6007996797561646,
+        0,
+        -0.7993996143341064
+      ],
+      "float64": {
+        "rayError": 5.578801654593729e-15,
+        "logDError": 8.881784197001252e-16,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.00000535755759137004,
+        "logDError": 0.0000010306377040691928,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 1.5799192557233264e-7,
+        "logDError": 3.395118151061638e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 7.470664688940736e-9,
+        "logDError": 1.0517727755399164e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "oblique",
+      "theta": 0.01,
+      "uploadedDirection": [
+        0.6079698801040649,
+        0,
+        -0.7939600944519043
+      ],
+      "float64": {
+        "rayError": 1.1801832636420706e-15,
+        "logDError": 1.7763568394002505e-15,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.000004993789954634417,
+        "logDError": 3.0470567846663243e-7,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0.000010885905063393842,
+        "logDError": 0.000003902329645200098,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 9.823602510596592e-9,
+        "logDError": 6.008986641603542e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "oblique",
+      "theta": 0.1,
+      "uploadedDirection": [
+        0.6768692135810852,
+        0,
+        -0.7361032962799072
+      ],
+      "float64": {
+        "rayError": 5.551115123125783e-17,
+        "logDError": 1.3322676295501878e-15,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 3.719723452836235e-8,
+        "logDError": 0.0000010256770450745023,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 6.40478268280235e-8,
+        "logDError": 6.793514218950136e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 8.631694192883937e-9,
+        "logDError": 1.4851046503672194e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "oblique",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.9899494647979736,
+        0,
+        -0.1414213627576828
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 8.881784197001252e-16,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1519109162048322e-8,
+        "logDError": 9.245016396874917e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.9149522433864027e-8,
+        "logDError": 7.205104246565952e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 9.80972281125804e-9,
+        "logDError": 8.53821857660364e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "oblique",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        0.800000011920929,
+        0,
+        0.6000000238418579
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.2159342621422596e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.724889294427395e-8,
+        "logDError": 3.2246747494468764e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.1624548380025837e-8,
+        "logDError": 3.2246747494468764e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100,
+      "axis": "oblique",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        -0.6000000238418579,
+        0,
+        0.800000011920929
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 5.17808018685173e-13,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 4.1801674122154964e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 4.1801674122154964e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "aligned",
+      "theta": 0,
+      "uploadedDirection": [
+        0,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 8.453383770756773e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 7.960175807397718e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 7.960175807397718e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "aligned",
+      "theta": 0.0001,
+      "uploadedDirection": [
+        0.00009999999747378752,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 1.1443916996305594e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 4.513668860565118e-9,
+        "logDError": 9.186607030642335e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.67444856769235e-8,
+        "logDError": 2.164373391622121e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.1477449479780937e-8,
+        "logDError": 2.164373391622121e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "aligned",
+      "theta": 0.001,
+      "uploadedDirection": [
+        0.0009999998146668077,
+        0,
+        -0.9999995231628418
+      ],
+      "float64": {
+        "rayError": 8.412021842036385e-17,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 3.889960704705302e-8,
+        "logDError": 6.4573614011465e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 7.95625563209164e-9,
+        "logDError": 1.52394045827009e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 7.956255632076985e-9,
+        "logDError": 1.52394045827009e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "aligned",
+      "theta": 0.01,
+      "uploadedDirection": [
+        0.009999833069741726,
+        0,
+        -0.9999499917030334
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 8.881784197001252e-16,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 3.498975524889362e-9,
+        "logDError": 5.072810616013612e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.061648766028401e-8,
+        "logDError": 8.782618632352523e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.0222642008485801e-8,
+        "logDError": 8.782618632352523e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "aligned",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.7071067690849304,
+        0,
+        -0.7071067690849304
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.3852447794681098e-17,
+        "logDError": 1.0658141036401503e-14,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 6.417026201549486e-9,
+        "logDError": 8.76633965418705e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 6.682773949982406e-11,
+        "logDError": 8.76633965418705e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "aligned",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        1,
+        0,
+        -6.123234262925839e-17
+      ],
+      "float64": {
+        "rayError": 2.168404344971009e-19,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 3.0357660829594124e-18,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 8.276762517081063e-8,
+        "logDError": 6.852433642734468e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.5270181412754795e-11,
+        "logDError": 6.852433642734468e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "aligned",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        0,
+        0,
+        1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 3.552713678800501e-15,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 4.375399953460146e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 4.375399953460146e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "oblique",
+      "theta": 0,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920830966793971e-8,
+        "logDError": 7.633307319565574e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 8.429369703748899e-8,
+        "logDError": 7.960175807397718e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 7.960175807397718e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "oblique",
+      "theta": 0.0001,
+      "uploadedDirection": [
+        0.6000800132751465,
+        0,
+        -0.7999399900436401
+      ],
+      "float64": {
+        "rayError": 4.399061727369024e-15,
+        "logDError": 3.552713678800501e-15,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.000020572149245447552,
+        "logDError": 0.0000013348540175428525,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0.000018599965146550685,
+        "logDError": 0.0000013556797195946046,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.147744952644329e-8,
+        "logDError": 2.164373391622121e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "oblique",
+      "theta": 0.001,
+      "uploadedDirection": [
+        0.6007996797561646,
+        0,
+        -0.7993996143341064
+      ],
+      "float64": {
+        "rayError": 4.54303750044251e-14,
+        "logDError": 3.375077994860476e-14,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.000011145693244059792,
+        "logDError": 0.000052723169565283,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0.000046884800970128995,
+        "logDError": 0.000018339060940064655,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1694686508079282e-8,
+        "logDError": 1.52394045827009e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "oblique",
+      "theta": 0.01,
+      "uploadedDirection": [
+        0.6079698801040649,
+        0,
+        -0.7939600944519043
+      ],
+      "float64": {
+        "rayError": 2.0014830212433607e-16,
+        "logDError": 3.552713678800501e-15,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.432589942614831e-7,
+        "logDError": 5.901134398911267e-7,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 8.253460996138462e-7,
+        "logDError": 0.0000072771128101223326,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.0222641914941201e-8,
+        "logDError": 8.782618632352523e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "oblique",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.9899494647979736,
+        0,
+        -0.1414213627576828
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1878248738858431e-8,
+        "logDError": 9.246670451545924e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 7.713155242491237e-8,
+        "logDError": 1.091046222256864e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.187064940363118e-8,
+        "logDError": 8.76633965418705e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "oblique",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        0.800000011920929,
+        0,
+        0.6000000238418579
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1944770616162279e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 8.544831618211749e-8,
+        "logDError": 6.852433642734468e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.6787287068554737e-8,
+        "logDError": 6.852433642734468e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000,
+      "axis": "oblique",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        -0.6000000238418579,
+        0,
+        0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 3.552713678800501e-15,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 4.375399953460146e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 4.375399953460146e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "aligned",
+      "theta": 0,
+      "uploadedDirection": [
+        0,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 3.6067362430003413e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 3.6067362430003413e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 3.6067362430003413e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "aligned",
+      "theta": 0.00001,
+      "uploadedDirection": [
+        0.000009999999747378752,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 2.237726045655905e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 4.5188535699376165e-9,
+        "logDError": 4.293672972721652e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.902243054696302e-9,
+        "logDError": 2.3223833522934e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 9.67456461478007e-11,
+        "logDError": 2.3223833522934e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "aligned",
+      "theta": 0.0001,
+      "uploadedDirection": [
+        0.00009999999747378752,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 1.0950442148898748e-17,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.7345458305639095e-8,
+        "logDError": 4.305789325087517e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 3.471312137459437e-8,
+        "logDError": 1.3848368851654413e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.471312137459435e-8,
+        "logDError": 1.3848368851654413e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "aligned",
+      "theta": 0.001,
+      "uploadedDirection": [
+        0.0009999998146668077,
+        0,
+        -0.9999995231628418
+      ],
+      "float64": {
+        "rayError": 2.7755575615628914e-17,
+        "logDError": 8.881784197001252e-16,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 8.278133234451701e-9,
+        "logDError": 1.1953461864777637e-7,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 3.0599793438152436e-9,
+        "logDError": 1.364690316307815e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 8.103673422618234e-10,
+        "logDError": 1.364690316307815e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "aligned",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.7071067690849304,
+        0,
+        -0.7071067690849304
+      ],
+      "float64": {
+        "rayError": 5.421010862427522e-20,
+        "logDError": 1.7763568394002505e-15,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 5.421010862427522e-20,
+        "logDError": 1.7763568394002505e-15,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.9142138491888697e-8,
+        "logDError": 4.082368398883318e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 6.450305646300345e-12,
+        "logDError": 4.082368398883318e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "aligned",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        1,
+        0,
+        -6.123234262925839e-17
+      ],
+      "float64": {
+        "rayError": 2.710505431213761e-20,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.710505431213761e-20,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.000000607787575e-9,
+        "logDError": 3.644554347204121e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.026212481032355e-12,
+        "logDError": 3.644554347204121e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "aligned",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        0,
+        0,
+        1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 4.005227971504155e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 4.005227971504155e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "oblique",
+      "theta": 0,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.191995129268264e-8,
+        "logDError": 7.840097993039308e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 8.429369703748899e-8,
+        "logDError": 3.6067362430003413e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 3.6067362430003413e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "oblique",
+      "theta": 0.00001,
+      "uploadedDirection": [
+        0.6000080108642578,
+        0,
+        -0.7999939918518066
+      ],
+      "float64": {
+        "rayError": 1.1669270658422433e-12,
+        "logDError": 1.5631940186722204e-13,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.00012662104216345103,
+        "logDError": 0.000004819012948686918,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0.00012641439266710327,
+        "logDError": 0.000004814884574599887,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 5.832760801698215e-8,
+        "logDError": 2.3223833522934e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "oblique",
+      "theta": 0.0001,
+      "uploadedDirection": [
+        0.6000800132751465,
+        0,
+        -0.7999399900436401
+      ],
+      "float64": {
+        "rayError": 3.3377745086188015e-13,
+        "logDError": 1.580957587066223e-13,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.000335188894979036,
+        "logDError": 0.00006747239651971881,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0.0002852098981451818,
+        "logDError": 0.00006748942479006814,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.35875953155562e-8,
+        "logDError": 1.3848368851654413e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "oblique",
+      "theta": 0.001,
+      "uploadedDirection": [
+        0.6007996797561646,
+        0,
+        -0.7993996143341064
+      ],
+      "float64": {
+        "rayError": 5.467214348906571e-15,
+        "logDError": 6.572520305780927e-14,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.000005353096037271595,
+        "logDError": 0.00010442961263290584,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 1.785187004581903e-7,
+        "logDError": 0.000036254473077868,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 9.895745993814866e-10,
+        "logDError": 1.364690316307815e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "oblique",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.9899494647979736,
+        0,
+        -0.1414213627576828
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 1.7763568394002505e-15,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.191663573678997e-8,
+        "logDError": 9.246688215114318e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 3.789598221057804e-8,
+        "logDError": 8.215618052531681e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.44757003221154e-8,
+        "logDError": 4.082368398883318e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "oblique",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        0.800000011920929,
+        0,
+        0.6000000238418579
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1923312841146866e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.317994291318382e-8,
+        "logDError": 3.644554347204121e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 7.253192727164098e-9,
+        "logDError": 3.644554347204121e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 10000,
+      "axis": "oblique",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        -0.6000000238418579,
+        0,
+        0.800000011920929
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 4.005227971504155e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 4.005227971504155e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "aligned",
+      "theta": 0,
+      "uploadedDirection": [
+        0,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 3.623767952376511e-13,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 3.623767952376511e-13,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 3.623767952376511e-13,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "aligned",
+      "theta": 1.0000000000000001e-7,
+      "uploadedDirection": [
+        1.0000000116860974e-7,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.314127106936058e-9,
+        "logDError": 3.33493233029003e-10,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.930879048395705e-9,
+        "logDError": 1.4426600358774522e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 5.900956574313677e-10,
+        "logDError": 1.4426600358774522e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "aligned",
+      "theta": 0.000001,
+      "uploadedDirection": [
+        9.999999974752427e-7,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 9.662274235924304e-17,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.524965526728651e-9,
+        "logDError": 3.6431160310712585e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 1.6664447599626376e-13,
+        "logDError": 2.4158453015843406e-13,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.6664447599626376e-13,
+        "logDError": 2.4158453015843406e-13,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "aligned",
+      "theta": 0.00001,
+      "uploadedDirection": [
+        0.000009999999747378752,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 1.2412670766236366e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 5.0090012987226735e-9,
+        "logDError": 7.226462095388797e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.930724781730582e-9,
+        "logDError": 1.971173091419587e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 5.885443254861613e-10,
+        "logDError": 1.971173091419587e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "aligned",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.7071067690849304,
+        0,
+        -0.7071067690849304
+      ],
+      "float64": {
+        "rayError": 4.235164736271502e-22,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 4.235164736271502e-22,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.916141371648997e-12,
+        "logDError": 4.433118760971411e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.0571220194851343e-13,
+        "logDError": 4.433118760971411e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "aligned",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        1,
+        0,
+        -6.123234262925839e-17
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.000508240841362e-13,
+        "logDError": 3.6424552263270016e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.5252574198251143e-15,
+        "logDError": 3.6424552263270016e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "aligned",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        0,
+        0,
+        1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 3.6428176031222392e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 3.6428176031222392e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "oblique",
+      "theta": 0,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.181827580243322e-8,
+        "logDError": 0.0008198442021090102,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 3.623767952376511e-13,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 3.623767952376511e-13,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "oblique",
+      "theta": 1.0000000000000001e-7,
+      "uploadedDirection": [
+        0.6000000834465027,
+        0,
+        -0.7999999523162842
+      ],
+      "float64": {
+        "rayError": 8.725035303710233e-11,
+        "logDError": 2.1380230919021415e-11,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.024493764687225167,
+        "logDError": 0.0035299860273561023,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 0.02878656253804317,
+        "logDError": 0.004140552004802345,
+        "withinTolerance": false
+      },
+      "frameCandidate": {
+        "rayError": 5.7834258087316394e-8,
+        "logDError": 1.4426600358774522e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "oblique",
+      "theta": 0.000001,
+      "uploadedDirection": [
+        0.60000079870224,
+        0,
+        -0.7999994158744812
+      ],
+      "float64": {
+        "rayError": 1.8435355464420194e-10,
+        "logDError": 1.3783107988274423e-10,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.001939095370766278,
+        "logDError": 0.03201522359537279,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 0.010474157702814207,
+        "logDError": 0.03232957509090184,
+        "withinTolerance": false
+      },
+      "frameCandidate": {
+        "rayError": 1.1921095355305056e-8,
+        "logDError": 2.4158453015843406e-13,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "oblique",
+      "theta": 0.00001,
+      "uploadedDirection": [
+        0.6000080108642578,
+        0,
+        -0.7999939918518066
+      ],
+      "float64": {
+        "rayError": 1.1672126435297193e-12,
+        "logDError": 1.5582202195218997e-11,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.00012758301280167082,
+        "logDError": 0.0004821714786444886,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0.00012740147146457435,
+        "logDError": 0.00048216332256600936,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.6994574884868087e-8,
+        "logDError": 1.971173091419587e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "oblique",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.9899494647979736,
+        0,
+        -0.1414213627576828
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920885811845428e-8,
+        "logDError": 9.24668874802137e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.825211515239783e-8,
+        "logDError": 1.87722907440957e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 4.194875693487141e-8,
+        "logDError": 4.433118760971411e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "oblique",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        0.800000011920929,
+        0,
+        0.6000000238418579
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920952580629942e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 1.3278961140093054e-8,
+        "logDError": 3.6424552263270016e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.4404789173175785e-8,
+        "logDError": 3.6424552263270016e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000,
+      "axis": "oblique",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        -0.6000000238418579,
+        0,
+        0.800000011920929
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928844055822e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 3.6428176031222392e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 3.6428176031222392e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "aligned",
+      "theta": 0,
+      "uploadedDirection": [
+        0,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "aligned",
+      "theta": 1e-9,
+      "uploadedDirection": [
+        9.999999717180685e-10,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 5.600382485043082e-9,
+        "logDError": 8.079652502601675e-10,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.930883842647618e-9,
+        "logDError": 4.385792706784741e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 5.901450172874901e-10,
+        "logDError": 4.385792706784741e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "aligned",
+      "theta": 1e-8,
+      "uploadedDirection": [
+        9.99999993922529e-9,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 6.077471028780365e-9,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "aligned",
+      "theta": 1e-7,
+      "uploadedDirection": [
+        1.0000000116860974e-7,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.3140780306814434e-9,
+        "logDError": 3.338508847150479e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.930883856456534e-9,
+        "logDError": 1.4426952077428723e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 5.9014488125769e-10,
+        "logDError": 1.4426952077428723e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "aligned",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.7071067690849304,
+        0,
+        -0.7071067690849304
+      ],
+      "float64": {
+        "rayError": 1.110223024625157e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.110223024625157e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.0016888415620554e-16,
+        "logDError": 1.2453238795728794e-7,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.4804742617064915e-16,
+        "logDError": 1.2453238795728794e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "aligned",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        1,
+        0,
+        -6.123234262925839e-17
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 6.07747099184471e-17,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 6.07747099184471e-17,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "aligned",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        0,
+        0,
+        1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "oblique",
+      "theta": 0,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 2.0000000000000004,
+        "logDError": 2.740785538962431,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 8.429369703748899e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "oblique",
+      "theta": 1e-9,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 1.4085739523067965e-9,
+        "logDError": 1.7362111748298048e-10,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.9900743817089985,
+        "logDError": 2.7264302459853624,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 0.19900738466405407,
+        "logDError": 0.014355292977068501,
+        "withinTolerance": false
+      },
+      "frameCandidate": {
+        "rayError": 5.7834208714489345e-8,
+        "logDError": 4.385792706784741e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "oblique",
+      "theta": 1e-8,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 7.245205457806491e-9,
+        "logDError": 4.045766388571792e-9,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.4142135715333033,
+        "logDError": 1.740785538962431,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 1.4142135623730978,
+        "logDError": 1,
+        "withinTolerance": false
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "oblique",
+      "theta": 1e-7,
+      "uploadedDirection": [
+        0.6000000834465027,
+        0,
+        -0.7999999523162842
+      ],
+      "float64": {
+        "rayError": 8.72503266555717e-11,
+        "logDError": 2.1380408554705355e-9,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.008638744119705798,
+        "logDError": 0.40426890374640223,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 0.02710330023505464,
+        "logDError": 0.4871994050955948,
+        "withinTolerance": false
+      },
+      "frameCandidate": {
+        "rayError": 1.6996175432065612e-8,
+        "logDError": 1.4426952077428723e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "oblique",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.9899494647979736,
+        0,
+        -0.1414213627576828
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928244535391e-8,
+        "logDError": 9.24668874802137e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 4.323168788926326e-8,
+        "logDError": 2.5589521612801036e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.6063064379199264e-8,
+        "logDError": 1.2453238795728794e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "oblique",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        0.800000011920929,
+        0,
+        0.6000000238418579
+      ],
+      "float64": {
+        "rayError": 1.5700924586837752e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.192092906610043e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 3.238767226680117e-8,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 2.192092869446327e-8,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 100000000,
+      "axis": "oblique",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        -0.6000000238418579,
+        0,
+        0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928755237982e-8,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 8.76793748716409e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "aligned",
+      "theta": 0,
+      "uploadedDirection": [
+        0,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "aligned",
+      "theta": 1e-13,
+      "uploadedDirection": [
+        9.9999998245167e-14,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 1.1443916996305594e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 4.286005938772237e-9,
+        "logDError": 5.290935689572507e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 1.6577324249732326e-8,
+        "logDError": 5.4365401069844665e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.4015943557581139e-8,
+        "logDError": 5.4365401069844665e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "aligned",
+      "theta": 1e-12,
+      "uploadedDirection": [
+        9.999999960041972e-13,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 8.09180279103759e-9,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "aligned",
+      "theta": 1e-11,
+      "uploadedDirection": [
+        9.999999960041972e-12,
+        0,
+        -1
+      ],
+      "float64": {
+        "rayError": 1.1443916996305594e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.6023371881260452e-9,
+        "logDError": 1.720756159784287e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 5.930883842647618e-9,
+        "logDError": 5.3183512704890745e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 5.901450172874901e-10,
+        "logDError": 5.3183512704890745e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "aligned",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.7071067690849304,
+        0,
+        -0.7071067690849304
+      ],
+      "float64": {
+        "rayError": 4.0389678347315804e-28,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 9.88861908616075e-21,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 1.4941655018023007e-20,
+        "logDError": 8.700191500565779e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.4941655018023007e-20,
+        "logDError": 8.700191500565779e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "aligned",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        1,
+        0,
+        -6.123234262925839e-17
+      ],
+      "float64": {
+        "rayError": 2.0194839173657902e-28,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 4.095999878093516e-21,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 3.9958029815850206e-21,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 3.9958029815850206e-21,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "aligned",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        0,
+        0,
+        1
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 0,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 0,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "oblique",
+      "theta": 0,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.9999999999999998,
+        "logDError": 29.082418100274083,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 2.6656007498500224e-8,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "oblique",
+      "theta": 1e-13,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0.00000851425688408017,
+        "logDError": 0.000002546180262186226,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.9900743816061723,
+        "logDError": 29.06806280729701,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 0.19900742855258524,
+        "logDError": 0.014355287067793654,
+        "withinTolerance": false
+      },
+      "frameCandidate": {
+        "rayError": 0.00006156533931120028,
+        "logDError": 0.000008875527818474893,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "oblique",
+      "theta": 1e-12,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 0.000044325190834332386,
+        "logDError": 1.207917321721652e-7,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.4142135708025863,
+        "logDError": 28.082418100274083,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 1.414213570802465,
+        "logDError": 0.9999999940907216,
+        "withinTolerance": false
+      },
+      "frameCandidate": {
+        "rayError": 0.000022125243345238412,
+        "logDError": 0.00003195111713694132,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "oblique",
+      "theta": 1e-11,
+      "uploadedDirection": [
+        0.6000000238418579,
+        0,
+        -0.800000011920929
+      ],
+      "float64": {
+        "rayError": 2.819448234089477e-7,
+        "logDError": 0.000006579814062490641,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 0.19900744990393626,
+        "logDError": 22.424206617522287,
+        "withinTolerance": false
+      },
+      "roundedArithmetic": {
+        "rayError": 1.990074402957337,
+        "logDError": 6.658211476842517,
+        "withinTolerance": false
+      },
+      "frameCandidate": {
+        "rayError": 1.6996175580022068e-8,
+        "logDError": 2.452350926773761e-7,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "oblique",
+      "theta": 0.7853981633974483,
+      "uploadedDirection": [
+        0.9899494647979736,
+        0,
+        -0.1414213627576828
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 9.83761623274404e-8,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 2.665708724006288e-8,
+        "logDError": 9.625236430110817e-8,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1923342846387187e-8,
+        "logDError": 8.700191500565779e-8,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "oblique",
+      "theta": 1.5707963267948966,
+      "uploadedDirection": [
+        0.800000011920929,
+        0,
+        0.6000000238418579
+      ],
+      "float64": {
+        "rayError": 0,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 8.429440417869646e-8,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1921928666502879e-8,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      }
+    },
+    {
+      "gamma": 1000000000000,
+      "axis": "oblique",
+      "theta": 3.141592653589793,
+      "uploadedDirection": [
+        -0.6000000238418579,
+        0,
+        0.800000011920929
+      ],
+      "float64": {
+        "rayError": 1.1102230246251565e-16,
+        "logDError": 0,
+        "withinTolerance": true
+      },
+      "uploadOnly": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 5.909278399940376e-9,
+        "withinTolerance": true
+      },
+      "roundedArithmetic": {
+        "rayError": 8.429369703748899e-8,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      },
+      "frameCandidate": {
+        "rayError": 1.1920928666420138e-8,
+        "logDError": 5.764725585777342e-9,
+        "withinTolerance": true
+      }
+    }
+  ]
+}
