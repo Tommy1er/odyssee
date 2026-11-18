@@ -81,6 +81,17 @@ function initMissionStorage(){
   finally{$('resume-mission').disabled=false;}
  };
  $('keep-mission').onclick=()=>{pendingMission=null;missionWriting=true;$('resume-mission').hidden=$('keep-mission').hidden=true;saveMission();};
+// Écran court : les choix de mission passent dans un menu « Mission ▾ ». Une mission sauvegardée en attente
+// ouvre le menu une fois (pastille ambre) ; il se replie après un choix, un clic ailleurs ou Échap.
+{const box=document.querySelector('.mission-controls'),toggle=$('mission-menu'),actions=$('mission-actions');
+ const setOpen=open=>{box.classList.toggle('menu-open',open);toggle.setAttribute('aria-expanded',String(open));};
+ const pending=()=>!$('resume-mission').hidden||!$('keep-mission').hidden;
+ const sync=()=>{const p=pending();box.classList.toggle('pending-choice',p);toggle.classList.toggle('pending',p);if(p!==sync.last){setOpen(p);sync.last=p;}};
+ toggle.onclick=e=>{e.stopPropagation();setOpen(!box.classList.contains('menu-open'));};
+ actions.addEventListener('click',e=>{if(e.target.closest('button'))setTimeout(()=>{if(!pending())setOpen(false);},0);});
+ document.addEventListener('click',e=>{if(!box.contains(e.target))setOpen(false);});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&box.classList.contains('menu-open')){setOpen(false);toggle.focus();}});
+ const watch=new MutationObserver(sync);for(const id of ['resume-mission','keep-mission'])watch.observe($(id),{attributes:true,attributeFilter:['hidden']});sync();}
  window.addEventListener('pagehide',saveMission);
  document.addEventListener('visibilitychange',()=>{if(document.hidden)saveMission();});
  // Bubble after controls: save changed mission, including before following a map link.
