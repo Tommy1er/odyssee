@@ -216,9 +216,9 @@ Le [registre de validation de la task force](./MATRICE_CONSOLIDATION.xlsx) déta
 
 ### 10.2. Maquettes Claude — sources de direction artistique, **non intégrées en production**
 
-- [Charte V3](../../../conception/CHARTE-UI-V3.md) et [directive de conception V3](../../../conception/ODYSSEE-V3-DIRECTIVE.md).
-- [Maquettes V3 initiales](../../../conception/maquettes/README.md) : Explorer, Observatoire, Carte ; bureau et mobile, HTML + captures PNG.
-- [Maquettes V3.1 immersives](../../../conception/maquettes-v3.1/README.md) : Explorer en vue libre/panneaux/vaisseau extérieur/Cinéma/mobile, Observatoire et Carte cosmique bureau/mobile. **Les HTML, PNG et les fonds capturés du moteur sont dans ce dossier**.
+- [Charte V3](../../conception/CHARTE-UI-V3.md) et [directive de conception V3](../../conception/ODYSSEE-V3-DIRECTIVE.md).
+- [Maquettes V3 initiales](../../conception/maquettes/README.md) : Explorer, Observatoire, Carte ; bureau et mobile, HTML + captures PNG.
+- [Maquettes V3.1 immersives](../../conception/maquettes-v3.1/README.md) : Explorer en vue libre/panneaux/vaisseau extérieur/Cinéma/mobile, Observatoire et Carte cosmique bureau/mobile. **Les HTML, PNG et les fonds capturés du moteur sont dans ce dossier**.
 - Les chiffres de vol montrés dans ces planches sont illustratifs et ne doivent pas être présentés comme des sorties de simulation validées.
 
 ### 10.3. Prototypes externes facultatifs
