@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>Carte cosmique V3.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#03070d;color:#edf3f7;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.4}
+a{color:#8ee2cc;text-decoration:none}
+button,select{font:inherit;color:inherit;cursor:pointer}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.stage{position:relative;overflow:hidden;background:#03070d}
+.sky{position:absolute;inset:0;background-repeat:no-repeat;background-color:#03070d}
+.vig{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#03070dcc,transparent 18%,transparent 70%,#03070de6)}
+.glass{background:#07101bd1;border:1px solid #a7bbcb2e;border-radius:10px}
+.glass.solid{background:#0a1420f5}
+.pill{display:flex;gap:2px;padding:3px;border-radius:999px;background:#07101bb8;border:1px solid #a7bbcb2e}
+.pill>*{border:0;background:transparent;border-radius:999px;padding:6px 13px;font-size:12px;color:#c9d7e1;display:inline-flex;align-items:center;gap:6px}
+.pill>.on{background:#1b3a35;color:#bff0e2}
+.btn{background:#111f2ce6;border:1px solid #2b3f4e;border-radius:7px;padding:7px 11px;font-size:12px;min-height:32px;display:inline-flex;align-items:center;gap:6px;color:#edf3f7}
+.btn.primary{background:#8ee2cc;border-color:#8ee2cc;color:#07141b;font-weight:600}
+.btn.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+.btn.ghost{background:transparent;border-color:#a7bbcb33}
+.kbd{font-family:"JetBrains Mono",monospace;font-size:12px;color:#a7bbcb;border:1px solid #a7bbcb55;border-radius:4px;padding:0 5px;line-height:17px}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:500;white-space:nowrap}
+.chip.obs{background:#17322ad9;color:#9fe8cf}.chip.model{background:#1b2a3dd9;color:#9fcbf6}.chip.recon{background:#2a2630d9;color:#d7c8f3}.chip.fiction{background:#2d2440d9;color:#cdb8f3}
+.label{font-size:12px;color:#a7bbcb;letter-spacing:.07em;text-transform:uppercase}
+.k{color:#a7bbcb;font-size:12px}
+.v{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:15px}
+.v small{font-size:12px;color:#a7bbcb}
+.tab{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;color:#c9d7e1;letter-spacing:.08em;display:flex;gap:8px;align-items:center}
+.seg{display:flex;border:1px solid #2b3f4e;border-radius:8px;overflow:hidden}
+.seg>*{border:0;background:#111f2ce6;padding:7px 11px;font-size:12px;min-height:32px;color:#edf3f7}
+.seg>*+*{border-left:1px solid #2b3f4e}
+.seg>.on{background:#1b3a35;color:#bff0e2}
+.bracket{position:absolute;pointer-events:none;--c:#8ee2cc;background:linear-gradient(var(--c),var(--c)) 0 0/18px 1.5px,linear-gradient(var(--c),var(--c)) 0 0/1.5px 18px,linear-gradient(var(--c),var(--c)) 100% 0/18px 1.5px,linear-gradient(var(--c),var(--c)) 100% 0/1.5px 18px,linear-gradient(var(--c),var(--c)) 0 100%/18px 1.5px,linear-gradient(var(--c),var(--c)) 0 100%/1.5px 18px,linear-gradient(var(--c),var(--c)) 100% 100%/18px 1.5px,linear-gradient(var(--c),var(--c)) 100% 100%/1.5px 18px;background-repeat:no-repeat}
+dl.grid{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0}
+dl.grid dt{color:#a7bbcb;font-size:12px}dl.grid dd{margin:0;font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:12px;text-align:right}
+table{border-collapse:collapse;width:100%;font-size:12px}
+td,th{padding:6px 5px;border-bottom:1px solid #1f2f3c;text-align:left;vertical-align:middle}th{color:#a7bbcb;font-weight:500}
+td.num{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.note{position:absolute;font-size:12px;color:#f0b56b;background:#20170bcc;border:1px dashed #f0b56b88;border-radius:6px;padding:4px 8px}
+</style>
+</head>
+<body>
+<div class="stage" style="width:1280px;height:585px">
+<div class="sky" style="background-image:url('assets/carte.jpg');background-size:cover;background-position:center"></div><div class="vig"></div>
+
+<div style="position:absolute;top:12px;left:14px;display:flex;align-items:center;gap:12px">
+ <span style="color:#8ee2cc;font-weight:600;letter-spacing:.16em;font-size:12px">✧ ODYSSÉE</span>
+ <nav class="pill" aria-label="Espaces"><a href="Explorer31.html">Explorer</a><a href="Observatoire31.html">Observatoire</a><span class="on">Carte cosmique</span></nav>
+</div>
+<div style="position:absolute;top:12px;right:14px;display:flex;align-items:center;gap:8px">
+ <label class="pill" style="padding:0 12px;height:32px;align-items:center;gap:8px;width:250px;border-radius:999px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a7bbcb" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span style="flex:1;color:#a7bbcb;font-size:12px;padding:0;justify-content:flex-start">Saturne, M87, Tarentule…</span><span class="kbd">/</span></label>
+ <button class="btn ghost" style="border-radius:999px;background:#07101bb8">Laboratoire ▾</button>
+ <button class="btn ghost" style="border-radius:999px;width:32px;justify-content:center;padding:0;background:#07101bb8" aria-label="Aide">?</button>
+</div>
+<aside class="glass" aria-label="Échelle" style="position:absolute;left:12px;top:60px;width:236px;padding:8px;font-size:12px">
+ <div class="label" style="padding:2px 8px 6px">Échelle · zoom continu</div><div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;color:#c9d7e1;"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #3a5263;background:transparent"></span><span style="flex:1">Système solaire</span><span class="mono" style="font-size:12px;color:#7f97a8">100 ua</span></div><div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;background:#1b3a35;color:#bff0e2;"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #8ee2cc;background:#8ee2cc"></span><span style="flex:1">Voisinage solaire</span><span class="mono" style="font-size:12px;color:#7f97a8">50 al</span></div><div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;color:#c9d7e1;"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #3a5263;background:transparent"></span><span style="flex:1">Voie lactée</span><span class="mono" style="font-size:12px;color:#7f97a8">100 kal</span></div><div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;color:#c9d7e1;"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #3a5263;background:transparent"></span><span style="flex:1">Groupe local</span><span class="mono" style="font-size:12px;color:#7f97a8">10 Mal</span></div><div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;color:#c9d7e1;"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #3a5263;background:transparent"></span><span style="flex:1">Amas de la Vierge</span><span class="mono" style="font-size:12px;color:#7f97a8">100 Mal</span></div><div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;color:#c9d7e1;"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #3a5263;background:transparent"></span><span style="flex:1">Laniakea</span><span class="mono" style="font-size:12px;color:#7f97a8">500 Mal</span></div><div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;color:#c9d7e1;"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #3a5263;background:transparent"></span><span style="flex:1">Toile cosmique</span><span class="mono" style="font-size:12px;color:#7f97a8">3 Gal</span></div><div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;color:#c9d7e1;"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #3a5263;background:transparent"></span><span style="flex:1">Univers observable</span><span class="mono" style="font-size:12px;color:#7f97a8">93 Gal</span></div>
+</aside>
+<div class="glass" style="position:absolute;right:12px;top:60px;width:250px;padding:10px 12px;font-size:12px;display:flex;flex-direction:column;gap:7px">
+ <div class="label">Couches ▾</div>
+ <div style="display:flex;justify-content:space-between;align-items:center"><span>Trajet du vaisseau</span><span class="chip obs">on</span></div><div style="display:flex;justify-content:space-between;align-items:center"><span>Repères et noms</span><span class="chip obs">on</span></div><div style="display:flex;justify-content:space-between;align-items:center"><span>Nuage d'Oort</span><span class="chip recon">hypothèse</span></div><div style="display:flex;justify-content:space-between;align-items:center"><span>Structures (CF4, bassins)</span><span class="chip model">aux grandes échelles</span></div>
+</div>
+<div class="glass" style="position:absolute;left:868px;top:300px;padding:7px 10px;font-size:12px"><strong>▲ Vaisseau</strong> · près de Saturne<br><span class="mono" style="color:#a7bbcb">9,6 ua du Soleil · ici confondu avec lui</span></div>
+
+<section class="glass" aria-label="Instruments de vol" style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);width:640px;padding:9px 12px 10px;display:flex;flex-direction:column;gap:8px">
+ <div style="display:flex;align-items:flex-end;gap:20px">
+  <div style="min-width:150px"><div class="k">Destination</div><div style="font-size:15px;font-weight:600;line-height:1.2">Saturne</div><div style="font-size:12px;color:#8ee2cc;white-space:nowrap">Arrivé · maintien orbital</div></div>
+  <div style="flex:1;display:flex;justify-content:space-between;gap:14px"><div style="white-space:nowrap"><div class="k">Vitesse</div><div class="v">0,000 <small>c</small></div></div><div style="white-space:nowrap"><div class="k">Restant</div><div class="v">—</div></div><div style="white-space:nowrap"><div class="k">À bord</div><div class="v">2 j 04 h</div></div><div style="white-space:nowrap"><div class="k">Référence</div><div class="v">2 j 04 h</div></div></div>
+ </div>
+ 
+ <div style="display:flex;gap:6px;align-items:center"><div class="seg"><button class="" style="white-space:nowrap">↑ Poussée</button><button class="on" style="white-space:nowrap">Inertie</button><button class="" style="white-space:nowrap">↓ Freiner</button></div><button class="btn" aria-label="Pause">❚❚</button><button class="btn" style="white-space:nowrap">×1 / s ▾</button><span style="flex:1"></span><span class="k">Perspective <span class="kbd">V</span></span><div class="seg"><button class="on">Cockpit</button><button class="">Vaisseau</button></div></div>
+</section>
+<div style="position:absolute;right:14px;bottom:14px;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+ <span class="chip obs">Étoiles : positions de catalogue</span>
+ <a class="btn" style="background:#07101bb8" href="Explorer31.html">↩ Retour au vaisseau</a>
+</div>
+<div class="mono" style="position:absolute;left:16px;bottom:16px;font-size:12px;color:#a7bbcb;display:flex;flex-direction:column;gap:4px"><span><span style="display:inline-block;width:80px;height:6px;border:2px solid #a7bbcb;border-top:0;margin-right:8px"></span>1 al</span><span>Référentiel galactique (l, b)</span></div>
+</div>
+</body>
+</html>

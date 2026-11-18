@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>Observatoire V3.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#03070d;color:#edf3f7;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.4}
+a{color:#8ee2cc;text-decoration:none}
+button,select{font:inherit;color:inherit;cursor:pointer}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.stage{position:relative;overflow:hidden;background:#03070d}
+.sky{position:absolute;inset:0;background-repeat:no-repeat;background-color:#03070d}
+.vig{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#03070dcc,transparent 18%,transparent 70%,#03070de6)}
+.glass{background:#07101bd1;border:1px solid #a7bbcb2e;border-radius:10px}
+.glass.solid{background:#0a1420f5}
+.pill{display:flex;gap:2px;padding:3px;border-radius:999px;background:#07101bb8;border:1px solid #a7bbcb2e}
+.pill>*{border:0;background:transparent;border-radius:999px;padding:6px 13px;font-size:12px;color:#c9d7e1;display:inline-flex;align-items:center;gap:6px}
+.pill>.on{background:#1b3a35;color:#bff0e2}
+.btn{background:#111f2ce6;border:1px solid #2b3f4e;border-radius:7px;padding:7px 11px;font-size:12px;min-height:32px;display:inline-flex;align-items:center;gap:6px;color:#edf3f7}
+.btn.primary{background:#8ee2cc;border-color:#8ee2cc;color:#07141b;font-weight:600}
+.btn.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+.btn.ghost{background:transparent;border-color:#a7bbcb33}
+.kbd{font-family:"JetBrains Mono",monospace;font-size:12px;color:#a7bbcb;border:1px solid #a7bbcb55;border-radius:4px;padding:0 5px;line-height:17px}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:500;white-space:nowrap}
+.chip.obs{background:#17322ad9;color:#9fe8cf}.chip.model{background:#1b2a3dd9;color:#9fcbf6}.chip.recon{background:#2a2630d9;color:#d7c8f3}.chip.fiction{background:#2d2440d9;color:#cdb8f3}
+.label{font-size:12px;color:#a7bbcb;letter-spacing:.07em;text-transform:uppercase}
+.k{color:#a7bbcb;font-size:12px}
+.v{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:15px}
+.v small{font-size:12px;color:#a7bbcb}
+.tab{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;color:#c9d7e1;letter-spacing:.08em;display:flex;gap:8px;align-items:center}
+.seg{display:flex;border:1px solid #2b3f4e;border-radius:8px;overflow:hidden}
+.seg>*{border:0;background:#111f2ce6;padding:7px 11px;font-size:12px;min-height:32px;color:#edf3f7}
+.seg>*+*{border-left:1px solid #2b3f4e}
+.seg>.on{background:#1b3a35;color:#bff0e2}
+.bracket{position:absolute;pointer-events:none;--c:#8ee2cc;background:linear-gradient(var(--c),var(--c)) 0 0/18px 1.5px,linear-gradient(var(--c),var(--c)) 0 0/1.5px 18px,linear-gradient(var(--c),var(--c)) 100% 0/18px 1.5px,linear-gradient(var(--c),var(--c)) 100% 0/1.5px 18px,linear-gradient(var(--c),var(--c)) 0 100%/18px 1.5px,linear-gradient(var(--c),var(--c)) 0 100%/1.5px 18px,linear-gradient(var(--c),var(--c)) 100% 100%/18px 1.5px,linear-gradient(var(--c),var(--c)) 100% 100%/1.5px 18px;background-repeat:no-repeat}
+dl.grid{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0}
+dl.grid dt{color:#a7bbcb;font-size:12px}dl.grid dd{margin:0;font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:12px;text-align:right}
+table{border-collapse:collapse;width:100%;font-size:12px}
+td,th{padding:6px 5px;border-bottom:1px solid #1f2f3c;text-align:left;vertical-align:middle}th{color:#a7bbcb;font-weight:500}
+td.num{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.note{position:absolute;font-size:12px;color:#f0b56b;background:#20170bcc;border:1px dashed #f0b56b88;border-radius:6px;padding:4px 8px}
+</style>
+</head>
+<body>
+<div class="stage" style="width:1280px;height:585px;display:grid;grid-template-columns:270px minmax(0,1fr) 330px;grid-template-rows:56px minmax(0,1fr)">
+<div style="grid-column:1/-1;position:relative;background:#070d16;border-bottom:1px solid #1f2f3c">
+<div style="position:absolute;top:12px;left:14px;display:flex;align-items:center;gap:12px">
+ <span style="color:#8ee2cc;font-weight:600;letter-spacing:.16em;font-size:12px">✧ ODYSSÉE</span>
+ <nav class="pill" aria-label="Espaces"><a href="Explorer31.html">Explorer</a><span class="on">Observatoire</span><a href="Carte31.html">Carte cosmique</a></nav>
+</div>
+<div style="position:absolute;top:12px;right:14px;display:flex;align-items:center;gap:8px">
+ <label class="pill" style="padding:0 12px;height:32px;align-items:center;gap:8px;width:250px;border-radius:999px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a7bbcb" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span style="flex:1;color:#a7bbcb;font-size:12px;padding:0;justify-content:flex-start">Saturne, M87, Tarentule…</span><span class="kbd">/</span></label>
+ <button class="btn ghost" style="border-radius:999px;background:#07101bb8">Laboratoire ▾</button>
+ <button class="btn ghost" style="border-radius:999px;width:32px;justify-content:center;padding:0;background:#07101bb8" aria-label="Aide">?</button>
+</div></div>
+<aside style="background:#0a1420;border-right:1px solid #1f2f3c;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:0">
+ <span class="label">Objet suivi depuis Explorer</span>
+ <h1 style="margin:0;font-size:24px;line-height:1.1">Saturne</h1>
+ <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip obs">Observé</span><span class="chip model">Position : éphéméride</span></div>
+ <div class="seg" style="width:100%"><button class="on" style="flex:1">Découverte</button><button style="flex:1">Scientifique</button></div>
+ <p style="margin:0;font-size:13px;color:#d6e2ea">Deuxième plus grosse planète du Système solaire, faite surtout d'hydrogène et d'hélium. Ses anneaux sont des milliards de fragments de glace d'eau.</p>
+ <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px">
+  <a class="btn primary" style="justify-content:center" href="Explorer31.html">Retour au vaisseau</a>
+  <div style="display:flex;gap:6px"><button class="btn" style="flex:1;justify-content:center">Engager le trajet</button><a class="btn" style="flex:1;justify-content:center" href="Carte31.html">Situer</a></div>
+ </div>
+</aside>
+<section style="position:relative;min-width:0;min-height:0">
+ <div class="sky" style="background-image:url('assets/saturne.jpg');background-size:auto 125%;background-position:50% 50%"></div>
+ <div style="position:absolute;top:10px;left:12px;right:12px;display:flex;gap:6px;align-items:center">
+  <div class="seg"><button class="on">Rendu Odyssée</button><button>Observation réelle</button><button>Comparer</button></div>
+  <span style="flex:1"></span><button class="btn" style="background:#07101bb8">Bande : visible ▾</button>
+ </div>
+ <div class="glass" style="position:absolute;left:12px;bottom:12px;max-width:400px;padding:9px 11px;font-size:12px;color:#d6e2ea"><strong style="color:#9fcbf6">Observation réelle</strong> : images Cassini / télescopes chargées à la demande, avec leur source et leur date. Aucune image affichée ici n'est une photographie.</div>
+ <div class="mono" style="position:absolute;right:12px;bottom:12px;font-size:12px;color:#a7bbcb;display:flex;align-items:center;gap:8px"><span style="width:70px;height:6px;border:2px solid #a7bbcb;border-top:0;display:inline-block"></span>100 000 km</div>
+</section>
+<aside style="background:#0a1420;border-left:1px solid #1f2f3c;padding:12px 14px;display:flex;flex-direction:column;gap:9px;min-height:0">
+ <div style="display:flex;gap:4px"><button class="btn on" style="min-height:28px;padding:4px 10px">Données</button><button class="btn " style="min-height:28px;padding:4px 10px">Spectre</button><button class="btn " style="min-height:28px;padding:4px 10px">Sources</button></div>
+ <table><thead><tr><th>Grandeur</th><th style="text-align:right">Valeur</th><th>Statut</th></tr></thead><tbody><tr><td>Demi-grand axe</td><td class="num">9,58 ua</td><td><span class="chip obs" style="padding:1px 7px">Observé</span></td></tr><tr><td>Rayon équatorial</td><td class="num">60 268 km</td><td><span class="chip obs" style="padding:1px 7px">Observé</span></td></tr><tr><td>Masse</td><td class="num">5,683 × 10²⁶ kg</td><td><span class="chip obs" style="padding:1px 7px">Observé</span></td></tr><tr><td>Période orbitale</td><td class="num">29,4 ans</td><td><span class="chip obs" style="padding:1px 7px">Observé</span></td></tr><tr><td>Position affichée</td><td class="num">éphéméride</td><td><span class="chip model" style="padding:1px 7px">Modèle</span></td></tr><tr><td>Texture</td><td class="num">—</td><td><span class="chip recon" style="padding:1px 7px">Illustratif</span></td></tr></tbody></table>
+ <div style="margin-top:auto;font-size:12px;color:#a7bbcb">Onglet Spectre : courbes mesurées avec leur instrument ; jamais de spectre inventé. Sources : NASA/JPL, références datées.</div>
+</aside>
+</div>
+</body>
+</html>
