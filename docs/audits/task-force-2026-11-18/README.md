@@ -2,6 +2,11 @@
 
 > **Document de travail, pas la Note Master, et pas une instruction d'exécution.** Les arbitrages stratégiques appartiennent au Product Owner. Claude, Head of UI/UX, garde son droit de revue, de contestation et de proposition ; Codex instruit les aspects d'ingénierie et de validation.
 
+## Note Master — projet soumis au propriétaire
+
+- **[PROJET_NOTE_MASTER_HEAD_UIUX_V1.md](./PROJET_NOTE_MASTER_HEAD_UIUX_V1.md)** — synthèse autoportante des décisions, des sept audits, des preuves, des contradictions, de l'état V54, des invariants scientifiques, de l'expérience cible et des questions ouvertes pour le Head. **Ce texte est un projet à examiner par le propriétaire ; il ne donne aucune autorisation de développement ou de publication.**
+- **[Prototypes Qwen V1/V2](./prototypes/README.md)** — HTML originaux de démonstration et avertissements ; ces prototypes ne sont pas branchés sur le moteur réel.
+
 ## Accès direct aux trois livrables
 
 1. **[Tableau de bord HTML autonome](./00_TABLEAU_DE_BORD.html)** — explorer les arbitrages, constats et divergences ; télécharger le fichier pour l'ouvrir dans un navigateur, car l'aperçu GitHub n'exécute pas le JavaScript.
