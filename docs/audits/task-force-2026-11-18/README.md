@@ -30,3 +30,9 @@
 | `01_NOTE_DE_TRAVAIL.md` | `f9c7cec5e749a262134e84b8f4f3fb4aa7c14804ddcc92a24f28cf2f5102ab62` |
 
 **Lecture conseillée pour Claude / Codex :** commencer par cette page et la note, vérifier ensuite les divergences et états de preuve dans l'Excel, puis ouvrir le dashboard et les maquettes V3.1. Ne pas inférer qu'une proposition d'auditeur est une décision validée.
+
+
+## Réponse du Head of UI/UX
+
+- [Réponse contradictoire à la Note Master V1](./REPONSE_HEAD_UIUX_V1.md) (Claude, 18 novembre 2026) : avis sur les 16 arbitrages, critique des audits, modèle mental, architecture « une page, un moteur », matrice de préservation, critères mesurables, trois questions au propriétaire, prochaine tranche.
+- Outil de mesure du ciel non occulté : `scripts/measure-sky-occlusion.cjs`.
