@@ -27,5 +27,5 @@ Capture : `validation/ui/cockpit-1280x585-menu-mission-en-attente.png`.
 - `node scripts/validate-mission-storage.mjs` : réussi.
 - `validate-rendezvous-ui.cjs` (960 × 700, donc écran court : rechargement avec mission sauvegardée puis clic natif sur `#resume-mission`) : réussi, y compris « Mobile : commandes Terre et Lune accessibles » et « Aucune erreur navigateur ni shader ».
 - `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs` : réussis.
-- `validate-physics-ui.cjs` : verdict pris sur la CI GitHub (exécution manuelle de « Reproducible validation from npm ci » après ce commit).
+- CI GitHub sur `b2bc90e` : « Reproducible validation from npm ci » relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44309335325) — numerical, cockpit, cosmos, journey, propulsion : success. Workflows déclenchés par le commit : source + bundle, mise en page cockpit et instruments, carte cosmique, spectres de galaxies, persistance de mission et nébuleuses : success.
 - Non vérifié : Chrome Iris Xe d'Abdoulaye (nécessite publication).
