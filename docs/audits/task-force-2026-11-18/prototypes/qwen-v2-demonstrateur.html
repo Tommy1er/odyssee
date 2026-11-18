@@ -1,0 +1,335 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Odyssée V3.1 — prototype v2 (non branché au moteur)</title>
+<style>
+:root{--bg:#070d16;--panel:#111f2c;--line:#1f2f3c;--text:#edf3f7;--muted:#a7bbcb;
+--mint:#8ee2cc;--obs:#76b9f5;--amber:#f0b56b;--spec:#bba5e7;--hud-h:40px;--bar-h:52px}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;background:var(--bg);color:var(--text);
+font:14px/1.45 system-ui,'Segoe UI',sans-serif;overflow:hidden}
+.mono{font-family:ui-monospace,'Cascadia Mono',monospace;font-variant-numeric:tabular-nums}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer;background:var(--panel);border:1px solid #2b3f4e;border-radius:6px;padding:7px 11px;min-height:34px;transition:border-color .15s,background .15s}
+button:hover{border-color:var(--mint)}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+button.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+button.primary{background:var(--mint);color:#07141b;border-color:var(--mint);font-weight:600}
+select,input[type=search]{background:#0d1822;border:1px solid #354854;color:var(--text);border-radius:6px;padding:7px}
+#sky{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+#vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,transparent 55%,#02050acc 100%)}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:500}
+.chip.obs{background:#17322a;color:#9fe8cf}.chip.model{background:#1b2a3d;color:#9fcbf6}
+.chip.recon{background:#2a2630;color:#d7c8f3}.chip.fiction{background:#2d2440;color:#cdb8f3}
+.label{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+[data-panel]{position:fixed;z-index:5;transition:opacity .18s ease}
+#hud{top:0;left:0;right:0;height:var(--hud-h);display:flex;align-items:center;gap:10px;padding:0 12px;
+background:#0a1420e6;border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+#hud .brand{color:var(--mint);font-weight:600;letter-spacing:.12em;font-size:13px}
+#hud .tele{display:flex;gap:13px;margin-left:auto;font-size:13px}
+#hud .tele b{color:var(--mint);font-weight:500}
+#states{display:flex;gap:4px}#states button{min-height:28px;padding:3px 9px;font-size:12px}
+#mNav,#mInst{display:none;min-height:40px;min-width:40px;padding:4px}
+#bar{bottom:0;left:0;right:0;height:var(--bar-h);display:flex;align-items:center;gap:10px;padding:0 12px;
+background:#0a1420f0;border-top:1px solid var(--line)}
+#bar .grp{display:flex;align-items:center;gap:6px}
+#bar .seg{display:flex}#bar .seg button{border-radius:0;min-height:32px;padding:5px 10px;font-size:13px}
+#bar .seg button:first-child{border-radius:6px 0 0 6px}#bar .seg button:last-child{border-radius:0 6px 6px 0}
+.mini{display:none}
+#missionMenu{position:absolute;bottom:calc(var(--bar-h) + 4px);left:12px;background:var(--panel);border:1px solid #2b3f4e;border-radius:8px;padding:8px;display:grid;gap:6px;min-width:250px;z-index:9}
+#missionMenu[hidden]{display:none}
+.drawer{top:var(--hud-h);bottom:var(--bar-h);width:min(310px,88vw);background:#0a1420f2;border:1px solid var(--line);
+padding:14px;overflow-y:auto;transition:transform .18s ease;backdrop-filter:blur(6px)}
+#nav{left:0;transform:translateX(-102%)}#inst{right:0;transform:translateX(102%)}
+body.nav-open #nav{transform:none}body.inst-open #inst{transform:none}
+.drawer h3{margin:0 0 10px;font-size:13px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.drawer .close{min-height:26px;padding:2px 9px;font-size:12px}
+#navList{display:grid;gap:5px;margin:10px 0}
+#navList button{text-align:left;display:flex;justify-content:space-between;gap:8px;min-height:38px;font-size:13px}
+#targetCard{border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px}
+#targetCard strong{font-size:16px}
+details{border-top:1px solid var(--line);padding:9px 0;font-size:13px}
+summary{cursor:pointer;color:#d6e2ea}details p,details label{color:var(--muted);font-size:12px}
+.rail{top:50%;transform:translateY(-50%);width:28px;min-height:96px;padding:6px 3px;font-size:12px;writing-mode:vertical-rl;
+background:#0a1420cc;border:1px solid var(--line);z-index:4}
+#railNav{left:0;border-radius:0 8px 8px 0}#railInst{right:0;border-radius:8px 0 0 8px}
+body.nav-open #railNav,body.inst-open #railInst,body[data-state=cinema] .rail{display:none}
+#scrim{position:fixed;inset:0;background:#02050a80;z-index:4;display:none}
+#stack{left:14px;bottom:calc(var(--bar-h) + 8px);display:flex;flex-direction:column;gap:6px;align-items:flex-start;z-index:4;max-width:min(600px,calc(100vw - 28px))}
+#stack>div{background:#081620e6;border:1px solid #2b3f4e;border-radius:8px;padding:5px 10px;font-size:12px;transition:opacity .18s}
+#stack .suivi{display:flex;align-items:center;gap:10px;min-width:min(380px,78vw)}
+#stack .suivi .track{flex:1;height:4px;background:#1f2f3c;border-radius:2px;overflow:hidden}
+#stack .suivi .track i{display:block;height:100%;width:0;background:var(--mint);transition:width .2s}
+#stack .phase{color:var(--amber);font-weight:600;white-space:nowrap}
+#layerLeg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:min(560px,80vw)}
+#metrics{top:calc(var(--hud-h) + 6px);right:12px;width:min(270px,92vw);background:#0a1420f2;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:12px}
+#metrics[hidden]{display:none}#metrics .row{display:flex;justify-content:space-between;margin:4px 0}
+#metrics .ok{color:var(--mint)}#metrics .warn{color:var(--amber)}#metrics .big{font-size:22px;font-weight:600}
+#obs{top:calc(var(--hud-h) + 6px);bottom:calc(var(--bar-h) + 6px);left:50%;transform:translateX(-50%);width:min(940px,94vw);
+background:#0a1420f7;border:1px solid #2b3f4e;border-radius:10px;padding:16px;overflow-y:auto;z-index:8}
+#obs[hidden]{display:none}#obs header{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+#obs .tabs{display:flex;gap:6px}#obs table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+#obs td,#obs th{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left}
+#aladin{margin-top:12px;border:1px dashed #3a5a6a;border-radius:8px;min-height:170px;display:grid;place-items:center;color:var(--muted);font-size:13px;background:radial-gradient(ellipse at 50% 45%,#1b2a3d,#070d16 75%);text-align:center;padding:12px}
+#restore{top:12px;right:12px;display:none;z-index:9}
+body[data-state=cinema] [data-panel]:not(#restore){display:none!important}
+body[data-state=cinema] #marker,body[data-state=cinema] #banner,body[data-state=cinema] #toast{display:none!important}
+body[data-state=cinema] #restore{display:block}
+#banner{position:fixed;top:calc(var(--hud-h) + 6px);left:50%;transform:translateX(-50%);z-index:10;background:#2d2440ee;color:#cdb8f3;border:1px solid #4a3a6a;border-radius:8px;padding:6px 13px;font-size:12px;cursor:pointer;max-width:92vw;text-align:center}
+#marker{position:fixed;left:52%;top:46%;transform:translate(-50%,-50%);pointer-events:none;z-index:3;text-align:center}
+#marker i{display:block;width:26px;height:26px;border:1px solid #8ee2cc99;transform:rotate(45deg);margin:0 auto 8px;animation:pulse 3.2s ease-in-out infinite}
+#marker span{background:#07141bd9;border:1px solid #2b3f4e;border-radius:6px;padding:4px 8px;font-size:12px}
+@keyframes pulse{0%,100%{transform:rotate(45deg) scale(1)}50%{transform:rotate(45deg) scale(1.07)}}
+#toast{position:fixed;bottom:calc(var(--bar-h) + 12px);left:50%;transform:translateX(-50%);background:#20453e;color:#d4f3e7;border:1px solid #52786c;border-radius:7px;padding:9px 16px;font-size:13px;z-index:11;max-width:90vw;text-align:center}
+#toast[hidden]{display:none}
+@media (pointer:coarse){:root{--hud-h:52px;--bar-h:60px}button{min-height:44px}#states button{min-height:40px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:760px){
+ :root{--hud-h:52px;--bar-h:56px}
+ #hud .brand span,#carteBtn,#metricsBtn,.full{display:none}
+ #hud .tele{display:none}#mNav,#mInst{display:inline-flex}
+ #states button{padding:3px 7px;min-height:40px}
+ .mini{display:inline}.rail{display:none}
+ #bar{flex-wrap:nowrap;overflow-x:auto;gap:8px}
+ #bar .seg button{min-width:40px;padding:5px 6px}
+ .rateGrp{display:none}
+ body.nav-open #scrim,body.inst-open #scrim{display:block}
+ #stack{max-width:calc(100vw - 24px)}#stack .suivi{min-width:0;width:100%}
+ #obs{width:96vw}
+}
+</style></head>
+<body data-state="immersion">
+<canvas id="sky"></canvas><div id="vignette"></div>
+<div id="marker"><i></i><span class="mono" id="markerLabel">M87 · Virgo A — 54,0 Mal</span></div>
+<div id="scrim"></div>
+
+<div id="hud" data-panel>
+  <button id="mNav" aria-label="Ouvrir la navigation">☰</button>
+  <span class="brand">✧ <span>ODYSSÉE</span></span>
+  <button id="carteBtn" style="min-height:28px;padding:3px 9px;font-size:12px">Carte cosmique</button>
+  <div class="tele mono">
+    <span>β <b id="tBeta">0,0000</b></span><span>γ <b id="tGamma">1,000</b></span>
+    <span>τ <b id="tTau">0 a 000 j</b></span><span>restant <b id="tDist">54,0 Mal</b></span>
+    <span id="tPhase" style="color:var(--amber)">EN PAUSE</span>
+  </div>
+  <div id="states" style="margin-left:auto">
+    <button data-s="immersion" class="on">Immersion</button>
+    <button data-s="travail">Travail</button>
+    <button data-s="cinema">Cinéma</button>
+  </div>
+  <button id="mInst" aria-label="Ouvrir les instruments">⚙</button>
+  <button id="metricsBtn" style="min-height:28px;padding:3px 9px;font-size:12px" aria-pressed="false">Métriques</button>
+</div>
+
+<button class="rail" id="railNav" data-panel>Navigation ◂</button>
+<button class="rail" id="railInst" data-panel>▸ Instruments</button>
+
+<aside class="drawer" id="nav" data-panel>
+  <h3>Navigation <button class="close" data-close="nav">✕</button></h3>
+  <input type="search" id="search" placeholder="M87, NGC 4486, Proxima…" aria-label="Recherche" style="width:100%">
+  <div id="navList"></div>
+  <div id="targetCard">
+    <span class="label">Cible sélectionnée</span><strong id="tcName">M87 · Virgo A</strong>
+    <span class="chip obs" id="tcChip">● Observé · galaxie elliptique</span>
+    <div class="mono" style="font-size:12px;color:var(--muted)">Depuis le vaisseau <b id="tcDist" style="color:var(--text)">54,0 Mal</b><br>Trajet 1 g, à bord <b style="color:var(--text)">34,6 ans</b></div>
+    <button class="primary" id="engage">Engager le trajet</button>
+    <div style="display:flex;gap:6px"><button id="observer" style="flex:1">Observer</button><button id="fiche" style="flex:1">Fiche & données</button></div>
+    <button id="navToInst" style="font-size:12px">Ouvrir les instruments ▸</button>
+  </div>
+</aside>
+
+<aside class="drawer" id="inst" data-panel>
+  <h3>Instruments <button class="close" data-close="inst">✕</button></h3>
+  <details open><summary>Relativité & lumière</summary><p>Doppler, aberration, exposition. (Fictif ici.)</p></details>
+  <details><summary>Gravitation</summary><p>Champ faible superposé — libellé corrigé. Schwarzschild exact pour un corps isolé.</p></details>
+  <details><summary>Laboratoire <span class="chip fiction">fiction</span></summary><p>Passages étiquetés, horloges gelées.</p></details>
+  <details open><summary>Affichage</summary>
+    <label><input type="checkbox" id="lyMark" checked> Repère de cible</label><br>
+    <label><input type="checkbox" id="mMetrics"> Panneau de métriques</label><br>
+    <label class="mono" style="font-size:12px">Lecture <select id="rateM" style="width:100%"><option>1 an / s</option><option>0,05 an / s</option><option>1 jour / s</option></select></label>
+  </details>
+  <details open><summary>Démo · pile basse (zéro chevauchement)</summary>
+    <label><input type="checkbox" id="lyLeg" checked> Légende</label><br>
+    <label><input type="checkbox" id="lyMan"> Manœuvre locale</label><br>
+    <label><input type="checkbox" id="lySui"> Suivi du trajet</label><br>
+    <label><input type="checkbox" id="lyOpt"> Options du vaisseau</label>
+    <p>Toute combinaison : les couches s'empilent en flux, jamais de superposition.</p>
+  </details>
+  <details open><summary>Démo · budget de résolution</summary>
+    <select id="budget" style="width:100%">
+      <option value="921600">Performance · 921 600 px</option>
+      <option value="2073600" selected>Équilibré · 2 073 600 px</option>
+      <option value="3686400">Qualité · 3 686 400 px</option>
+      <option value="824850">Budget constant · 824 850 px</option>
+    </select>
+    <p id="budgetInfo" class="mono" style="font-size:12px"></p>
+    <p>Formule de <code>render-budget.js</code>, démo Canvas2D — pas un benchmark.</p>
+  </details>
+</aside>
+
+<div id="stack" data-panel>
+  <div id="layerOpt" hidden>Caméra accompagnante · Lumière astrophysique · <button style="min-height:24px;padding:2px 8px;font-size:12px">Cadrer le vaisseau</button></div>
+  <div class="suivi" id="layerSui" hidden><span class="phase" id="suiPhase">EN PAUSE</span><div class="track"><i id="suiBar"></i></div><span class="mono" id="suiPct">0 %</span><button style="min-height:24px;padding:2px 8px;font-size:12px">Détails</button></div>
+  <div id="layerMan" hidden>MANŒUVRE LOCALE · <button style="min-height:24px;padding:2px 8px;font-size:12px">Approcher</button> <button style="min-height:24px;padding:2px 8px;font-size:12px">S'éloigner</button></div>
+  <div id="layerLeg" class="mono" style="color:var(--muted)">Champ 70° · lumière retardée · <span class="chip model">Modèle calculé</span> <span class="chip recon">Reconstitution · M87</span></div>
+</div>
+
+<div id="metrics" data-panel hidden>
+  <span class="label">Surfaces live (rectangles feuilles)</span>
+  <div class="row"><span>Canvas / fenêtre</span><b class="big ok">100 %</b></div>
+  <div class="row"><span>Ciel non occulté</span><b class="big" id="mSky">—</b></div>
+  <div class="row"><span>Cible état</span><span id="mTarget">≥ 75 %</span></div>
+  <hr style="border-color:var(--line)">
+  <span class="label">Tampon interne (démo)</span>
+  <div class="row mono"><span id="mBuf">—</span></div>
+  <div class="row"><span>× vs cockpit actuel</span><b id="mRatio">—</b></div>
+  <p style="color:var(--muted);font-size:11px;margin:6px 0 0">Réf. 780×470 @DPR1,5 = 824 850 px. Occlusion = union des rectangles réels des panneaux (grille 96×54), pas des boîtes englobantes.</p>
+</div>
+
+<div id="bar" data-panel>
+  <div class="grp"><button id="missionBtn">Mission ▾</button>
+    <div id="missionMenu" hidden><button>Choisir la Terre</button><button>Choisir la Lune</button><button>Reprendre la mission sauvegardée</button><button>Conserver ce nouveau vol</button></div></div>
+  <div class="grp"><button id="play" aria-label="Reprendre ou mettre en pause le temps"><span class="full">▶ Reprendre le temps</span><span class="mini">▶</span></button></div>
+  <div class="grp seg"><button id="thrust" aria-label="Poussée"><span class="full">↑ Poussée</span><span class="mini">↑</span></button><button id="coast" class="on" aria-label="Inertie"><span class="full">Inertie</span><span class="mini">●</span></button><button id="brake" aria-label="Freiner"><span class="full">↓ Freiner</span><span class="mini">↓</span></button></div>
+  <div class="grp rateGrp" style="margin-left:auto"><span class="label">Lecture</span><select id="rate"><option>1 an / s</option><option>0,05 an / s</option><option>1 jour / s</option></select></div>
+  <button id="cinemaBtn" title="Mode cinéma" aria-label="Mode cinéma">⤢</button>
+</div>
+
+<section id="obs" data-panel hidden>
+  <header><strong id="obsName" style="font-size:18px">M87 · Virgo A</strong>
+    <span class="chip obs">Observé</span><span class="chip recon">Reconstitution</span>
+    <span class="mono" style="color:var(--mint);font-size:12px" id="obsMission">mission en pause derrière</span>
+    <button id="obsPlay" style="min-height:28px;padding:3px 9px;font-size:12px">▶ Reprendre</button>
+    <label style="font-size:12px;color:var(--muted)"><input type="checkbox" id="obsFreeze"> Geler pendant l'observation</label>
+    <button id="obsClose" style="margin-left:auto">Fermer ✕</button></header>
+  <div class="tabs"><button id="tabDec" class="on">Découverte</button><button id="tabSci">Scientifique</button></div>
+  <div id="dec"><p style="color:var(--muted)">Galaxie elliptique géante de l'amas de la Vierge, jet relativiste, M87* imagé par l'EHT. ≈ 54 millions d'al. <em>Valeurs de démonstration.</em></p></div>
+  <div id="sci" hidden><table><thead><tr><th>Grandeur</th><th>Valeur</th><th>Source</th><th>Statut</th></tr></thead><tbody>
+    <tr><td>Distance</td><td class="mono">16,4 Mpc</td><td>CF4 / EHT</td><td><span class="chip obs">Observé</span></td></tr>
+    <tr><td>Masse M87*</td><td class="mono">6,5 × 10⁹ M☉</td><td>EHT 2019</td><td><span class="chip obs">Observé</span></td></tr>
+    <tr><td>Vitesse radiale CMB</td><td class="mono">1 284 km/s</td><td>CF4</td><td><span class="chip obs">Observé</span></td></tr>
+    <tr><td>Morphologie 3D</td><td>classe elliptique</td><td>modèle de classe</td><td><span class="chip recon">Reconstitution</span></td></tr>
+    <tr><td>Trajet 1 g à bord</td><td class="mono">34,6 ans</td><td>SR espace plat</td><td><span class="chip model">Calculé</span></td></tr>
+  </tbody></table></div>
+  <button id="aladinBtn" style="margin-top:12px">Ouvrir une observation réelle · Aladin Lite (à la demande)</button>
+  <div id="aladin" hidden>Emplacement du visualiseur HiPS — chargé à la demande, détruit à la fermeture.<br><strong>Pas une vraie image ici.</strong> Licence à trancher avant intégration (agrégation / conformité / alternative).</div>
+</section>
+
+<button id="restore" data-panel>Afficher les commandes</button>
+<div id="banner">PROTOTYPE v2 — non branché au moteur · valeurs fictives · aucune mesure GPU · cliquer pour masquer</div>
+<div id="toast" hidden></div>
+
+<script>
+'use strict';const $=id=>document.getElementById(id),body=document.body;
+const sky=$('sky'),ctx=sky.getContext('2d'),off=document.createElement('canvas'),octx=off.getContext('2d');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W=innerWidth,H=innerHeight,dpr=devicePixelRatio||1,drift=0,paused=true,progress=0,engaged=false,freezeWas=null;
+const LEGACY=824850;
+const CAT=[{n:'Proxima Centauri',d:'4,25 al',t:'Étoile',c:'obs'},{n:'M31 · Andromède',d:'2,5 Mal',t:'Galaxie spirale',c:'obs'},
+{n:'M33 · Triangle',d:'2,7 Mal',t:'Galaxie spirale',c:'obs'},{n:'M87 · Virgo A',d:'54,0 Mal',t:'Galaxie elliptique',c:'obs'},
+{n:'Amas de la Vierge',d:'54 Mal',t:'Amas',c:'obs'},{n:'Sagittarius A*',d:'27 000 al',t:'Trou noir',c:'obs'},
+{n:'Tarentule · 30 Dor',d:'170 000 al',t:'Nébuleuse',c:'recon'},{n:'Passage hypothétique',d:'—',t:'Téléportation',c:'fiction'}];
+let target=CAT[3],stars=[];
+(function(){let s=42;const r=()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+for(let i=0;i<430;i++)stars.push({x:r(),y:r(),r:.4+r()*1.4,a:.25+r()*.75,h:r(),z:[.3,.6,1][i%3]});})();
+function sizeCanvas(){W=innerWidth;H=innerHeight;dpr=devicePixelRatio||1;sky.width=Math.round(W*dpr);sky.height=Math.round(H*dpr);applyBudget();}
+function applyBudget(){const b=+$('budget').value,r=Math.min(dpr,2,Math.sqrt(b/(W*H)));
+off.width=Math.max(2,Math.round(W*r));off.height=Math.max(2,Math.round(H*r));
+$('budgetInfo').textContent=`tampon ${off.width}×${off.height} = ${(off.width*off.height).toLocaleString('fr-FR')} px · DPR eff. ${r.toFixed(3)}`;
+$('mBuf').textContent=`${off.width}×${off.height} = ${(off.width*off.height).toLocaleString('fr-FR')} px`;
+const ratio=off.width*off.height/LEGACY;$('mRatio').textContent='×'+ratio.toFixed(3);$('mRatio').className=ratio>1.5?'warn':'ok';drawSky();}
+function drawSky(){const w=off.width,h=off.height;octx.fillStyle='#03070d';octx.fillRect(0,0,w,h);
+const g=octx.createRadialGradient(w*.52,h*.46,0,w*.52,h*.46,w*.34);
+g.addColorStop(0,'#3a2f52');g.addColorStop(.4,'#1b1626');g.addColorStop(1,'rgba(7,13,22,0)');octx.fillStyle=g;octx.fillRect(0,0,w,h);
+for(const s of stars){const dx=reduced?0:Math.sin(drift*.05)*w*.012*s.z,dy=reduced?0:(drift*h*.0004*s.z)%h;
+const x=(s.x*w+dx+w)%w,y=(s.y*h+dy)%h,tw=reduced?1:.85+.15*Math.sin(drift*1.3+s.x*40);
+octx.globalAlpha=s.a*tw;octx.fillStyle=s.h<.15?'#ffe7c2':s.h>.85?'#cfe0ff':'#fff';
+octx.beginPath();octx.arc(x,y,s.r*(w/1280)*(.6+.4*s.z),0,7);octx.fill();}
+octx.globalAlpha=1;ctx.imageSmoothingEnabled=true;ctx.drawImage(off,0,0,sky.width,sky.height);}
+// ── états + tiroirs (correction cul-de-sac) ──
+function setState(s){body.dataset.state=s;document.querySelectorAll('#states button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));
+if(s==='immersion'){closeDrawer('nav');closeDrawer('inst');}
+if(s==='travail'&&!body.classList.contains('nav-open')&&!body.classList.contains('inst-open'))openDrawer('nav');
+if(s==='cinema'){$('obs').hidden=true;$('missionMenu').hidden=true;}
+$('mTarget').textContent=s==='cinema'?'≥ 95 %':s==='immersion'?'≥ 75 %':'— (travail)';updateMetrics();}
+function openDrawer(w){body.classList.add(w+'-open');$(w).classList.add('open');updateMetrics();}
+function closeDrawer(w){body.classList.remove(w+'-open');$(w).classList.remove('open');}
+document.querySelectorAll('#states button').forEach(b=>b.onclick=e=>{setState(b.dataset.s);if(e.detail>0)b.blur();});
+$('railNav').onclick=()=>{setState('travail');openDrawer('nav');};
+$('railInst').onclick=()=>{setState('travail');openDrawer('inst');};
+$('mNav').onclick=()=>{setState('travail');openDrawer('nav');};
+$('mInst').onclick=()=>{setState('travail');openDrawer('inst');};
+$('navToInst').onclick=()=>openDrawer('inst');
+$('scrim').onclick=()=>{closeDrawer('nav');closeDrawer('inst');setState('immersion');};
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{closeDrawer(b.dataset.close);
+if(!body.classList.contains('nav-open')&&!body.classList.contains('inst-open'))setState('immersion');else updateMetrics();});
+$('cinemaBtn').onclick=()=>setState('cinema');$('restore').onclick=()=>setState('immersion');
+$('carteBtn').onclick=()=>toast('Carte unifiée — hors prototype (cible P1).');
+// ── catalogue ──
+function renderList(q=''){const f=CAT.filter(o=>o.n.toLowerCase().includes(q.toLowerCase()));
+$('navList').innerHTML=f.map(o=>`<button data-i="${CAT.indexOf(o)}" class="${o===target?'on':''}"><span>${o.n}</span><span class="mono" style="color:var(--muted)">${o.d}</span></button>`).join('');
+$('navList').querySelectorAll('button').forEach(b=>b.onclick=()=>{target=CAT[+b.dataset.i];renderList($('search').value);updateTarget();});}
+function updateTarget(){$('tcName').textContent=target.n;$('tcDist').textContent=target.d;
+$('tcChip').className='chip '+target.c;$('tcChip').textContent='● '+({obs:'Observé',recon:'Reconstitution',fiction:'Fiction',model:'Modèle'})[target.c]+' · '+target.t;
+$('markerLabel').textContent=target.n+' — '+target.d;$('obsName').textContent=target.n;}
+$('search').oninput=e=>renderList(e.target.value);
+// ── mission fictive ──
+const fmtTau=y=>Math.floor(y)+' a '+String(Math.floor((y-Math.floor(y))*365.25)).padStart(3,'0')+' j';
+function syncPlay(){$('play').innerHTML=paused?'<span class="full">▶ Reprendre le temps</span><span class="mini">▶</span>':'<span class="full">Ⅱ Pause</span><span class="mini">Ⅱ</span>';
+$('obsPlay').textContent=paused?'▶ Reprendre':'⏸ Geler';}
+function tick(dt){if(!paused&&engaged){progress=Math.min(1,progress+dt/45);drift+=dt;
+const beta=.9831*Math.sin(Math.min(1,progress*1.15)*Math.PI/2),g=1/Math.sqrt(1-beta*beta);
+$('tBeta').textContent=beta.toFixed(4).replace('.',',');$('tGamma').textContent=g.toFixed(3).replace('.',',');
+$('tTau').textContent=fmtTau(progress*34.6);$('tDist').textContent=(54*(1-progress)).toFixed(1).replace('.',',')+' Mal';
+const ph=progress>=1?'ARRIVÉE · EN PAUSE':progress<.5?'ACCÉLÉRATION · 1 g':'FREINAGE · 1 g';
+$('tPhase').textContent=ph;$('suiPhase').textContent=ph;$('suiBar').style.width=(progress*100)+'%';$('suiPct').textContent=Math.round(progress*100)+' %';
+if(progress>=1){paused=true;engaged=false;syncPlay();toast('Arrivée (fictive) · en pause.');}}
+else if(!reduced)drift+=dt*.3;
+$('obsMission').textContent=$('obs').hidden?'':(engaged&&!paused?'mission en cours derrière':'mission en pause derrière');
+drawSky();}
+$('engage').onclick=()=>{engaged=true;paused=false;progress=0;syncPlay();$('layerSui').hidden=false;$('lySui').checked=true;
+toast('Trajet engagé (fictif). La mission continue pendant que vous ouvrez les instruments.');updateMetrics();};
+$('play').onclick=()=>{if(!engaged&&progress<1)engaged=true;paused=!paused;syncPlay();if(paused)$('tPhase').textContent='EN PAUSE';};
+$('obsPlay').onclick=()=>{if(!engaged&&progress<1)engaged=true;paused=!paused;syncPlay();};
+['thrust','coast','brake'].forEach(id=>$(id).onclick=()=>['thrust','coast','brake'].forEach(j=>$(j).classList.toggle('on',j===id)));
+$('missionBtn').onclick=e=>{e.stopPropagation();$('missionMenu').hidden=!$('missionMenu').hidden;};
+document.addEventListener('click',e=>{if(!e.target.closest('#missionMenu')&&!e.target.closest('#missionBtn'))$('missionMenu').hidden=true;});
+$('rate').onchange=e=>$('rateM').value=e.target.value;$('rateM').onchange=e=>$('rate').value=e.target.value;
+// ── pile basse + repère ──
+const layers={lyLeg:'layerLeg',lyMan:'layerMan',lySui:'layerSui',lyOpt:'layerOpt'};
+Object.entries(layers).forEach(([cb,ly])=>$(cb).onchange=()=>{$(ly).hidden=!$(cb).checked;updateMetrics();});
+$('lyMark').onchange=()=>{$('marker').style.display=$('lyMark').checked?'':'none';};
+// ── observatoire + temps contrôlable ──
+function openObs(){if($('obsFreeze').checked){freezeWas=paused;paused=true;syncPlay();}
+$('obs').hidden=false;updateMetrics();}
+function closeObs(){if(freezeWas!==null){paused=freezeWas;freezeWas=null;syncPlay();}
+$('obs').hidden=true;$('aladin').hidden=true;updateMetrics();}
+$('fiche').onclick=openObs;$('observer').onclick=()=>{setState('travail');openDrawer('inst');toast('Instruments déployés — le canvas ne rétrécit pas.');};
+$('obsClose').onclick=closeObs;
+$('tabDec').onclick=()=>{$('dec').hidden=false;$('sci').hidden=true;$('tabDec').classList.add('on');$('tabSci').classList.remove('on');};
+$('tabSci').onclick=()=>{$('dec').hidden=true;$('sci').hidden=false;$('tabSci').classList.add('on');$('tabDec').classList.remove('on');};
+$('aladinBtn').onclick=()=>{$('aladin').hidden=false;toast('Chargement à la demande simulé — aucun visualiseur réel, licence non tranchée.');};
+// ── métriques : rectangles FEUILLES ──
+function panelRects(){const out=[];for(const el of document.querySelectorAll('[data-panel]')){
+if(!el.getClientRects().length||getComputedStyle(el).display==='none')continue;
+if(el.id==='stack'){for(const c of el.children)if(!c.hidden&&c.getClientRects().length)out.push(c.getBoundingClientRect());}
+else out.push(el.getBoundingClientRect());}
+return out.filter(r=>r.right>0&&r.bottom>0&&r.left<W&&r.top<H);}
+function updateMetrics(){if($('metrics').hidden)return;const rects=panelRects(),NX=96,NY=54;let cov=0;
+for(let i=0;i<NX;i++)for(let j=0;j<NY;j++){const x=(i+.5)/NX*W,y=(j+.5)/NY*H;
+if(rects.some(r=>x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom))cov++;}
+const p=100*(1-cov/(NX*NY));$('mSky').textContent=p.toFixed(1)+' %';
+const t=body.dataset.state==='cinema'?95:body.dataset.state==='immersion'?75:0;
+$('mSky').className='big '+(p>=t?'ok':'warn');}
+function toggleMetrics(){$('metrics').hidden=!$('metrics').hidden;$('mMetrics').checked=!$('metrics').hidden;
+$('metricsBtn').setAttribute('aria-pressed',String(!$('metrics').hidden));updateMetrics();}
+$('metricsBtn').onclick=toggleMetrics;$('mMetrics').onchange=toggleMetrics;$('budget').onchange=applyBudget;
+// ── divers ──
+let toastT;function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>$('toast').hidden=true,4200);}
+$('banner').onclick=()=>$('banner').remove();setTimeout(()=>{const b=$('banner');if(b)b.remove();},12000);
+addEventListener('keydown',e=>{const onCtrl=e.target.closest('input,select,textarea,button,a,summary,[contenteditable=true],[role=button]');
+if(e.key==='Escape'){if(!$('obs').hidden)closeObs();else setState('immersion');return;}
+if(onCtrl)return; // activation native préservée (correctif cockpit 15/11)
+if(e.key==='1')setState('immersion');else if(e.key==='2')setState('travail');else if(e.key==='3')setState('cinema');
+else if(e.key===' '){e.preventDefault();$('play').click();}});
+addEventListener('resize',()=>{sizeCanvas();updateMetrics();});setInterval(updateMetrics,600);
+let last=performance.now();(function loop(now){const dt=Math.min(.1,(now-last)/1000);last=now;tick(dt);requestAnimationFrame(loop);})(last);
+renderList();updateTarget();sizeCanvas();setState('immersion');syncPlay();
+</script></body></html>
