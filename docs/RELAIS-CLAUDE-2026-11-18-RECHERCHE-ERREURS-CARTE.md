@@ -43,3 +43,9 @@ CI GitHub sur `701ed53` (après rebasage sur les commits documentaires `docs/aud
 ## Non vérifié
 
 Déclenchement spontané de la notification `ResizeObserver` sur la Carte dans le Chrome d'Abdoulaye ; rendu sur Iris Xe après publication.
+
+## Contrôle matériel — version 55 (Chrome d'Abdoulaye, Iris Xe, 1280 × 585)
+
+- Recherche du cockpit (saisie injectée dans `#destination-search`, trois premiers résultats) : « Mars » → Mars, Marsic, Marsic B ; « Marsic » → Marsic, Marsic B ; « HIP 32349 » → Sirius ; « proxima » → Proxima Centauri, puis Proxima Cen d et b ; « Saturne » → Saturne, Titan, Encelade ; « bételgeuse » → Betelgeuse.
+- Carte cosmique : chargement puis défilement de molette ; aucun panneau d'erreur, écran de chargement retiré. Notification `ResizeObserver` injectée sur le site publié : pas de panneau, avertissement « Carte : notification ignorée … » en console.
+- Non établi : le déclenchement spontané de la notification dans ce Chrome (le suivi de la console a commencé après le chargement de la page ; aucune notification spontanée vue ensuite).
