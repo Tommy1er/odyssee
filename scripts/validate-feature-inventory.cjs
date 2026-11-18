@@ -51,11 +51,49 @@ const results=[];const check=(name,ok,detail='')=>{results.push({name,ok,detail}
     return [id,hit&&(hit===e||e.contains(hit)||hit.closest('label')?.contains(e))?'ok':'recouvert par '+(hit?.id||hit?.className||hit?.tagName)];}).filter(x=>x[1]!=='ok'),ids);
    const scroll=await page.evaluate(()=>document.documentElement.scrollHeight>innerHeight+1);
    check(`Noyau de pilotage atteignable · ${label}${short?' (écran court)':''}`,!r.length&&!scroll,[...r.map(x=>x.join(' : ')),scroll?'la page défile':''].filter(Boolean).join(' ; '));
-   info[label]=await page.evaluate(()=>({sky:window.skyOcclusion?.(),smallText:[...document.querySelectorAll('body *')].filter(e=>e.getClientRects().length&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())&&parseFloat(getComputedStyle(e).fontSize)<12&&getComputedStyle(e).visibility!=='hidden').length}));
+   info[label]=await page.evaluate(()=>({sky:window.skyOcclusion?.(),smallText:[...document.querySelectorAll('body *')].filter(e=>e.getClientRects().length&&getComputedStyle(e).clip==='auto'&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())&&parseFloat(getComputedStyle(e).fontSize)<12&&getComputedStyle(e).visibility!=='hidden').length}));
    console.log(`INFO ${label} · ciel non occulté ${info[label].sky?.unoccludedPercent} % · textes visibles < 12 px : ${info[label].smallText}`);};
   await core('1440 × 900');
   await page.setViewportSize({width:1280,height:585});await page.waitForTimeout(800);await core('1280 × 585');
+  // Interface immersive (tranche 1) : mêmes identifiants, noyau atteignable, tiroirs N / I, retour au classique.
+  await page.setViewportSize({width:1280,height:585});
+  await page.goto(`http://127.0.0.1:${PORT}/cockpit.html?ui=immersive`);await page.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);await page.waitForTimeout(600);
+  check('Immersive · disposition active, ciel plein écran',await page.evaluate(()=>{const a=document.getElementById('flight-app'),c=document.getElementById('flight-canvas').getBoundingClientRect();return a.classList.contains('ui-immersive')&&Math.round(c.width)===innerWidth&&Math.round(c.height)===innerHeight;}));
+  const facts2=await page.evaluate(ids=>ids.filter(id=>document.querySelectorAll('#'+CSS.escape(id)).length!==1),all);
+  check('Immersive · les 95 identifiants de la matrice existent une seule fois',!facts2.length,facts2.join(', '));
+  const reach=ids=>page.evaluate(ids=>ids.map(id=>{const e=document.getElementById(id);if(!e||!e.getClientRects().length||getComputedStyle(e).visibility==='hidden')return [id,'invisible'];const b=e.getBoundingClientRect();if(b.bottom>innerHeight||b.right>innerWidth||b.top<0||b.left<0)return [id,'hors fenêtre'];const hit=document.elementFromPoint(b.left+b.width/2,b.top+b.height/2);return [id,hit&&(hit===e||e.contains(hit)||hit.closest('label')?.contains(e))?'ok':'recouvert par '+(hit?.id||hit?.className||hit?.tagName)];}).filter(x=>x[1]!=='ok'),ids);
+  let bad=await reach(['ui-mode-toggle','nav-drawer-toggle','instr-drawer-toggle','cockpit-view','external-view','map-view','identify','clean-view','pause','thrust','coast','brake','time-rate','mission-menu']);
+  check('Immersive · noyau de pilotage et tiroirs atteignables sans défilement',!bad.length&&!(await page.evaluate(()=>document.documentElement.scrollHeight>innerHeight+1)),bad.map(x=>x.join(' : ')).join(' ; '));
+  await page.waitForFunction(()=>window.renderer===undefined||true);await page.waitForTimeout(2500);
+  info['Immersive 1280 × 585 · vol libre au démarrage']=await page.evaluate(()=>({sky:window.skyOcclusion?.(),smallText:[...document.querySelectorAll('body *')].filter(e=>e.getClientRects().length&&getComputedStyle(e).clip==='auto'&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())&&parseFloat(getComputedStyle(e).fontSize)<12&&getComputedStyle(e).visibility!=='hidden').length}));
+  console.log(`INFO Immersive 1280 × 585 · vol libre au démarrage · ciel non occulté ${info['Immersive 1280 × 585 · vol libre au démarrage'].sky?.unoccludedPercent} % · textes visibles < 12 px : ${info['Immersive 1280 × 585 · vol libre au démarrage'].smallText}`);
+  check('Immersive · tiroirs fermés inertes (hors tabulation)',await page.evaluate(()=>document.getElementById('dest-panel').inert&&document.getElementById('instruments-panel').inert));
+  await page.click('#nav-drawer-toggle');await page.waitForFunction(()=>getComputedStyle(document.getElementById('dest-panel')).visibility==='visible'&&getComputedStyle(document.getElementById('dest-panel')).transform==='none');
+  bad=await reach(['destination-search']);
+  for(const id of ['engage','aim']){await page.evaluate(id=>document.getElementById(id).scrollIntoView({block:'nearest'}),id);await page.waitForTimeout(150);bad.push(...await reach([id]));}
+  check('Immersive · tiroir Navigation : recherche, puis Engager et Orienter (après défilement du tiroir)',!bad.length&&!(await page.evaluate(()=>document.getElementById('dest-panel').inert)),bad.map(x=>x.join(' : ')).join(' ; '));
+  await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.getElementById('flight-app').classList.contains('nav-open'));
+  await page.click('#instr-drawer-toggle');await page.waitForFunction(()=>getComputedStyle(document.getElementById('instruments-panel')).transform==='none');
+  await page.evaluate(()=>document.getElementById('observatory-controls').scrollIntoView({block:'nearest'}));await page.waitForTimeout(200);
+  bad=await reach(['observatory-controls']);
+  check('Immersive · tiroir Instruments : instruments d\'observation atteignables (après défilement du tiroir)',!bad.length,bad.map(x=>x.join(' : ')).join(' ; '));
+  await page.mouse.click(640,300);await page.waitForFunction(()=>!document.getElementById('flight-app').classList.contains('instr-open'));
+  check('Immersive · un clic dans le ciel referme les tiroirs',true);
+  info['Immersive 1280 × 585 · après interactions']=await page.evaluate(()=>({sky:window.skyOcclusion?.(),smallText:[...document.querySelectorAll('body *')].filter(e=>e.getClientRects().length&&getComputedStyle(e).clip==='auto'&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())&&parseFloat(getComputedStyle(e).fontSize)<12&&getComputedStyle(e).visibility!=='hidden').length}));
+  console.log(`INFO Immersive 1280 × 585 · après interactions · ciel non occulté ${info['Immersive 1280 × 585 · après interactions'].sky?.unoccludedPercent} % · textes visibles < 12 px : ${info['Immersive 1280 × 585 · après interactions'].smallText}`);
+  check('Immersive · télémétrie en pastille renseignée',await page.evaluate(()=>{const t=document.getElementById('immersive-telemetry');return !t.hidden&&/\d/.test(document.getElementById('it-v').textContent)&&document.getElementById('it-dest').textContent.length>0;}));
+  await page.click('#ui-mode-toggle');await page.waitForTimeout(300);
+  check('Bascule vers Classique : disposition d\'origine rétablie',await page.evaluate(()=>!document.getElementById('flight-app').classList.contains('ui-immersive')&&document.getElementById('immersive-telemetry').hidden&&!document.getElementById('dest-panel').inert&&getComputedStyle(document.querySelector('.flight-workspace')).display==='grid'));
+  await page.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
+  await page.evaluate(()=>{try{localStorage.removeItem('odyssee-ui-mode');}catch{}});await page.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
+  check('Classique par défaut, bascule d\'essai invisible sans ?ui= ni choix mémorisé',await page.evaluate(()=>!document.getElementById('flight-app').classList.contains('ui-immersive')&&document.getElementById('ui-mode-toggle').hidden));
   check('Fonctions de mesure exposées (skyOcclusion, frameTimingSample, phases de démarrage)',await page.evaluate(()=>typeof window.skyOcclusion==='function'&&typeof window.frameTimingSample==='function'&&!!window.gpuStartupDiagnostic().phases?.engine));
+  // Démarrage dans un onglet caché : aucune attente d'image (correctif tranche 1).
+  {const hidden=await browser.newPage({viewport:{width:1280,height:585}});hidden.setDefaultTimeout(400000);
+   await hidden.addInitScript(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});});
+   await hidden.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await hidden.waitForFunction(()=>window.gpuStartupDiagnostic?.().phases?.frameWait);
+   const w=await hidden.evaluate(()=>({label:gpuStartupDiagnostic().entries.find(e=>e.label.startsWith('Attente'))?.label,ms:gpuStartupDiagnostic().phases.frameWait.ms}));
+   check('Onglet caché au démarrage : pas d\'attente d\'image',/caché/.test(w.label||'')&&w.ms!==null&&w.ms<100,`${w.label} · ${w.ms} ms`);await hidden.close();}
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));
   await page.close();
  }finally{await browser.close();server.close();}

@@ -168,3 +168,111 @@ body{color:#edf3f7}.section-title{color:var(--muted)}
  .mission-controls.pending-choice #resume-mission{border-color:#4f8f80;color:#bff0e2}
  .mission-controls.pending-choice #mission-actions::before{content:"Mission sauvegardée disponible";font-size:12px;color:#f0b56b;padding:0 2px 2px;order:-2}
 }
+
+/* ==========================================================================
+   Interface immersive (tranche 1, essai) — bureau seulement, Classique par défaut.
+   Même DOM que l'interface classique : les éléments sont repositionnés, jamais recréés.
+   Panneaux semi-opaques, sans backdrop-filter (coût GPU sur Iris Xe). Texte ≥ 12 px.
+   ========================================================================== */
+#ui-mode-toggle{font:inherit;font-size:12px;color:#bff0e2;background:#10242d;border:1px solid #2f5b55;border-radius:999px;padding:5px 11px;cursor:pointer;white-space:nowrap}
+.immersive-telemetry,.drawer-tab{display:none}
+@media (max-width:900px){#ui-mode-toggle{display:none}}
+@media (min-width:901px){
+ #flight-app.ui-immersive,#flight-app.ui-immersive.clean-view{display:block;position:relative;height:100dvh;min-height:0;overflow:hidden}
+ .ui-immersive .flight-workspace{position:absolute;inset:0;display:block;height:auto;min-height:0;max-height:none}
+ .ui-immersive #viewport{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:0}
+ .ui-immersive .flight-footer{display:none}
+ /* En-tête : trois pastilles flottantes (marque + vues, télémétrie, liens) */
+ .ui-immersive .flight-header{position:absolute;z-index:40;top:8px;left:8px;right:8px;height:auto;padding:0;border:0;background:transparent;gap:8px;justify-content:space-between;pointer-events:none}
+ .ui-immersive .flight-header>*{pointer-events:auto}
+ .ui-immersive .flight-brand{background:#07101bd1;border:1px solid #a7bbcb2e;border-radius:999px;height:36px;padding:0 12px;font-size:15px;gap:6px}
+ .ui-immersive .flight-brand>span{font-size:12px;letter-spacing:2px}
+ .ui-immersive .flight-brand small{display:none}
+ .ui-immersive .view-switch{background:#07101bd1;border:1px solid #a7bbcb2e;border-radius:999px;padding:3px;margin:0}
+ .ui-immersive .view-switch button{font-size:12px;padding:6px 11px;border-radius:999px}
+ .ui-immersive .header-links{background:#07101bd1;border:1px solid #a7bbcb2e;border-radius:999px;height:36px;padding:0 6px 0 4px;gap:10px;margin-left:0}
+ .ui-immersive .header-links a,.ui-immersive .header-links button:not(#ui-mode-toggle),.ui-immersive #private-mark{font-size:12px}
+ .ui-immersive .immersive-telemetry{display:flex;align-items:center;gap:12px;height:36px;padding:0 14px;margin:0 auto;border-radius:999px;background:#07101bd1;border:1px solid #a7bbcb2e;font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:#d6e2ea;white-space:nowrap;overflow:hidden;min-width:0}
+ .ui-immersive .immersive-telemetry b{color:#edf3f7;font-weight:500}
+ .ui-immersive .immersive-telemetry .it-dest b{font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px}
+ .ui-immersive .immersive-telemetry i{font-style:normal;color:#8ee2cc}
+ .ui-immersive .immersive-telemetry abbr{text-decoration:none}
+ .ui-immersive #it-state{color:#a7bbcb}
+ /* Tiroirs : superposés au ciel, sans le redimensionner */
+ .ui-immersive .dest-panel,.ui-immersive .instruments{display:flex;flex-direction:column;position:absolute;z-index:35;top:52px;bottom:62px;width:300px;max-width:calc(50% - 24px);overflow:auto;background:#0a1420f5;border:1px solid #a7bbcb2e;border-radius:10px;box-shadow:0 12px 40px #0009;visibility:hidden;transition:transform .18s ease,visibility 0s linear .18s}
+ .ui-immersive .dest-panel{left:8px;transform:translateX(calc(-100% - 16px))}
+ .ui-immersive .instruments{right:8px;transform:translateX(calc(100% + 16px))}
+ .ui-immersive.nav-open .dest-panel,.ui-immersive.instr-open .instruments{transform:none;visibility:visible;transition:transform .18s ease}
+ .ui-immersive .drawer-tab{display:flex;align-items:center;gap:8px;position:absolute;z-index:34;top:50%;padding:12px 6px;writing-mode:vertical-rl;font:inherit;font-size:12px;letter-spacing:.06em;color:#c9d7e1;background:#07101bd1;border:1px solid #a7bbcb2e;cursor:pointer}
+ .ui-immersive .drawer-tab.left{left:0;border-left:0;border-radius:0 8px 8px 0;transform:translateY(-50%) rotate(180deg)}
+ .ui-immersive .drawer-tab.right{right:0;border-right:0;border-radius:8px 0 0 8px;transform:translateY(-50%)}
+ .ui-immersive .drawer-tab kbd{font-family:"JetBrains Mono",monospace;font-size:12px;border:1px solid #a7bbcb55;border-radius:4px;padding:2px 0}
+ .ui-immersive.nav-open .drawer-tab.left,.ui-immersive.instr-open .drawer-tab.right{display:none}
+ /* Commandes : pastilles basses flottantes ; intitulés gardés pour les lecteurs d'écran */
+ .ui-immersive .flight-controls{position:absolute;z-index:30;left:8px;right:8px;bottom:8px;display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:flex-end;gap:8px;padding:0;margin:0;background:transparent;border:0;pointer-events:none}
+ .ui-immersive .flight-controls>.control-group{pointer-events:auto;display:flex;flex-direction:row;align-items:center;gap:4px;flex:0 1 auto;min-width:0;width:auto;max-width:none;padding:4px;background:#07101bd1;border:1px solid #a7bbcb2e;border-radius:12px;grid-column:auto}
+ .ui-immersive .flight-controls>.control-group>span,.ui-immersive .flight-controls>.control-group>label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ .ui-immersive .flight-controls>.control-group>div{display:flex;flex-wrap:nowrap;gap:4px}
+ .ui-immersive .flight-controls button,.ui-immersive .flight-controls a,.ui-immersive .flight-controls select{font-size:12px;min-height:34px;padding:6px 10px;white-space:nowrap}
+ .ui-immersive .flight-controls small,.ui-immersive .flight-controls .regime-controls>div>span{display:none}
+ .ui-immersive .flight-controls .time-control{flex:0 0 auto;min-width:0;max-width:none}
+ .ui-immersive .flight-controls .time-control select{width:auto}
+ /* Menu Mission : même comportement que sur écran court */
+ .ui-immersive .flight-controls .mission-controls{position:relative}
+ .ui-immersive .flight-controls .mission-menu{display:inline-flex;align-items:center;gap:7px}
+ .ui-immersive .flight-controls .mission-controls>#mission-actions{display:none;position:absolute;left:0;bottom:calc(100% + 8px);z-index:40;flex-direction:column;align-items:stretch;gap:6px;min-width:250px;padding:10px;background:#0b1620;border:1px solid #2b3f4e;border-radius:8px;box-shadow:0 10px 28px #000a}
+ .ui-immersive .flight-controls .mission-controls.menu-open>#mission-actions{display:flex}
+ .ui-immersive .mission-controls.pending-choice #resume-mission,.ui-immersive .mission-controls.pending-choice #keep-mission{order:-1}
+ .ui-immersive .mission-controls.pending-choice #mission-actions::before{content:"Mission sauvegardée disponible";font-size:12px;color:#f0b56b;padding:0 2px 2px;order:-2}
+ /* Éléments du ciel décalés sous l'en-tête et au-dessus des commandes */
+ .ui-immersive .glass-top{top:52px}
+ .ui-immersive .view-options{top:86px}
+ .ui-immersive .viewport-actions{top:120px}
+ .ui-immersive #map-options{top:52px}
+ .ui-immersive .canvas-foot{bottom:62px}
+ .ui-immersive .cockpit-strut{display:none}
+ .ui-immersive .glass-top,.ui-immersive .glass-top small,.ui-immersive .view-options,.ui-immersive .view-options button,.ui-immersive .viewport-actions button,.ui-immersive .canvas-foot,.ui-immersive #navigation-hud,.ui-immersive #navigation-hud button,.ui-immersive .local-tools button{font-size:12px}
+}
+@media (min-width:901px){
+ /* Ajustements après première mesure (1280 × 585) */
+ .ui-immersive .header-links{gap:12px}
+ .ui-immersive .header-links a,.ui-immersive .header-links button{white-space:nowrap}
+ .ui-immersive .header-links a[href="./"]:not(.flight-brand){display:none} /* « Atlas ↗ » : même lien que la marque ODYSSÉE */
+ .ui-immersive .glass-top{top:50px;left:12px;right:auto;width:auto;padding:4px 10px;min-height:0}
+ .ui-immersive .glass-top .status-dot,.ui-immersive #flight-status{display:none} /* l'état est dans la pastille de télémétrie */
+ .ui-immersive .glass-top small{display:block;margin:0}
+ .ui-immersive .view-options{top:80px;left:12px}
+ .ui-immersive .viewport-actions{top:80px;left:252px;right:auto}
+ .ui-immersive .canvas-foot{left:12px;right:auto;width:auto;max-width:calc(100% - 24px);gap:18px;justify-content:flex-start}
+ .ui-immersive #flight-toast{bottom:64px}
+ .ui-immersive #target-marker,.ui-immersive #target-marker *{font-size:12px}
+ .ui-immersive .instruments small,.ui-immersive .dest-panel small,.ui-immersive #catalogue-sky-status,.ui-immersive #graphics-preparation{font-size:12px}
+}
+@media (min-width:901px){
+ /* Télémétrie sur sa propre ligne, à droite sous l'en-tête : l'en-tête garde marque, vues et liens */
+ .ui-immersive .immersive-telemetry{position:fixed;top:50px;right:12px;margin:0;max-width:calc(100% - 360px)}
+ .ui-immersive #map-options{top:92px}
+ .ui-immersive .canvas-foot{white-space:nowrap}
+ .ui-immersive #navigation-hud,.ui-immersive #navigation-hud.compact{max-width:min(520px,calc(100% - 28px))}
+}
+@media (min-width:901px){
+ /* Tiroir Navigation : seule la liste défile ; la carte de route (Engager, Orienter) reste visible en bas */
+ .ui-immersive .dest-panel{overflow:hidden}
+ .ui-immersive .dest-panel .destinations{flex:1 1 auto;min-height:0;overflow:auto}
+ .ui-immersive .dest-panel .route-card{flex:none}
+}
+@media (min-width:901px){
+ .ui-immersive .dest-panel{padding:12px 11px 10px}
+ .ui-immersive .dest-panel .destinations{flex:1 1 48px;min-height:48px}
+}
+@media (min-width:901px){
+ /* Tiroir Navigation sur écran bas : tout le tiroir défile, la liste garde une hauteur bornée,
+    comme la colonne de l'interface classique à cette hauteur. */
+ .ui-immersive .dest-panel{overflow:auto}
+ .ui-immersive .dest-panel .destinations{flex:none;height:auto;max-height:min(240px,38vh);min-height:48px}
+}
+@media (min-width:901px){
+ /* Carte galactique : légende à droite, au-dessus des commandes (le suivi et la légende du ciel restent à gauche) */
+ .ui-immersive .map-legend{left:auto;right:12px;bottom:62px;max-width:min(430px,calc(50% - 24px))}
+}
+@media (min-width:901px){.ui-immersive .map-legend,.ui-immersive .map-legend *{font-size:12px}}

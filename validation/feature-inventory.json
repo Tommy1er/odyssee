@@ -1,5 +1,5 @@
 {
- "passed": 19,
+ "passed": 30,
  "failed": 0,
  "results": [
   {
@@ -88,9 +88,64 @@
    "detail": ""
   },
   {
+   "name": "Immersive · disposition active, ciel plein écran",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Immersive · les 95 identifiants de la matrice existent une seule fois",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Immersive · noyau de pilotage et tiroirs atteignables sans défilement",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Immersive · tiroirs fermés inertes (hors tabulation)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Immersive · tiroir Navigation : recherche, puis Engager et Orienter (après défilement du tiroir)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Immersive · tiroir Instruments : instruments d'observation atteignables (après défilement du tiroir)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Immersive · un clic dans le ciel referme les tiroirs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Immersive · télémétrie en pastille renseignée",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Bascule vers Classique : disposition d'origine rétablie",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Classique par défaut, bascule d'essai invisible sans ?ui= ni choix mémorisé",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "Fonctions de mesure exposées (skyOcclusion, frameTimingSample, phases de démarrage)",
    "ok": true,
    "detail": ""
+  },
+  {
+   "name": "Onglet caché au démarrage : pas d'attente d'image",
+   "ok": true,
+   "detail": "Attente de la première image du navigateur (onglet caché, fenêtre active) · 0 ms"
   },
   {
    "name": "Aucune erreur de page",
@@ -124,10 +179,40 @@
      780,
      470
     ],
-    "unoccludedPercent": 37.8,
+    "unoccludedPercent": 35.8,
     "method": "union de rectangles, grille 4 px"
    },
-   "smallText": 21
+   "smallText": 22
+  },
+  "Immersive 1280 × 585 · vol libre au démarrage": {
+   "sky": {
+    "window": [
+     1280,
+     585
+    ],
+    "sky": [
+     1280,
+     585
+    ],
+    "unoccludedPercent": 69.2,
+    "method": "union de rectangles, grille 4 px"
+   },
+   "smallText": 0
+  },
+  "Immersive 1280 × 585 · après interactions": {
+   "sky": {
+    "window": [
+     1280,
+     585
+    ],
+    "sky": [
+     1280,
+     585
+    ],
+    "unoccludedPercent": 56.1,
+    "method": "union de rectangles, grille 4 px"
+   },
+   "smallText": 0
   }
  }
 }
