@@ -322,3 +322,48 @@ Sur la machine du propriétaire, toujours chargée, les mesures restent **indica
 ---
 
 *Je reste disponible pour défendre ou réviser chacun de ces choix sur preuve. Une seule ligne rouge : ne pas dégrader la vérité scientifique pour gagner de la place à l'écran.*
+
+---
+
+## Addendum V1.1 — réponse au retour de ChatGPT (18 novembre, soir)
+
+ChatGPT a relu cette réponse et formulé quatre précautions et trois propositions de décision. **Je les accepte toutes.** Voici ce qu'elles changent, avec une mesure nouvelle.
+
+### A. Les quatre précautions
+
+1. **L'occlusion géométrique n'est pas la visibilité perçue.** D'accord. `measure-sky-occlusion.cjs` compte des rectangles, pas des étoiles cachées ni la lisibilité. Chaque chiffre sera désormais présenté **avec la capture correspondante**, et l'évaluation finale se fera à l'œil sur l'Iris Xe.
+2. **19,7 s n'est pas le coût de chaque navigation.** D'accord, et c'est confirmé par trois chargements du cockpit sur le Chrome Iris Xe du propriétaire, le même jour **[M]** :
+
+   | Chargement | Interface prête | Catalogues | Préparation processeur non tracée | Construction du moteur | Préparation GPU |
+   |---|---|---|---|---|---|
+   | Matin (premier de la session) | 19,7 s | 3,0 s | 2,3 s | 2,1 s | 10,5 s |
+   | Soir, rechargement | 10,4 s | 3,1 s | 0,9 s | 1,0 s | 4,3 s |
+   | Soir, retour depuis la Carte (cache chaud) | **5,0 s** | 0,7 s | 0,0 s | 0,6 s | 3,2 s |
+
+   Trois constats. **La variance est forte** : machine chargée, et un cache de programmes GPU du navigateur probablement réchauffé. **Les catalogues ne sont pas toujours servis depuis le cache** (plus de 1,7 Mo retransférés au rechargement du soir). Enfin, **un aller-retour coûte 5 à 10 s** dans les conditions observées. L'argument « une page, un moteur » reste valable, mais son **motif principal est D9** : sur la page Carte, la mission ne tourne pas. Le temps de rechargement ne vient qu'en second. Je retire de mon résumé la formulation « ≈ 19,7 s par changement de page ».
+3. **Un budget de pixels égal ne garantit pas un coût GPU égal.** D'accord. Composition, volumes, préparation des ressources et temps processeur comptent aussi. Le budget de pixels est un **levier**, pas une promesse : seule la mesure de temps d'image (`flightPerformance()`, p50 et p95, même scène) tranchera.
+4. **« Seul Engager fait bouger le vaisseau ».** Correction acceptée. La règle vaut pour les **actions de navigation liées à un objet** (Sélectionner, Cadrer, Observer, Situer, Préparer, Engager). **Le pilotage manuel** (Poussée, Freiner, flèches, manœuvres locales) déplace évidemment le vaisseau directement. Lire le § 3.2 avec cette précision.
+
+### B. Les trois décisions proposées, et comment je les mettrai en œuvre si le propriétaire les retient
+
+1. **Carte intégrée au cockpit : accord de principe, migration progressive.** C'est déjà ma proposition (§ 4.3, étape 4). J'ajoute une **preuve de faisabilité** avant toute migration : un seul niveau de `cosmos.html` (Groupe local) rendu dans la vue Carte du cockpit, avec mesure des ressources graphiques et de la mémoire, une matrice de parité niveau par niveau, et `cosmos.html` conservée jusqu'à l'équivalence démontrée.
+2. **Assistance activée par défaut, désactivable à tout moment.** J'adopte la critique : une arrivée n'est pas un danger, une chute libre peut être voulue, une limite de Roche simplifiée n'est pas une vérité. La liste du § 3.5 est remplacée par **trois classes** :
+
+   | Classe | Exemples | Réaction par défaut |
+   |---|---|---|
+   | **Risque détectable** (le modèle le calcule de façon fiable) | trajectoire coupant l'horizon d'un trou noir ; collision avec un corps dont le rayon est connu | ralentir la lecture, rouvrir le HUD, demander confirmation |
+   | **Alerte prudente** (modèle simplifié ou intention ambiguë) | approche d'une limite de Roche calculée ; chute libre sans poussée prolongée | notification persistante, **aucune action automatique** |
+   | **Information insuffisante** (le simulateur ne sait pas) | milieu mal connu, objet sans rayon ou masse | mention « donnée inconnue » dans la fiche, aucune alerte inventée |
+
+   Les arrivées et les découvertes restent de simples notifications. L'assistance **n'agit jamais silencieusement** : toute intervention est affichée, journalisée et annulable. Elle n'agit que sur la **vitesse de lecture**, jamais sur la vitesse physique.
+3. **Iris Xe : profils adaptatifs conservés, comparaison réelle avant décision.** J'abandonne l'idée d'imposer un ratio de pixels. La tranche 1 apportera une **démonstration comparative** sur la même scène (Mars en vue extérieure, Tarentule, Carte), avec :
+   - Immersion au budget actuel ;
+   - Immersion en profil Équilibré ;
+   - Immersion en profil Qualité ;
+   - captures côte à côte, et temps d'image p50 et p95 sur le Chrome du propriétaire.
+
+   Le propriétaire choisit sur pièces.
+
+### C. Ce qui ne change pas
+
+La séquence **Tranche 0 (instruments) → planche V3.2 → Tranche 1 réversible (Classique par défaut)** est approuvée par ChatGPT et reste ma proposition. Rien ne démarre sans l'accord du propriétaire sur les trois décisions ci-dessus.
