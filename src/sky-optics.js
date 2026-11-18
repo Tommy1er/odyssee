@@ -100,8 +100,8 @@ L*=exposure;vec3 rgb=1.-exp(-max(L,vec3(0)));if(band==0.){float y=dot(rgb,vec3(.
   this.compiledMaterials.add(material);
  }
  async prepareCloud(renderer){if(!this.cloudCompilation){this.cloudCompilation=compileForTarget(renderer,this.cloudPass.scene,this.cloudPass.camera,this.cloudPass.target);this.cloudCompilation.then(()=>{if(renderer.getRenderTarget)this.drawWarmup.enqueue('Nuage HDR émission/transmission',()=>drawForTarget(renderer,this.cloudPass.scene,this.cloudPass.camera,this.cloudPass.target)).catch(e=>{this.variantError=String(e);});}).catch(()=>{});}await this.cloudCompilation;}
- startOrdinaryWarmup(renderer){if(this.ordinaryPreparation)return;this.ordinaryPreparation={status:'preparing'};this.groupPass.prepare(renderer,true);
-  const run=async()=>{for(const key of ['s','c','sc']){this.ordinaryPreparation.label=this.variant(key).name;await this.requestCompilation(renderer,this.variant(key),null);}await this.groupPass.compilation;if(this.groupPass.error)throw Error(this.groupPass.error);this.ordinaryPreparation={status:'ready'};};
+ startOrdinaryWarmup(renderer){if(this.ordinaryPreparation)return;this.ordinaryPreparation={status:'preparing',startedAt:performance.now()};this.groupPass.prepare(renderer,true);
+  const run=async()=>{for(const key of ['s','c','sc']){this.ordinaryPreparation.label=this.variant(key).name;await this.requestCompilation(renderer,this.variant(key),null);}await this.groupPass.compilation;if(this.groupPass.error)throw Error(this.groupPass.error);this.ordinaryPreparation={status:'ready',startedAt:this.ordinaryPreparation?.startedAt,readyAt:performance.now()};};
   run().catch(e=>{this.ordinaryPreparation={status:'error',error:String(e)};});
  }
  // Share one promise between selection-time warmup and arrival. A finished warmup never changes the displayed variant.

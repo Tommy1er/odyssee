@@ -51,6 +51,14 @@ export class GPUStartup {
  stop(){this.cancelled=true;this.persist();}
  detach(){for(const restore of this.restore.splice(0).reverse())restore();}
  complete(){this.check();this.ready=true;this.detach();this.persist();}
+ // Repère instantané (durée nulle) : moment clé du démarrage, sans effet sur la préparation.
+ mark(label){const e={label,start:this.now(),ms:0,status:'repère'};this.entries.push(e);if(this.entries.length>300)this.entries.shift();this.persist();return e;}
+ // Résumé lisible : début et durée de chaque phase, en millisecondes depuis le début de la navigation.
+ phases(){const find=l=>this.entries.find(e=>e.label.startsWith(l)),span=e=>e?{start:Math.round(e.start),ms:e.ms??null}:null,
+  engine=find('Construction du moteur'),done=find('Préparation complète du premier rendu'),ui=find('Interface active');
+  return {json:span(find('Catalogues · téléchargement et lecture JSON')),objects:span(find('Catalogues · préparation des objets')),frameWait:span(find('Attente de la première image')),
+   engine:span(engine),gpuBeforeFirstImage:engine&&engine.ms!=null&&done?{start:Math.round(engine.start+engine.ms),ms:Math.round(done.start-(engine.start+engine.ms))}:null,
+   firstImage:done?Math.round(done.start):null,interfaceActive:ui?Math.round(ui.start):null};}
  text(){return 'Démarrage GPU · '+(this.sync?'mesures synchronisées avec gl.finish()':'durées CPU/pilote ; cubes attendus par barrières GPU')+'\nÉtapes actives : '+(this.active.map(e=>e.label).join(' → ')||'aucune')+'\n'+this.entries.slice(-45).map(e=>e.label+' : '+e.status+(e.ms!==undefined?' ('+e.ms+' ms)':'')+(e.error?' — '+e.error:'')).join('\n');}
 }
 

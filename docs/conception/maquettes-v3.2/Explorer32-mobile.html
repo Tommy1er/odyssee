@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Explorer V3.2 — téléphone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#03070d;color:#edf3f7;font-family:Inter,system-ui,sans-serif;font-size:13px;line-height:1.4}
+a{color:#8ee2cc;text-decoration:none}
+button,select{font:inherit;color:inherit;cursor:pointer}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.stage{position:relative;overflow:hidden;background:#03070d}
+.sky{position:absolute;inset:0;background-repeat:no-repeat;background-color:#03070d}
+.vig{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#03070dcc,transparent 18%,transparent 70%,#03070de6)}
+.glass{background:#07101bd1;border:1px solid #a7bbcb2e;border-radius:10px}
+.glass.solid{background:#0a1420f5}
+.pill{display:flex;gap:2px;padding:3px;border-radius:999px;background:#07101bb8;border:1px solid #a7bbcb2e}
+.pill>*{border:0;background:transparent;border-radius:999px;padding:6px 13px;font-size:12px;color:#c9d7e1;display:inline-flex;align-items:center;gap:6px}
+.pill>.on{background:#1b3a35;color:#bff0e2}
+.btn{background:#111f2ce6;border:1px solid #2b3f4e;border-radius:7px;padding:7px 11px;font-size:12px;min-height:32px;display:inline-flex;align-items:center;gap:6px;color:#edf3f7}
+.btn.primary{background:#8ee2cc;border-color:#8ee2cc;color:#07141b;font-weight:600}
+.btn.on{background:#1b3a35;border-color:#4f8f80;color:#bff0e2}
+.btn.ghost{background:transparent;border-color:#a7bbcb33}
+.kbd{font-family:"JetBrains Mono",monospace;font-size:12px;color:#a7bbcb;border:1px solid #a7bbcb55;border-radius:4px;padding:0 5px;line-height:17px}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:500;white-space:nowrap}
+.chip.obs{background:#17322ad9;color:#9fe8cf}.chip.model{background:#1b2a3dd9;color:#9fcbf6}.chip.recon{background:#2a2630d9;color:#d7c8f3}.chip.fiction{background:#2d2440d9;color:#cdb8f3}
+.label{font-size:12px;color:#a7bbcb;letter-spacing:.07em;text-transform:uppercase}
+.k{color:#a7bbcb;font-size:12px}
+.v{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:15px}
+.v small{font-size:12px;color:#a7bbcb}
+.tab{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;color:#c9d7e1;letter-spacing:.08em;display:flex;gap:8px;align-items:center}
+.seg{display:flex;border:1px solid #2b3f4e;border-radius:8px;overflow:hidden}
+.seg>*{border:0;background:#111f2ce6;padding:7px 11px;font-size:12px;min-height:32px;color:#edf3f7}
+.seg>*+*{border-left:1px solid #2b3f4e}
+.seg>.on{background:#1b3a35;color:#bff0e2}
+.bracket{position:absolute;pointer-events:none;--c:#8ee2cc;background:linear-gradient(var(--c),var(--c)) 0 0/18px 1.5px,linear-gradient(var(--c),var(--c)) 0 0/1.5px 18px,linear-gradient(var(--c),var(--c)) 100% 0/18px 1.5px,linear-gradient(var(--c),var(--c)) 100% 0/1.5px 18px,linear-gradient(var(--c),var(--c)) 0 100%/18px 1.5px,linear-gradient(var(--c),var(--c)) 0 100%/1.5px 18px,linear-gradient(var(--c),var(--c)) 100% 100%/18px 1.5px,linear-gradient(var(--c),var(--c)) 100% 100%/1.5px 18px;background-repeat:no-repeat}
+dl.grid{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0}
+dl.grid dt{color:#a7bbcb;font-size:12px}dl.grid dd{margin:0;font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:12px;text-align:right}
+table{border-collapse:collapse;width:100%;font-size:12px}
+td,th{padding:6px 5px;border-bottom:1px solid #1f2f3c;text-align:left;vertical-align:middle}th{color:#a7bbcb;font-weight:500}
+td.num{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.note{position:absolute;font-size:12px;color:#f0b56b;background:#20170bcc;border:1px dashed #f0b56b88;border-radius:6px;padding:4px 8px}
+
+.bar{position:absolute;display:flex;gap:6px;align-items:center}
+.grp{display:flex;align-items:center;gap:6px;height:44px;padding:0 6px;border-radius:12px;background:#07101bd1;border:1px solid #a7bbcb2e}
+.grp .btn,.grp .seg>*{min-height:34px}
+.tele{display:flex;align-items:center;gap:11px;height:34px;padding:0 12px;border-radius:999px;background:#07101bd1;border:1px solid #a7bbcb2e;font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:12px;white-space:nowrap}
+.tele b{font-family:Inter,sans-serif;font-weight:600;font-size:13px}
+.tele .u{color:#a7bbcb}
+.alert{border-left:3px solid #f0b56b}
+</style>
+</head>
+<body>
+<div class="stage" style="width:390px;height:844px">
+<div class="sky" style="background-image:url('../maquettes-v3.1/assets/saturne.jpg');background-size:auto 118%;background-position:50% 40%"></div>
+<div class="bar" style="top:10px;left:10px;right:10px"><nav class="pill" style="flex:1"><span class="on">Explorer</span><a href="Observatoire31-mobile.html">Observatoire</a><a href="Carte31-mobile.html">Carte</a></nav>
+ <button class="btn" style="width:44px;height:44px;border-radius:999px;justify-content:center;padding:0;background:#07101bd1" aria-label="Rechercher">⌕</button></div>
+<div class="tele" style="position:absolute;top:62px;left:10px;right:10px;justify-content:space-between;gap:8px;padding:0 12px"><span><span style="color:#8ee2cc">●</span> <b>Saturne</b></span><span>0,000 c</span><span><span class="u">bord</span> 2 j 04 h</span></div>
+<div style="position:absolute;right:10px;top:330px;display:flex;flex-direction:column;gap:8px">
+ <button class="btn" style="width:44px;height:44px;justify-content:center;padding:0;background:#07101bd1" aria-label="Navigation">☰</button>
+ <button class="btn" style="width:44px;height:44px;justify-content:center;padding:0;background:#07101bd1" aria-label="Instruments">◫</button>
+ <button class="btn" style="width:44px;height:44px;justify-content:center;padding:0;background:#07101bd1" aria-label="Perspective">◐</button>
+ <button class="btn" style="width:44px;height:44px;justify-content:center;padding:0;background:#07101bd1" aria-label="Cinéma">⤢</button></div>
+<div class="glass" style="position:absolute;left:10px;right:10px;bottom:128px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+ <div><strong style="font-size:16px">Saturne</strong> <span class="k">· 1,2 M km</span></div><button class="btn primary" style="min-height:44px">Préparer le trajet</button></div>
+<div style="position:absolute;left:10px;right:10px;bottom:10px;display:flex;flex-direction:column;gap:8px">
+ <div style="display:flex;gap:8px"><button class="btn" style="flex:1;min-height:44px;justify-content:center;background:#07101bd1">↑ Poussée</button><button class="btn on" style="flex:1;min-height:44px;justify-content:center">Inertie</button><button class="btn" style="flex:1;min-height:44px;justify-content:center;background:#07101bd1">↓ Freiner</button></div>
+ <div style="display:flex;gap:8px"><button class="btn" style="min-height:44px;background:#07101bd1">Mission ▾</button><button class="btn" style="width:48px;min-height:44px;justify-content:center;background:#07101bd1" aria-label="Reprendre le temps">▶</button><button class="btn" style="flex:1;min-height:44px;background:#07101bd1">×1 / s ▾</button></div>
+</div>
+<div style="position:absolute;left:12px;bottom:204px"><span class="chip model">Rendu Odyssée · illustratif</span></div>
+</div>
+</body>
+</html>

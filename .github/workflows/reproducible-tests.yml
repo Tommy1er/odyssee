@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [cockpit, cosmos, propulsion, journey, search]
+        suite: [cockpit, cosmos, propulsion, journey, search, inventory]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -42,3 +42,4 @@ jobs:
           path: |
             validation/v2-screenshots/
             validation/search-and-map-errors.json
+            validation/feature-inventory.json

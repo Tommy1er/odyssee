@@ -1,0 +1,133 @@
+{
+ "passed": 19,
+ "failed": 0,
+ "results": [
+  {
+   "name": "Inventaire · Perspectives et vues (4)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Navigation et recherche (8)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Suivi du trajet et passage (3)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Vision et vue (6)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Carte galactique 3D (10)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Vaisseau 3D (3)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Manœuvre locale (5)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Instruments d'observation (10)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Relativité (3)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Risques du milieu (3)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Gravitation (9)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Laboratoire (fiction) (7)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Fiche, journal, physique (4)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Mission (7)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Inventaire · Temps et propulsion (6)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Noyau de pilotage atteignable · 1440 × 900",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Noyau de pilotage atteignable · 1280 × 585 (écran court)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Fonctions de mesure exposées (skyOcclusion, frameTimingSample, phases de démarrage)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Aucune erreur de page",
+   "ok": true,
+   "detail": ""
+  }
+ ],
+ "info": {
+  "1440 × 900": {
+   "sky": {
+    "window": [
+     1440,
+     900
+    ],
+    "sky": [
+     902,
+     686
+    ],
+    "unoccludedPercent": 38.9,
+    "method": "union de rectangles, grille 4 px"
+   },
+   "smallText": 7
+  },
+  "1280 × 585": {
+   "sky": {
+    "window": [
+     1280,
+     585
+    ],
+    "sky": [
+     780,
+     470
+    ],
+    "unoccludedPercent": 37.8,
+    "method": "union de rectangles, grille 4 px"
+   },
+   "smallText": 21
+  }
+ }
+}
