@@ -57,6 +57,8 @@ Local (Chromium SwiftShader, Playwright préinstallé) :
 - Parcours cockpit complet (`validate-physics-ui.cjs`) : non relancé en local (blocage de capture connu de ce bac à sable) ; verdict sur la CI.
 - Maquettes V3.2 : mesure d'occlusion, contrôle des textes < 12 px et des chevauchements sur les six planches.
 
+CI GitHub sur `c312b1e` : « Reproducible validation from npm ci » relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44405473314). Réussis : numerical, cockpit (parcours complet), cosmos, journey, propulsion, search, et **inventory (nouveau job)**. Les huit autres exécutions déclenchées par le commit sont également réussies : source et bundle, budget d'émission, bornes GPU à γ élevé, zoom de la carte et intégration au cockpit, persistance de mission et nébuleuses, spectres de galaxies, et deux exécutions de validation reproductible.
+
 ## 6. Prochaines étapes (Head, sans nouvelle validation intermédiaire)
 
 1. Après publication de cette tranche par Codex : relever `gpuStartupDiagnostic().phases` sur l'Iris Xe, au premier chargement puis au retour depuis la Carte, pour confirmer ou infirmer l'hypothèse de l'attente d'image.
