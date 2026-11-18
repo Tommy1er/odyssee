@@ -36,7 +36,9 @@ Premier essai : « proxima » plaçait « Proxima Cen b » et « Proxima Cen d �
 Local (Chromium SwiftShader, Playwright préinstallé) :
 - `validate-search-and-map-errors.cjs` : 24/24 (résultat : `validation/search-and-map-errors.json`).
 - Réussis (code 0) : `validate-cosmos.cjs`, `validate-cosmos-context-ui.cjs`, `validate-rendezvous-ui.cjs` (recherche et clics de destination Terre / Lune), `validate-cockpit-layout-ui.cjs`, `validate-physics-mobile.cjs`.
-- `validate-physics-ui.cjs` (parcours cockpit complet, utilise la recherche) : verdict pris sur la CI après ce commit.
+- `validate-physics-ui.cjs` (parcours cockpit complet, utilise la recherche) : en local, les 5 premiers contrôles passent (dont la sélection par la recherche), puis arrêt sur `page.screenshot` (délai de 90 s après « fonts loaded »), blocage de capture connu de ce bac à sable ; verdict pris sur la CI.
+
+CI GitHub sur `701ed53` (après rebasage sur les commits documentaires `docs/audits/`) : « Reproducible validation from npm ci » relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44360290116) — numerical, cockpit, cosmos, propulsion, journey et **search** (nouveau job) : success. Workflows déclenchés par le commit : source + bundle, budget d'émission imbriquée, persistance de mission et nébuleuses, zoom de la carte et intégration cockpit, spectres de galaxies : success.
 
 ## Non vérifié
 
