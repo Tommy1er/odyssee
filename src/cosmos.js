@@ -1,4 +1,4 @@
-import {monitorWebGL} from './render-diagnostics.js';
+import {monitorWebGL,isBenignWindowError} from './render-diagnostics.js';
 import * as T from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {MapGalaxyPreview,TIME_LAPSE_MYR} from './map-galaxy-preview.js';
@@ -12,7 +12,7 @@ import {STRUCTURES,LEVELS,TYPE_NAMES,xyz} from './cosmic-data.js';
 const HORIZON_MLY=46500,MAX_DISTANCE=150000;
 const $=id=>document.getElementById(id),fmt=(n,p=1)=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:p}).format(n),byId=new Map(STRUCTURES.map(o=>[o.id,o]));
 const webglMonitor=monitorWebGL($('cosmos'),$('error'),'carte',()=>{$('loading').hidden=true;});
-window.addEventListener('error',e=>{$('loading').hidden=true;webglMonitor.showError(e.error||e.message);});
+window.addEventListener('error',e=>{if(isBenignWindowError(e)){console.warn('Carte : notification ignorée',e.message);return;}$('loading').hidden=true;webglMonitor.showError(e.error||e.message);});
 const canvas=$('cosmos'),renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0x03080f);renderer.outputColorSpace=T.SRGBColorSpace;const scene=new T.Scene(),camera=new T.PerspectiveCamera(48,1,.00001,200000);camera.up.set(0,0,1);const controls=new OrbitControls(camera,canvas);controls.enableDamping=true;controls.minDistance=.005;controls.maxDistance=MAX_DISTANCE;controls.zoomSpeed=2.2;controls.zoomToCursor=false;const cosmic=new CosmicScene();scene.add(cosmic.root);const observed=new ObservedGalaxies(scene);const preview=new MapGalaxyPreview(scene);const basins=new BasinLayer(scene),basinLabels=new Map();
 let level=0,selected='local-group',span=8,transition=null,immersion=false,last=0,keys=new Set(),down=null,drag=false;
 let surveyRows=[],surveyFiltered=[],surveyKey='',surveyTicket=0,surveyReady=false;const surveyCache=new Map();

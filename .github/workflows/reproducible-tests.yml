@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [cockpit, cosmos, propulsion, journey]
+        suite: [cockpit, cosmos, propulsion, journey, search]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -39,4 +39,6 @@ jobs:
         if: always()
         with:
           name: reproducible-${{ matrix.suite }}
-          path: validation/v2-screenshots/
+          path: |
+            validation/v2-screenshots/
+            validation/search-and-map-errors.json

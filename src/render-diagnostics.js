@@ -25,3 +25,15 @@ export function monitorWebGL(canvas,element,page,onStop=()=>{},diagnostic=()=>''
  for(const [type,listener] of Object.entries(listeners))canvas.addEventListener(type,listener);
  return {get stopped(){return stopped;},showError,dispose(){for(const [type,listener] of Object.entries(listeners))canvas.removeEventListener(type,listener);}};
 }
+
+// Erreurs de fenêtre sans gravité pour le rendu : notifications ResizeObserver (le navigateur les remonte comme
+// « error » sans que rien ne soit cassé) et erreurs de scripts d'une autre origine (extensions, bandeau de l'hébergeur),
+// dont le navigateur masque le contenu (« Script error. »). Elles vont en console ; tout le reste reste affiché.
+export function isBenignWindowError(event,origin=globalThis.location?.origin){
+ const message=String(event?.message||event?.error?.message||'');
+ if(/^ResizeObserver loop (limit exceeded|completed with undelivered notifications)/.test(message))return true;
+ const file=String(event?.filename||'');
+ if(!event?.error&&message==='Script error.')return true;
+ if(file&&origin&&!file.startsWith(origin)&&!file.startsWith('blob:'+origin))return true;
+ return false;
+}

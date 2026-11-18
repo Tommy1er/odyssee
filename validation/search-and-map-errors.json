@@ -1,0 +1,126 @@
+{
+ "passed": 24,
+ "failed": 0,
+ "results": [
+  {
+   "name": "Filtre : notification ResizeObserver ignorée",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Filtre : ancienne forme ResizeObserver ignorée",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Filtre : « Script error. » sans objet ignoré",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Filtre : script d'extension ignoré",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Filtre : erreur de la carte conservée",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Filtre : erreur sans fichier conservée",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "« Mars » : la planète Mars en premier",
+   "ok": true,
+   "detail": "solar:Mars, h78804, h78805"
+  },
+  {
+   "name": "« Mars » : Marsic toujours proposé, après Mars",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "« mars » entouré d'espaces et en minuscules : même résultat",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "« Marsic » : l'étoile Marsic en premier",
+   "ok": true,
+   "detail": "h78804, h78805"
+  },
+  {
+   "name": "Alias exact « HIP 32349 » : Sirius en premier",
+   "ok": true,
+   "detail": "h32263"
+  },
+  {
+   "name": "Alias exact « 7Kap Her » : Marsic en premier",
+   "ok": true,
+   "detail": "h78804, h78805"
+  },
+  {
+   "name": "Alias exact « Sol » : le Soleil en premier",
+   "ok": true,
+   "detail": "h0, h104442, solar:Mars"
+  },
+  {
+   "name": "Préfixe « proxima » : Proxima Centauri en premier",
+   "ok": true,
+   "detail": "h70666, planet:Proxima Cen d, planet:Proxima Cen b"
+  },
+  {
+   "name": "« Saturne » : Saturne en premier",
+   "ok": true,
+   "detail": "solar:Saturne, moon:Titan, moon:Encelade"
+  },
+  {
+   "name": "« Saturne » : ses lunes restent trouvées par l'hôte",
+   "ok": true,
+   "detail": "moon:Titan"
+  },
+  {
+   "name": "Accents ignorés : « bételgeuse » trouve Betelgeuse",
+   "ok": true,
+   "detail": "h27919"
+  },
+  {
+   "name": "Recherche vide : liste par distance, Soleil en tête",
+   "ok": true,
+   "detail": "h0, solar:Mercure, solar:Vénus"
+  },
+  {
+   "name": "Cockpit : aucune erreur de page pendant la recherche",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Carte : aucun panneau d'erreur au démarrage",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Carte : notification ResizeObserver sans panneau",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Carte : erreur de script tiers sans panneau",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Carte : vraie erreur de la carte affichée",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Carte : perte de contexte WebGL affichée",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}
