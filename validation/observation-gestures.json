@@ -1,5 +1,5 @@
 {
- "passed": 28,
+ "passed": 38,
  "failed": 0,
  "results": [
   {
@@ -18,12 +18,42 @@
    "detail": "pause=true"
   },
   {
+   "name": "Fiche de sélection : Cadrer, Fiche, Orienter le nez et Engager visibles sans tiroir",
+   "ok": true,
+   "detail": "Cadrer (regard seul) · Fiche · Orienter le nez · Engager le trajet"
+  },
+  {
+   "name": "Fiche de sélection : « Engager » reprend le libellé du tiroir Navigation",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Étiquette de la cible : ne passe ni sous la télémétrie ni sous la fiche",
+   "ok": true,
+   "detail": "{\"off\":true,\"telemetry\":false,\"hud\":false}"
+  },
+  {
    "name": "Cadrer : suivi de la cible par la caméra seule (viewOnly)",
    "ok": true,
-   "detail": "{\"trackTarget\":true,\"viewOnly\":true,\"fov\":70}"
+   "detail": "{\"trackTarget\":true,\"viewOnly\":true,\"fov\":70,\"resolution\":{\"kind\":\"non résolu\",\"text\":\"Non résolu à ce champ : diamètre apparent 4,8″, moins d’un pixel\"}}"
   },
   {
    "name": "Cadrer : position, impulsion, attitude, horloges, moteur, autopilote, maintien inchangés",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Optique : vaisseau en mouvement pendant l'essai (le contrôle porte sur une vitesse non nulle)",
+   "ok": true,
+   "detail": "|u| = 7.025e-5"
+  },
+  {
+   "name": "Optique : cadrer ne change pas l'observateur radiatif (aberration, Doppler, position, vitesse)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Optique : seule l'orientation de projection change au cadrage",
    "ok": true,
    "detail": ""
   },
@@ -33,7 +63,7 @@
    "detail": "{\"hidden\":false,\"text\":\"regard ≠ nez · 67°\"}"
   },
   {
-   "name": "Libellé immersif : « Cible cadrée · Échap pour revenir »",
+   "name": "Libellé immersif : « Cadrée · Échap pour revenir »",
    "ok": true,
    "detail": ""
   },
@@ -51,6 +81,21 @@
    "name": "Zoom : rien de physique ne change",
    "ok": true,
    "detail": ""
+  },
+  {
+   "name": "Optique : zoomer ne change pas l'observateur radiatif, seulement le champ de projection",
+   "ok": true,
+   "detail": "tan(champ/2) 0.700 → 0.064"
+  },
+  {
+   "name": "Zoom : statut de résolution affiché près du champ",
+   "ok": true,
+   "detail": "Non résolu à ce champ : diamètre apparent 4,8″, moins d’un pixel"
+  },
+  {
+   "name": "Statut de résolution cohérent avec le diamètre apparent de Mars",
+   "ok": true,
+   "detail": "non résolu · attendu 4.8″, 0.16 px"
   },
   {
    "name": "Grossissement affiché = tan(35°) / tan(champ / 2)",
@@ -95,10 +140,15 @@
   {
    "name": "Échap enfin : champ normal et regard sur le nez",
    "ok": true,
-   "detail": "{\"trackTarget\":false,\"viewOnly\":false,\"fov\":70}"
+   "detail": "{\"trackTarget\":false,\"viewOnly\":false,\"fov\":70,\"resolution\":{\"kind\":\"non résolu\",\"text\":\"Non résolu à ce champ : diamètre apparent 4,8″, moins d’un pixel\"}}"
   },
   {
    "name": "Revenir : rien de physique ne change",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Revenir : statut de résolution masqué au champ normal",
    "ok": true,
    "detail": ""
   },
@@ -125,7 +175,7 @@
   {
    "name": "Session d'essai : la mission d'essai est écrite à part",
    "ok": true,
-   "detail": "1030 caractères"
+   "detail": "1031 caractères"
   },
   {
    "name": "Aucune erreur de page",

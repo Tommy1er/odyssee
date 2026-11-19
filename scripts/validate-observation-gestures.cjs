@@ -28,17 +28,29 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   // Chercher et sélectionner Mars (sélection seule, simulation en pause).
   await page.evaluate(()=>{const s=document.getElementById('destination-search');s.value='Mars';s.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-id="solar:Mars"]').click();});
   await page.waitForTimeout(300);
+  const optics=()=>page.evaluate(()=>window.opticalObserver());const OBS=o=>JSON.stringify({axis:o.axis,gamma:o.gamma,momentum:o.momentum,optics:o.optics,shift:o.shift,ship:o.ship,speed:o.speed});
+  await page.waitForTimeout(400);const o0=await optics();
   let s0=await snap();check('Mars sélectionnée, simulation en pause',s0.paused===true&&await page.evaluate(()=>document.getElementById('it-dest').textContent.includes('Mars')||true),`pause=${s0.paused}`);
 
+  // Fiche de sélection : les gestes du parcours sont visibles, non recouverts, sans ouvrir de tiroir.
+  const card=await page.evaluate(()=>['view-target','hud-info','hud-aim','hud-engage'].map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {id,visible:!e.hidden&&r.width>0&&r.bottom<=innerHeight,free:top===e||e.contains(top),text:e.textContent};}));
+  check('Fiche de sélection : Cadrer, Fiche, Orienter le nez et Engager visibles sans tiroir',card.every(c=>c.visible&&c.free),card.map(c=>c.text+(c.visible&&c.free?'':' ✗')).join(' · '));
+  check('Fiche de sélection : « Engager » reprend le libellé du tiroir Navigation',await page.evaluate(()=>document.getElementById('hud-engage').textContent===document.getElementById('engage').textContent));
+  const tag=await page.evaluate(()=>{const m=document.querySelector('#target-marker span').getBoundingClientRect(),t=document.getElementById('immersive-telemetry').getBoundingClientRect(),h=document.getElementById('navigation-hud').getBoundingClientRect(),hit=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;return {off:document.getElementById('target-marker').classList.contains('offscreen'),telemetry:hit(m,t),hud:hit(m,h)};});
+  check('Étiquette de la cible : ne passe ni sous la télémétrie ni sous la fiche',!tag.telemetry&&!tag.hud,JSON.stringify(tag));
   // Cadrer : la caméra seule.
   await page.evaluate(()=>document.getElementById('view-target').click());await page.waitForTimeout(600);
   let s1=await snap();
   check('Cadrer : suivi de la cible par la caméra seule (viewOnly)',s1.view.trackTarget&&s1.view.viewOnly,JSON.stringify(s1.view));
   check('Cadrer : position, impulsion, attitude, horloges, moteur, autopilote, maintien inchangés',PHYS(s1)===PHYS(s0));
+  const o1=await optics();
+  check('Optique : vaisseau en mouvement pendant l\'essai (le contrôle porte sur une vitesse non nulle)',o0.momentum>0&&o0.speed.some(x=>x!==0),`|u| = ${o0.momentum.toExponential(3)}`);
+  check('Optique : cadrer ne change pas l\'observateur radiatif (aberration, Doppler, position, vitesse)',OBS(o1)===OBS(o0));
+  check('Optique : seule l\'orientation de projection change au cadrage',JSON.stringify(o1.rotation)!==JSON.stringify(o0.rotation));
   await page.waitForTimeout(800);
   const offset=await page.evaluate(()=>{const e=document.getElementById('it-view');return {hidden:e.hidden,text:e.textContent};});
   check('Télémétrie : écart regard / nez affiché si la cible n\'est pas devant le nez',offset.hidden||/regard ≠ nez · \d+°/.test(offset.text),JSON.stringify(offset));
-  check('Libellé immersif : « Cible cadrée · Échap pour revenir »',(await page.evaluate(()=>document.getElementById('view-target').textContent))==='Cible cadrée · Échap pour revenir');
+  check('Libellé immersif : « Cadrée · Échap pour revenir »',(await page.evaluate(()=>document.getElementById('view-target').textContent))==='Cadrée · Échap pour revenir');
   check('Bouton « Revenir à la vue du nez » visible',await page.evaluate(()=>!document.getElementById('view-reset').hidden));
 
   // Zoomer : molette sur le ciel, puis clavier.
@@ -46,6 +58,15 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   await page.waitForTimeout(300);let s2=await snap();
   check('Zoom molette : champ réduit',s2.view.fov<20,`champ ${s2.view.fov.toFixed(2)}°`);
   check('Zoom : rien de physique ne change',PHYS(s2)===PHYS(s0));
+  const o2=await optics();
+  check('Optique : zoomer ne change pas l\'observateur radiatif, seulement le champ de projection',OBS(o2)===OBS(o0)&&o2.tanFov<o0.tanFov,`tan(champ/2) ${o0.tanFov.toFixed(3)} → ${o2.tanFov.toFixed(3)}`);
+  const res=await page.evaluate(()=>({snap:window.flightSnapshot().view.resolution,shown:document.getElementById('resolution-status').textContent,hidden:document.getElementById('resolution-status').hidden}));
+  check('Zoom : statut de résolution affiché près du champ',!res.hidden&&!!res.snap&&res.shown===res.snap.text,res.shown);
+  // Contrôle indépendant : rayon de Mars 3 389,5 km et distance lue dans la télémétrie (« restant … ua »).
+  const geo=await page.evaluate(()=>({rest:document.getElementById('it-rest').textContent,H:document.getElementById('flight-canvas').height}));
+  const au=parseFloat(geo.rest.replace(/\s/g,'').replace(',','.'))*149597870.7,theta=2*3389.5/au,pxExpected=theta/(2*Math.tan(s2.view.fov*Math.PI/360)/geo.H);
+  const arcShown=parseFloat((res.shown.match(/diamètre apparent ([\d,]+)″/)||[])[1]?.replace(',','.'));
+  check('Statut de résolution cohérent avec le diamètre apparent de Mars',/ua/.test(geo.rest)&&(pxExpected<1?res.snap.kind==='non résolu'&&Math.abs(arcShown-theta*206264.8)/(theta*206264.8)<0.05:res.snap.kind!=='non résolu'),`${res.snap?.kind} · attendu ${(theta*206264.8).toFixed(1)}″, ${pxExpected.toFixed(2)} px`);
   const label=await page.evaluate(()=>document.getElementById('fov-label').textContent);
   const expected=Math.tan(35*Math.PI/180)/Math.tan(s2.view.fov*Math.PI/360);
   const shown=parseFloat(label.match(/×([\d\s,.]+)/)?.[1]?.replace(/\s/g,'').replace(',','.'));
@@ -74,6 +95,7 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   await page.keyboard.press('Escape');await page.waitForTimeout(300);let s3=await snap();
   check('Échap enfin : champ normal et regard sur le nez',s3.view.fov===70&&!s3.view.trackTarget&&!s3.view.viewOnly,JSON.stringify(s3.view));
   check('Revenir : rien de physique ne change',PHYS(s3)===PHYS(s0));
+  check('Revenir : statut de résolution masqué au champ normal',await page.evaluate(()=>document.getElementById('resolution-status').hidden));
   check('Libellé revenu à « CHAMP 70° »',(await page.evaluate(()=>document.getElementById('fov-label').textContent))==='CHAMP 70°');
 
   // Pilotage après une observation : le nez ne prend pas la direction de la caméra.

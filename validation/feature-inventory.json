@@ -179,10 +179,10 @@
      780,
      470
     ],
-    "unoccludedPercent": 35.8,
+    "unoccludedPercent": 37.8,
     "method": "union de rectangles, grille 4 px"
    },
-   "smallText": 22
+   "smallText": 21
   },
   "Immersive 1280 × 585 · vol libre au démarrage": {
    "sky": {
@@ -194,7 +194,7 @@
      1280,
      585
     ],
-    "unoccludedPercent": 69.2,
+    "unoccludedPercent": 69.5,
     "method": "union de rectangles, grille 4 px"
    },
    "smallText": 0
@@ -209,7 +209,7 @@
      1280,
      585
     ],
-    "unoccludedPercent": 56.1,
+    "unoccludedPercent": 56.4,
     "method": "union de rectangles, grille 4 px"
    },
    "smallText": 0
