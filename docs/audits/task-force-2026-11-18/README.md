@@ -2,6 +2,10 @@
 
 > **Document de travail, pas la Note Master, et pas une instruction d'exécution.** Les arbitrages stratégiques appartiennent au Product Owner. Claude, Head of UI/UX, garde son droit de revue, de contestation et de proposition ; Codex instruit les aspects d'ingénierie et de validation.
 
+## Revue ciblée — parcours de la tranche 2 (19 novembre 2026)
+
+- **[Contre-avis ChatGPT sur Cadrer / Zoomer / Observer / Revenir](./CONTRE_AVIS_CHATGPT_PARCOURS_TRANCHE2_2026-11-19.md)** : réponse sur pièces aux relais du Head `c1e2107` et `4317239` ; distinction caméra/attitude, zoom optique, tests de continuité et stratégie de test sans toucher à la mission sauvegardée. Ce document n'autorise ni implémentation, ni déploiement.
+
 ## Note Master — projet soumis au propriétaire
 
 - **[PROJET_NOTE_MASTER_HEAD_UIUX_V1.md](./PROJET_NOTE_MASTER_HEAD_UIUX_V1.md)** — synthèse autoportante des décisions, des sept audits, des preuves, des contradictions, de l'état V54, des invariants scientifiques, de l'expérience cible et des questions ouvertes pour le Head. **Ce texte est un projet à examiner par le propriétaire ; il ne donne aucune autorisation de développement ou de publication.**
