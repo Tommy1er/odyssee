@@ -14,7 +14,8 @@
     "test:ui:journey": "node scripts/validate-cosmic-flight-ui.cjs",
     "test:ui:search": "node scripts/validate-search-and-map-errors.cjs",
     "test:ui:inventory": "node scripts/validate-feature-inventory.cjs",
-    "test:ui": "npm run build && npm run test:ui:cockpit && npm run test:ui:cosmos && npm run test:ui:propulsion && npm run test:ui:journey && npm run test:ui:search && npm run test:ui:inventory",
+    "test:ui:observation": "node scripts/validate-observation-gestures.cjs",
+    "test:ui": "npm run build && npm run test:ui:cockpit && npm run test:ui:cosmos && npm run test:ui:propulsion && npm run test:ui:journey && npm run test:ui:search && npm run test:ui:inventory && npm run test:ui:observation",
     "test:all": "npm run test:physics && npm run test:ui"
   },
   "dependencies": {

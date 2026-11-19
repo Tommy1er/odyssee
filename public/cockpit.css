@@ -276,3 +276,7 @@ body{color:#edf3f7}.section-title{color:var(--muted)}
  .ui-immersive .map-legend{left:auto;right:12px;bottom:62px;max-width:min(430px,calc(50% - 24px))}
 }
 @media (min-width:901px){.ui-immersive .map-legend,.ui-immersive .map-legend *{font-size:12px}}
+/* Session d'essai (?essai=1) : sauvegarde isolée, toujours signalée */
+#trial-badge{font-size:12px;color:#20170b;background:#f0b56b;border-radius:999px;padding:4px 10px;white-space:nowrap;font-weight:600}
+#view-reset{white-space:nowrap}
+@media (min-width:901px){.ui-immersive #it-view{color:#f0b56b}}

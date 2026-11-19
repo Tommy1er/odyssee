@@ -1,0 +1,146 @@
+{
+ "passed": 28,
+ "failed": 0,
+ "results": [
+  {
+   "name": "Session d'essai signalée dans l'en-tête",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Session d'essai : la mission personnelle n'est pas proposée",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Mars sélectionnée, simulation en pause",
+   "ok": true,
+   "detail": "pause=true"
+  },
+  {
+   "name": "Cadrer : suivi de la cible par la caméra seule (viewOnly)",
+   "ok": true,
+   "detail": "{\"trackTarget\":true,\"viewOnly\":true,\"fov\":70}"
+  },
+  {
+   "name": "Cadrer : position, impulsion, attitude, horloges, moteur, autopilote, maintien inchangés",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Télémétrie : écart regard / nez affiché si la cible n'est pas devant le nez",
+   "ok": true,
+   "detail": "{\"hidden\":false,\"text\":\"regard ≠ nez · 67°\"}"
+  },
+  {
+   "name": "Libellé immersif : « Cible cadrée · Échap pour revenir »",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Bouton « Revenir à la vue du nez » visible",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Zoom molette : champ réduit",
+   "ok": true,
+   "detail": "champ 4.70°"
+  },
+  {
+   "name": "Zoom : rien de physique ne change",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Grossissement affiché = tan(35°) / tan(champ / 2)",
+   "ok": true,
+   "detail": "CHAMP 4,7° · GROSSISSEMENT ×17 · attendu ×17.05"
+  },
+  {
+   "name": "Zoom borné à 1°",
+   "ok": true,
+   "detail": "1"
+  },
+  {
+   "name": "Clavier : « − » élargit le champ",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Clavier : « + » resserre le champ (alternative au geste)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Observer : la fiche s'ouvre",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Observer : rien de physique ne change",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Échap ferme d'abord la fiche, sans réinitialiser la vue",
+   "ok": true,
+   "detail": "champ 1"
+  },
+  {
+   "name": "Échap ferme ensuite le tiroir, sans réinitialiser la vue",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Échap enfin : champ normal et regard sur le nez",
+   "ok": true,
+   "detail": "{\"trackTarget\":false,\"viewOnly\":false,\"fov\":70}"
+  },
+  {
+   "name": "Revenir : rien de physique ne change",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Libellé revenu à « CHAMP 70° »",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Pilotage après cadrage : suivi levé, nez tourné seulement par la commande",
+   "ok": true,
+   "detail": "rotation du nez 4.58°"
+  },
+  {
+   "name": "Pilotage après cadrage : position et horloges inchangées (simulation en pause)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Session d'essai : sauvegarde personnelle intacte",
+   "ok": true,
+   "detail": "{\"sentinelle\":\"sauvegarde personnelle, ne pas modifier\"}"
+  },
+  {
+   "name": "Session d'essai : la mission d'essai est écrite à part",
+   "ok": true,
+   "detail": "1030 caractères"
+  },
+  {
+   "name": "Aucune erreur de page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Classique inchangé : « Voir / suivre la cible » oriente le nez comme avant",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Classique inchangé : pas de zoom optique",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}
