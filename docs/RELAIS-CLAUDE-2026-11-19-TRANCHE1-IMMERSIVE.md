@@ -55,6 +55,8 @@ Local (Chromium SwiftShader, Playwright préinstallé) :
 - Réussis (code 0) : `validate-search-and-map-errors.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.
 - Captures immersives contrôlées à l'œil (1280 × 585) : vol libre, tiroirs ouverts, Saturne, Mars en vue extérieure, Carte galactique 3D ; aucun chevauchement détecté entre options du vaisseau, suivi, manœuvre locale et télémétrie. Fichiers : `validation/ui/cockpit-immersive-1280x585-vaisseau3d.png`, `validation/ui/cockpit-immersive-1280x585-carte.png`.
 - Parcours cockpit complet (`validate-physics-ui.cjs`) : verdict sur la CI.
+
+CI GitHub sur `258ef12` : « Reproducible validation from npm ci » relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44425277449). Réussis : numerical, cockpit (parcours complet), cosmos, journey, propulsion, search et inventory (30 contrôles, dont le mode immersif et l'onglet caché). Les six autres workflows déclenchés par le commit sont également réussis : source et bundle, mise en page du cockpit et instruments, persistance de mission et nébuleuses, zoom de la carte et intégration au cockpit, spectres de galaxies, validation reproductible.
 - Non vérifié : Chrome Iris Xe (nécessite publication).
 
 ## 7. Comparaison sur Iris Xe (après publication)
