@@ -46,6 +46,8 @@ Local (Chromium SwiftShader, Playwright préinstallé, 1280 × 585) :
 - Non-régression, réussis (code 0) : `validate-feature-inventory.cjs` (30/30), `validate-search-and-map-errors.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`. Ces suites ont tourné avant le dernier changement (libellé immersif du bouton de cadrage), après lequel seul le test d'observation a été relancé.
 - Parcours cockpit complet (`validate-physics-ui.cjs`) : verdict sur la CI.
 
+CI GitHub sur `2ba60e8` : « Reproducible validation from npm ci » relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44529881671). Réussis : numerical, cockpit (parcours complet), cosmos, journey, propulsion, search, inventory et **observation (nouveau job)**. Réussis aussi, déclenchés par le commit : validation reproductible, mise en page du cockpit et instruments, budget d'émission, source et bundle, persistance de mission et nébuleuses, zoom de la carte et intégration au cockpit. Spectres de galaxies : encore en cours au moment de la rédaction.
+
 Non vérifié : Chrome Iris Xe (après publication), pavé tactile Windows réel et écran tactile, scènes lourdes (nébuleuse, trou noir).
 
 ## 4. Après publication, sur l'Iris Xe
