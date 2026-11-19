@@ -43,6 +43,8 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   let s1=await snap();
   check('Cadrer : suivi de la cible par la caméra seule (viewOnly)',s1.view.trackTarget&&s1.view.viewOnly,JSON.stringify(s1.view));
   check('Cadrer : position, impulsion, attitude, horloges, moteur, autopilote, maintien inchangés',PHYS(s1)===PHYS(s0));
+  // Les uniformes ne changent qu'à la prochaine image dessinée : attendre la condition plutôt qu'un délai fixe (runners lents).
+  await page.waitForFunction(r=>JSON.stringify(window.opticalObserver().rotation)!==r,JSON.stringify(o0.rotation),{timeout:60000}).catch(()=>{});
   const o1=await optics();
   check('Optique : vaisseau en mouvement pendant l\'essai (le contrôle porte sur une vitesse non nulle)',o0.momentum>0&&o0.speed.some(x=>x!==0),`|u| = ${o0.momentum.toExponential(3)}`);
   check('Optique : cadrer ne change pas l\'observateur radiatif (aberration, Doppler, position, vitesse)',OBS(o1)===OBS(o0));
@@ -58,6 +60,7 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   await page.waitForTimeout(300);let s2=await snap();
   check('Zoom molette : champ réduit',s2.view.fov<20,`champ ${s2.view.fov.toFixed(2)}°`);
   check('Zoom : rien de physique ne change',PHYS(s2)===PHYS(s0));
+  await page.waitForFunction(t=>window.opticalObserver().tanFov<t-1e-6,o0.tanFov,{timeout:60000}).catch(()=>{});
   const o2=await optics();
   check('Optique : zoomer ne change pas l\'observateur radiatif, seulement le champ de projection',OBS(o2)===OBS(o0)&&o2.tanFov<o0.tanFov,`tan(champ/2) ${o0.tanFov.toFixed(3)} → ${o2.tanFov.toFixed(3)}`);
   const res=await page.evaluate(()=>({snap:window.flightSnapshot().view.resolution,shown:document.getElementById('resolution-status').textContent,hidden:document.getElementById('resolution-status').hidden}));

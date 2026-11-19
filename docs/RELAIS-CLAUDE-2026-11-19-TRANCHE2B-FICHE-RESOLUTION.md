@@ -70,4 +70,9 @@ Local (Chromium SwiftShader, Playwright préinstallé, 1280 × 585) :
 - Non-régression, réussis (code 0) : `validate-search-and-map-errors.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.
 - Parcours cockpit complet (`validate-physics-ui.cjs`) : verdict sur la CI.
 
+CI GitHub sur `59cbeb6` :
+- « Reproducible validation from npm ci » relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44592167138) : les 8 jobs réussis, dont cockpit (parcours complet) et observation.
+- Exécution déclenchée par le push (run 44592169071) : job observation en échec sur un seul contrôle, « seule l'orientation de projection change au cadrage ». Cause : sur ce runner lent, aucune image n'avait encore été dessinée 600 ms après le cadrage, donc les uniformes n'avaient pas changé. Ce n'est pas un défaut du cockpit. **Correctif du test** dans le commit suivant : attente de la condition (nouvelle image) plutôt qu'un délai fixe, au cadrage comme au zoom. Après correctif : 38/38 en local, verdict CI dans ce relais ci-dessous.
+- Autres workflows du commit réussis : source et bundle, spectres de galaxies, zoom de la carte et intégration au cockpit, mise en page du cockpit et instruments, persistance de mission et nébuleuses, seconde validation reproductible.
+
 Non vérifié : Chrome Iris Xe (publication nécessaire), pavé tactile réel.

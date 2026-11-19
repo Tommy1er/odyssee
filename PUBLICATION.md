@@ -9,7 +9,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `2ba60e8` | Tranche 2a : gestes d'observation dans l'essai immersif (cadrer en regard seul, zoom optique, revenir) et session d'essai isolée `?essai=1`. Interface classique inchangée. | 19 nov. 2026 | CI reproductible verte, 8 jobs dont « observation » ; autres workflows verts |
-| *Tranche 2b* (commit qui suit `71f5230`, titre « Tranche 2b ») | Essai immersif : fiche de sélection (Cadrer, Fiche, Orienter le nez, Engager visibles), statut de résolution au zoom, invariance optique testée, étiquette hors champ et pied du ciel corrigés. Interface classique inchangée. | 19 nov. 2026 | Local : observation 38/38, inventaire 30/30, 6 suites de non-régression ; CI : voir le relais |
+| `59cbeb6` (+ correctif de test suivant) |  Essai immersif : fiche de sélection (Cadrer, Fiche, Orienter le nez, Engager visibles), statut de résolution au zoom, invariance optique testée, étiquette hors champ et pied du ciel corrigés. Interface classique inchangée. | 19 nov. 2026 | Local : observation 38/38, inventaire 30/30, 6 suites de non-régression ; CI : run manuel vert (8 jobs), voir le relais |
 | `9dbd00d` | Relais `docs/RELAIS-CLAUDE-2026-11-19-TRANCHE2A-OBSERVATION.md` (documentation seulement) | 19 nov. 2026 | — |
 
 **Codex : à publier dès qu'Abdoulaye le demande, ou à lui rappeler s'il ne l'a pas encore demandé.** Après publication, contrôler l'essai `/cockpit.html?ui=immersive&essai=1`. Ne cliquer ni sur « Reprendre la mission sauvegardée » ni sur « Conserver ce nouveau vol » dans la session normale.
