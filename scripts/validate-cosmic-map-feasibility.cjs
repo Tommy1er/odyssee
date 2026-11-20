@@ -52,6 +52,14 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   const both=await page.evaluate(()=>({status:window.cosmicMapLayer.status,rows:window.cosmicMapLayer.rows.length,ungc:window.cosmicMapLayer.layers.ungc.rows.length}));
   check('Catalogue UNGC 2013 ajouté sur la Carte (choix « Les deux »)',both.status==='ready'&&both.ungc>500&&both.rows===both.ungc+layer.rows,JSON.stringify(both));
   await sample('carte Groupe local · McConnachie + UNGC');
+  const prov=await page.evaluate(()=>({pairs:window.cosmicMapLayer.pairs?.length??0,rows:window.cosmicMapLayer.rows.length,note:document.getElementById('map-cosmic-note').textContent,hidden:document.getElementById('map-cosmic-note').hidden,lines:!!window.cosmicMapLayer.pairLines?.visible}));
+  measures.doublons=prov;
+  check('Provenance : doublons McConnachie / UNGC reliés et galaxies distinctes comptées',prov.pairs>20&&prov.lines&&!prov.hidden&&prov.note.replace(/\s/g,'').includes(String(prov.rows-prov.pairs)+'galaxiesdistinctes'),`${prov.pairs} doublons · « ${prov.note} »`);
+  const ps=await page.evaluate(()=>window.cosmicMapPairScreen());
+  if(ps){await page.mouse.move(ps.x,ps.y);await page.mouse.down();await page.mouse.up();await page.waitForTimeout(600);
+   const tt=await page.evaluate(()=>document.getElementById('flight-toast').textContent);
+   check('Clic sur un doublon : la notification explique les deux mesures de la même galaxie',tt.includes(ps.name)&&/Une seule galaxie, deux mesures/.test(tt),tt);}
+  else check('Un doublon visible pour le contrôle de la notification',false,'aucun');
   const pu=await page.evaluate(()=>window.cosmicMapPickable());
   if(pu){await page.mouse.move(pu.x,pu.y);await page.mouse.down();await page.mouse.up();await page.waitForTimeout(800);
    check('Clic sur une galaxie (catalogue « Les deux ») : elle devient la cible',(await page.evaluate(()=>window.flightSnapshot().target))===pu.cockpitId,`${pu.name} (${pu.key}) → ${pu.cockpitId}`);}

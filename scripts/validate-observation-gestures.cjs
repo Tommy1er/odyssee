@@ -114,6 +114,32 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   const storage=await page.evaluate(()=>({main:localStorage.getItem('odyssee.mission.v1'),trial:localStorage.getItem('odyssee.mission.v1.essai'),ui:localStorage.getItem('odyssee-ui-mode'),uiTrial:localStorage.getItem('odyssee-ui-mode.essai')}));
   check('Session d\'essai : sauvegarde personnelle intacte',storage.main===SENTINEL,String(storage.main).slice(0,60));
   check('Session d\'essai : la mission d\'essai est écrite à part',!!storage.trial,storage.trial?`${storage.trial.length} caractères`:'absente');
+  // Rangée basse V3.3, variante A (validée le 20 novembre).
+  const bar=await page.evaluate(()=>({groups:[...document.querySelectorAll('.flight-controls > .control-group')].filter(g=>g.getClientRects().length).map(g=>g.className),homeIn:document.getElementById('mission-actions').contains(document.getElementById('home')),cosmicIn:document.getElementById('mission-actions').contains(document.getElementById('cosmic-flight-link')),rateNext:document.getElementById('pause').nextElementSibling?.id,rateName:document.getElementById('time-rate').getAttribute('aria-label'),take:getComputedStyle(document.getElementById('take-control')).display}));
+  check('Rangée basse A : trois groupes visibles (Mission, Temps, Propulsion)',bar.groups.length===3,bar.groups.join(' | '));
+  check('Rangée basse A : Nouvelle mission et Mission cosmologique dans « Mission ▾ »',bar.homeIn&&bar.cosmicIn);
+  check('Rangée basse A : vitesse de lecture à côté de « Reprendre le temps », nommée',bar.rateNext==='time-rate'&&bar.rateName==='Vitesse de lecture du voyage');
+  check('Rangée basse A : « Reprendre les commandes » masqué sans automatisme',bar.take==='none');
+  await page.evaluate(()=>document.getElementById('mission-menu').click());await page.waitForTimeout(300);
+  const menu=await page.evaluate(()=>['choose-earth','choose-moon','home','cosmic-flight-link'].map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),t=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {id,ok:r.width>0&&r.bottom<=innerHeight&&(t===e||e.contains(t))};}));
+  check('Menu Mission : Terre, Lune, Nouvelle mission, Mission cosmologique visibles et cliquables',menu.every(m=>m.ok),menu.filter(m=>!m.ok).map(m=>m.id).join(', '));
+  await page.keyboard.press('Escape');await page.waitForTimeout(200);
+  await page.evaluate(()=>document.getElementById('time-rate').selectedIndex=1);await page.evaluate(()=>document.getElementById('time-rate').dispatchEvent(new Event('change',{bubbles:true})));
+  check('Vitesse de lecture modifiable depuis la pastille Temps',await page.evaluate(()=>document.getElementById('time-rate').selectedIndex===1));
+  // Automatisme actif (pilote automatique de la session d'essai) : le bouton apparaît, puis disparaît une fois les commandes reprises.
+  await page.evaluate(()=>{const s=document.getElementById('destination-search');s.value='Mars';s.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-id="solar:Mars"]').click();});
+  await page.evaluate(()=>document.getElementById('hud-engage').click());
+  await page.waitForFunction(()=>getComputedStyle(document.getElementById('take-control')).display!=='none',{},{timeout:30000}).catch(()=>{});
+  check('Pilote automatique engagé : « Reprendre les commandes » apparaît',await page.evaluate(()=>getComputedStyle(document.getElementById('take-control')).display!=='none'));
+  await page.evaluate(()=>document.getElementById('take-control').click());
+  await page.waitForFunction(()=>getComputedStyle(document.getElementById('take-control')).display==='none',{},{timeout:30000}).catch(()=>{});
+  check('Commandes reprises : le bouton redevient discret',await page.evaluate(()=>getComputedStyle(document.getElementById('take-control')).display==='none'));
+  // Aller-retour Classique ↔ Immersive : positions d'origine restaurées, puis rangée A rétablie.
+  await page.evaluate(()=>document.getElementById('ui-mode-toggle').click());await page.waitForTimeout(400);
+  const back=await page.evaluate(()=>({groups:[...document.querySelectorAll('.flight-controls > .control-group')].filter(g=>g.getClientRects().length).length,homeIn:document.getElementById('mission-actions').contains(document.getElementById('home')),rateIn:document.querySelector('.time-control').contains(document.getElementById('time-rate')),take:getComputedStyle(document.getElementById('take-control')).display}));
+  check('Retour en Classique : cinq groupes et positions d\'origine',back.groups===5&&!back.homeIn&&back.rateIn&&back.take!=='none',JSON.stringify(back));
+  await page.evaluate(()=>document.getElementById('ui-mode-toggle').click());await page.waitForTimeout(400);
+  check('Puis Immersive : rangée A rétablie',await page.evaluate(()=>document.getElementById('mission-actions').contains(document.getElementById('home'))&&document.getElementById('pause').nextElementSibling?.id==='time-rate'));
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));
   await page.close();
 
@@ -125,6 +151,8 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   const c1=await classic.evaluate(()=>window.flightSnapshot());
   check('Classique inchangé : « Voir / suivre la cible » oriente le nez comme avant',!c1.view.viewOnly&&JSON.stringify(c1.attitude)!==JSON.stringify(c0.attitude));
   await classic.mouse.move(640,300);await classic.mouse.wheel(0,-600);await classic.waitForTimeout(300);
+  check('Classique : rangée basse d\'origine (cinq groupes, « Nouvelle mission » dans Commandes)',await classic.evaluate(()=>[...document.querySelectorAll('.flight-controls > .control-group')].filter(g=>g.getClientRects().length).length===5&&!document.getElementById('mission-actions').contains(document.getElementById('home'))));
+  check('Aucune étiquette « Privé » dans l\'en-tête',await classic.evaluate(()=>!/Privé/.test(document.querySelector('header').textContent)));
   check('Classique inchangé : pas de zoom optique',(await classic.evaluate(()=>window.flightSnapshot().view.fov))===70);
   await classic.close();
  }finally{await browser.close();server.close();}

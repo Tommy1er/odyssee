@@ -34,6 +34,12 @@ export class CockpitCosmicMap{
     L.rows=decodeCatalogue(k,await r.json()).filter(o=>!EXCLUDED.test(o.name));L.layer.setRows(L.rows,k);L.status='ready';}
    catch(e){L.status='error';this.error=e.message;}}));
  }
+ // Doublons entre catalogues (même galaxie, deux mesures de distance) : un trait relie les deux points quand les deux catalogues sont affichés.
+ setPairs(pairs){if(this.pairLines){this.root.remove(this.pairLines);this.pairLines.geometry.dispose();}
+  this.pairs=pairs;const pos=new Float32Array(pairs.length*6);pairs.forEach(([a,b],i)=>pos.set([...a.p,...b.p],i*6));
+  const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(pos,3));
+  this.pairLines=new T.LineSegments(g,new T.LineBasicMaterial({color:0xf0c47a,transparent:true,opacity:.6,depthWrite:false}));this.root.add(this.pairLines);}
+ pairOf(row){return this.pairs?.find(([a,b])=>a===row||b===row)||null;}
  // spanLy : largeur cadrée par la Carte du cockpit ; mapScale : unités de carte par année-lumière ; heightPx : hauteur du tampon de dessin.
  update({map,mapScale,spanLy,heightPx,dpr=1}){
   const on=this.enabled&&!!map;this.root.visible=on;this.label.visible=on;if(!on)return;
@@ -41,6 +47,7 @@ export class CockpitCosmicMap{
   for(const e of this.cosmic.entries)if(e.o.type==='galaxy')e.mesh.visible=false;
   if(this.cosmic.sun)this.cosmic.sun.visible=false;
   this.cosmic.material.uniforms.screenHeight.value=heightPx;
+  if(this.pairLines)this.pairLines.visible=KEYS.every(k=>this.catalogues.has(k));
   for(const k of KEYS){this.layers[k].layer.root.visible=this.catalogues.has(k);this.layers[k].layer.material.uniforms.size.value=Math.min(dpr,2)*4;}
   // Étiquette posée sur le bord supérieur de l'enveloppe (rayon de repérage de cosmic-data), lisible tant que le groupe tient dans le cadre.
   const g=this.group;this.label.visible=!!g&&spanLy/MLY<g.r*12;if(g&&mapScale)this.label.position.set(g.p[0]*MLY*mapScale,(g.p[1]+g.r*.55)*MLY*mapScale,g.p[2]*MLY*mapScale);

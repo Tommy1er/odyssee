@@ -1,5 +1,5 @@
 {
- "passed": 38,
+ "passed": 50,
  "failed": 0,
  "results": [
   {
@@ -85,7 +85,7 @@
   {
    "name": "Optique : zoomer ne change pas l'observateur radiatif, seulement le champ de projection",
    "ok": true,
-   "detail": "tan(champ/2) 0.700 → 0.064"
+   "detail": "tan(champ/2) 0.700 → 0.041"
   },
   {
    "name": "Zoom : statut de résolution affiché près du champ",
@@ -175,7 +175,57 @@
   {
    "name": "Session d'essai : la mission d'essai est écrite à part",
    "ok": true,
-   "detail": "1031 caractères"
+   "detail": "1030 caractères"
+  },
+  {
+   "name": "Rangée basse A : trois groupes visibles (Mission, Temps, Propulsion)",
+   "ok": true,
+   "detail": "control-group mission-controls | control-group | control-group propulsion"
+  },
+  {
+   "name": "Rangée basse A : Nouvelle mission et Mission cosmologique dans « Mission ▾ »",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Rangée basse A : vitesse de lecture à côté de « Reprendre le temps », nommée",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Rangée basse A : « Reprendre les commandes » masqué sans automatisme",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Menu Mission : Terre, Lune, Nouvelle mission, Mission cosmologique visibles et cliquables",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Vitesse de lecture modifiable depuis la pastille Temps",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Pilote automatique engagé : « Reprendre les commandes » apparaît",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Commandes reprises : le bouton redevient discret",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Retour en Classique : cinq groupes et positions d'origine",
+   "ok": true,
+   "detail": "{\"groups\":5,\"homeIn\":false,\"rateIn\":true,\"take\":\"block\"}"
+  },
+  {
+   "name": "Puis Immersive : rangée A rétablie",
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "Aucune erreur de page",
@@ -184,6 +234,16 @@
   },
   {
    "name": "Classique inchangé : « Voir / suivre la cible » oriente le nez comme avant",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Classique : rangée basse d'origine (cinq groupes, « Nouvelle mission » dans Commandes)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Aucune étiquette « Privé » dans l'en-tête",
    "ok": true,
    "detail": ""
   },

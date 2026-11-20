@@ -1,5 +1,5 @@
 {
- "passed": 12,
+ "passed": 14,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 133.9,
-   "frameP50": 233.3,
-   "frameP95": 450,
-   "frames": 26
+   "heapMB": 137.4,
+   "frameP50": 183.3,
+   "frameP95": 383.4,
+   "frames": 34
   },
   "carte Groupe local · couche allumée": {
    "geometries": 71,
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 9458,
-   "heapMB": 132.6,
-   "frameP50": 216.7,
-   "frameP95": 383.3,
-   "frames": 25
+   "heapMB": 121.2,
+   "frameP50": 249.9,
+   "frameP95": 450.1,
+   "frames": 20
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -35,17 +35,24 @@
    "distanceAl": 2155894
   },
   "carte Groupe local · McConnachie + UNGC": {
-   "geometries": 72,
+   "geometries": 73,
    "textures": 34,
    "programs": 17,
-   "calls": 56,
+   "calls": 57,
    "triangles": 1070,
    "points": 143999,
-   "lines": 9458,
-   "heapMB": 118.8,
-   "frameP50": 183.3,
-   "frameP95": 300,
-   "frames": 35
+   "lines": 9554,
+   "heapMB": 127.6,
+   "frameP50": 216.7,
+   "frameP95": 416.7,
+   "frames": 24
+  },
+  "doublons": {
+   "pairs": 96,
+   "rows": 969,
+   "note": "969 points · 873 galaxies distinctes : 96 figurent dans les deux catalogues, reliées par un trait ambre (même galaxie, deux mesures de distance).",
+   "hidden": false,
+   "lines": true
   }
  },
  "results": [
@@ -62,7 +69,7 @@
   {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533298,\"inside\":true}"
+   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.49831755332985,\"inside\":true}"
   },
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
@@ -72,7 +79,7 @@
   {
    "name": "Au moins une galaxie cataloguée visible et cliquable sur la carte",
    "ok": true,
-   "detail": "82 à l'écran · essai sur Andromeda XXVIII"
+   "detail": "81 à l'écran · essai sur Andromeda XXVIII"
   },
   {
    "name": "Clic sur la carte : la galaxie devient la cible du cockpit",
@@ -93,6 +100,16 @@
    "name": "Catalogue UNGC 2013 ajouté sur la Carte (choix « Les deux »)",
    "ok": true,
    "detail": "{\"status\":\"ready\",\"rows\":969,\"ungc\":868}"
+  },
+  {
+   "name": "Provenance : doublons McConnachie / UNGC reliés et galaxies distinctes comptées",
+   "ok": true,
+   "detail": "96 doublons · « 969 points · 873 galaxies distinctes : 96 figurent dans les deux catalogues, reliées par un trait ambre (même galaxie, deux mesures de distance). »"
+  },
+  {
+   "name": "Clic sur un doublon : la notification explique les deux mesures de la même galaxie",
+   "ok": true,
+   "detail": "M32 : McConnachie 2012 2,63 Mal, UNGC 2013 1,6 Mal (écart 64,3 %). Une seule galaxie, deux mesures ; le cockpit retient UNGC 2013."
   },
   {
    "name": "Clic sur une galaxie (catalogue « Les deux ») : elle devient la cible",
