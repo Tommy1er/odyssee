@@ -32,6 +32,14 @@ Le site reste sur **ChatGPT Sites**. Aucune migration vers Netlify, Vercel ou Cl
 
 **Manifeste `.openai/hosting.json`** (racine du dépôt, ajouté le 20 novembre 2026) : exigé par ChatGPT Sites pour publier depuis ce dépôt. Il désigne `dist/` comme dossier publié et le projet Sites existant. Valeurs reprises du commit source de la v57 (`d3b7855`), communiquées par Codex. Ne pas le modifier sans raison : il rattache le dépôt au site existant.
 
+**Publier depuis GitHub (procédure vérifiée le 20 novembre 2026, v58)** : dans ChatGPT, Espace → Sites → Atlas stellaire → Paramètres → « Modifier » ouvre Codex rattaché au site. Lui demander de :
+1. récupérer `main` au commit voulu ;
+2. créer sur la branche `main` de Sites **un commit enfant du commit Sites courant** (avance rapide, jamais de réécriture ni de forçage), dont l'arborescence est exactement celle du commit GitHub, et vérifier que `git diff --stat <commit GitHub> <commit Sites>` est vide ;
+3. construire avec `npm ci --cache /tmp/npm-cache` (le cache par défaut n'est pas inscriptible) puis `npm run build` ;
+4. publier `dist/` tel quel et donner la version, le SHA Sites et le SHA GitHub.
+
+Son navigateur de vérification est étroit (moins de 901 px) et ne voit donc pas l'interface immersive : vérifier l'essai immersif sur un Chrome de bureau. Claude peut conduire cette procédure via Claude in Chrome à la demande d'Abdoulaye ; Codex peut toujours publier comme avant.
+
 **Registre `PUBLICATION.md`** (racine du dépôt) : dernière version servie et commits poussés sur `main` mais pas encore publiés. Qui pousse du code y ajoute une ligne d'attente ; Codex la vide et note la version servie après chaque publication. En début de tour, Codex le consulte et rappelle à Abdoulaye toute publication en attente.
 
 La configuration interne Sites reste gérée dans le projet d’hébergement existant et n’est pas nécessaire pour exécuter le dépôt localement. La visibilité du dépôt GitHub et celle du site sont deux réglages indépendants ; ne pas les modifier pendant ce relais.
