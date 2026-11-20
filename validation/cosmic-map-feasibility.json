@@ -1,0 +1,74 @@
+{
+ "passed": 8,
+ "failed": 0,
+ "measures": {
+  "carte Groupe local · couche éteinte": {
+   "geometries": 66,
+   "textures": 32,
+   "programs": 17,
+   "calls": 50,
+   "triangles": 1068,
+   "points": 143030,
+   "lines": 8978,
+   "heapMB": 125.3,
+   "frameP50": 200,
+   "frameP95": 349.9,
+   "frames": 29
+  },
+  "carte Groupe local · couche allumée": {
+   "geometries": 71,
+   "textures": 32,
+   "programs": 17,
+   "calls": 54,
+   "triangles": 1068,
+   "points": 143131,
+   "lines": 9458,
+   "heapMB": 137.2,
+   "frameP50": 233.3,
+   "frameP95": 433.2,
+   "frames": 25
+  }
+ },
+ "results": [
+  {
+   "name": "Couche Groupe local chargée dans la Carte du cockpit (McConnachie 2012)",
+   "ok": true,
+   "detail": "{\"status\":\"ready\",\"rows\":101,\"box\":true}"
+  },
+  {
+   "name": "Réglage de la couche visible dans les options de la Carte (essai)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Ressources : la couche ajoute des appels de dessin et des points, aucune texture",
+   "ok": true,
+   "detail": "appels 50→54 · points 143030→143131 · géométries 66→71 · programmes 17→17 · textures 32→32"
+  },
+  {
+   "name": "Au moins une galaxie cataloguée visible et cliquable sur la carte",
+   "ok": true,
+   "detail": "82 à l'écran · essai sur Andromeda XXVIII"
+  },
+  {
+   "name": "Clic sur la carte : la galaxie devient la cible du cockpit",
+   "ok": true,
+   "detail": "ungc:And XXVIII · attendu ungc:And XXVIII"
+  },
+  {
+   "name": "Clic sur la carte : ni le nez ni le temps ne changent",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Aucune erreur de page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Cockpit public : couche absente et réglage masqué",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

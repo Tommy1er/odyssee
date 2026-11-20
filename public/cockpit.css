@@ -287,7 +287,7 @@ body{color:#edf3f7}.section-title{color:var(--muted)}
 
 @media (min-width:901px){
  .ui-immersive #navigation-hud.compact{max-width:min(780px,calc(100% - 300px))}
- .ui-immersive #navigation-hud.compact #view-target{display:inline-block!important;order:1}
+ .ui-immersive #navigation-hud.compact.card #view-target{display:inline-block!important;order:1}
  .ui-immersive #navigation-hud.compact .hud-proxy:not([hidden]){display:inline-block;order:1}
  .ui-immersive #navigation-hud.compact #navigation-toggle{order:3}
  .ui-immersive #navigation-hud.compact strong{min-width:90px}

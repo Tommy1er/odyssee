@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [cockpit, cosmos, propulsion, journey, search, inventory, observation]
+        suite: [cockpit, cosmos, propulsion, journey, search, inventory, observation, cosmicmap]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -44,3 +44,5 @@ jobs:
             validation/search-and-map-errors.json
             validation/feature-inventory.json
             validation/observation-gestures.json
+            validation/cosmic-map-feasibility.json
+            validation/ui/cockpit-carte-groupe-local-faisabilite.jpg
