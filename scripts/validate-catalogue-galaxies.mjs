@@ -30,8 +30,11 @@ check("Aucun doublon entre UNGC et McConnachie (Sagittarius, Fornax, M32, NGC 55
   check("Noms usuels : M81, NGC 253", m81.aliases.includes("M81") && list.find((o) => o.id === "ungc:NGC0253").aliases.includes("NGC 253")); }
 // 3 · Positions: same equatorial axes as the map (Mly) and the cockpit (ly).
 { let worst = 0;
-  for (const o of list) { const r = o.catalogueRow; worst = Math.max(worst, Math.hypot(...o.xyz.map((x, k) => x - r.p[k] * 1e6)) / o.d); }
-  check("Positions cockpit = positions de la carte", worst < 1e-12, `écart relatif ${worst.toExponential(1)}`); }
+  // Direction du catalogue de l'objet ; distance de la source retenue (McConnachie 2012 pour les doublons du Groupe local, décision du 20 novembre 2026).
+  for (const o of list) { const r = o.catalogueRow, n = Math.hypot(...r.p), d = (o.distanceRow || r).d * 1e6; worst = Math.max(worst, Math.hypot(...o.xyz.map((x, k) => x - r.p[k] / n * d)) / o.d); }
+  check("Positions cockpit = direction de la carte × distance retenue", worst < 1e-12, `écart relatif ${worst.toExponential(1)}`);
+  const m32 = list.find((o) => o.id === "ungc:MESSIER032"), adopted = list.filter((o) => o.altDistance);
+  check("Doublons du Groupe local : distance McConnachie 2012 retenue, UNGC 2013 en seconde source (M32 : 0,805 Mpc ; UNGC 0,49)", m32 && Math.abs(m32.d / 1e6 - 0.805 * 3.261563777) < 1e-3 && m32.altDistance.mpc === 0.49 && /McConnachie/.test(m32.distanceSource) && adopted.length > 90, `${adopted.length} galaxies, M32 à ${(m32.d / 1e6).toFixed(3)} millions d’al`); }
 // 4 · CF4 objects.
 { const row = cf4.find((r) => r.raw[0] === 41361), m87 = galaxyObject(row);
   check("M87 (PGC 41361) : elliptique, d’après les fluctuations de brillance de surface", m87.galaxyClass === "E" && /fluctuations/.test(m87.classSource) && /taille typique supposée/.test(m87.sizeSource), `${(m87.d / 1e6).toFixed(1)} millions d’al`);

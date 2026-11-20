@@ -75,3 +75,15 @@ Local (Chromium SwiftShader, Playwright préinstallé) :
 CI GitHub sur `0bc341a` : « Reproducible validation from npm ci », relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44758298839) et déclenché par le push (run 44758299512) : les 9 jobs réussis dans les deux exécutions. Les cinq autres workflows du commit ont aussi réussi, dont « Cosmic map zoom and cockpit integration » (page Structures cosmiques).
 
 Non vérifié : Chrome Iris Xe (publication nécessaire).
+
+## 6. Appliqué le 20 novembre : distance McConnachie 2012 pour les doublons du Groupe local
+
+Décision du propriétaire : « je valide cela » (proposition du § 4).
+
+- `adoptLocalGroupDistance` (`src/catalogue-galaxies.js`) : quand une ligne McConnachie 2012 est reconnue comme la même galaxie qu'un objet UNGC 2013, **l'objet UNGC est conservé** (identifiant, missions sauvegardées, type, taille, photométrie, liens), mais **sa distance devient celle de McConnachie**. Sa position garde la direction UNGC, à la distance McConnachie, et `baseXYZ` est mis à jour pour les mouvements. Champs ajoutés : `distanceSource`, `distanceRow`, `altDistance`.
+- **99 galaxies** concernées. M32 passe de 1,60 à **2,626 millions d'al** (0,805 Mpc), au voisinage de M31 ; IC 10 passe à 2,590 millions d'al.
+- **Fiche** : « 0,805 Mpc (2,626 millions d'al), McConnachie 2012 (compilation du Groupe local) · seconde source UNGC 2013 : 0,49 Mpc (écart 64,3 %) ».
+- **Carte (essai)** : la notification indique désormais que le cockpit retient McConnachie 2012. L'écart entre le point McConnachie et l'objet du cockpit est de **0 al** pour And XXVIII (il était de 35 900 al).
+- Reste à faire : vérifier la valeur UNGC de M32 dans la publication d'origine. Elle n'est plus utilisée pour la position, mais reste affichée comme seconde source.
+
+Vérifications : `validate-catalogue-galaxies.mjs` **21/21**, dont un contrôle de position modifié (direction du catalogue × distance retenue) et un nouveau contrôle sur M32 ; `validate-extragalactic.mjs`, `validate-catalogue-sky.mjs`, `validate-galaxy-photometry.mjs`, `validate-map-preview.mjs` réussis. Suites navigateur réussies (code 0) : `validate-cosmic-map-feasibility.cjs` (14/14), `validate-observation-gestures.cjs`, `validate-feature-inventory.cjs`, `validate-search-and-map-errors.cjs`, `validate-catalogue-ui.mjs`, `validate-galaxy-ui.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.

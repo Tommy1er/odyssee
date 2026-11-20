@@ -85,7 +85,7 @@
   {
    "name": "Optique : zoomer ne change pas l'observateur radiatif, seulement le champ de projection",
    "ok": true,
-   "detail": "tan(champ/2) 0.700 → 0.041"
+   "detail": "tan(champ/2) 0.700 → 0.064"
   },
   {
    "name": "Zoom : statut de résolution affiché près du champ",
@@ -175,7 +175,7 @@
   {
    "name": "Session d'essai : la mission d'essai est écrite à part",
    "ok": true,
-   "detail": "1030 caractères"
+   "detail": "1031 caractères"
   },
   {
    "name": "Rangée basse A : trois groupes visibles (Mission, Temps, Propulsion)",

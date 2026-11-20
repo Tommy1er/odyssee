@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 137.4,
-   "frameP50": 183.3,
-   "frameP95": 383.4,
-   "frames": 34
+   "heapMB": 122.4,
+   "frameP50": 283.3,
+   "frameP95": 366.6,
+   "frames": 22
   },
   "carte Groupe local · couche allumée": {
    "geometries": 71,
@@ -23,15 +23,15 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 9458,
-   "heapMB": 121.2,
-   "frameP50": 249.9,
-   "frameP95": 450.1,
-   "frames": 20
+   "heapMB": 122.8,
+   "frameP50": 216.6,
+   "frameP95": 383.3,
+   "frames": 29
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
    "cockpit": "ungc:And XXVIII",
-   "ecartAl": 35877,
+   "ecartAl": 0,
    "distanceAl": 2155894
   },
   "carte Groupe local · McConnachie + UNGC": {
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 9554,
-   "heapMB": 127.6,
-   "frameP50": 216.7,
-   "frameP95": 416.7,
-   "frames": 24
+   "heapMB": 123.5,
+   "frameP50": 216.6,
+   "frameP95": 316.7,
+   "frames": 29
   },
   "doublons": {
    "pairs": 96,
@@ -69,7 +69,7 @@
   {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.49831755332985,\"inside\":true}"
+   "detail": "{\"visible\":true,\"x\":706.0141685145658,\"y\":311.49831755333,\"inside\":true}"
   },
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
@@ -109,7 +109,7 @@
   {
    "name": "Clic sur un doublon : la notification explique les deux mesures de la même galaxie",
    "ok": true,
-   "detail": "M32 : McConnachie 2012 2,63 Mal, UNGC 2013 1,6 Mal (écart 64,3 %). Une seule galaxie, deux mesures ; le cockpit retient UNGC 2013."
+   "detail": "M32 : McConnachie 2012 2,63 Mal, UNGC 2013 1,6 Mal (écart 64,3 %). Une seule galaxie, deux mesures ; le cockpit retient McConnachie 2012, compilation du Groupe local."
   },
   {
    "name": "Clic sur une galaxie (catalogue « Les deux ») : elle devient la cible",

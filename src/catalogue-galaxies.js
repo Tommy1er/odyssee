@@ -130,6 +130,16 @@ export function galaxyObject(row, extra = {}) {
 }
 // Local catalogues (UNGC preferred, then McConnachie), without duplicates of each other or of existing galaxies
 // (M31, M33, the Magellanic Clouds keep their richer existing model). Returns { list, alias: catalogueId → existing id }.
+// Galaxie présente dans UNGC 2013 et dans McConnachie 2012 (décision du propriétaire, 20 novembre 2026) :
+// on garde l'objet UNGC (identifiant, type, taille, photométrie) mais sa distance devient celle de McConnachie 2012,
+// compilation dédiée au Groupe local (trois chiffres significatifs) ; UNGC, arrondi au centième de Mpc, reste affiché comme seconde source.
+export function adoptLocalGroupDistance(o, row) {
+  const d = row.d * MLY, u = unitVec(o.ra, o.dec);
+  o.altDistance = { catalogue: "ungc", mpc: o.catalogueRow.mpc, d: o.catalogueRow.d };
+  o.distanceRow = row; o.d = d; o.xyz = u.map((x) => x * d); o.baseXYZ = [...o.xyz];
+  o.distanceSource = "McConnachie 2012 (compilation du Groupe local)";
+  return o;
+}
 export function buildLocalGalaxies(payloads, existing = []) {
   const list = [], alias = new Map(), kept = [...existing.filter((o) => o.type === "galaxy")];
   for (const key of ["ungc", "mcconnachie"]) {
@@ -139,7 +149,7 @@ export function buildLocalGalaxies(payloads, existing = []) {
       // The Milky Way itself (UNGC "Milky Way", McConnachie "The Galaxy"): we are inside it; the cockpit has its own model.
       if (/^(milky way|the galaxy|galaxy)$/i.test(row.name)) { alias.set(o.id, "sgr-a"); continue; }
       const dup = findDuplicate(o, kept.filter((k) => k.catalogue !== key));
-      if (dup) { alias.set(o.id, dup.id); continue; }
+      if (dup) { alias.set(o.id, dup.id); if (key === "mcconnachie" && dup.catalogue === "ungc") adoptLocalGroupDistance(dup, row); continue; }
       kept.push(o); list.push(o);
     }
   }
