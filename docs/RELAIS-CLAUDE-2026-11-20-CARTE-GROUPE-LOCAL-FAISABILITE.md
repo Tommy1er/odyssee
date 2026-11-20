@@ -86,6 +86,8 @@ Local (Chromium SwiftShader, Playwright préinstallé, 1280 × 585) :
 - Non-régression, réussis (code 0) : `validate-observation-gestures.cjs` (38/38), `validate-feature-inventory.cjs` (30/30), `validate-search-and-map-errors.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.
 - Parcours cockpit complet (`validate-physics-ui.cjs`) : verdict sur la CI.
 
+CI GitHub sur `6fc8df5` : « Reproducible validation from npm ci », relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44725952465) et déclenché par le push (run 44725951438) : les 9 jobs réussis dans les deux exécutions, dont cockpit (parcours complet), observation et **cosmicmap (nouveau)**. Les six autres workflows du commit ont aussi réussi : source et bundle, spectres de galaxies, mise en page du cockpit et instruments, budget d'émission, persistance de mission et nébuleuses, zoom de la carte et intégration au cockpit.
+
 Autre correction incluse : en vue Carte, le bandeau replié de l'essai immersif n'affiche plus « Cadrer » seul. Le bouton n'apparaît qu'avec la fiche de sélection complète, comme avant la tranche 2b.
 
 Non vérifié : Chrome Iris Xe (publication nécessaire).
