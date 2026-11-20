@@ -105,3 +105,5 @@ Vérifications : `validate-cosmic-map-feasibility.cjs` **12/12**. Nouveaux contr
 Non-régression, réussis (code 0) : `validate-observation-gestures.cjs`, `validate-feature-inventory.cjs`, `validate-search-and-map-errors.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.
 
 Maquette de la rangée basse (proposition, sans code) : `docs/conception/maquettes-v3.3/`.
+
+CI GitHub sur `9ada4da` : « Reproducible validation from npm ci », relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44735276238) et déclenché par le push (run 44735277131) : les 9 jobs réussis dans les deux exécutions. Les cinq autres workflows du commit ont aussi réussi.
