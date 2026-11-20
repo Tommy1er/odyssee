@@ -30,6 +30,8 @@ Adresse : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site
 
 Le site reste sur **ChatGPT Sites**. Aucune migration vers Netlify, Vercel ou Cloudflare Pages. Après un changement envoyé par Claude sur GitHub, Abdoulaye demande à Codex de publier la dernière version. Codex récupère le dernier `main`, construit et vérifie le projet, puis publie sur le Site existant en conservant son identité et son audience actuelle. Depuis le 17 novembre 2026, Abdoulaye a explicitement demandé un accès public par lien pour la revue externe ; conserver cette audience sauf nouvelle instruction. GitHub → Sites n’est pas automatiquement synchronisé.
 
+**Manifeste `.openai/hosting.json`** (racine du dépôt, ajouté le 20 novembre 2026) : exigé par ChatGPT Sites pour publier depuis ce dépôt. Il désigne `dist/` comme dossier publié et le projet Sites existant. Valeurs reprises du commit source de la v57 (`d3b7855`), communiquées par Codex. Ne pas le modifier sans raison : il rattache le dépôt au site existant.
+
 **Registre `PUBLICATION.md`** (racine du dépôt) : dernière version servie et commits poussés sur `main` mais pas encore publiés. Qui pousse du code y ajoute une ligne d'attente ; Codex la vide et note la version servie après chaque publication. En début de tour, Codex le consulte et rappelle à Abdoulaye toute publication en attente.
 
 La configuration interne Sites reste gérée dans le projet d’hébergement existant et n’est pas nécessaire pour exécuter le dépôt localement. La visibilité du dépôt GitHub et celle du site sont deux réglages indépendants ; ne pas les modifier pendant ce relais.
