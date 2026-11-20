@@ -145,6 +145,8 @@ Les scripts UI utilisent leurs propres serveurs locaux et écrivent dans `valida
 
 ## Dernier relais
 
+**Temporaire : ChatGPT et Codex, lire d'abord `A-LIRE-CHATGPT-CODEX.md` (ce qui s'est passé les 19 et 20 novembre 2026), puis supprimer ce fichier et cette ligne.**
+
 Phase C : lire `docs/RELAIS-CODEX-2026-10-10-LANIAKEA.md`. La carte des galaxies observées est distincte des populations synthétiques et des futures visites cockpit. `jsdom` est utilisé uniquement pour tester les contrôles de carte dans Node, pas pour valider les shaders.
 
 Relais du 13 octobre : `docs/RELAIS-CODEX-2026-10-13-CIEL-CF4.md`. Test ciblé : `node scripts/validate-catalogue-sky.mjs`.
