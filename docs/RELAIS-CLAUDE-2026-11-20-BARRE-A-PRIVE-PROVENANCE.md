@@ -72,4 +72,6 @@ Local (Chromium SwiftShader, Playwright préinstallé) :
 - Non-régression, réussis (code 0) : `validate-feature-inventory.cjs`, `validate-search-and-map-errors.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-cosmos.cjs`, `validate-cosmos-zoom-ui.cjs`, `validate-mission-storage.mjs`.
 - Parcours cockpit complet (`validate-physics-ui.cjs`) : verdict sur la CI.
 
+CI GitHub sur `0bc341a` : « Reproducible validation from npm ci », relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44758298839) et déclenché par le push (run 44758299512) : les 9 jobs réussis dans les deux exécutions. Les cinq autres workflows du commit ont aussi réussi, dont « Cosmic map zoom and cockpit integration » (page Structures cosmiques).
+
 Non vérifié : Chrome Iris Xe (publication nécessaire).
