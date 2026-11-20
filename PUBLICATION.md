@@ -8,7 +8,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
-| *Carte niveau 2* (commit « Carte cosmique niveau 2… », après `09ea771`) | Session d'essai seulement : niveau « Voisinage de la Vierge » sur la Carte du cockpit, catalogue selon l'échelle, Cosmicflows-4 sur la Carte. Retouche partagée sans effet public : étiquettes du Groupe local masquées au-delà de 33 millions d'al. | 20 nov. 2026 | Local : Carte 20/20 + 12 suites ; CI : voir le relais |
+| `4434a85` | Session d'essai seulement : niveau « Voisinage de la Vierge » sur la Carte du cockpit, catalogue selon l'échelle, Cosmicflows-4 sur la Carte. Retouche partagée sans effet public : étiquettes du Groupe local masquées au-delà de 33 millions d'al. | 20 nov. 2026 | Local : Carte 20/20 + 12 suites ; CI verte (9 jobs + 6 workflows) |
 
 ## Dernière version servie
 
