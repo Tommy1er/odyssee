@@ -1,5 +1,5 @@
 {
- "passed": 14,
+ "passed": 20,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 122.4,
-   "frameP50": 283.3,
-   "frameP95": 366.6,
-   "frames": 22
+   "heapMB": 142.7,
+   "frameP50": 166.7,
+   "frameP95": 333.3,
+   "frames": 37
   },
   "carte Groupe local · couche allumée": {
    "geometries": 71,
@@ -23,9 +23,9 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 9458,
-   "heapMB": 122.8,
-   "frameP50": 216.6,
-   "frameP95": 383.3,
+   "heapMB": 123.6,
+   "frameP50": 200.1,
+   "frameP95": 366.7,
    "frames": 29
   },
   "ecartDoublon": {
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 9554,
-   "heapMB": 123.5,
-   "frameP50": 216.6,
-   "frameP95": 316.7,
-   "frames": 29
+   "heapMB": 139.8,
+   "frameP50": 199.9,
+   "frameP95": 366.7,
+   "frames": 35
   },
   "doublons": {
    "pairs": 96,
@@ -53,6 +53,32 @@
    "note": "969 points · 873 galaxies distinctes : 96 figurent dans les deux catalogues, reliées par un trait ambre (même galaxie, deux mesures de distance).",
    "hidden": false,
    "lines": true
+  },
+  "carte Vierge · UNGC": {
+   "geometries": 97,
+   "textures": 36,
+   "programs": 18,
+   "calls": 56,
+   "triangles": 2280,
+   "points": 143898,
+   "lines": 9938,
+   "heapMB": 125.1,
+   "frameP50": 200,
+   "frameP95": 400,
+   "frames": 29
+  },
+  "carte Vierge · Cosmicflows-4": {
+   "geometries": 98,
+   "textures": 36,
+   "programs": 18,
+   "calls": 56,
+   "triangles": 2280,
+   "points": 198907,
+   "lines": 9938,
+   "heapMB": 184.8,
+   "frameP50": 216.6,
+   "frameP95": 416.6,
+   "frames": 25
   }
  },
  "results": [
@@ -69,7 +95,7 @@
   {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "{\"visible\":true,\"x\":706.0141685145658,\"y\":311.49831755333,\"inside\":true}"
+   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533298,\"inside\":true}"
   },
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
@@ -115,6 +141,36 @@
    "name": "Clic sur une galaxie (catalogue « Les deux ») : elle devient la cible",
    "ok": true,
    "detail": "And XXVIII (ungc) → ungc:And XXVIII"
+  },
+  {
+   "name": "Vierge : niveau 2 actif, catalogue selon l'échelle = UNGC 2013",
+   "ok": true,
+   "detail": "868 galaxies · « 868 galaxies · UNGC 2013 (Karachentsev et al.), Volume local jusqu’à ≈ 36 millions d’al : l’amas de la Vierge (≈ 54 millions d’al) est au-delà, choisir Cosmicflows-4 · catalogue choisi selon l’échelle. »"
+  },
+  {
+   "name": "Vierge : étiquettes « Amas de la Vierge » et « Superamas de la Vierge » visibles, « Groupe local » masquée à cette échelle",
+   "ok": true,
+   "detail": "[\"Groupe local:masquée\",\"Amas de la Vierge:visible\",\"Superamas de la Vierge:visible\"]"
+  },
+  {
+   "name": "Vierge : clic sur une galaxie UNGC → cible du cockpit, sans piloter",
+   "ok": true,
+   "detail": "UGC08030 → ungc:UGC08030"
+  },
+  {
+   "name": "Vierge : Cosmicflows-4 chargé et peuplant l'amas de la Vierge",
+   "ok": true,
+   "detail": "55877 galaxies, dont 180 à moins de 12 millions d'al du centre de l'amas · « 55 877 galaxies · Cosmicflows-4 (Tully et al. 2023), distances individuelles avec leur inc… »"
+  },
+  {
+   "name": "Vierge : clic sur une galaxie CF4 → destination du cockpit créée et ciblée",
+   "ok": true,
+   "detail": "PGC 40985 → cf4:40985"
+  },
+  {
+   "name": "Retour « Groupe local » : niveau 1 et McConnachie 2012 selon l'échelle",
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "Aucune erreur de page",

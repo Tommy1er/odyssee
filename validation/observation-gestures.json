@@ -85,7 +85,7 @@
   {
    "name": "Optique : zoomer ne change pas l'observateur radiatif, seulement le champ de projection",
    "ok": true,
-   "detail": "tan(champ/2) 0.700 → 0.064"
+   "detail": "tan(champ/2) 0.700 → 0.041"
   },
   {
    "name": "Zoom : statut de résolution affiché près du champ",

@@ -63,13 +63,40 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   const pu=await page.evaluate(()=>window.cosmicMapPickable());
   if(pu){await page.mouse.move(pu.x,pu.y);await page.mouse.down();await page.mouse.up();await page.waitForTimeout(800);
    check('Clic sur une galaxie (catalogue « Les deux ») : elle devient la cible',(await page.evaluate(()=>window.flightSnapshot().target))===pu.cockpitId,`${pu.name} (${pu.key}) → ${pu.cockpitId}`);}
+  // Niveau 2 de cosmos.html : « Voisinage de la Vierge » (150 millions d'al), catalogue selon l'échelle (UNGC 2013).
+  await page.evaluate(()=>{const s=document.getElementById('map-cosmic-catalogue');s.value='auto';s.dispatchEvent(new Event('change'));});
+  await page.evaluate(()=>document.getElementById('map-virgo').click());
+  await page.waitForFunction(()=>window.cosmicMapLayer.status==='ready'&&window.cosmicMapLayer.level===1,{},{timeout:120000}).catch(()=>{});await page.waitForTimeout(2000);
+  const vir=await page.evaluate(()=>({level:window.cosmicMapLayer.level,focus:window.cosmicMapLayer.focus,cats:[...window.cosmicMapLayer.catalogues],rows:window.cosmicMapLayer.rows.length,labels:window.cosmicMapLabels(),note:document.getElementById('map-cosmic-note').textContent}));
+  check('Vierge : niveau 2 actif, catalogue selon l\'échelle = UNGC 2013',vir.level===1&&vir.focus==='virgo-supercluster'&&vir.cats.join()==='ungc'&&vir.rows>800,`${vir.rows} galaxies · « ${vir.note} »`);
+  const lv=Object.fromEntries(vir.labels.map(l=>[l.id,l]));
+  check('Vierge : étiquettes « Amas de la Vierge » et « Superamas de la Vierge » visibles, « Groupe local » masquée à cette échelle',lv['virgo-cluster']?.visible&&lv['virgo-cluster']?.inside&&lv['virgo-supercluster']?.visible&&lv['virgo-supercluster']?.inside&&!lv['local-group']?.visible,JSON.stringify(vir.labels.map(l=>`${l.name}:${l.visible?'visible':'masquée'}${l.inside?'':' (hors cadre)'}`)));
+  await sample('carte Vierge · UNGC');
+  const shotV=await page.context().newCDPSession(page);const sv=await shotV.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-vierge-faisabilite.jpg'),Buffer.from(sv.data,'base64'));
+  const pv=await page.evaluate(()=>window.cosmicMapPickable());
+  if(pv){const before2=await page.evaluate(()=>window.flightSnapshot());await page.mouse.move(pv.x,pv.y);await page.mouse.down();await page.mouse.up();await page.waitForTimeout(800);const after2=await page.evaluate(()=>window.flightSnapshot());
+   check('Vierge : clic sur une galaxie UNGC → cible du cockpit, sans piloter',after2.target===pv.cockpitId&&JSON.stringify(after2.attitude)===JSON.stringify(before2.attitude)&&JSON.stringify(after2.pos)===JSON.stringify(before2.pos),`${pv.name} → ${pv.cockpitId}`);}
+  else check('Vierge : au moins une galaxie cliquable',false,'aucune');
+  // Cosmicflows-4 au niveau Vierge : couvre l'amas de la Vierge (≈ 54 millions d'al), que UNGC n'atteint pas.
+  await page.evaluate(()=>{const s=document.getElementById('map-cosmic-catalogue');s.value='cf4';s.dispatchEvent(new Event('change'));});
+  await page.waitForFunction(()=>window.cosmicMapLayer.layers.cf4.status==='ready',{},{timeout:240000}).catch(()=>{});await page.waitForTimeout(2000);
+  const cf=await page.evaluate(()=>{const L=window.cosmicMapLayer,v=L.rows.filter(r=>{const d=Math.hypot(r.p[0]+52.3,r.p[1]+7.1,r.p[2]-11.6);return d<12;}).length;return {status:L.layers.cf4.status,rows:L.rows.length,virgo:v,note:document.getElementById('map-cosmic-note').textContent};});
+  check('Vierge : Cosmicflows-4 chargé et peuplant l\'amas de la Vierge',cf.status==='ready'&&cf.rows>50000&&cf.virgo>100,`${cf.rows} galaxies, dont ${cf.virgo} à moins de 12 millions d'al du centre de l'amas · « ${cf.note.slice(0,90)}… »`);
+  await sample('carte Vierge · Cosmicflows-4');
+  const shotC=await page.context().newCDPSession(page);const sc=await shotC.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-vierge-cf4.jpg'),Buffer.from(sc.data,'base64'));
+  const pc=await page.evaluate(()=>window.cosmicMapPickable());
+  if(pc){await page.mouse.move(pc.x,pc.y);await page.mouse.down();await page.mouse.up();await page.waitForTimeout(1000);
+   check('Vierge : clic sur une galaxie CF4 → destination du cockpit créée et ciblée',(await page.evaluate(()=>window.flightSnapshot().target))===pc.cockpitId,`${pc.name} → ${pc.cockpitId}`);}
+  await page.evaluate(()=>{const s=document.getElementById('map-cosmic-catalogue');s.value='auto';s.dispatchEvent(new Event('change'));});
+  await page.evaluate(()=>document.getElementById('map-local-group').click());await page.waitForFunction(()=>window.cosmicMapLayer.level===0&&window.cosmicMapLayer.status==='ready',{},{timeout:60000}).catch(()=>{});await page.waitForTimeout(800);
+  check('Retour « Groupe local » : niveau 1 et McConnachie 2012 selon l\'échelle',await page.evaluate(()=>window.cosmicMapLayer.level===0&&[...window.cosmicMapLayer.catalogues].join()==='mcconnachie'));
   const c=await page.context().newCDPSession(page);const s=await c.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-groupe-local-faisabilite.jpg'),Buffer.from(s.data,'base64'));
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));
   await page.close();
   // Hors session d'essai : rien ne change pour les visiteurs.
   const pub=await ctx.newPage();pub.setDefaultTimeout(400000);await pub.goto(`http://127.0.0.1:${PORT}/cockpit.html`);
   await pub.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
-  check('Cockpit public : couche absente et réglages masqués',await pub.evaluate(()=>window.cosmicMapLayer===undefined&&document.getElementById('map-cosmic-layer').closest('label').hidden&&document.getElementById('map-cosmic-catalogue').closest('label').hidden&&document.getElementById('map-target').hidden));
+  check('Cockpit public : couche absente et réglages masqués',await pub.evaluate(()=>window.cosmicMapLayer===undefined&&document.getElementById('map-cosmic-layer').closest('label').hidden&&document.getElementById('map-cosmic-catalogue').closest('label').hidden&&document.getElementById('map-target').hidden&&document.getElementById('map-virgo').hidden));
   await pub.close();
  }finally{await browser.close();server.close();}
  const failed=results.filter(r=>!r.ok);

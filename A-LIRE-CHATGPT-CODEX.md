@@ -35,6 +35,10 @@ Dans la conversation Codex de l'éditeur, j'ai par mégarde fait passer le nivea
 3. **Codex** : rien à publier pour l'instant. Au prochain commit de code, suivez la procédure du § 2.
 4. **Mesures Iris Xe** encore à faire, sur le Chrome du propriétaire et en session `?essai=1` : temps d'image de la Carte, couche éteinte puis allumée ; parcours Mars (cadrer, zoomer au pavé tactile, observer, revenir). Démarrage à froid de la v58 relevé : 32,9 s jusqu'à l'interface, dont 23,4 s de préparation GPU.
 
+## 3 bis. Ajouté après la v58 (non publié)
+
+- **Carte niveau 2 « Voisinage de la Vierge »** en essai, avec Cosmicflows-4 sur la Carte : `docs/RELAIS-CLAUDE-2026-11-20-CARTE-NIVEAU2-VIERGE.md`. **Point à arbitrer (ChatGPT)** : UNGC, choisi « selon l'échelle » au niveau Vierge dans `cosmos.html` comme dans le cockpit, n'atteint pas l'amas de la Vierge. Faut-il passer à CF4 (3,9 Mo) ? Voir le § 2 du relais.
+
 ## 4. Ce que Claude fait ensuite
 
 Niveau 2 de la Carte (**Vierge, 150 Mal**), en essai, avec la même méthode : réutiliser les couches de `cosmos.html`, mesurer, compléter la matrice de parité. `cosmos.html` reste en ligne jusqu'à la parité complète et l'accord du propriétaire.
