@@ -52,13 +52,13 @@ Statut : **=** équivalent dans le cockpit ; **≈** existe sous une autre forme
 | Temps de la mission pendant la consultation (D9) | la simulation reste dans la même page | **=** (motif principal de l'intégration) |
 | Voie lactée, M31, M33 | populations et photométrie du cockpit | = |
 | Étiquettes Voie lactée, Andromède, Triangle | étiquettes du cockpit | = |
-| Étiquette « Groupe local » sur l'enveloppe | — | ✗ |
-| Catalogue au choix (selon l'échelle, McConnachie, UNGC, CF4) | McConnachie seul sur la Carte ; UNGC et McConnachie dans la recherche ; CF4 dans le ciel en vol | ≈ / ✗ (UNGC et CF4 absents de la Carte) |
+| Étiquette « Groupe local » sur l'enveloppe | étiquette posée sur le bord de l'enveloppe | ✓ essai (§ 6) |
+| Catalogue au choix (selon l'échelle, McConnachie, UNGC, CF4) | McConnachie, UNGC ou les deux sur la Carte (§ 6) ; CF4 dans le ciel en vol | ✓ essai pour McConnachie et UNGC ; ✗ CF4 sur la Carte (niveaux 2 à 4) |
 | Recherche par nom ou identifiant | recherche de destinations du cockpit (mêmes galaxies) | ≈ |
 | Filtre de distance maximale, incertitude CF4 | — | ✗ |
 | Liste des résultats (60) | liste des destinations | ≈ |
-| Fiche : type, distance, résumé, limites du catalogue | fiche de l'objet du cockpit | ≈ (la phrase de limite du catalogue manque) |
-| Cadrer en 3D, explorer l'intérieur, revenir à la vue d'ensemble | « Groupe local », « Galaxie entière », « Centrer vaisseau » | ≈ (pas de cadrage sur l'objet choisi) |
+| Fiche : type, distance, résumé, limites du catalogue | fiche de l'objet du cockpit, ligne « Limites » avec la phrase du catalogue | = (correction : ce n'était pas un manque) |
+| Cadrer en 3D, explorer l'intérieur, revenir à la vue d'ensemble | « Cadrer la sélection » (§ 6), « Groupe local », « Galaxie entière » | ✓ essai / ≈ |
 | Se rapprocher, échelle plus petite, dézoomer d'un niveau | sélecteur d'échelle (jusqu'à 6 millions d'al) | ≈ |
 | Retrouver notre position | « Centrer Soleil » | = |
 | Vue dégagée, afficher les repères | cases Écliptique, Plan galactique, Trajectoire | ≈ |
@@ -71,11 +71,11 @@ Statut : **=** équivalent dans le cockpit ; **≈** existe sous une autre forme
 
 ## 4. Conclusion et proposition
 
-**Faisable** : le moteur du cockpit héberge les couches de `cosmos.html` sans les réécrire. Le coût mesuré est marginal, et la sélection relie la carte à la mission (D9), ce que la page séparée ne peut pas faire. Cette preuve ne suffit pas à la parité : la matrice compte 6 manques au niveau 1, et les niveaux 2 à 4 restent à faire.
+**Faisable** : le moteur du cockpit héberge les couches de `cosmos.html` sans les réécrire. Le coût mesuré est marginal, et la sélection relie la carte à la mission (D9), ce que la page séparée ne peut pas faire. Cette preuve ne suffit pas à la parité. Au niveau 1, après le § 6, restent les filtres de distance et d'incertitude, la rotation illustrative et les populations illustratives, ces deux dernières sans objet ou masquées volontairement. Les niveaux 2 à 4 restent à faire.
 
 Proposition pour la suite, sans retrait de `cosmos.html` :
 1. Mesurer sur l'Iris Xe (après publication) : temps d'image couche éteinte et allumée, sur la même scène.
-2. Fermer les manques du niveau 1 : étiquette d'enveloppe, catalogue UNGC sur la Carte, phrase de limite du catalogue dans la fiche, cadrage sur l'objet choisi.
+2. ~~Fermer les manques du niveau 1~~ : fait pour l'étiquette, UNGC et le cadrage (§ 6) ; la phrase de limite existait déjà.
 3. Niveau 2 (Vierge), puis 3 et 4, avec la même matrice.
 4. Retirer `cosmos.html` **seulement** quand la matrice est entièrement à **=** ou **≈**, et avec l'accord du propriétaire.
 
@@ -91,3 +91,17 @@ CI GitHub sur `6fc8df5` : « Reproducible validation from npm ci », relancé à
 Autre correction incluse : en vue Carte, le bandeau replié de l'essai immersif n'affiche plus « Cadrer » seul. Le bouton n'apparaît qu'avec la fiche de sélection complète, comme avant la tranche 2b.
 
 Non vérifié : Chrome Iris Xe (publication nécessaire).
+
+## 6. Suite du 20 novembre : manques du niveau 1 comblés (session d'essai)
+
+- **Étiquette « Groupe local »**, posée sur le bord supérieur de l'enveloppe. Elle se masque quand le cadre devient beaucoup plus large que le groupe (douze fois son rayon).
+- **Choix du catalogue sur la Carte** : McConnachie 2012 (par défaut, comme `cosmos.html` au niveau 1), UNGC 2013 (868 galaxies) ou les deux (969 points).
+- **« Cadrer la sélection »** dans les options de la Carte : centre la Carte sur la cible du cockpit, avec un cadre de douze fois son rayon.
+- **Écart entre catalogues, à connaître** : une galaxie présente dans McConnachie **et** dans UNGC n'a pas exactement la même distance dans les deux. Le cockpit garde la fiche UNGC (règle de dédoublonnage existante). Exemple mesuré, And XXVIII : 35 900 al entre le point McConnachie et l'objet UNGC du cockpit, à 2,16 millions d'al (1,7 %). « Cadrer la sélection » centre l'**objet du cockpit**, celui vers lequel on volerait. Le point McConnachie peut donc être légèrement décalé du centre. C'est aussi le cas dans `cosmos.html`, où chaque catalogue garde ses propres distances.
+
+Mesures (SwiftShader) : avec les deux catalogues, 56 appels de dessin et 143 999 points, contre 50 et 143 030 couche éteinte. L'étiquette ajoute une texture. Temps d'image toujours non concluant sous SwiftShader.
+
+Vérifications : `validate-cosmic-map-feasibility.cjs` **12/12**. Nouveaux contrôles : étiquette visible sur l'enveloppe ; « Cadrer la sélection » centre la cible (écart < 12 px) ; UNGC chargé, avec le bon nombre de points en « Les deux » ; clic sur une galaxie avec les deux catalogues ; réglages masqués hors essai.
+Non-régression, réussis (code 0) : `validate-observation-gestures.cjs`, `validate-feature-inventory.cjs`, `validate-search-and-map-errors.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.
+
+Maquette de la rangée basse (proposition, sans code) : `docs/conception/maquettes-v3.3/`.

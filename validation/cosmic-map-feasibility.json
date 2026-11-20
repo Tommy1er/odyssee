@@ -1,32 +1,51 @@
 {
- "passed": 8,
+ "passed": 12,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
-   "geometries": 66,
-   "textures": 32,
+   "geometries": 71,
+   "textures": 33,
    "programs": 17,
    "calls": 50,
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 125.3,
-   "frameP50": 200,
-   "frameP95": 349.9,
-   "frames": 29
+   "heapMB": 133.9,
+   "frameP50": 233.3,
+   "frameP95": 450,
+   "frames": 26
   },
   "carte Groupe local · couche allumée": {
    "geometries": 71,
-   "textures": 32,
+   "textures": 33,
    "programs": 17,
-   "calls": 54,
-   "triangles": 1068,
+   "calls": 55,
+   "triangles": 1070,
    "points": 143131,
    "lines": 9458,
-   "heapMB": 137.2,
-   "frameP50": 233.3,
-   "frameP95": 433.2,
+   "heapMB": 132.6,
+   "frameP50": 216.7,
+   "frameP95": 383.3,
    "frames": 25
+  },
+  "ecartDoublon": {
+   "catalogue": "mcconnachie",
+   "cockpit": "ungc:And XXVIII",
+   "ecartAl": 35877,
+   "distanceAl": 2155894
+  },
+  "carte Groupe local · McConnachie + UNGC": {
+   "geometries": 72,
+   "textures": 34,
+   "programs": 17,
+   "calls": 56,
+   "triangles": 1070,
+   "points": 143999,
+   "lines": 9458,
+   "heapMB": 118.8,
+   "frameP50": 183.3,
+   "frameP95": 300,
+   "frames": 35
   }
  },
  "results": [
@@ -41,9 +60,14 @@
    "detail": ""
   },
   {
-   "name": "Ressources : la couche ajoute des appels de dessin et des points, aucune texture",
+   "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "appels 50→54 · points 143030→143131 · géométries 66→71 · programmes 17→17 · textures 32→32"
+   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533298,\"inside\":true}"
+  },
+  {
+   "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
+   "ok": true,
+   "detail": "appels 50→55 · points 143030→143131 · géométries 71→71 · programmes 17→17 · textures 33→33"
   },
   {
    "name": "Au moins une galaxie cataloguée visible et cliquable sur la carte",
@@ -61,12 +85,27 @@
    "detail": ""
   },
   {
+   "name": "« Cadrer la sélection » centre la Carte sur la cible du cockpit",
+   "ok": true,
+   "detail": "écart 0.0 px"
+  },
+  {
+   "name": "Catalogue UNGC 2013 ajouté sur la Carte (choix « Les deux »)",
+   "ok": true,
+   "detail": "{\"status\":\"ready\",\"rows\":969,\"ungc\":868}"
+  },
+  {
+   "name": "Clic sur une galaxie (catalogue « Les deux ») : elle devient la cible",
+   "ok": true,
+   "detail": "And XXVIII (ungc) → ungc:And XXVIII"
+  },
+  {
    "name": "Aucune erreur de page",
    "ok": true,
    "detail": ""
   },
   {
-   "name": "Cockpit public : couche absente et réglage masqué",
+   "name": "Cockpit public : couche absente et réglages masqués",
    "ok": true,
    "detail": ""
   }
