@@ -39,10 +39,11 @@ Les bassins (surfaces) et leurs lignes de courant animées **multiplient par 2,5
 | CF4 selon l'échelle | même choix, chargement partagé | ✓ essai |
 | Bassins CF4 2023 et lignes de courant | `BasinLayer`, données partagées avec le vol | ✓ essai |
 | Bassins SDSS coupés par le bord du modèle (option) | — | ✗ |
-| Légende des bassins (noms, couleurs) | — | ✗ |
-| Plan supergalactique, vue du dessus SG | — | ✗ |
+| Légende des bassins (noms, couleurs) | légende, un bouton par bassin qui recadre sur son attracteur (§ 6) | ✓ essai |
+| Plan supergalactique | case « Plan supergalactique (SGZ = 0) » (§ 6) | ✓ essai |
+| Vue du dessus supergalactique | « Vue du dessus » du cockpit (plan galactique) | ≈ |
 | Horizon de l'univers observable | — | ✗ |
-| Filtres de distance et d'incertitude CF4 | — | ✗ |
+| Filtres de distance et d'incertitude CF4 | mêmes valeurs que `cosmos.html` (§ 6) | ✓ essai |
 | Choisir une galaxie comme destination | clic → cible du cockpit | ✓ essai, **mieux** |
 
 **Bilan des quatre niveaux** : l'essentiel visuel et scientifique de `cosmos.html` est rendu par le moteur du cockpit, sans changement de page, avec le temps de la mission conservé. Pour la parité complète, il manque surtout des réglages secondaires : légende des bassins, plan supergalactique, horizon, filtres, bassins SDSS. Et l'arbitrage de performance aux niveaux 3 et 4.
@@ -57,3 +58,15 @@ Local (Chromium SwiftShader, Playwright préinstallé) :
 CI GitHub sur `1d71601` : « Reproducible validation from npm ci », relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44894495106) et déclenché par le push (run 44894494705) : les 9 jobs réussis dans les deux exécutions. Quatre autres workflows réussis ; « Galaxy spectra build and verification » encore en cours au moment du relevé.
 
 Non vérifié : Chrome Iris Xe (publication nécessaire).
+
+## 6. Suite du 21 novembre : réglages de parité
+
+- **Panneau « Carte cosmique · essai »** repliable : il regroupe tous les réglages d'essai, est replié par défaut et s'ouvre quand on change de niveau. Placé après la ligne « Échelle », sa hauteur est bornée (défilement interne) : il ne recouvre plus le bandeau de trajet à 1280 × 585, ce qui est contrôlé.
+- **Filtres de `cosmos.html`** : distance maximale (5 à 1 000 Mpc) et incertitude du module de distance CF4 (≤ 0,2 ou ≤ 0,5 mag), avec la même fonction `filterCatalogue`. Le clic et les comptes portent sur les galaxies affichées. Exemple : CF4 passe de 55 877 à 12 020 galaxies à 100 Mpc, puis à 1 032 avec une incertitude ≤ 0,2 mag.
+- **Plan supergalactique (SGZ = 0)**, affiché par défaut comme dans `cosmos.html`, masquable.
+- **Légende des bassins CF4 2023** : couleur, nom et volume, Laniakea en tête. Chaque bouton recadre la Carte sur l'attracteur du bassin et le signale comme « attracteur du modèle CF4 2023, pas un objet observé ».
+
+Restent à faire pour la parité : bassins SDSS coupés (option), horizon de l'univers observable, vue du dessus dans le repère supergalactique.
+
+Vérifications : `validate-cosmic-map-feasibility.cjs` **31/31**. Nouveaux contrôles : panneau sans chevauchement ; légende ; recadrage par bassin ; filtres de distance et d'incertitude, puis retour au catalogue complet ; plan supergalactique masquable ; panneau absent hors essai.
+Non-régression, réussis (code 0) : `validate-observation-gestures.cjs`, `validate-feature-inventory.cjs`, `validate-search-and-map-errors.cjs`, `validate-galaxy-ui.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.

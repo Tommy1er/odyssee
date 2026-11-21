@@ -8,7 +8,7 @@
 import * as T from 'three';
 import {CosmicScene} from './cosmic-scene.js';
 import {ObservedGalaxies} from './observed-galaxies.js';
-import {CATALOGUES,decodeCatalogue} from './extragalactic-data.js';
+import {CATALOGUES,decodeCatalogue,filterCatalogue} from './extragalactic-data.js';
 import {MLY,STRUCTURES,LEVELS} from './cosmic-data.js';
 import {BasinLayer} from './cf4-basins.js';
 
@@ -23,6 +23,7 @@ export class CockpitCosmicMap{
   this.cosmic=new CosmicScene({map:true});this.root.add(this.cosmic.root);
   this.layers=Object.fromEntries(KEYS.map(k=>{const l=new ObservedGalaxies(this.root);l.plane.visible=false;return [k,{layer:l,rows:[],status:'idle'}];}));
   this.catalogues=new Set(['mcconnachie']);this.enabled=false;this._v=new T.Vector3();
+  this.filter={maxMpc:Infinity,maxError:Infinity};this.showPlane=true; // mêmes filtres et même plan supergalactique que cosmos.html
   this.loaders={}; // chargeurs fournis par le cockpit (CF4 : décodage partagé avec la recherche, 3,9 Mo téléchargés une seule fois)
   this.group=STRUCTURES.find(o=>o.id==='local-group');
   // Niveau de cosmos.html affiché (0 Groupe local, 1 Voisinage de la Vierge) et structure mise en avant.
@@ -41,7 +42,7 @@ export class CockpitCosmicMap{
  async load(fetcher=fetch){
   await Promise.all([...this.catalogues].map(async k=>{const L=this.layers[k];if(L.status==='ready'||L.status==='loading')return;L.status='loading';
    try{let rows;if(this.loaders[k])rows=await this.loaders[k]();else{const r=await fetcher('./'+CATALOGUES[k].file);if(!r.ok)throw Error('HTTP '+r.status);rows=decodeCatalogue(k,await r.json());}
-    L.rows=rows.filter(o=>!EXCLUDED.test(o.name));L.layer.setRows(L.rows,k);L.status='ready';}
+    L.all=rows.filter(o=>!EXCLUDED.test(o.name));this.applyFilter(k);L.status='ready';}
    catch(e){L.status='error';this.error=e.message;}}));
  }
  // Niveau de cosmos.html : 0 Groupe local, 1 Voisinage de la Vierge, 2 Laniakea et voisins, 3 Superamas et grands vides. Renvoie le cadrage attendu (centre en al, largeur en al).
@@ -54,6 +55,9 @@ export class CockpitCosmicMap{
   const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(pos,3));
   this.pairLines=new T.LineSegments(g,new T.LineBasicMaterial({color:0xf0c47a,transparent:true,opacity:.6,depthWrite:false}));this.root.add(this.pairLines);}
  pairOf(row){return this.pairs?.find(([a,b])=>a===row||b===row)||null;}
+ // Filtres de cosmos.html (distance maximale en Mpc, incertitude du module de distance CF4) : L.rows = lignes affichées et cliquables.
+ applyFilter(k){const L=this.layers[k];if(!L.all)return;L.rows=filterCatalogue(L.all,this.filter);L.layer.setRows(L.rows,k);}
+ setFilter(f){Object.assign(this.filter,f);for(const k of KEYS)this.applyFilter(k);}
  // spanLy : largeur cadrée par la Carte du cockpit ; mapScale : unités de carte par année-lumière ; heightPx : hauteur du tampon de dessin.
  update({map,mapScale,spanLy,heightPx,dpr=1}){
   const on=this.enabled&&!!map;this.root.visible=on;if(!on){for(const x of this.labels)x.l.visible=false;return;}
@@ -65,6 +69,7 @@ export class CockpitCosmicMap{
   if(this.cosmic.sun)this.cosmic.sun.visible=false;
   this.cosmic.material.uniforms.screenHeight.value=heightPx;
   if(this.pairLines)this.pairLines.visible=this.catalogues.has('mcconnachie')&&this.catalogues.has('ungc');
+  const first=KEYS.find(k=>this.catalogues.has(k));for(const k of KEYS)this.layers[k].layer.plane.visible=this.showPlane&&k===first;
   for(const k of KEYS){this.layers[k].layer.root.visible=this.catalogues.has(k);this.layers[k].layer.material.uniforms.size.value=Math.min(dpr,2)*4;}
   // Étiquettes posées sur le bord supérieur de chaque enveloppe (rayon de repérage de cosmic-data) : visibles si la structure
   // appartient au niveau affiché, reste repérable (cadre de moins de 40 fois son rayon) et n'en remplit pas tout l'écran.

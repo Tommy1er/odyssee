@@ -16,12 +16,15 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   await page.goto(`http://127.0.0.1:${PORT}/cockpit.html?ui=immersive&essai=1`);
   await page.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
   await page.evaluate(()=>document.getElementById('map-view').click());await page.waitForTimeout(1500);
-  await page.evaluate(()=>document.getElementById('map-local-group').click());
+  await page.evaluate(()=>{document.getElementById('map-local-group').click();document.getElementById('map-cosmic-panel').open=true;});
   await page.waitForFunction(()=>window.cosmicMapLayer?.status==='ready',{},{timeout:120000}).catch(()=>{});
-  const layer=await page.evaluate(()=>({status:window.cosmicMapLayer?.status,rows:window.cosmicMapLayer?.rows.length,box:!document.getElementById('map-cosmic-layer').closest('label').hidden}));
+  const layer=await page.evaluate(()=>({status:window.cosmicMapLayer?.status,rows:window.cosmicMapLayer?.rows.length,box:!document.getElementById('map-cosmic-panel').hidden}));
   check('Couche Groupe local chargée dans la Carte du cockpit (McConnachie 2012)',layer.status==='ready'&&layer.rows>=90,JSON.stringify(layer));
   check('Réglage de la couche visible dans les options de la Carte (essai)',layer.box);
-  await page.waitForTimeout(1500);const lab=await page.evaluate(()=>window.cosmicMapLabel());
+  await page.waitForTimeout(1500);
+  const fit=await page.evaluate(()=>{const p=document.getElementById('map-cosmic-panel').getBoundingClientRect(),h=document.getElementById('navigation-hud'),hr=h.getBoundingClientRect(),sc=document.getElementById('galaxy-scale').getBoundingClientRect();return {open:document.getElementById('map-cosmic-panel').open,bottom:Math.round(p.bottom),hudTop:h.hidden?null:Math.round(hr.top),scaleVisible:sc.bottom<=innerHeight&&sc.top>=0};});
+  check('Panneau ouvert : ne recouvre pas le bandeau de trajet, « Échelle » reste visible',fit.open&&fit.scaleVisible&&(fit.hudTop==null||fit.bottom<=fit.hudTop),JSON.stringify(fit));
+  const lab=await page.evaluate(()=>window.cosmicMapLabel());
   check('Étiquette « Groupe local » posée sur l\'enveloppe et visible',lab.visible&&lab.inside,JSON.stringify(lab));
   const sample=async label=>{await page.waitForTimeout(1500);const r=await page.evaluate(()=>window.renderResources());const f=await page.evaluate(()=>window.frameTimingSample(6));measures[label]={...r,frameP50:f.p50??f.median,frameP95:f.p95,frames:f.frames??f.count};console.log(label,JSON.stringify(measures[label]));};
   await page.evaluate(()=>{const b=document.getElementById('map-cosmic-layer');b.checked=false;b.dispatchEvent(new Event('change'));});await sample('carte Groupe local · couche éteinte');
@@ -98,6 +101,23 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   check('Laniakea : la note cite la source des bassins et précise que c\'est un modèle',/Dupuy & Courtois 2023/.test(lan.note)&&/pas des vitesses 3D mesurées/.test(lan.note),lan.note.slice(-160));
   await sample('carte Laniakea · CF4 + bassins');
   {const c2=await page.context().newCDPSession(page);const s2=await c2.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-laniakea.jpg'),Buffer.from(s2.data,'base64'));}
+  const leg=await page.evaluate(()=>[...document.querySelectorAll('#map-basins-legend button')].map(b=>b.textContent));
+  check('Laniakea : légende des bassins CF4 (comme cosmos.html), Laniakea en tête',leg.length>=4&&/Laniakea/.test(leg[0]),leg.slice(0,3).join(' | '));
+  const fb=await page.evaluate(()=>{const b=document.querySelector('#map-basins-legend button[data-basin="1"]');b.click();return true;});await page.waitForTimeout(800);
+  check('Légende : un bassin recadre la Carte et le signale comme modèle',await page.evaluate(()=>/attracteur du modèle CF4 2023, pas un objet observé/.test(document.getElementById('flight-toast').textContent)));
+  await page.evaluate(()=>{const s=document.getElementById('map-cosmic-level');s.value='2';s.dispatchEvent(new Event('change'));});await page.waitForTimeout(800);
+  // Filtres de cosmos.html sur CF4 : distance maximale 100 Mpc et incertitude ≤ 0,2 mag.
+  const n0=await page.evaluate(()=>window.cosmicMapLayer.rows.length);
+  await page.evaluate(()=>{const r=document.getElementById('map-cosmic-radius');r.value='100';r.dispatchEvent(new Event('change'));});await page.waitForTimeout(600);
+  const n1=await page.evaluate(()=>({n:window.cosmicMapLayer.rows.length,max:Math.max(...window.cosmicMapLayer.rows.map(r=>r.mpc))}));
+  await page.evaluate(()=>{const r=document.getElementById('map-cosmic-error');r.value='0.2';r.dispatchEvent(new Event('change'));});await page.waitForTimeout(600);
+  const n2=await page.evaluate(()=>({n:window.cosmicMapLayer.rows.length,maxErr:Math.max(...window.cosmicMapLayer.rows.map(r=>r.eDm??0))}));
+  check('Filtres : distance max 100 Mpc puis incertitude ≤ 0,2 mag réduisent CF4 comme dans cosmos.html',n1.n<n0&&n1.max<=100&&n2.n<n1.n&&n2.maxErr<=0.2,`${n0} → ${n1.n} (≤ ${n1.max.toFixed(1)} Mpc) → ${n2.n} (eDm ≤ ${n2.maxErr})`);
+  await page.evaluate(()=>{for(const id of ['map-cosmic-radius','map-cosmic-error']){const r=document.getElementById(id);r.value='Infinity';r.dispatchEvent(new Event('change'));}});await page.waitForTimeout(600);
+  check('Filtres retirés : tout CF4 à nouveau',await page.evaluate(n=>window.cosmicMapLayer.rows.length===n,n0));
+  const pl=await page.evaluate(()=>{const L=window.cosmicMapLayer,on=L.layers.cf4.layer.plane.visible;document.getElementById('map-sg-plane').click();return {on};});await page.waitForTimeout(2500);
+  check('Plan supergalactique affiché par défaut, masquable',pl.on&&await page.evaluate(()=>!window.cosmicMapLayer.layers.cf4.layer.plane.visible));
+  await page.evaluate(()=>document.getElementById('map-sg-plane').click());
   await page.evaluate(()=>{const b=document.getElementById('map-basins');b.checked=false;b.dispatchEvent(new Event('change'));});await page.waitForTimeout(800);
   check('Bassins : la case les masque',await page.evaluate(()=>!window.cosmicMapLayer.basins.root.visible));
   await page.evaluate(()=>{const b=document.getElementById('map-basins');b.checked=true;b.dispatchEvent(new Event('change'));});
@@ -113,7 +133,7 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   // Hors session d'essai : rien ne change pour les visiteurs.
   const pub=await ctx.newPage();pub.setDefaultTimeout(400000);await pub.goto(`http://127.0.0.1:${PORT}/cockpit.html`);
   await pub.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
-  check('Cockpit public : couche absente et réglages masqués',await pub.evaluate(()=>window.cosmicMapLayer===undefined&&document.getElementById('map-cosmic-layer').closest('label').hidden&&document.getElementById('map-cosmic-catalogue').closest('label').hidden&&document.getElementById('map-target').hidden&&document.getElementById('map-cosmic-level').closest('label').hidden&&document.getElementById('map-basins').closest('label').hidden));
+  check('Cockpit public : couche absente et réglages masqués',await pub.evaluate(()=>window.cosmicMapLayer===undefined&&document.getElementById('map-cosmic-panel').hidden&&!document.getElementById('map-cosmic-panel').getClientRects().length));
   await pub.close();
  }finally{await browser.close();server.close();}
  const failed=results.filter(r=>!r.ok);

@@ -1,32 +1,32 @@
 {
- "passed": 25,
+ "passed": 31,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
-   "geometries": 71,
+   "geometries": 73,
    "textures": 33,
    "programs": 17,
    "calls": 50,
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 142.4,
-   "frameP50": 183.4,
-   "frameP95": 383.3,
-   "frames": 29
+   "heapMB": 122.5,
+   "frameP50": 200,
+   "frameP95": 400,
+   "frames": 28
   },
   "carte Groupe local · couche allumée": {
-   "geometries": 71,
+   "geometries": 73,
    "textures": 33,
    "programs": 17,
-   "calls": 55,
+   "calls": 57,
    "triangles": 1070,
    "points": 143131,
-   "lines": 9458,
-   "heapMB": 138.2,
+   "lines": 10101,
+   "heapMB": 138.8,
    "frameP50": 200,
    "frameP95": 366.6,
-   "frames": 27
+   "frames": 29
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -35,17 +35,17 @@
    "distanceAl": 2155894
   },
   "carte Groupe local · McConnachie + UNGC": {
-   "geometries": 73,
+   "geometries": 75,
    "textures": 34,
    "programs": 17,
-   "calls": 57,
+   "calls": 59,
    "triangles": 1070,
    "points": 143999,
-   "lines": 9554,
-   "heapMB": 124,
+   "lines": 10197,
+   "heapMB": 124.9,
    "frameP50": 200,
-   "frameP95": 250,
-   "frames": 33
+   "frameP95": 383.4,
+   "frames": 31
   },
   "doublons": {
    "pairs": 96,
@@ -55,56 +55,56 @@
    "lines": true
   },
   "carte Vierge · UNGC": {
-   "geometries": 97,
+   "geometries": 100,
    "textures": 36,
    "programs": 18,
-   "calls": 56,
+   "calls": 58,
    "triangles": 2280,
    "points": 143898,
-   "lines": 9938,
-   "heapMB": 141.1,
+   "lines": 10581,
+   "heapMB": 128.5,
    "frameP50": 200,
-   "frameP95": 366.7,
-   "frames": 29
+   "frameP95": 416.6,
+   "frames": 30
   },
   "carte Vierge · Cosmicflows-4": {
-   "geometries": 98,
+   "geometries": 103,
    "textures": 36,
    "programs": 18,
-   "calls": 56,
+   "calls": 58,
    "triangles": 2280,
    "points": 198907,
-   "lines": 9938,
-   "heapMB": 166.5,
-   "frameP50": 233.3,
-   "frameP95": 516.6,
-   "frames": 23
+   "lines": 10581,
+   "heapMB": 194,
+   "frameP50": 283.3,
+   "frameP95": 450,
+   "frames": 21
   },
   "carte Laniakea · CF4 + bassins": {
-   "geometries": 118,
+   "geometries": 123,
    "textures": 39,
    "programs": 20,
-   "calls": 65,
+   "calls": 67,
    "triangles": 61588,
    "points": 198907,
-   "lines": 128208,
-   "heapMB": 187,
-   "frameP50": 549.9,
-   "frameP95": 833.3,
-   "frames": 10
+   "lines": 128851,
+   "heapMB": 182.7,
+   "frameP50": 583.3,
+   "frameP95": 666.6,
+   "frames": 12
   },
   "carte toile cosmique · CF4 + bassins": {
-   "geometries": 132,
+   "geometries": 135,
    "textures": 43,
    "programs": 20,
-   "calls": 74,
+   "calls": 76,
    "triangles": 61594,
    "points": 198907,
-   "lines": 129168,
-   "heapMB": 166.2,
-   "frameP50": 666.6,
-   "frameP95": 716.7,
-   "frames": 9
+   "lines": 129811,
+   "heapMB": 170.3,
+   "frameP50": 683.3,
+   "frameP95": 1150,
+   "frames": 7
   }
  },
  "results": [
@@ -119,6 +119,11 @@
    "detail": ""
   },
   {
+   "name": "Panneau ouvert : ne recouvre pas le bandeau de trajet, « Échelle » reste visible",
+   "ok": true,
+   "detail": "{\"open\":true,\"bottom\":362,\"hudTop\":455,\"scaleVisible\":true}"
+  },
+  {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
    "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533296,\"inside\":true}"
@@ -126,12 +131,12 @@
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
    "ok": true,
-   "detail": "appels 50→55 · points 143030→143131 · géométries 71→71 · programmes 17→17 · textures 33→33"
+   "detail": "appels 50→57 · points 143030→143131 · géométries 73→73 · programmes 17→17 · textures 33→33"
   },
   {
    "name": "Au moins une galaxie cataloguée visible et cliquable sur la carte",
    "ok": true,
-   "detail": "77 à l'écran · essai sur Andromeda XXVIII"
+   "detail": "74 à l'écran · essai sur Andromeda XXVIII"
   },
   {
    "name": "Clic sur la carte : la galaxie devient la cible du cockpit",
@@ -207,6 +212,31 @@
    "name": "Laniakea : la note cite la source des bassins et précise que c'est un modèle",
    "ok": true,
    "detail": "icflows-4 (Dupuy & Courtois 2023 ; Courtois et al. 2023), pas des vitesses 3D mesurées ; les surfaces sont des frontières du modèle, pas des parois matérielles."
+  },
+  {
+   "name": "Laniakea : légende des bassins CF4 (comme cosmos.html), Laniakea en tête",
+   "ok": true,
+   "detail": "◉ Laniakea · 1,9 × 10⁶ (Mpc/h)³ | Apus · 9,5 × 10⁶ (Mpc/h)³ | Hercule · 3,1 × 10⁶ (Mpc/h)³"
+  },
+  {
+   "name": "Légende : un bassin recadre la Carte et le signale comme modèle",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Filtres : distance max 100 Mpc puis incertitude ≤ 0,2 mag réduisent CF4 comme dans cosmos.html",
+   "ok": true,
+   "detail": "55877 → 12020 (≤ 99.8 Mpc) → 1032 (eDm ≤ 0.2)"
+  },
+  {
+   "name": "Filtres retirés : tout CF4 à nouveau",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Plan supergalactique affiché par défaut, masquable",
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "Bassins : la case les masque",

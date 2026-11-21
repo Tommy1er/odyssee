@@ -313,3 +313,12 @@ body{color:#edf3f7}.section-title{color:var(--muted)}
 #map-cosmic-note{flex-basis:100%;color:#f0c47a}
 @media (min-width:901px){.ui-immersive #map-cosmic-note{font-size:12px}}
 #map-cosmic-note:not([hidden]){display:block;max-width:560px;background:rgba(5,8,12,.82);padding:4px 8px;border-radius:6px}
+#map-cosmic-panel{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:4px;padding:4px 8px;border:1px solid rgba(240,196,122,.35);border-radius:8px;background:rgba(5,8,12,.6)}
+#map-cosmic-panel[hidden]{display:none}
+#map-cosmic-panel:not([open]){display:block}
+#map-cosmic-panel>summary{flex-basis:100%;cursor:pointer;color:#f0c47a}
+#map-basins-legend{flex-basis:100%;display:flex;flex-wrap:wrap;gap:4px}
+#map-basins-legend[hidden]{display:none}
+#map-basins-legend button{display:inline-flex;align-items:center;gap:6px}
+#map-basins-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+#map-cosmic-panel[open]{max-height:calc(100vh - 330px);overflow:auto}
