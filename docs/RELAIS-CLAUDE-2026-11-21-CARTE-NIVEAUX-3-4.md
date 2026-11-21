@@ -70,3 +70,5 @@ Restent à faire pour la parité : bassins SDSS coupés (option), horizon de l'u
 
 Vérifications : `validate-cosmic-map-feasibility.cjs` **31/31**. Nouveaux contrôles : panneau sans chevauchement ; légende ; recadrage par bassin ; filtres de distance et d'incertitude, puis retour au catalogue complet ; plan supergalactique masquable ; panneau absent hors essai.
 Non-régression, réussis (code 0) : `validate-observation-gestures.cjs`, `validate-feature-inventory.cjs`, `validate-search-and-map-errors.cjs`, `validate-galaxy-ui.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.
+
+CI GitHub sur `c1556c7` : « Reproducible validation from npm ci », relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44901356636) et déclenché par le push (run 44901357199) : les 9 jobs réussis.
