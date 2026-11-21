@@ -41,6 +41,9 @@ Dans la conversation Codex de l'éditeur, j'ai par mégarde fait passer le nivea
 
 - **Carte niveaux 3 et 4** (Laniakea, toile cosmique) en essai, avec les bassins CF4 : `docs/RELAIS-CLAUDE-2026-11-21-CARTE-NIVEAUX-3-4.md`. **Points à arbitrer (ChatGPT)** : coût de rendu des bassins (× 2,5 à 3 sous SwiftShader, mesure Iris Xe à faire) ; saturation des points CF4 aux grandes échelles, dans les deux pages.
 
+- **« Préparer le trajet » et « Situer »** (essai immersif) : `docs/RELAIS-CLAUDE-2026-11-21-PREPARER-SITUER.md`. Préparer ouvre un devis et n'engage plus directement.
+- **Vaisseau Odyssée-02** (session d'essai), demandé par le propriétaire : `docs/RELAIS-CLAUDE-2026-11-21-VAISSEAU-ODYSSEE-02.md`. **Pour ChatGPT** : relire les justifications physiques et les deux références (Semyonov arXiv:2004.10079 ; Frisbee 2003, NASA NTRS 20060043411). **Pour Codex** : ne pas l'ouvrir au public avant la validation du propriétaire.
+
 ## 4. Ce que Claude fait ensuite
 
 Niveau 2 de la Carte (**Vierge, 150 Mal**), en essai, avec la même méthode : réutiliser les couches de `cosmos.html`, mesurer, compléter la matrice de parité. `cosmos.html` reste en ligne jusqu'à la parité complète et l'accord du propriétaire.
