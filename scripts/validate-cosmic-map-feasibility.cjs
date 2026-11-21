@@ -125,7 +125,27 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   check('Toile cosmique : niveau 4, étiquettes Shapley, Coma, Hercule et vide du Bouvier visibles',web.level===3&&web.labels.shapley&&web.labels['coma-supercluster']&&web.labels['hercules-supercluster']&&web.labels['bootes-void'],JSON.stringify(Object.entries(web.labels).filter(([,v])=>v).map(([k])=>k)));
   await sample('carte toile cosmique · CF4 + bassins');
   {const c3=await page.context().newCDPSession(page);const s3=await c3.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-toile-cosmique.jpg'),Buffer.from(s3.data,'base64'));}
+  // Bassins SDSS coupés par le bord du modèle (option de cosmos.html) : plus de bassins et une légende plus longue.
+  const sd0=await page.evaluate(()=>({shells:window.cosmicMapLayer.basins.entries.filter(e=>e.mesh.visible).length,legend:document.querySelectorAll('#map-basins-legend button').length,box:!document.getElementById('map-basins-sdss').closest('label').hidden}));
+  await page.evaluate(()=>document.getElementById('map-basins-sdss').click());await page.waitForTimeout(1500);
+  const sd1=await page.evaluate(()=>({shells:window.cosmicMapLayer.basins.entries.filter(e=>e.mesh.visible).length,legend:document.querySelectorAll('#map-basins-legend button').length,cut:[...document.querySelectorAll('#map-basins-legend button')].some(b=>/coupé/.test(b.textContent))}));
+  check('Bassins SDSS coupés : option affichée aux niveaux 3–4, ajoute des bassins et des entrées de légende',sd0.box&&sd1.shells>sd0.shells&&sd1.legend>sd0.legend,`${sd0.shells} → ${sd1.shells} bassins, légende ${sd0.legend} → ${sd1.legend}${sd1.cut?', dont « coupé »':''}`);
+  await page.evaluate(()=>document.getElementById('map-basins-sdss').click());await page.waitForTimeout(800);
+  // Vue du dessus du plan supergalactique (bouton de cosmos.html) : regard selon −SGZ, SGY vers le haut.
+  await page.evaluate(()=>document.getElementById('map-sg-top').click());await page.waitForTimeout(1200);
+  const top=await page.evaluate(()=>{const v=window.cosmicMapView(),dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);return {look:dot(v.dir,v.sgZ),up:dot(v.up,v.sgY)};});
+  check('Plan supergalactique vu du dessus : caméra sur l\'axe SGZ, SGY vers le haut',top.look<-.999&&top.up>.999,JSON.stringify(top));
+  // Univers observable : cadre centré sur le Soleil, horizon comobile (46,5 milliards d'al) tracé comme dans cosmos.html.
+  await page.evaluate(()=>{const s=document.getElementById('map-cosmic-level');s.value='4';s.dispatchEvent(new Event('change'));});await page.waitForTimeout(3000);
+  const uni=await page.evaluate(()=>({level:window.cosmicMapLayer.level,select:document.getElementById('map-cosmic-level').value,horizon:window.cosmicMapLayer.horizon.visible,toast:document.getElementById('flight-toast').textContent,cats:[...window.cosmicMapLayer.catalogues].join()}));
+  check('Univers observable : horizon tracé, structures du niveau 4 et CF4, notification avec la distance comobile',uni.select==='4'&&uni.level===3&&uni.horizon&&uni.cats==='cf4'&&/46,5 milliards/.test(uni.toast)&&/comobile/.test(uni.toast),JSON.stringify(uni).slice(0,240));
+  await sample('carte univers observable · horizon');
+  {const c4=await page.context().newCDPSession(page);const s4=await c4.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-univers-observable.jpg'),Buffer.from(s4.data,'base64'));}
+  await page.evaluate(()=>document.getElementById('map-horizon').click());await page.waitForTimeout(800);
+  check('Horizon : la case le masque',await page.evaluate(()=>!window.cosmicMapLayer.horizon.visible));
+  await page.evaluate(()=>document.getElementById('map-horizon').click());
   await page.evaluate(()=>document.getElementById('map-local-group').click());await page.waitForFunction(()=>window.cosmicMapLayer.level===0&&window.cosmicMapLayer.status==='ready',{},{timeout:60000}).catch(()=>{});await page.waitForTimeout(800);
+  check('Groupe local : horizon et option SDSS masqués à cette échelle',await page.evaluate(()=>!window.cosmicMapLayer.horizon.visible&&document.getElementById('map-basins-sdss').closest('label').hidden));
   check('Retour « Groupe local » : niveau 1 et McConnachie 2012 selon l\'échelle',await page.evaluate(()=>window.cosmicMapLayer.level===0&&[...window.cosmicMapLayer.catalogues].join()==='mcconnachie'));
   const c=await page.context().newCDPSession(page);const s=await c.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-groupe-local-faisabilite.jpg'),Buffer.from(s.data,'base64'));
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));

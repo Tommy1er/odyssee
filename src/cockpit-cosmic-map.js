@@ -13,6 +13,9 @@ import {MLY,STRUCTURES,LEVELS} from './cosmic-data.js';
 import {BasinLayer} from './cf4-basins.js';
 
 const KEYS=['mcconnachie','ungc','cf4'];
+// Horizon de l'Univers observable, comme cosmos.html : rayon comobile de l'horizon des particules ≈ 14,3 Gpc = 46,5 milliards d'al
+// (ΛCDM Planck 2018). Les coordonnées de la Carte sont lues comme des distances comobiles à cette échelle.
+export const HORIZON_MLY=46500;
 const EXCLUDED=/^(the galaxy|milky way)$/i; // nous sommes dedans : la Carte du cockpit a son propre modèle
 function makeLabel(text,color){const c=document.createElement('canvas');c.width=512;c.height=64;const x=c.getContext('2d');x.font='28px monospace';x.fillStyle=color;x.fillText(text,5,43);
  const s=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),transparent:true,depthTest:false}));s.scale.set(9,1.125,1);return s;}
@@ -33,7 +36,10 @@ export class CockpitCosmicMap{
   this.label=this.labels.find(x=>x.o.id==='local-group').l;
   // Bassins d'attraction et lignes de courant CF4 2023 (niveaux 3 et 4, comme cosmos.html) : reconstruction, pas une observation directe.
   // Données partagées avec le cockpit en vol (loadBasinData garde une seule promesse de téléchargement).
-  this.basins=new BasinLayer(this.root);this.showBasins=true;this.showLines=true;
+  this.basins=new BasinLayer(this.root);this.showBasins=true;this.showLines=true;this.showSDSS=false;
+  // Trois grands cercles de la sphère comobile autour du Soleil (même tracé que cosmos.html), au-delà de tout catalogue chargé.
+  this.showHorizon=true;this.horizon=new T.Group();{const pts=[];for(let a=0;a<3;a++)for(let i=0;i<256;i++)for(const j of [i,i+1]){const t=j*Math.PI/128,c=Math.cos(t)*HORIZON_MLY,s=Math.sin(t)*HORIZON_MLY;pts.push(a===0?new T.Vector3(c,s,0):a===1?new T.Vector3(c,0,s):new T.Vector3(0,c,s));}
+   this.horizon.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(pts),new T.LineBasicMaterial({color:0xd8a070,transparent:true,opacity:.45,depthWrite:false})));this.horizon.visible=false;this.root.add(this.horizon);}
  }
  get rows(){return KEYS.filter(k=>this.catalogues.has(k)).flatMap(k=>this.layers[k].rows);}
  // Doublons reliés seulement entre McConnachie et UNGC (les deux catalogues du Volume local).
@@ -46,7 +52,9 @@ export class CockpitCosmicMap{
    catch(e){L.status='error';this.error=e.message;}}));
  }
  // Niveau de cosmos.html : 0 Groupe local, 1 Voisinage de la Vierge, 2 Laniakea et voisins, 3 Superamas et grands vides. Renvoie le cadrage attendu (centre en al, largeur en al).
- setLevel(i){const L=LEVELS[i];this.level=i;this.focus=L.focus;const f=STRUCTURES.find(o=>o.id===L.focus);return {span:L.span*MLY,center:f.p.map(x=>x*MLY),name:L.name,text:L.text};}
+ // Niveau 4 du cockpit = « Univers observable » de cosmos.html : structures du niveau « Superamas et grands vides », cadre centré sur le Soleil.
+ setLevel(i){if(i===4){this.level=3;this.focus=LEVELS[3].focus;return {span:HORIZON_MLY*2.4*MLY,center:[0,0,0],name:'Univers observable',text:'horizon des particules à ≈ 46,5 milliards d’al en distance comobile (14,3 Gpc, ΛCDM Planck 2018) ; la lumière la plus ancienne a voyagé 13,8 milliards d’années. Aucun catalogue de galaxies ne l’atteint.'};}
+  const L=LEVELS[i];this.level=i;this.focus=L.focus;const f=STRUCTURES.find(o=>o.id===L.focus);return {span:L.span*MLY,center:f.p.map(x=>x*MLY),name:L.name,text:L.text};}
  // Catalogue « selon l'échelle », comme cosmos.html : McConnachie 2012, puis UNGC 2013 (Vierge), puis Cosmicflows-4.
  autoCatalogue(){return this.level===0?'mcconnachie':this.level===1?'ungc':'cf4';}
  // Doublons entre catalogues (même galaxie, deux mesures de distance) : un trait relie les deux points quand les deux catalogues sont affichés.
@@ -62,7 +70,8 @@ export class CockpitCosmicMap{
  update({map,mapScale,spanLy,heightPx,dpr=1}){
   const on=this.enabled&&!!map;this.root.visible=on;if(!on){for(const x of this.labels)x.l.visible=false;return;}
   const wantBasins=this.level>=2&&(this.showBasins||this.showLines);if(wantBasins&&this.basins.status==='idle')this.basins.load('./').catch(()=>{});
-  this.basins.root.visible=wantBasins&&this.basins.status==='ready';if(this.basins.root.visible)this.basins.update(performance.now()/1000,{shells:this.showBasins,lines:this.showLines,sdss:false});
+  this.basins.root.visible=wantBasins&&this.basins.status==='ready';if(this.basins.root.visible)this.basins.update(performance.now()/1000,{shells:this.showBasins,lines:this.showLines,sdss:this.showSDSS});
+  this.horizon.visible=this.showHorizon&&spanLy/MLY>HORIZON_MLY*.04; // comme cosmos.html : seulement aux grandes échelles
   // Mêmes réglages par défaut que cosmos.html : enveloppes affichées, connexions schématiques et populations illustratives masquées.
   this.cosmic.update(this.level,this.focus,spanLy/MLY,{envelopes:true,filaments:false,boost:6,synthetic:false});
   for(const e of this.cosmic.entries)if(e.o.type==='galaxy')e.mesh.visible=false;

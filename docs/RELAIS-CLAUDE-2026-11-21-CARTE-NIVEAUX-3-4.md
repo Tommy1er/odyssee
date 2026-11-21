@@ -38,11 +38,11 @@ Les bassins (surfaces) et leurs lignes de courant animées **multiplient par 2,5
 | Enveloppes et étiquettes des structures | `CosmicScene`, mêmes réglages | ✓ essai |
 | CF4 selon l'échelle | même choix, chargement partagé | ✓ essai |
 | Bassins CF4 2023 et lignes de courant | `BasinLayer`, données partagées avec le vol | ✓ essai |
-| Bassins SDSS coupés par le bord du modèle (option) | — | ✗ |
+| Bassins SDSS coupés par le bord du modèle (option) | même option, légende complétée (§ 7) | ✓ essai |
 | Légende des bassins (noms, couleurs) | légende, un bouton par bassin qui recadre sur son attracteur (§ 6) | ✓ essai |
 | Plan supergalactique | case « Plan supergalactique (SGZ = 0) » (§ 6) | ✓ essai |
-| Vue du dessus supergalactique | « Vue du dessus » du cockpit (plan galactique) | ≈ |
-| Horizon de l'univers observable | — | ✗ |
+| Vue du dessus supergalactique | bouton « Plan supergalactique vu du dessus » (§ 7) | ✓ essai |
+| Horizon de l'univers observable | niveau « Univers observable » et case d'affichage (§ 7) | ✓ essai |
 | Filtres de distance et d'incertitude CF4 | mêmes valeurs que `cosmos.html` (§ 6) | ✓ essai |
 | Choisir une galaxie comme destination | clic → cible du cockpit | ✓ essai, **mieux** |
 
@@ -72,3 +72,21 @@ Vérifications : `validate-cosmic-map-feasibility.cjs` **31/31**. Nouveaux contr
 Non-régression, réussis (code 0) : `validate-observation-gestures.cjs`, `validate-feature-inventory.cjs`, `validate-search-and-map-errors.cjs`, `validate-galaxy-ui.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.
 
 CI GitHub sur `c1556c7` : « Reproducible validation from npm ci », relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44901356636) et déclenché par le push (run 44901357199) : les 9 jobs réussis.
+
+## 7. Suite du 21 novembre (soir) : horizon et bassins SDSS
+
+Message du propriétaire : « c'est parfait, continue ».
+
+- **Niveau « Univers observable »** (sélecteur « Niveau » et option d'échelle), comme le bouton de `cosmos.html` : cadre centré sur le Soleil, structures du niveau « Superamas et grands vides », CF4 selon l'échelle. Notification : horizon des particules à ≈ 46,5 milliards d'al en distance comobile (14,3 Gpc, ΛCDM Planck 2018), lumière la plus ancienne partie il y a 13,8 milliards d'années, aucun catalogue de galaxies ne l'atteint. Même constante et même commentaire que `cosmos.js`.
+- **Horizon** tracé comme dans `cosmos.html` (trois grands cercles de la sphère comobile), affiché seulement aux grandes échelles (cadre de plus de 4 % du rayon de l'horizon), avec une case pour le masquer.
+- **Bassins SDSS coupés par le bord du modèle** : même option que `cosmos.html`, aux niveaux 3 et 4. Elle ajoute les 3 bassins tronqués (6 → 9) et leurs entrées de légende, marquées « coupé ».
+
+Mesure (SwiftShader, 1280 × 585), Univers observable avec CF4, bassins et horizon : 70 appels, 61 580 triangles, 198 907 points, 130 579 segments ; temps d'image médian 583 ms, p95 850 ms. Le même ordre que le niveau 4, car l'horizon n'ajoute que 768 segments.
+
+Capture : `validation/ui/cockpit-carte-univers-observable.jpg`. À cette échelle, tout Cosmicflows-4 (jusqu'à ≈ 3,3 milliards d'al) tient dans la tache centrale : c'est le message de `cosmos.html`.
+
+- **Plan supergalactique vu du dessus** : bouton du panneau, même geste que `cosmos.html` (caméra sur l'axe SGZ, SGY vers le haut, même centre et même distance).
+
+**Parité des quatre niveaux** : toutes les lignes de la matrice sont désormais ✓ ou mieux en session d'essai. Restent à trancher avant toute ouverture publique : le coût de rendu sur Iris Xe, la saturation des points CF4 (§ 3) et UNGC au niveau Vierge.
+
+Vérifications : `validate-cosmic-map-feasibility.cjs` **36/36**. Nouveaux contrôles : vue du dessus supergalactique (regard selon −SGZ, SGY vers le haut) ; option SDSS (6 → 9 bassins, légende 6 → 9, entrée « coupé ») ; niveau Univers observable (horizon tracé, CF4, notification avec la distance comobile) ; case de l'horizon ; horizon et option SDSS masqués au niveau Groupe local.

@@ -1,5 +1,5 @@
 {
- "passed": 31,
+ "passed": 36,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 131.6,
-   "frameP50": 216.7,
-   "frameP95": 333.3,
-   "frames": 25
+   "heapMB": 123.2,
+   "frameP50": 233.3,
+   "frameP95": 450,
+   "frames": 26
   },
   "carte Groupe local · couche allumée": {
    "geometries": 73,
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 10101,
-   "heapMB": 133.2,
-   "frameP50": 216.7,
-   "frameP95": 433.2,
-   "frames": 30
+   "heapMB": 136.9,
+   "frameP50": 199.9,
+   "frameP95": 383.4,
+   "frames": 31
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -42,9 +42,9 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 10197,
-   "heapMB": 134.6,
-   "frameP50": 233.3,
-   "frameP95": 433.3,
+   "heapMB": 126.6,
+   "frameP50": 249.9,
+   "frameP95": 516.7,
    "frames": 23
   },
   "doublons": {
@@ -62,10 +62,10 @@
    "triangles": 2280,
    "points": 143898,
    "lines": 10581,
-   "heapMB": 150.9,
-   "frameP50": 216.8,
-   "frameP95": 399.9,
-   "frames": 29
+   "heapMB": 144.3,
+   "frameP50": 266.6,
+   "frameP95": 466.7,
+   "frames": 22
   },
   "carte Vierge · Cosmicflows-4": {
    "geometries": 103,
@@ -75,10 +75,10 @@
    "triangles": 2280,
    "points": 198907,
    "lines": 10581,
-   "heapMB": 198,
-   "frameP50": 299.9,
-   "frameP95": 566.6,
-   "frames": 17
+   "heapMB": 189.9,
+   "frameP50": 250,
+   "frameP95": 300,
+   "frames": 29
   },
   "carte Laniakea · CF4 + bassins": {
    "geometries": 123,
@@ -88,9 +88,9 @@
    "triangles": 61588,
    "points": 198907,
    "lines": 128851,
-   "heapMB": 180.8,
-   "frameP50": 500,
-   "frameP95": 1016.6,
+   "heapMB": 211.7,
+   "frameP50": 466.6,
+   "frameP95": 849.9,
    "frames": 11
   },
   "carte toile cosmique · CF4 + bassins": {
@@ -101,10 +101,23 @@
    "triangles": 61594,
    "points": 198907,
    "lines": 129811,
-   "heapMB": 171,
-   "frameP50": 750,
-   "frameP95": 1383.3,
+   "heapMB": 172.2,
+   "frameP50": 733.3,
+   "frameP95": 1283.3,
    "frames": 7
+  },
+  "carte univers observable · horizon": {
+   "geometries": 139,
+   "textures": 43,
+   "programs": 20,
+   "calls": 70,
+   "triangles": 61580,
+   "points": 198907,
+   "lines": 130579,
+   "heapMB": 172.8,
+   "frameP50": 666.7,
+   "frameP95": 949.9,
+   "frames": 9
   }
  },
  "results": [
@@ -121,12 +134,12 @@
   {
    "name": "Panneau ouvert : ne recouvre pas le bandeau de trajet, « Échelle » reste visible",
    "ok": true,
-   "detail": "{\"open\":true,\"bottom\":362,\"hudTop\":455,\"scaleVisible\":true}"
+   "detail": "{\"open\":true,\"bottom\":434,\"hudTop\":455,\"scaleVisible\":true}"
   },
   {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533298,\"inside\":true}"
+   "detail": "{\"visible\":true,\"x\":706.0141685145658,\"y\":311.4983175533298,\"inside\":true}"
   },
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
@@ -136,7 +149,7 @@
   {
    "name": "Au moins une galaxie cataloguée visible et cliquable sur la carte",
    "ok": true,
-   "detail": "74 à l'écran · essai sur Andromeda XXVIII"
+   "detail": "70 à l'écran · essai sur Andromeda XXVIII"
   },
   {
    "name": "Clic sur la carte : la galaxie devient la cible du cockpit",
@@ -247,6 +260,31 @@
    "name": "Toile cosmique : niveau 4, étiquettes Shapley, Coma, Hercule et vide du Bouvier visibles",
    "ok": true,
    "detail": "[\"virgo-supercluster\",\"laniakea\",\"perseus-pisces\",\"coma-supercluster\",\"hercules-supercluster\",\"shapley\",\"bootes-void\"]"
+  },
+  {
+   "name": "Bassins SDSS coupés : option affichée aux niveaux 3–4, ajoute des bassins et des entrées de légende",
+   "ok": true,
+   "detail": "6 → 9 bassins, légende 6 → 9, dont « coupé »"
+  },
+  {
+   "name": "Plan supergalactique vu du dessus : caméra sur l'axe SGZ, SGY vers le haut",
+   "ok": true,
+   "detail": "{\"look\":-0.9999999999999997,\"up\":1.0000000000000004}"
+  },
+  {
+   "name": "Univers observable : horizon tracé, structures du niveau 4 et CF4, notification avec la distance comobile",
+   "ok": true,
+   "detail": "{\"level\":3,\"select\":\"4\",\"horizon\":true,\"toast\":\"Univers observable · horizon des particules à ≈ 46,5 milliards d’al en distance comobile (14,3 Gpc, ΛCDM Planck 2018) ; la lumière la plus ancienne a voyagé 13,8 milliards d’années. Aucun cata"
+  },
+  {
+   "name": "Horizon : la case le masque",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Groupe local : horizon et option SDSS masqués à cette échelle",
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "Retour « Groupe local » : niveau 1 et McConnachie 2012 selon l'échelle",

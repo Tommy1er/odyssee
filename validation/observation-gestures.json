@@ -45,7 +45,7 @@
   {
    "name": "Situer : la Carte s'ouvre centrée sur la cible",
    "ok": true,
-   "detail": "{\"map\":true,\"c\":{\"x\":640.0000000000001,\"y\":292.4999999999999,\"cx\":640,\"cy\":292.5}}"
+   "detail": "{\"map\":true,\"c\":{\"x\":639.9999999999999,\"y\":292.50000000000017,\"cx\":640,\"cy\":292.5}}"
   },
   {
    "name": "Situer : rien de physique ne change",
@@ -110,7 +110,7 @@
   {
    "name": "Optique : zoomer ne change pas l'observateur radiatif, seulement le champ de projection",
    "ok": true,
-   "detail": "tan(champ/2) 0.700 → 0.041"
+   "detail": "tan(champ/2) 0.700 → 0.064"
   },
   {
    "name": "Zoom : statut de résolution affiché près du champ",

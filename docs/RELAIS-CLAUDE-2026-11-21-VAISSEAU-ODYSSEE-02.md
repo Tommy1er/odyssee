@@ -41,12 +41,13 @@ Local (Chromium SwiftShader) :
 
 Captures : `validation/ui/vaisseau-odyssee-02-profil.jpg`, `-trois-quarts.jpg`, `-avant.jpg` (éclairage d'inspection, studio non physique, session d'essai).
 
-Non vérifié : Chrome Iris Xe ; coût de rendu du nouveau modèle sur GPU réel ; jet du moteur en poussée (non capturé).
+Moteur en poussée : `validation/ui/vaisseau-odyssee-02-poussee.jpg` (ajoutée le soir du 21 novembre). La chambre s'allume, le jet reste pâle et étroit, et les radiateurs rougeoient faiblement ; leur teinte a été assombrie après une première capture jugée trop rose.
+
+Non vérifié : Chrome Iris Xe ; coût de rendu du nouveau modèle sur GPU réel.
 
 Erreur corrigée avant le commit : un commentaire `//` placé sur une ligne minifiée désactivait l'ajout du vaisseau à la scène ; il est devenu un commentaire `/* */`, et les captures ont été refaites ensuite.
 
-## 4. À valider par le propriétaire
+## 4. Validation du propriétaire
 
-1. L'allure générale, à partir des captures ou de `cockpit.html?essai=1` → « Vaisseau 3D ».
-2. Le nom « Odyssée-02 ».
-3. L'ouverture au public, qui remplacerait Odyssée-01.
+- 21 novembre, après les captures : « c'est parfait, continue ». Allure générale et nom retenus.
+- **Reste à confirmer explicitement : l'ouverture au public**, qui remplacerait Odyssée-01 pour tous les visiteurs. Tant que ce n'est pas dit, Odyssée-02 reste en session d'essai.
