@@ -33,9 +33,22 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   let s0=await snap();check('Mars sélectionnée, simulation en pause',s0.paused===true&&await page.evaluate(()=>document.getElementById('it-dest').textContent.includes('Mars')||true),`pause=${s0.paused}`);
 
   // Fiche de sélection : les gestes du parcours sont visibles, non recouverts, sans ouvrir de tiroir.
-  const card=await page.evaluate(()=>['view-target','hud-info','hud-aim','hud-engage'].map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {id,visible:!e.hidden&&r.width>0&&r.bottom<=innerHeight,free:top===e||e.contains(top),text:e.textContent};}));
-  check('Fiche de sélection : Cadrer, Fiche, Orienter le nez et Engager visibles sans tiroir',card.every(c=>c.visible&&c.free),card.map(c=>c.text+(c.visible&&c.free?'':' ✗')).join(' · '));
-  check('Fiche de sélection : « Engager » reprend le libellé du tiroir Navigation',await page.evaluate(()=>document.getElementById('hud-engage').textContent===document.getElementById('engage').textContent));
+  const card=await page.evaluate(()=>['view-target','hud-situate','hud-info','hud-aim','hud-engage'].map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {id,visible:!e.hidden&&r.width>0&&r.bottom<=innerHeight,free:top===e||e.contains(top),text:e.textContent};}));
+  check('Fiche de sélection : Cadrer, Situer, Fiche, Orienter le nez et Préparer visibles sans tiroir',card.every(c=>c.visible&&c.free),card.map(c=>c.text+(c.visible&&c.free?'':' ✗')).join(' · '));
+  check('Fiche de sélection : « Préparer le trajet » remplace « Engager » (D13)',await page.evaluate(()=>document.getElementById('hud-engage').textContent==='Préparer le trajet'));
+  // Préparer ≠ engager : le devis n'a aucun effet physique.
+  const q0=await snap();await page.evaluate(()=>document.getElementById('hud-engage').click());await page.waitForTimeout(400);
+  const quote=await page.evaluate(()=>({open:!document.getElementById('trip-quote').hidden,title:document.getElementById('trip-quote-title').textContent,rows:Object.fromEntries([...document.querySelectorAll('#trip-quote-values dt')].map(d=>[d.textContent,d.nextElementSibling.textContent])),hyp:document.getElementById('trip-quote-assumptions').textContent,focus:document.activeElement?.id}));
+  check('Préparer : devis ouvert (distance, profil, vitesse et γ maximaux, durée, temps à bord, hypothèses)',quote.open&&quote.title==='Devis · Mars'&&['Distance à parcourir','Profil','Vitesse maximale','γ maximal','Durée (temps de référence)','Temps vécu à bord'].every(k=>quote.rows[k])&&/gravité non intégrée/.test(quote.hyp)&&quote.focus==='quote-engage',JSON.stringify(quote.rows));
+  check('Préparer : rien de physique ne change',PHYS(await snap())===PHYS(q0));
+  await page.keyboard.press('Escape');await page.waitForTimeout(300);
+  check('Échap ferme le devis sans rien engager',await page.evaluate(()=>document.getElementById('trip-quote').hidden)&&PHYS(await snap())===PHYS(q0));
+  // Situer : la Carte centrée sur la cible, sans effet physique.
+  await page.evaluate(()=>document.getElementById('hud-situate').click());await page.waitForTimeout(1500);
+  const sit=await page.evaluate(()=>({map:document.getElementById('map-view').classList.contains('active'),c:window.cosmicMapTargetScreen()}));
+  check('Situer : la Carte s\'ouvre centrée sur la cible',sit.map&&sit.c&&Math.hypot(sit.c.x-sit.c.cx,sit.c.y-sit.c.cy)<15,JSON.stringify(sit));
+  check('Situer : rien de physique ne change',PHYS(await snap())===PHYS(q0));
+  await page.evaluate(()=>document.getElementById('cockpit-view').click());await page.waitForTimeout(800);
   const tag=await page.evaluate(()=>{const m=document.querySelector('#target-marker span').getBoundingClientRect(),t=document.getElementById('immersive-telemetry').getBoundingClientRect(),h=document.getElementById('navigation-hud').getBoundingClientRect(),hit=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;return {off:document.getElementById('target-marker').classList.contains('offscreen'),telemetry:hit(m,t),hud:hit(m,h)};});
   check('Étiquette de la cible : ne passe ni sous la télémétrie ni sous la fiche',!tag.telemetry&&!tag.hud,JSON.stringify(tag));
   // Cadrer : la caméra seule.
@@ -128,7 +141,7 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   check('Vitesse de lecture modifiable depuis la pastille Temps',await page.evaluate(()=>document.getElementById('time-rate').selectedIndex===1));
   // Automatisme actif (pilote automatique de la session d'essai) : le bouton apparaît, puis disparaît une fois les commandes reprises.
   await page.evaluate(()=>{const s=document.getElementById('destination-search');s.value='Mars';s.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-id="solar:Mars"]').click();});
-  await page.evaluate(()=>document.getElementById('hud-engage').click());
+  await page.evaluate(()=>document.getElementById('hud-engage').click());await page.waitForTimeout(300);await page.evaluate(()=>document.getElementById('quote-engage').click());
   await page.waitForFunction(()=>getComputedStyle(document.getElementById('take-control')).display!=='none',{},{timeout:30000}).catch(()=>{});
   check('Pilote automatique engagé : « Reprendre les commandes » apparaît',await page.evaluate(()=>getComputedStyle(document.getElementById('take-control')).display!=='none'));
   await page.evaluate(()=>document.getElementById('take-control').click());
@@ -140,6 +153,9 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   check('Retour en Classique : cinq groupes et positions d\'origine',back.groups===5&&!back.homeIn&&back.rateIn&&back.take!=='none',JSON.stringify(back));
   await page.evaluate(()=>document.getElementById('ui-mode-toggle').click());await page.waitForTimeout(400);
   check('Puis Immersive : rangée A rétablie',await page.evaluate(()=>document.getElementById('mission-actions').contains(document.getElementById('home'))&&document.getElementById('pause').nextElementSibling?.id==='time-rate'));
+  // Vaisseau Odyssée-02 (conception fictive d'après la physique) : session d'essai seulement.
+  const ship=await page.evaluate(()=>({name:window.flightSnapshot().shipName,credit:document.getElementById('ship-credit').textContent}));
+  check('Essai : vaisseau Odyssée-02, signalé comme conception fictive',ship.name==='Odyssée-02',JSON.stringify(ship));
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));
   await page.close();
 

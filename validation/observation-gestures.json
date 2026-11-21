@@ -1,5 +1,5 @@
 {
- "passed": 50,
+ "passed": 56,
  "failed": 0,
  "results": [
   {
@@ -18,12 +18,37 @@
    "detail": "pause=true"
   },
   {
-   "name": "Fiche de sélection : Cadrer, Fiche, Orienter le nez et Engager visibles sans tiroir",
+   "name": "Fiche de sélection : Cadrer, Situer, Fiche, Orienter le nez et Préparer visibles sans tiroir",
    "ok": true,
-   "detail": "Cadrer (regard seul) · Fiche · Orienter le nez · Engager le trajet"
+   "detail": "Cadrer (regard seul) · Situer · Fiche · Orienter le nez · Préparer le trajet"
   },
   {
-   "name": "Fiche de sélection : « Engager » reprend le libellé du tiroir Navigation",
+   "name": "Fiche de sélection : « Préparer le trajet » remplace « Engager » (D13)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Préparer : devis ouvert (distance, profil, vitesse et γ maximaux, durée, temps à bord, hypothèses)",
+   "ok": true,
+   "detail": "{\"Distance à parcourir\":\"1,962 ua\",\"Freinage préalable\":\"44,5 km/s à annuler par rapport à Mars, en 4 534 s à 1 g\",\"Profil\":\"1 g d’accélération puis 1 g de freinage, 2 j chacun\",\"Vitesse maximale\":\"0,0057 c\",\"γ maximal\":\"1,000016\",\"Durée (temps de référence)\":\"4,1 j\",\"Temps vécu à bord\":\"4,1 j\"}"
+  },
+  {
+   "name": "Préparer : rien de physique ne change",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Échap ferme le devis sans rien engager",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Situer : la Carte s'ouvre centrée sur la cible",
+   "ok": true,
+   "detail": "{\"map\":true,\"c\":{\"x\":640.0000000000001,\"y\":292.4999999999999,\"cx\":640,\"cy\":292.5}}"
+  },
+  {
+   "name": "Situer : rien de physique ne change",
    "ok": true,
    "detail": ""
   },
@@ -226,6 +251,11 @@
    "name": "Puis Immersive : rangée A rétablie",
    "ok": true,
    "detail": ""
+  },
+  {
+   "name": "Essai : vaisseau Odyssée-02, signalé comme conception fictive",
+   "ok": true,
+   "detail": "{\"name\":\"Odyssée-02\",\"credit\":\"Odyssée-02 · aucune source stellaire connue : coque dans l’ombre\"}"
   },
   {
    "name": "Aucune erreur de page",

@@ -194,7 +194,7 @@
      1280,
      585
     ],
-    "unoccludedPercent": 69.9,
+    "unoccludedPercent": 69.6,
     "method": "union de rectangles, grille 4 px"
    },
    "smallText": 0
@@ -209,7 +209,7 @@
      1280,
      585
     ],
-    "unoccludedPercent": 59.7,
+    "unoccludedPercent": 59.3,
     "method": "union de rectangles, grille 4 px"
    },
    "smallText": 0

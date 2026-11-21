@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 122.5,
-   "frameP50": 200,
-   "frameP95": 400,
-   "frames": 28
+   "heapMB": 131.6,
+   "frameP50": 216.7,
+   "frameP95": 333.3,
+   "frames": 25
   },
   "carte Groupe local · couche allumée": {
    "geometries": 73,
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 10101,
-   "heapMB": 138.8,
-   "frameP50": 200,
-   "frameP95": 366.6,
-   "frames": 29
+   "heapMB": 133.2,
+   "frameP50": 216.7,
+   "frameP95": 433.2,
+   "frames": 30
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 10197,
-   "heapMB": 124.9,
-   "frameP50": 200,
-   "frameP95": 383.4,
-   "frames": 31
+   "heapMB": 134.6,
+   "frameP50": 233.3,
+   "frameP95": 433.3,
+   "frames": 23
   },
   "doublons": {
    "pairs": 96,
@@ -62,10 +62,10 @@
    "triangles": 2280,
    "points": 143898,
    "lines": 10581,
-   "heapMB": 128.5,
-   "frameP50": 200,
-   "frameP95": 416.6,
-   "frames": 30
+   "heapMB": 150.9,
+   "frameP50": 216.8,
+   "frameP95": 399.9,
+   "frames": 29
   },
   "carte Vierge · Cosmicflows-4": {
    "geometries": 103,
@@ -75,10 +75,10 @@
    "triangles": 2280,
    "points": 198907,
    "lines": 10581,
-   "heapMB": 194,
-   "frameP50": 283.3,
-   "frameP95": 450,
-   "frames": 21
+   "heapMB": 198,
+   "frameP50": 299.9,
+   "frameP95": 566.6,
+   "frames": 17
   },
   "carte Laniakea · CF4 + bassins": {
    "geometries": 123,
@@ -88,10 +88,10 @@
    "triangles": 61588,
    "points": 198907,
    "lines": 128851,
-   "heapMB": 182.7,
-   "frameP50": 583.3,
-   "frameP95": 666.6,
-   "frames": 12
+   "heapMB": 180.8,
+   "frameP50": 500,
+   "frameP95": 1016.6,
+   "frames": 11
   },
   "carte toile cosmique · CF4 + bassins": {
    "geometries": 135,
@@ -101,9 +101,9 @@
    "triangles": 61594,
    "points": 198907,
    "lines": 129811,
-   "heapMB": 170.3,
-   "frameP50": 683.3,
-   "frameP95": 1150,
+   "heapMB": 171,
+   "frameP50": 750,
+   "frameP95": 1383.3,
    "frames": 7
   }
  },
@@ -126,7 +126,7 @@
   {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533296,\"inside\":true}"
+   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533298,\"inside\":true}"
   },
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
