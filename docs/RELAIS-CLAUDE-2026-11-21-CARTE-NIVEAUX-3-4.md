@@ -54,4 +54,6 @@ Local (Chromium SwiftShader, Playwright préinstallé) :
 - Non-régression, réussis (code 0) : `validate-observation-gestures.cjs`, `validate-feature-inventory.cjs`, `validate-search-and-map-errors.cjs`, `validate-galaxy-ui.cjs`, `validate-rendezvous-ui.cjs`, `validate-cockpit-layout-ui.cjs`, `validate-cosmos-context-ui.cjs`, `validate-physics-mobile.cjs`, `validate-mission-storage.mjs`.
 - Parcours cockpit complet : verdict sur la CI.
 
+CI GitHub sur `1d71601` : « Reproducible validation from npm ci », relancé à la main (https://github.com/Tommy1er/odyssee/actions/runs/44894495106) et déclenché par le push (run 44894494705) : les 9 jobs réussis dans les deux exécutions. Quatre autres workflows réussis ; « Galaxy spectra build and verification » encore en cours au moment du relevé.
+
 Non vérifié : Chrome Iris Xe (publication nécessaire).
