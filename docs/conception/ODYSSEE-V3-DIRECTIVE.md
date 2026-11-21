@@ -238,13 +238,13 @@ Ne pas travailler simultanément sur les mêmes fichiers. Pas de force push. Pas
 
 #### Ce qui est déjà en place — à préserver et à auditer avant toute implémentation
 
-La lecture de \`main\` à cette date fait apparaître des fondations réelles ; **ne pas présenter ce besoin comme si Odyssée n'avait aucune dynamique** :
+La lecture de `main` à cette date fait apparaître des fondations réelles ; **ne pas présenter ce besoin comme si Odyssée n'avait aucune dynamique** :
 
-- \`src/ephemeris.js\` + \`src/solar-ephemeris.js\` : positions évolutives des planètes du Système solaire (éléments approchés JPL/Standish), de la Lune (théorie lunaire simplifiée), et orbites animées mais **phases illustratives** d'autres satellites et des exoplanètes ; calcul de positions à l'époque de mission et, selon le réglage, de lumière retardée.
-- \`src/iau-rotation.js\` et la représentation des corps proches : paramètres de rotation/orientation des principaux corps d'après l'IAU (avec simplifications documentées). Vérifier par essai visuel ce qui tourne effectivement, dans quelles vues et selon quelle horloge.
-- \`src/comets.js\` : orbites osculatrices JPL propagées par un modèle képlérien à deux corps ; précision dépendant de l'éloignement de l'époque de référence.
-- \`src/cosmic-motion.js\` : vitesses radiales cataloguées et mouvements particuliers parfois reconstruits, avec approximation cinématique de premier ordre ; **ce n'est ni une simulation N-corps de galaxies ni une évolution FLRW complète des formes**.
-- Le cockpit possède un **temps de mission** (\`t\`), un **temps propre** (\`tau\`), une commande de pause/vitesse de lecture et une animation de surfaces (\`animateBodies\`, \`observationTime\`) qui peut progresser indépendamment des horloges de mission. Cette dernière distinction doit être explicite et testée.
+- `src/ephemeris.js` + `src/solar-ephemeris.js` : positions évolutives des planètes du Système solaire (éléments approchés JPL/Standish), de la Lune (théorie lunaire simplifiée), et orbites animées mais **phases illustratives** d'autres satellites et des exoplanètes ; calcul de positions à l'époque de mission et, selon le réglage, de lumière retardée.
+- `src/iau-rotation.js` et la représentation des corps proches : paramètres de rotation/orientation des principaux corps d'après l'IAU (avec simplifications documentées). Vérifier par essai visuel ce qui tourne effectivement, dans quelles vues et selon quelle horloge.
+- `src/comets.js` : orbites osculatrices JPL propagées par un modèle képlérien à deux corps ; précision dépendant de l'éloignement de l'époque de référence.
+- `src/cosmic-motion.js` : vitesses radiales cataloguées et mouvements particuliers parfois reconstruits, avec approximation cinématique de premier ordre ; **ce n'est ni une simulation N-corps de galaxies ni une évolution FLRW complète des formes**.
+- Le cockpit possède un **temps de mission** (`t`), un **temps propre** (`tau`), une commande de pause/vitesse de lecture et une animation de surfaces (`animateBodies`, `observationTime`) qui peut progresser indépendamment des horloges de mission. Cette dernière distinction doit être explicite et testée.
 
 **Risque UX actuel à investiguer :** un voyage ou une visite en pause, une échelle de temps réelle trop lente, une caméra immobile ou une Carte ne montrant pas les mêmes mouvements peuvent faire croire à tort que tout l'Univers est figé. Ce risque est une **hypothèse à tester**, pas la preuve que les trajectoires calculées n'existent pas.
 
@@ -267,6 +267,42 @@ La lecture de \`main\` à cette date fait apparaître des fondations réelles ; 
 - **Proposition de séquencement** par Claude, chiffrée après audit : commencer par rendre perceptibles et compréhensibles les mouvements déjà calculés ; ajouter ensuite les phénomènes et interfaces manquants, sans promettre une simulation intégrale de l'évolution astrophysique.
 
 **Critère de réussite produit :** le joueur peut regarder un système, changer d'échelle temporelle et **voir les astres évoluer de manière cohérente avec les connaissances et modèles déclarés**, sans que les éléments inconnus soient maquillés en certitudes. *Univers vivant* ne veut dire ni décor immobile, ni mouvement fabriqué pour faire joli.
+
+---
+
+#### Complément : activité observable lors de l'approche d'un astre (précision du propriétaire, 21/11/2026)
+
+Le propriétaire précise l'exigence « Univers vivant » : **plus le vaisseau s'approche d'un objet, plus il doit pouvoir découvrir les phénomènes dynamiques propres à cet objet**, lorsqu'ils sont justifiés par les données ou un modèle déclaré. Ne pas limiter le mouvement à l'avancée d'un point sur la Carte ou à une texture animée sans relation avec la physique. Cela concerne aussi le vol libre, pas seulement les visites guidées.
+
+**Attention au domaine de Kepler.** Les lois de Kepler (et leur formulation newtonienne à deux corps) sont adaptées à des orbites dominées par une masse centrale, parfois avec éléments osculateurs et perturbations ; elles ne résolvent ni la structure magnétique d'une étoile, ni les jets d'une comète, ni une galaxie autopotentielle à des milliers de milliards d'objets, ni la cosmologie relativiste. Choisir un modèle spécifique à chaque phénomène et afficher son degré de fidélité.
+
+| Approche dans Odyssée | Mouvement et activité à rendre observables | Calculs et limites à examiner |
+|---|---|---|
+| Planète ou lune | Révolution autour du parent, rotation propre, éclairage changeant, phases, ombres et éclipses ; éventuellement nuages ou atmosphère en évolution | Éphémérides/Kepler, rotations IAU, géométrie de l'éclairage ; nuages et météorologie réels indisponibles pour beaucoup d'objets → illustrative ou absente |
+| Comète (ex. 67P, Halley) | Translation réelle par rapport au vaisseau et au Soleil, noyau en rotation quand la période est connue, chevelure, jets de sublimation, queues de poussière et de plasma qui évoluent selon l'ensoleillement ; activité souvent accrue près du Soleil | Orbite JPL osculatrice + perturbations et dégazage à considérer ; débit, orientation des jets et géométrie du noyau pas nécessairement mesurés pour chaque comète. La **queue ionique** dépend du vent solaire et pointe globalement dans le sens antisolaire ; la **queue de poussière** suit des particules soumises à la gravité et à la pression radiative et peut être courbe. **Ne pas dessiner systématiquement la queue derrière la direction du mouvement.** |
+| Étoile (Soleil comme référence) | Rotation, granulation/convection visible à courte distance, zones actives/taches, protubérances et éruptions éventuelles, corona et vent stellaire selon le type | Physique du plasma et des champs magnétiques ; utiliser observations solaires calibrées comme référence, et des procéduraux explicitement **illustratifs** pour les autres étoiles faute de données temporelles. Une étoile ne doit pas nécessairement produire de grandes éruptions permanentes |
+| Pulsar / trou noir | Rotation et balayage des faisceaux pour pulsars, évolution d'un disque d'accrétion ou de jets *si présents*, orbites proches et effets relativistes | Relativité, MHD et transfert radiatif ; ne pas imposer disque, jets ni matière tombante à tout trou noir. L'horizon lui-même n'est pas une surface lumineuse animée |
+| Galaxie ou amas | Mouvement d'étoiles et de gaz à l'intérieur des galaxies, rotation différentielle quand documentée, déplacements relatifs des galaxies, interactions et collisions sur de très longues durées ; évolution possible des bras ou du milieu interstellaire | Potentiel gravitationnel étendu, calculs N corps/hydrodynamiques ou données de simulations validées. **Ne pas faire tourner une image entière de galaxie comme un disque rigide**, et ne pas déformer les structures par une animation décorative. L'évolution morphologique n'est pas calculée par l'actuel modèle de translation des galaxies |
+| Nébuleuse et gaz | Structures fines, écoulements et fronts de choc quand un modèle ou une observation le permet ; jets et régions d'ionisation selon les cas | Dynamique des fluides/plasma et évolution radiative ; beaucoup de changements ont des échelles très longues. Une animation accélérée doit être qualifiée de reconstruction/simulation illustrative selon les preuves |
+
+**Comportement attendu en visite :**
+
+1. **À grande distance**, le monde conserve des mouvements cohérents avec le temps de mission et les observations retardées, sans surcharge graphique.
+2. **À l'approche**, augmenter progressivement le niveau de détail pertinent : noyau, rotation, structures et émissions quand le modèle le permet ; éviter le surgissement artificiel de détails non observés.
+3. **À proximité**, montrer une activité locale distincte de la translation de l'objet. Pour le Soleil : une surface magnétique active ; pour une comète : coma et jets ; pour un système Terre–Lune : phases, orbites et rotation.
+4. **À différentes vitesses temporelles**, rendre un mouvement lent perceptible en accélérant *l'échelle de temps explicitement affichée*. Offrir une prévisualisation non destructive lorsque le joueur veut examiner une évolution sans modifier sa mission ; indiquer les validités limitées des éphémérides et des modèles.
+5. **En mode science**, permettre de distinguer « observation mesurée/rejouée », « résultat de simulation physique », « reconstruction » et « animation illustrative », avec la source, l'époque et les paramètres majeurs. Le rendu spectaculaire ne doit jamais masquer les incertitudes.
+
+**Critères d'acceptation à soumettre au Head et à Codex :**
+- Une **comète témoin** : survol en vol libre ; position et vitesse relatives correctes ; activité variant avec distance au Soleil, deux queues physiquement distinguées si elles sont affichées, rotation uniquement si les données ou hypothèses sont exposées ; captures à deux dates ou distances.
+- Une **étoile témoin** : le Soleil, avec une activité locale crédible, cycles/échelles temporelles signalés ; une autre étoile montre les limites des données connues, sans fausse précision.
+- Un **système témoin** : Soleil–Terre–Lune ou Jupiter–Io, dont les positions, la révolution, la rotation et l'éclairage évoluent ensemble avec le temps choisi.
+- Une **galaxie témoin** : différencier translation cataloguée/modélisée et rotation interne ou déformation **non calculées** ; ne représenter ces dernières que sur une base scientifique indiquée.
+- Pour chaque parcours : vérification de la continuité mission/horloges, sources et limites, comparaison avant/après sur Iris Xe et absence de régression physique.
+
+**Ordre de travail proposé, non imposé :** inventorier ce que le rendu proche affiche vraiment aujourd'hui ; démontrer les mouvements **déjà calculés mais peu perceptibles**, puis prototyper une activité locale crédible sur la comète et le Soleil avant d'étendre aux galaxies/nébuleuses. Le Head conserve son autorité de conception et peut proposer une meilleure séquence. Aucun changement du code de production ni publication n'est autorisé par ce complément documentaire.
+
+**Repères scientifiques à consulter :** [JPL — positions planétaires approchées](https://ssd.jpl.nasa.gov/planets/approx_pos.html) ; [NASA — fonctionnement d'une comète et de ses queues](https://science.nasa.gov/learn/basics-of-space-flight/chapter1-3/) ; [NASA — physique et activité solaire](https://science.nasa.gov/heliophysics/focus-areas/solar-science/).
 
 ---
 
