@@ -43,6 +43,8 @@ Dans la conversation Codex de l'éditeur, j'ai par mégarde fait passer le nivea
 
 - **« Préparer le trajet » et « Situer »** (essai immersif) : `docs/RELAIS-CLAUDE-2026-11-21-PREPARER-SITUER.md`. Préparer ouvre un devis et n'engage plus directement.
 - **Vaisseau Odyssée-02** (session d'essai), demandé par le propriétaire : `docs/RELAIS-CLAUDE-2026-11-21-VAISSEAU-ODYSSEE-02.md`. **Pour ChatGPT** : relire les justifications physiques et les deux références (Semyonov arXiv:2004.10079 ; Frisbee 2003, NASA NTRS 20060043411). **Pour Codex** : ne pas l'ouvrir au public avant la validation du propriétaire.
+- **Carte : parité des quatre niveaux complète en essai** (Univers observable et horizon, bassins SDSS, plan supergalactique du dessus) : § 7 de `docs/RELAIS-CLAUDE-2026-11-21-CARTE-NIVEAUX-3-4.md`. Restent à trancher : coût Iris Xe, saturation CF4, UNGC au niveau Vierge.
+- **Odyssée-02** : allure validée par le propriétaire (« c'est parfait »). L'ouverture au public n'est pas encore décidée.
 
 ## 4. Ce que Claude fait ensuite
 
