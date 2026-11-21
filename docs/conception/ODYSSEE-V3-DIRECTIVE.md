@@ -306,6 +306,78 @@ Le propriétaire précise l'exigence « Univers vivant » : **plus le vaisseau s
 
 ---
 
+#### Complément : objets compacts, voisinage des trous noirs et dynamique des grandes structures (précision du propriétaire, 21/11/2026)
+
+**Vision produit supplémentaire.** Le réalisme de l'Univers vivant doit couvrir **quasars, pulsars, magnétars, étoiles à neutrons, trous noirs et objets soumis à leur gravité**, puis **galaxies, amas, superamas, Grand Attracteur et écoulements cosmiques**. En s'approchant d'une source compacte ou en explorant une région dense, le joueur doit percevoir les **phénomènes qu'elle produit dans son environnement**, et pas seulement le mouvement ou la texture de l'objet central. À très grande échelle, il doit pouvoir étudier une dynamique gravitationnelle reconstituée sans confondre visualisation d'un champ et évolution réelle suivie pendant des milliards d'années.
+
+**Nature : exigence de conception et d'étude, à coordonner par Claude (Head) et Codex ; pas une demande de simulation intégrale immédiate, ni un GO de déploiement.** Le modèle scientifique, ses limites, le coût sur Iris Xe, la provenance et les exemples-test doivent être explicités avant implémentation.
+
+##### 1. Objets compacts et noyaux actifs : que doit-on pouvoir observer ?
+
+| Famille | Activités/effets à représenter à proximité | Discipline scientifique |
+|---|---|---|
+| **Pulsar** (sous-ensemble d'étoiles à neutrons) | Rotation, cônes d'émission balayant l'espace, pulsations détectées lorsque le faisceau intersecte l'observateur, éventuelle nébuleuse de vent de pulsar et dynamique du système binaire | Période et orientation si connues ; la visibilité est **directionnelle et dépend de la bande spectrale**. Une image en lumière visible ne doit pas forcément clignoter. Géométrie magnétique inconnue → reconstruction illustrative |
+| **Magnétar** (autre classe d'étoiles à neutrons, certains pulsent) | Rotation, champ magnétique représenté en couche pédagogique, points chauds, rayonnement X/gamma et éruptions possibles ; environnement de particules | Ne pas afficher en permanence des sursauts spectaculaires. Chronologie réelle si observations disponibles ; sinon événements **simulés et signalés comme hypothétiques**. Les lignes de champ tracées sont une visualisation, pas des filaments lumineux vus à l'œil nu |
+| **Étoile à neutrons non classée pulsar/magnétar** | Rotation si connue, émission thermique, accrétion et points chauds seulement si l'environnement (notamment compagnon) le justifie | Les familles se recoupent mais ne sont pas synonymes ; ne pas attribuer automatiquement les propriétés d'un magnétar à toute étoile à neutrons |
+| **Quasar / noyau actif (AGN)** | Milieu entourant un trou noir supermassif **alimenté** : disque ou flot d'accrétion, plasma chaud, variations lumineuses selon la bande, poussière et vents, parfois jets relativistes et lobes étendus | Un quasar est un **noyau galactique actif**, pas un type distinct de trou noir. Jets non universels ; variabilité et dimensions imposent des échelles de temps propres. Ne pas rendre visible par défaut un rayonnement X/radio |
+| **Trou noir dormant ou actif** | Lentille gravitationnelle sur le ciel de fond, ombre apparente si conditions de rendu et résolution adaptées, effets du champ gravitationnel sur les trajectoires ; **disque/jets seulement si accrétion observée ou modèle explicite** | L'**horizon des événements** est une frontière causale, **pas une surface matérielle qui rayonne ou tourne visiblement**. Distinguer horizon, sphère de photons, orbites stables/instables, ombre et éventuel disque d'accrétion |
+
+**Attention :** les faisceaux, surfaces, lignes magnétiques, gaz, jets et luminosités montrés à l'écran appartiennent à des bandes d'observation distinctes ; leur rendu visible nécessite un instrument, une palette ou un codage indiquant ce qui serait réellement visible à l'œil.
+
+##### 2. Le trou noir doit aussi influencer les objets autour de lui
+
+C'est **un critère majeur formulé par le propriétaire**. Approcher une étoile, une planète, un disque de matière ou le vaisseau près d'un trou noir doit, lorsque le modèle le permet, révéler des effets sur **ces objets** :
+
+1. **Orbites modifiées** : trajectoire liée, déviation, accélération au périastre, précession relativiste et éventuellement entraînement des référentiels pour un modèle de trou noir en rotation (Kerr). Le niveau Kepler/newtonien est une base pour les régions faibles ; **la seule ellipse de Kepler ne suffit pas dans le régime de champ fort**. Le cas observé de l'étoile **S2 autour de Sagittarius A\*** est une référence pour la précession de Schwarzschild, distincte d'un test de destruction.
+2. **Effets de marée** : gradients de gravité, déformation, chauffage ou dislocation uniquement lorsque les propriétés du corps, la distance, la masse centrale et un modèle de résistance permettent de le conclure. Ne pas supposer qu'un corps est détruit dès qu'il franchit un seuil de proximité visuel ; la frontière de Roche et le rayon de disruption dépendent des hypothèses, et le comportement diffère fortement entre trous noirs stellaires et supermassifs.
+3. **Rayonnement et matière environnante** : chauffage/ionisation/ablation ou interaction de vents et jets avec un corps voisin **si** un disque actif, une source de rayonnement et la géométrie/résistance pertinentes sont définis. Sinon, ne pas inventer d'érosion, de feu ou de dislocation.
+4. **Optique et temps** : lentille du fond et des objets voisins, images multiples/arcs selon la résolution, décalage gravitationnel des fréquences, dilatation temporelle et délai de propagation du signal pour les observateurs concernés. La position du corps, son image reçue et son aspect apparent peuvent différer : **ne pas déplacer physiquement l'objet pour reproduire un simple effet optique**.
+5. **Systèmes multiples** : interactions et transfert de matière dans un système binaire actif peuvent être étudiés progressivement ; éviter de promettre une hydrodynamique N-corps/GRMHD temps réel sur Iris Xe.
+
+**Cas de validation prioritaires** :
+- **Sagittarius A\* + S2** : comparer orbite/précession aux mesures de l'ESO ; distinguer observation mesurée, trajectoire calculée et échelle de temps accélérée. Le modèle doit aussi expliquer pourquoi S2 survit à son passage rapproché.
+- **Trou noir dormant** (ex. Gaia BH1) : pas de disque lumineux inventé ; effets gravitationnels et optiques mesurables selon géométrie et précision.
+- **Trou noir actif** (ex. M87\*) : image/rayonnement dépendant de la bande et de la géométrie du plasma, sans faire passer l'ombre EHT pour un horizon directement photographié.
+- **Scénario extrême hypothétique, séparé des objets catalogués** : planète/étoile à plusieurs distances d'un trou noir, pour éprouver en laboratoire précession, marées et domaine de validité ; toute déformation matérielle visualisée doit être marquée « simulation / reconstruction ».
+
+##### 3. Galaxies, amas, Grand Attracteur : voir les mouvements collectifs
+
+- **Galaxie isolée / spirale** : rotation **différentielle** des étoiles et du gaz autour d'un potentiel galactique étendu, si courbe de rotation et modèle de distribution de masse disponibles. Les bras spiraux ne forment pas un disque rigide tournant d'un seul bloc ; morphologie évolutive et rencontre galactique nécessitent un modèle distinct.
+- **Interactions et collisions** : orbites mutuelles, forces de marée, queues de marée, redistribution du gaz et formation stellaire possibles. Pour Andromède et la Voie lactée, ne pas imposer une collision inévitable à une date précise si les paramètres observationnels et incertitudes ne le justifient pas. Préférer des scénarios paramétrés validés ou des simulations scientifiques identifiées.
+- **Amas de galaxies** : vitesses des membres et dispersion, gaz intra-amas chaud (surtout en rayons X), chocs et interaction de pression dynamique quand justifiée ; lentille gravitationnelle de la **masse collective** si un modèle de potentiel est disponible.
+- **Superamas, Laniakea, Grand Attracteur, Shapley, toile cosmique** : visualiser les **vecteurs de vitesse particulière** et les **lignes de courant reconstruites** (ex. Cosmicflows-4), leurs bassins, incertitudes et référentiels. Le « Grand Attracteur » n'est **ni un astre unique ni un trou noir géant aspirant toutes les galaxies** : il renvoie à une région de surdensité/une structure du champ gravitationnel et cinématique, dont la définition et les contours dépendent des données et de la reconstruction.
+- **Ne pas confondre champ à une époque et film de l'avenir** : les lignes de courant CF4 actuelles sont calculées dans un **champ reconstruit à l'époque de référence** ; elles ne constituent pas des trajectoires de galaxies vérifiées sur des milliards d'années. Pour faire évoluer les structures dans le temps, adopter un modèle cosmologique/N-corps identifié, avec domaine de validité et démonstration distincte.
+- **Structures liées et expansion** : distinguer déplacements gravitationnels locaux, composante d'expansion cosmologique et évolution des objets liés. Le modèle `src/cosmic-motion.js` ne doit pas être extrapolé sans contrôle aux grandes époques ou aux transformations de morphologie.
+
+##### 4. Ce qui est déjà présent dans le code — ne pas réinventer ni sur-vendre
+
+Lecture de `main` au 21/11/2026 :
+- `src/compact-objects.js` : catégories de flux d'accrétion **absent / disque mince / RIAF**, avec exemples et limites explicites ; une partie des phénomènes optiques est déjà dans les shaders de `src/black-hole.js` et `src/sky-optics.js`. **Ne prouve pas** une dynamique de toutes les étoiles et planètes du voisinage.
+- `src/gravity-field.js` : intégration relativiste du vaisseau, avec métrique Schwarzschild exacte pour **une source isolée**, composition approximative multi-sources et régime quasi statique ; **pas** une solution GR complète N-corps et **pas** automatiquement une évolution du catalogue de corps voisins.
+- `src/gravity.js` : expérience radiale Schwarzschild simplifiée, lecture d'effets d'horloge/marée ; distincte de la visualisation d'une rupture matérielle réelle.
+- `src/cf4-basins.js` : bassins, vitesses particulières et lignes de courant **reconstruits** de CF4 ; le fichier précise déjà que ces lignes ne sont pas des trajectoires temporelles sur des milliards d'années.
+- `src/renderer.js` : certaines représentations de pulsars et jets existent, mais leurs mouvements et leur lien aux propriétés physiques de chaque objet doivent être **audités visuellement et numériquement**. L'absence d'un modèle de magnétar ou de quasar actif ne doit pas être cachée derrière un effet générique.
+
+##### 5. Définition d'acceptation et ordre de preuve
+
+**Mandat d'audit puis de conception**, à proposer par le Head et Codex :
+1. Établir une **matrice objet × phénomène × moteur × bande spectrale × horloge × niveau de preuve** : pulsar, magnétar, étoile à neutrons, quasar, trou noir dormant/actif, compagnon de trou noir, étoile/planète voisine, galaxie, amas, bassin/attracteur. Pour chaque effet : *mesuré / calculé / reconstruit / illustratif / absent*, et en préciser la source, la période/échelle de temps et la présence dans la version publique vs essai.
+2. Livrer un **petit démonstrateur scientifique avant une refonte générale**, avec trois volets : (a) pulsar et émission anisotrope à période vérifiable ; (b) Sgr A\*–S2 (orbite et précession) et un scénario séparé de marées près d'un trou noir ; (c) carte CF4 avec champ vectoriel **à époque fixe**, et *aucune* fausse migration temporelle des galaxies.
+3. Ajouter ensuite un scénario quasar/AGN et un magnétar, puis l'animation collective des galaxies/amas **seulement** si les données ou équations sont suffisantes. Pour l'AGN, l'accrétion, la variabilité, les jets et les fréquences doivent rester conditionnels, jamais des décorations universelles.
+4. Tests : continuité physique des positions et des horloges, trajectoires et précession de référence, conservation lorsque le modèle l'exige, seuils de marées avec hypothèses, rayons et géométrie d'ombre clairement distingués, pulsations selon l'orientation, échelle temporelle et filtres spectraux, performance p50/p95 et mémoire sur **Iris Xe réel**.
+5. **Intégration progressive, réversible, sur session d'essai**, sans toucher aux missions personnelles ni à la publication publique, tant que les scénarios, sources et performances ne sont pas validés.
+
+**Question de conception à trancher avec le propriétaire uniquement quand les options sont démontrées :** quelle part de l'activité astrophysique doit être un modèle causal réellement calculé, et quelle part peut être une **visualisation pédagogique explicitement illustrative** lorsqu'aucune observation temporelle ne permet une reconstitution unique ?
+
+**Références de départ** :
+- [NASA — anatomie et optique des trous noirs](https://science.nasa.gov/universe/black-holes/anatomy/), [NASA — effets des marées près d'un trou noir](https://science.nasa.gov/universe/what-happens-when-something-gets-too-close-to-a-black-hole/).
+- [ESO — mesure de la précession de S2](https://eso.org/public/france/news/eso2006/).
+- [NASA — pulsars](https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-pulsars/), [NASA — étoiles à neutrons et magnétars](https://science.nasa.gov/universe/stars/types/).
+- [NASA Webb — noyaux actifs et quasars](https://science.nasa.gov/mission/webb/science-overview/science-explainers/what-are-active-galactic-nuclei/).
+- [Cosmicflows-4 — champs de densité et de vitesse](https://doi.org/10.1051/0004-6361/202245331) ; [Nature Astronomy — bassins d'attraction](https://www.nature.com/articles/s41550-024-02370-0).
+
+---
+
 ### Critère final de réussite
 
 Je veux pouvoir quitter la Terre dans Odyssée-01, naviguer entre les galaxies, m'approcher de M87, explorer l'amas de la Vierge, prendre de la hauteur sur la toile cosmique et distinguer à chaque instant :
