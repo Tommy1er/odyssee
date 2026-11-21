@@ -65,7 +65,7 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
    check('Clic sur une galaxie (catalogue « Les deux ») : elle devient la cible',(await page.evaluate(()=>window.flightSnapshot().target))===pu.cockpitId,`${pu.name} (${pu.key}) → ${pu.cockpitId}`);}
   // Niveau 2 de cosmos.html : « Voisinage de la Vierge » (150 millions d'al), catalogue selon l'échelle (UNGC 2013).
   await page.evaluate(()=>{const s=document.getElementById('map-cosmic-catalogue');s.value='auto';s.dispatchEvent(new Event('change'));});
-  await page.evaluate(()=>document.getElementById('map-virgo').click());
+  await page.evaluate(()=>{const s=document.getElementById('map-cosmic-level');s.value='1';s.dispatchEvent(new Event('change'));});
   await page.waitForFunction(()=>window.cosmicMapLayer.status==='ready'&&window.cosmicMapLayer.level===1,{},{timeout:120000}).catch(()=>{});await page.waitForTimeout(2000);
   const vir=await page.evaluate(()=>({level:window.cosmicMapLayer.level,focus:window.cosmicMapLayer.focus,cats:[...window.cosmicMapLayer.catalogues],rows:window.cosmicMapLayer.rows.length,labels:window.cosmicMapLabels(),note:document.getElementById('map-cosmic-note').textContent}));
   check('Vierge : niveau 2 actif, catalogue selon l\'échelle = UNGC 2013',vir.level===1&&vir.focus==='virgo-supercluster'&&vir.cats.join()==='ungc'&&vir.rows>800,`${vir.rows} galaxies · « ${vir.note} »`);
@@ -88,6 +88,23 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   if(pc){await page.mouse.move(pc.x,pc.y);await page.mouse.down();await page.mouse.up();await page.waitForTimeout(1000);
    check('Vierge : clic sur une galaxie CF4 → destination du cockpit créée et ciblée',(await page.evaluate(()=>window.flightSnapshot().target))===pc.cockpitId,`${pc.name} → ${pc.cockpitId}`);}
   await page.evaluate(()=>{const s=document.getElementById('map-cosmic-catalogue');s.value='auto';s.dispatchEvent(new Event('change'));});
+  // Niveaux 3 et 4 de cosmos.html : Laniakea et voisins (650 millions d'al), Superamas et grands vides (1,8 milliard d'al) ; CF4 selon l'échelle ; bassins CF4 2023.
+  const level=async i=>{await page.evaluate(i=>{const s=document.getElementById('map-cosmic-level');s.value=String(i);s.dispatchEvent(new Event('change'));},i);
+   await page.waitForFunction(i=>window.cosmicMapLayer.level===i&&window.cosmicMapLayer.status==='ready'&&['ready','error'].includes(window.cosmicMapLayer.basins.status),i,{timeout:240000}).catch(()=>{});await page.waitForTimeout(2500);
+   return page.evaluate(()=>({level:window.cosmicMapLayer.level,cats:[...window.cosmicMapLayer.catalogues],basins:window.cosmicMapLayer.basins.status,basinsVisible:window.cosmicMapLayer.basins.root.visible,shells:window.cosmicMapLayer.basins.entries.filter(e=>e.mesh.visible).length,labels:Object.fromEntries(window.cosmicMapLabels().map(l=>[l.id,l.visible&&l.inside])),note:document.getElementById('map-cosmic-note').textContent,box:!document.getElementById('map-basins').closest('label').hidden}));};
+  const lan=await level(2);
+  check('Laniakea : niveau 3, Cosmicflows-4 selon l\'échelle, bassins CF4 chargés et affichés',lan.level===2&&lan.cats.join()==='cf4'&&lan.basins==='ready'&&lan.basinsVisible&&lan.shells>0&&lan.box,`${lan.shells} bassins affichés · bassins ${lan.basins}`);
+  check('Laniakea : étiquettes Laniakea, Persée–Poissons et Grand Attracteur visibles',lan.labels.laniakea&&lan.labels['perseus-pisces']&&lan.labels['great-attractor'],JSON.stringify(Object.entries(lan.labels).filter(([,v])=>v).map(([k])=>k)));
+  check('Laniakea : la note cite la source des bassins et précise que c\'est un modèle',/Dupuy & Courtois 2023/.test(lan.note)&&/pas des vitesses 3D mesurées/.test(lan.note),lan.note.slice(-160));
+  await sample('carte Laniakea · CF4 + bassins');
+  {const c2=await page.context().newCDPSession(page);const s2=await c2.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-laniakea.jpg'),Buffer.from(s2.data,'base64'));}
+  await page.evaluate(()=>{const b=document.getElementById('map-basins');b.checked=false;b.dispatchEvent(new Event('change'));});await page.waitForTimeout(800);
+  check('Bassins : la case les masque',await page.evaluate(()=>!window.cosmicMapLayer.basins.root.visible));
+  await page.evaluate(()=>{const b=document.getElementById('map-basins');b.checked=true;b.dispatchEvent(new Event('change'));});
+  const web=await level(3);
+  check('Toile cosmique : niveau 4, étiquettes Shapley, Coma, Hercule et vide du Bouvier visibles',web.level===3&&web.labels.shapley&&web.labels['coma-supercluster']&&web.labels['hercules-supercluster']&&web.labels['bootes-void'],JSON.stringify(Object.entries(web.labels).filter(([,v])=>v).map(([k])=>k)));
+  await sample('carte toile cosmique · CF4 + bassins');
+  {const c3=await page.context().newCDPSession(page);const s3=await c3.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-toile-cosmique.jpg'),Buffer.from(s3.data,'base64'));}
   await page.evaluate(()=>document.getElementById('map-local-group').click());await page.waitForFunction(()=>window.cosmicMapLayer.level===0&&window.cosmicMapLayer.status==='ready',{},{timeout:60000}).catch(()=>{});await page.waitForTimeout(800);
   check('Retour « Groupe local » : niveau 1 et McConnachie 2012 selon l\'échelle',await page.evaluate(()=>window.cosmicMapLayer.level===0&&[...window.cosmicMapLayer.catalogues].join()==='mcconnachie'));
   const c=await page.context().newCDPSession(page);const s=await c.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-groupe-local-faisabilite.jpg'),Buffer.from(s.data,'base64'));
@@ -96,7 +113,7 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   // Hors session d'essai : rien ne change pour les visiteurs.
   const pub=await ctx.newPage();pub.setDefaultTimeout(400000);await pub.goto(`http://127.0.0.1:${PORT}/cockpit.html`);
   await pub.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
-  check('Cockpit public : couche absente et réglages masqués',await pub.evaluate(()=>window.cosmicMapLayer===undefined&&document.getElementById('map-cosmic-layer').closest('label').hidden&&document.getElementById('map-cosmic-catalogue').closest('label').hidden&&document.getElementById('map-target').hidden&&document.getElementById('map-virgo').hidden));
+  check('Cockpit public : couche absente et réglages masqués',await pub.evaluate(()=>window.cosmicMapLayer===undefined&&document.getElementById('map-cosmic-layer').closest('label').hidden&&document.getElementById('map-cosmic-catalogue').closest('label').hidden&&document.getElementById('map-target').hidden&&document.getElementById('map-cosmic-level').closest('label').hidden&&document.getElementById('map-basins').closest('label').hidden));
   await pub.close();
  }finally{await browser.close();server.close();}
  const failed=results.filter(r=>!r.ok);

@@ -39,6 +39,8 @@ Dans la conversation Codex de l'éditeur, j'ai par mégarde fait passer le nivea
 
 - **Carte niveau 2 « Voisinage de la Vierge »** en essai, avec Cosmicflows-4 sur la Carte : `docs/RELAIS-CLAUDE-2026-11-20-CARTE-NIVEAU2-VIERGE.md`. **Point à arbitrer (ChatGPT)** : UNGC, choisi « selon l'échelle » au niveau Vierge dans `cosmos.html` comme dans le cockpit, n'atteint pas l'amas de la Vierge. Faut-il passer à CF4 (3,9 Mo) ? Voir le § 2 du relais.
 
+- **Carte niveaux 3 et 4** (Laniakea, toile cosmique) en essai, avec les bassins CF4 : `docs/RELAIS-CLAUDE-2026-11-21-CARTE-NIVEAUX-3-4.md`. **Points à arbitrer (ChatGPT)** : coût de rendu des bassins (× 2,5 à 3 sous SwiftShader, mesure Iris Xe à faire) ; saturation des points CF4 aux grandes échelles, dans les deux pages.
+
 ## 4. Ce que Claude fait ensuite
 
 Niveau 2 de la Carte (**Vierge, 150 Mal**), en essai, avec la même méthode : réutiliser les couches de `cosmos.html`, mesurer, compléter la matrice de parité. `cosmos.html` reste en ligne jusqu'à la parité complète et l'accord du propriétaire.

@@ -1,5 +1,5 @@
 {
- "passed": 20,
+ "passed": 25,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 142.7,
-   "frameP50": 166.7,
-   "frameP95": 333.3,
-   "frames": 37
+   "heapMB": 142.4,
+   "frameP50": 183.4,
+   "frameP95": 383.3,
+   "frames": 29
   },
   "carte Groupe local · couche allumée": {
    "geometries": 71,
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 9458,
-   "heapMB": 123.6,
-   "frameP50": 200.1,
-   "frameP95": 366.7,
-   "frames": 29
+   "heapMB": 138.2,
+   "frameP50": 200,
+   "frameP95": 366.6,
+   "frames": 27
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 9554,
-   "heapMB": 139.8,
-   "frameP50": 199.9,
-   "frameP95": 366.7,
-   "frames": 35
+   "heapMB": 124,
+   "frameP50": 200,
+   "frameP95": 250,
+   "frames": 33
   },
   "doublons": {
    "pairs": 96,
@@ -62,9 +62,9 @@
    "triangles": 2280,
    "points": 143898,
    "lines": 9938,
-   "heapMB": 125.1,
+   "heapMB": 141.1,
    "frameP50": 200,
-   "frameP95": 400,
+   "frameP95": 366.7,
    "frames": 29
   },
   "carte Vierge · Cosmicflows-4": {
@@ -75,10 +75,36 @@
    "triangles": 2280,
    "points": 198907,
    "lines": 9938,
-   "heapMB": 184.8,
-   "frameP50": 216.6,
-   "frameP95": 416.6,
-   "frames": 25
+   "heapMB": 166.5,
+   "frameP50": 233.3,
+   "frameP95": 516.6,
+   "frames": 23
+  },
+  "carte Laniakea · CF4 + bassins": {
+   "geometries": 118,
+   "textures": 39,
+   "programs": 20,
+   "calls": 65,
+   "triangles": 61588,
+   "points": 198907,
+   "lines": 128208,
+   "heapMB": 187,
+   "frameP50": 549.9,
+   "frameP95": 833.3,
+   "frames": 10
+  },
+  "carte toile cosmique · CF4 + bassins": {
+   "geometries": 132,
+   "textures": 43,
+   "programs": 20,
+   "calls": 74,
+   "triangles": 61594,
+   "points": 198907,
+   "lines": 129168,
+   "heapMB": 166.2,
+   "frameP50": 666.6,
+   "frameP95": 716.7,
+   "frames": 9
   }
  },
  "results": [
@@ -95,7 +121,7 @@
   {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533298,\"inside\":true}"
+   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533296,\"inside\":true}"
   },
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
@@ -105,7 +131,7 @@
   {
    "name": "Au moins une galaxie cataloguée visible et cliquable sur la carte",
    "ok": true,
-   "detail": "81 à l'écran · essai sur Andromeda XXVIII"
+   "detail": "77 à l'écran · essai sur Andromeda XXVIII"
   },
   {
    "name": "Clic sur la carte : la galaxie devient la cible du cockpit",
@@ -150,7 +176,7 @@
   {
    "name": "Vierge : étiquettes « Amas de la Vierge » et « Superamas de la Vierge » visibles, « Groupe local » masquée à cette échelle",
    "ok": true,
-   "detail": "[\"Groupe local:masquée\",\"Amas de la Vierge:visible\",\"Superamas de la Vierge:visible\"]"
+   "detail": "[\"Groupe local:masquée\",\"Amas de la Vierge:visible\",\"Superamas de la Vierge:visible\",\"Amas du Centaure:masquée\",\"Amas de Norma:masquée\",\"Grand Attracteur:masquée\",\"Laniakea:masquée\",\"Amas de Persée:masquée (hors cadre)\",\"Persée–Poissons:masquée (hors cadre)\",\"Amas de Coma:masquée (hors cadre)\",\"Superamas de Coma:masquée (hors cadre)\",\"Amas d’Hercule:masquée (hors cadre)\",\"Superamas d’Hercule:masquée (hors cadre)\",\"Concentration de Shapley:masquée\",\"Vide du Bouvier:masquée (hors cadre)\"]"
   },
   {
    "name": "Vierge : clic sur une galaxie UNGC → cible du cockpit, sans piloter",
@@ -166,6 +192,31 @@
    "name": "Vierge : clic sur une galaxie CF4 → destination du cockpit créée et ciblée",
    "ok": true,
    "detail": "PGC 40985 → cf4:40985"
+  },
+  {
+   "name": "Laniakea : niveau 3, Cosmicflows-4 selon l'échelle, bassins CF4 chargés et affichés",
+   "ok": true,
+   "detail": "6 bassins affichés · bassins ready"
+  },
+  {
+   "name": "Laniakea : étiquettes Laniakea, Persée–Poissons et Grand Attracteur visibles",
+   "ok": true,
+   "detail": "[\"virgo-supercluster\",\"great-attractor\",\"laniakea\",\"perseus-pisces\"]"
+  },
+  {
+   "name": "Laniakea : la note cite la source des bassins et précise que c'est un modèle",
+   "ok": true,
+   "detail": "icflows-4 (Dupuy & Courtois 2023 ; Courtois et al. 2023), pas des vitesses 3D mesurées ; les surfaces sont des frontières du modèle, pas des parois matérielles."
+  },
+  {
+   "name": "Bassins : la case les masque",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Toile cosmique : niveau 4, étiquettes Shapley, Coma, Hercule et vide du Bouvier visibles",
+   "ok": true,
+   "detail": "[\"virgo-supercluster\",\"laniakea\",\"perseus-pisces\",\"coma-supercluster\",\"hercules-supercluster\",\"shapley\",\"bootes-void\"]"
   },
   {
    "name": "Retour « Groupe local » : niveau 1 et McConnachie 2012 selon l'échelle",

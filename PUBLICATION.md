@@ -9,6 +9,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `4434a85` | Session d'essai seulement : niveau « Voisinage de la Vierge » sur la Carte du cockpit, catalogue selon l'échelle, Cosmicflows-4 sur la Carte. Retouche partagée sans effet public : étiquettes du Groupe local masquées au-delà de 33 millions d'al. | 20 nov. 2026 | Local : Carte 20/20 + 12 suites ; CI verte (9 jobs + 6 workflows) |
+| *Carte niveaux 3 et 4* (commit « Carte cosmique niveaux 3 et 4… », après `2238ae7`) | Session d'essai seulement : sélecteur de niveau (4 niveaux de `cosmos.html`), CF4 selon l'échelle, bassins et lignes de courant CF4 2023 sur la Carte. **Coût de rendu à mesurer sur Iris Xe avant toute ouverture publique.** | 21 nov. 2026 | Local : Carte 25/25 + 9 suites ; CI : voir le relais |
 
 ## Dernière version servie
 

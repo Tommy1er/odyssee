@@ -10,6 +10,7 @@ import {CosmicScene} from './cosmic-scene.js';
 import {ObservedGalaxies} from './observed-galaxies.js';
 import {CATALOGUES,decodeCatalogue} from './extragalactic-data.js';
 import {MLY,STRUCTURES,LEVELS} from './cosmic-data.js';
+import {BasinLayer} from './cf4-basins.js';
 
 const KEYS=['mcconnachie','ungc','cf4'];
 const EXCLUDED=/^(the galaxy|milky way)$/i; // nous sommes dedans : la Carte du cockpit a son propre modèle
@@ -27,8 +28,11 @@ export class CockpitCosmicMap{
   // Niveau de cosmos.html affiché (0 Groupe local, 1 Voisinage de la Vierge) et structure mise en avant.
   this.level=0;this.focus='local-group';
   // Étiquettes des structures des niveaux intégrés (galaxies exclues : la Carte du cockpit a les siennes).
-  this.labels=STRUCTURES.filter(o=>o.level<=1&&o.type!=='galaxy').map(o=>{const l=makeLabel(o.name,'#f0c47a');l.visible=false;l.center.set(0,.5);if(mapScene)mapScene.add(l);return {o,l};});
+  this.labels=STRUCTURES.filter(o=>o.type!=='galaxy').map(o=>{const l=makeLabel(o.name,'#f0c47a');l.visible=false;l.center.set(0,.5);if(mapScene)mapScene.add(l);return {o,l};});
   this.label=this.labels.find(x=>x.o.id==='local-group').l;
+  // Bassins d'attraction et lignes de courant CF4 2023 (niveaux 3 et 4, comme cosmos.html) : reconstruction, pas une observation directe.
+  // Données partagées avec le cockpit en vol (loadBasinData garde une seule promesse de téléchargement).
+  this.basins=new BasinLayer(this.root);this.showBasins=true;this.showLines=true;
  }
  get rows(){return KEYS.filter(k=>this.catalogues.has(k)).flatMap(k=>this.layers[k].rows);}
  // Doublons reliés seulement entre McConnachie et UNGC (les deux catalogues du Volume local).
@@ -40,10 +44,10 @@ export class CockpitCosmicMap{
     L.rows=rows.filter(o=>!EXCLUDED.test(o.name));L.layer.setRows(L.rows,k);L.status='ready';}
    catch(e){L.status='error';this.error=e.message;}}));
  }
- // Niveau de cosmos.html : 0 « Groupe local », 1 « Voisinage de la Vierge ». Renvoie le cadrage attendu (centre en al, largeur en al).
+ // Niveau de cosmos.html : 0 Groupe local, 1 Voisinage de la Vierge, 2 Laniakea et voisins, 3 Superamas et grands vides. Renvoie le cadrage attendu (centre en al, largeur en al).
  setLevel(i){const L=LEVELS[i];this.level=i;this.focus=L.focus;const f=STRUCTURES.find(o=>o.id===L.focus);return {span:L.span*MLY,center:f.p.map(x=>x*MLY),name:L.name,text:L.text};}
- // Catalogue « selon l'échelle », comme cosmos.html : McConnachie 2012 au Groupe local, UNGC 2013 au voisinage de la Vierge.
- autoCatalogue(){return this.level===0?'mcconnachie':'ungc';}
+ // Catalogue « selon l'échelle », comme cosmos.html : McConnachie 2012, puis UNGC 2013 (Vierge), puis Cosmicflows-4.
+ autoCatalogue(){return this.level===0?'mcconnachie':this.level===1?'ungc':'cf4';}
  // Doublons entre catalogues (même galaxie, deux mesures de distance) : un trait relie les deux points quand les deux catalogues sont affichés.
  setPairs(pairs){if(this.pairLines){this.root.remove(this.pairLines);this.pairLines.geometry.dispose();}
   this.pairs=pairs;const pos=new Float32Array(pairs.length*6);pairs.forEach(([a,b],i)=>pos.set([...a.p,...b.p],i*6));
@@ -53,6 +57,8 @@ export class CockpitCosmicMap{
  // spanLy : largeur cadrée par la Carte du cockpit ; mapScale : unités de carte par année-lumière ; heightPx : hauteur du tampon de dessin.
  update({map,mapScale,spanLy,heightPx,dpr=1}){
   const on=this.enabled&&!!map;this.root.visible=on;if(!on){for(const x of this.labels)x.l.visible=false;return;}
+  const wantBasins=this.level>=2&&(this.showBasins||this.showLines);if(wantBasins&&this.basins.status==='idle')this.basins.load('./').catch(()=>{});
+  this.basins.root.visible=wantBasins&&this.basins.status==='ready';if(this.basins.root.visible)this.basins.update(performance.now()/1000,{shells:this.showBasins,lines:this.showLines,sdss:false});
   // Mêmes réglages par défaut que cosmos.html : enveloppes affichées, connexions schématiques et populations illustratives masquées.
   this.cosmic.update(this.level,this.focus,spanLy/MLY,{envelopes:true,filaments:false,boost:6,synthetic:false});
   for(const e of this.cosmic.entries)if(e.o.type==='galaxy')e.mesh.visible=false;
