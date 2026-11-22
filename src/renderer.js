@@ -22,6 +22,7 @@ import {SkyOptics} from './sky-optics.js';
 import {SpacecraftView} from './spacecraft.js';
 import {ShipLighting} from './ship-lighting.js';
 import {EnvironmentLayer,GalacticOrbit} from './environments.js';
+import {S2Demo} from './s2-demo.js';
 import {BlackHoleLens} from './black-hole.js';
 import {SolarMapLayer} from './solar-map.js';
 
@@ -197,6 +198,7 @@ export class SpaceRenderer{
     timings?.mark('Repères et surcouches');
     if(s.external)await this.spacecraft.render(this.renderer,{...s,shipLightSources:this.shipLight=this.shipLighting.update(s),opticalLab:s.opticalLab&&!!betaOptics,labBeta:betaOptics?s.labBeta:0,speedValue:half&&!betaOptics?0:norm(physicalV),gammaValue:half&&!betaOptics?1:gammaU(s.u),velocityVector:s.opticalLab?labDirection(physicalV,forward.toArray()):physicalV},half?w/2/h:w/h,this.startupTrace);
     timings?.mark('Vaisseau 3D');
+    if(s.s2View){this.s2Demo??=new S2Demo(this.orbit.center);this.s2Demo.mode=s.s2View;this.s2Demo.render(this.renderer,s,w/h);} // essai : vue d'observation de S2, caméra seule
    };
    if(s.opticalLab){this.renderer.setScissorTest(true);this.renderer.setViewport(0,0,w/2,h);this.renderer.setScissor(0,0,w/2,h);await draw(0,true);this.renderer.setViewport(w/2,0,w/2,h);this.renderer.setScissor(w/2,0,w/2,h);await draw(1,true);this.renderer.setScissorTest(false);this.renderer.setViewport(0,0,w,h);}else await draw(+s.relativistic,false);if(s.passage)this.passageView.render(this.renderer,s.passage.progress,s.passage.unstable,performance.now()/1000,w/h);
   }

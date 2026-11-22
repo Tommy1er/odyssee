@@ -50,7 +50,26 @@ Contrôle indépendant, Mars : 6 779 km à 1,559 ua = 6,0″ ; à 1° sur 706 px
 - **Approximation déclarée** : avance séculaire, régulière dans le temps. En réalité, l'essentiel de l'avance se produit près du péricentre. Cela ne change pas l'écart entre deux péricentres successifs, qui est la grandeur démontrée.
 - **Affichage** : orbite tracée révolution par révolution et deux repères partant de Sagittarius A*, le péricentre courant (or) et le précédent (bleu). Ils sont confondus avec Kepler et séparés de 12,2′ avec la relativité. La case affiche la valeur ; aucune exagération de la trajectoire.
 - La case ne modifie ni la position du vaisseau ni ses horloges (contrôlé). Hors essai, elle est absente et seul Kepler est utilisé.
-- **Limite visuelle** (capture `validation/ui/cockpit-s2-precession-essai.jpg`) : à l'arrivée par passage, le vaisseau est à 1,27 ua de Sagittarius A*, bien à l'intérieur de l'orbite de S2 (péricentre ≈ 120 ua, apocentre ≈ 1 940 ua). Les repères ne sont donc pas dans le champ. Le calcul et les repères sont vérifiés, mais le geste « voir passer S2, marquer, avancer d'une révolution, comparer » demande encore un point de vue. Je propose une vue caméra dédiée, de l'ordre de 3 000 ua au-dessus du plan de l'orbite, qui ne déplace pas le vaisseau. À valider avant de la coder.
+- **Limite visuelle** (capture `validation/ui/cockpit-s2-precession-essai.jpg`) : à l'arrivée par passage, le vaisseau est à 1,27 ua de Sagittarius A*, bien à l'intérieur de l'orbite de S2 (péricentre ≈ 120 ua, apocentre ≈ 1 940 ua). Les repères ne sont donc pas dans le champ. Le calcul et les repères sont vérifiés, mais le geste « voir passer S2, marquer, avancer d'une révolution, comparer » demande encore un point de vue. Une vue caméra dédiée, qui ne déplace pas le vaisseau, a été ajoutée ensuite : voir § 4 bis.
+
+## 4 bis. Vue d'observation de S2 (suite du 22 novembre, soir)
+
+Demande relayée : faire la caméra S2 avant la prochaine publication, avec deux cadrages ; critère : repères superposés avec Kepler, distincts au zoom avec la relativité, sans amplifier l'angle ; vaisseau intact à l'entrée et à la sortie.
+
+- Bouton « Observer l'orbite de S2 » (essai), sous la case de précession. Il ouvre une **vue dédiée** (`src/s2-demo.js`), avec sa propre scène et sa propre caméra. Elle lit le temps de la mission et le modèle d'orbite ; elle n'écrit rien dans l'état du vol.
+- **Orbite entière** : caméra à 3 000 ua au-dessus du plan de l'orbite, centrée sur le centre de l'ellipse ; champ ≈ 2 547 ua.
+- **Péricentre** : caméra à 2,4 ua au-dessus du milieu des deux péricentres ; champ ≈ 2,0 ua.
+- Les deux dernières révolutions sont tracées, avec des points resserrés près du péricentre. Repères : péricentre de la dernière révolution (or) et de la précédente (bleu), et Sagittarius A*. Les repères du cockpit (cible, réticule, bandeaux) sont masqués pendant la vue, car ils ne s'appliquent pas à cette caméra.
+- **Lecture** sous les boutons, rafraîchie : angle entre les deux péricentres, prédiction, mesure GRAVITY, distance au trou noir, écart en ua, champ et écart en pixels dans le cadrage courant. Avec la relativité sur l'orbite entière, elle indique que l'écart (0,10 px) est trop petit et invite à passer au péricentre.
+- Échap ou « Quitter » referment la vue.
+
+Résultats (`validate-s2-precession-ui.cjs`, 11/11, SwiftShader 1280 × 720) :
+- Kepler, au péricentre : écart < 0,001′ et < 0,05 px (superposés).
+- Relativité, orbite entière : 0,10 px.
+- Relativité, péricentre : **12,18′ ; 0,424 ua à 120 ua de Sagittarius A* ; 126 px** pour un champ de 2,04 ua.
+- Entrée et sortie de la vue : position, impulsion, horloges, moteur et pause inchangés.
+
+Captures : `validation/ui/cockpit-s2-vue-orbite.jpg`, `validation/ui/cockpit-s2-vue-pericentre.jpg`. Au péricentre, les deux tracés se recouvrent presque, car l'avance déplace le péricentre le long de l'orbite. Ce sont les deux repères qui montrent l'écart.
 
 ## 5. Comparaison Odyssée-01 / Odyssée-02 sur Iris Xe (préparée)
 

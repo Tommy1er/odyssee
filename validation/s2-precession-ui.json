@@ -8,7 +8,17 @@
   {
    "label": "Kepler (témoin) : les deux repères de péricentre sont confondus",
    "ok": true,
-   "detail": "{\"gr\":false,\"visible\":true,\"key\":\"false|0\",\"markerArcmin\":0}"
+   "detail": "{\"gr\":false,\"visible\":true,\"key\":\"false|0\",\"markerArcmin\":0,\"view\":null,\"readout\":null,\"text\":\"\"}"
+  },
+  {
+   "label": "Kepler, péricentre au zoom : les deux passages se superposent",
+   "ok": true,
+   "detail": "Kepler (témoin) : les deux passages au péricentre se superposent (écart 0,000′). Champ ≈ 2,0 ua · écart à l’écran 0,00 px. Angle non amplifié."
+  },
+  {
+   "label": "Entrer dans la vue S2 ne change pas la simulation",
+   "ok": true,
+   "detail": ""
   },
   {
    "label": "Relativité : repères séparés de 12,2′ (prédiction de Schwarzschild ; GRAVITY 2020 : 12′)",
@@ -21,7 +31,22 @@
    "detail": ""
   },
   {
-   "label": "Hors essai : case absente, Kepler seul",
+   "label": "Relativité, orbite entière (≈ 3 000 ua) : écart trop petit pour l'écran, la lecture le dit",
+   "ok": true,
+   "detail": "0.101 px"
+  },
+  {
+   "label": "Relativité, péricentre (champ ≈ 2 ua) : deux passages distincts, 12,18′ et ≈ 0,42 ua, sans amplification",
+   "ok": true,
+   "detail": "0.424 ua · 126 px · champ 2.04 ua"
+  },
+  {
+   "label": "Échap quitte la vue S2 ; position, vitesse et horloges intactes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "label": "Hors essai : case et vue S2 absentes, Kepler seul",
    "ok": true,
    "detail": ""
   },

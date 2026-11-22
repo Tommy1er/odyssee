@@ -65,7 +65,7 @@
   {
    "name": "Étiquette de la cible : ne passe ni sous la télémétrie ni sous la fiche",
    "ok": true,
-   "detail": "{\"off\":true,\"telemetry\":false,\"hud\":false}"
+   "detail": "{\"off\":false,\"telemetry\":false,\"hud\":false}"
   },
   {
    "name": "Cadrer : suivi de la cible par la caméra seule (viewOnly)",
@@ -95,7 +95,7 @@
   {
    "name": "Télémétrie : écart regard / nez affiché si la cible n'est pas devant le nez",
    "ok": true,
-   "detail": "{\"hidden\":false,\"text\":\"regard ≠ nez · 67°\"}"
+   "detail": "{\"hidden\":false,\"text\":\"regard ≠ nez · 117°\"}"
   },
   {
    "name": "Libellé immersif : « Cadrée · Échap pour revenir »",
@@ -120,7 +120,7 @@
   {
    "name": "Optique : zoomer ne change pas l'observateur radiatif, seulement le champ de projection",
    "ok": true,
-   "detail": "tan(champ/2) 0.700 → 0.064"
+   "detail": "tan(champ/2) 0.700 → 0.041"
   },
   {
    "name": "Zoom : statut de résolution affiché près du champ",
@@ -210,7 +210,7 @@
   {
    "name": "Session d'essai : la mission d'essai est écrite à part",
    "ok": true,
-   "detail": "1031 caractères"
+   "detail": "1030 caractères"
   },
   {
    "name": "Rangée basse A : trois groupes visibles (Mission, Temps, Propulsion)",
