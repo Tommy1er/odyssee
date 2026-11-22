@@ -6,6 +6,18 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
+Aucun lot en attente.
+
+## Dernière version servie
+
+| Version | Commit de `main` | Publié le | Par | Contenu |
+|---|---|---|---|---|
+| **v59** | `874d4d357a1d73490a0fceef336a55e4e369b077` (commit Sites `3e1b5eb8ed7c11c65932834326297756b13e0ff2`, même arborescence) | 22 nov. 2026 à 19:10 UTC | Codex | Carte cosmique en session d’essai, Préparer/Situer, vaisseau Odyssée-02 en essai et notes de conception de ChatGPT. |
+
+Vérifié après publication dans Chrome : accueil et `cosmos.html` accessibles, Odyssée-01 affiché dans le cockpit classique, badge « Essai · sauvegarde isolée » visible avec `?essai=1`. L’essai immersif et les mesures Iris Xe restent à vérifier sur le poste de référence.
+
+Commits publiés en v59 :
+
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `4434a85` | Session d'essai seulement : niveau « Voisinage de la Vierge » sur la Carte du cockpit, catalogue selon l'échelle, Cosmicflows-4 sur la Carte. Retouche partagée sans effet public : étiquettes du Groupe local masquées au-delà de 33 millions d'al. | 20 nov. 2026 | Local : Carte 20/20 + 12 suites ; CI verte (9 jobs + 6 workflows) |
@@ -14,7 +26,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 | `8ebd712` | Essai immersif : « Préparer le trajet » ouvre un devis (rendezvousEstimate) au lieu d'engager ; « Situer » cadre la Carte sur la cible. Session d'essai : vaisseau **Odyssée-02** (conception fictive d'après la physique). Visiteurs : Odyssée-01 et interface classique inchangés. **Allure du vaisseau à valider par le propriétaire.** | 21 nov. 2026 | Local : observation 56/56 + 9 suites (inventaire, recherche, rendez-vous, mise en page, contexte cosmos, physique mobile, Carte 31/31, stockage). `validate-v2.cjs` : contrôle « Odyssée-01 hors essai » réussi, puis échec de capture d'écran (délai des polices) identique sur `49b5a28`, donc antérieur ; ce script n'est pas dans la CI. CI sur `0a6acaa` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 44948996610) et par le push (run 44948994133), 9 jobs chacun |
 | `7538bde` | Session d'essai seulement : niveau « Univers observable » (horizon comobile), bassins SDSS coupés, plan supergalactique vu du dessus sur la Carte du cockpit ; radiateurs d'Odyssée-02 assombris. **Odyssée-02 : allure validée par le propriétaire ; ouverture au public encore à confirmer.** | 21 nov. 2026 | Local : Carte 36/36 + 7 suites (observation, inventaire, recherche, mise en page, contexte cosmos, physique mobile, stockage). CI sur `8e94f2a` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 44954894429) et par le push (run 44954894495) |
 
-## Dernière version servie
+## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
@@ -41,3 +53,4 @@ Précédente : v57, tranche 1 (`258ef12`, relais `2dffd5c`), commit Sites `d3b78
 - **Qui pousse du code sur `main`** ajoute une ligne dans « En attente de publication ».
 - **Après chaque publication**, celui qui publie (Codex ou Claude) déplace les lignes publiées dans « Dernière version servie » (numéro de version, commit réellement construit, date), vide la section d'attente, puis commit et push.
 - Un commit purement documentaire peut rester en attente sans bloquer : il ne change rien de visible.
+
