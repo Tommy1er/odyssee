@@ -38,10 +38,28 @@ export class EnvironmentLayer{
  if(this.cache.size>16){for(const [id,e] of this.cache){if(!e.group.visible&&!this.prepared?.has(id)){e.group.traverse(x=>{x.geometry?.dispose();x.material?.dispose();});this.scene.remove(e.group);this.cache.delete(id);this.evictions=(this.evictions||0)+1;if(this.cache.size<=12)break;}}}
  }
 }
-export function s2Position(t,center){const e=.884,P=16,a=Math.cbrt(4.297e6*P*P)*AU;const M=2*Math.PI*((t+8.37)%P)/P;let E=M;for(let k=0;k<12;k++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));const x=a*(Math.cos(E)-e),y=a*Math.sqrt(1-e*e)*Math.sin(E);const a1=new T.Vector3(.78,.22,.59).normalize(),a2=new T.Vector3(.31,-.84,-.44);a2.addScaledVector(a1,-a1.dot(a2)).normalize();return add(center,a1.multiplyScalar(x).addScaledVector(a2,y).toArray());}
+// Orbite de S2 autour de Sagittarius A* : ellipse képlérienne (témoin) et, en option, précession relativiste du péricentre.
+// Précession de Schwarzschild par révolution : Δφ = 6π GM / (c² a (1 − e²)) ≈ 12,2′ avec les paramètres ci-dessous.
+// Mesure : GRAVITY Collaboration 2020 (A&A 636, L5, arXiv:2004.07187) : Δφ ≈ 12′ par orbite, f_SP = 1,10 ± 0,19 fois la prédiction.
+// Approximation séculaire : l'argument du péricentre avance régulièrement avec le temps (en réalité, l'avance se concentre au péricentre).
+export const S2_ORBIT={P:16,e:.884,M:4.297e6,phase:8.37};
+const RG_AU=1476.625/1.495978707e11; // GM☉/c² en unités astronomiques
+export const S2_MODEL={gr:false}; // réglé par le cockpit (session d'essai)
+export function s2Precession(){const {P,e,M}=S2_ORBIT,a=Math.cbrt(M*P*P);return 6*Math.PI*M*RG_AU/(a*(1-e*e));} // radians par révolution
+export function s2Position(t,center,gr=S2_MODEL.gr){const {e,P,M:mass,phase}=S2_ORBIT,a=Math.cbrt(mass*P*P)*AU;const M=2*Math.PI*((((t+phase)%P)+P)%P)/P;let E=M;for(let k=0;k<12;k++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));let x=a*(Math.cos(E)-e),y=a*Math.sqrt(1-e*e)*Math.sin(E);
+ if(gr){const w=s2Precession()*(t+phase)/P,c=Math.cos(w),sn=Math.sin(w);[x,y]=[x*c-y*sn,x*sn+y*c];}
+ const a1=new T.Vector3(.78,.22,.59).normalize(),a2=new T.Vector3(.31,-.84,-.44);a2.addScaledVector(a1,-a1.dot(a2)).normalize();return add(center,a1.multiplyScalar(x).addScaledVector(a2,y).toArray());}
+// Instant du n-ième passage au péricentre (n = 0 : passage de référence, 2018,4 dans le modèle).
+export const s2PericentreTime=n=>n*S2_ORBIT.P-S2_ORBIT.phase;
 export class GalacticOrbit{
- constructor(scene,center){this.scene=scene;this.center=center;this.group=new T.Group();scene.add(this.group);const pts=[];for(let i=0;i<=256;i++)pts.push(new T.Vector3(...sub(s2Position(i/256*16-8.37,center),center)).divideScalar(AU));this.path=new T.Line(new T.BufferGeometry().setFromPoints(pts),new T.LineBasicMaterial({color:0x9cccdf,transparent:true,opacity:.5}));this.group.add(this.path);this.star=new T.Mesh(new T.SphereGeometry(9,12,8),new T.MeshBasicMaterial({color:0xb8dcff}));this.group.add(this.star);}
- update(s){const range=norm(sub(s.pos,this.center));this.group.visible=range<2&&s.orbitS2;const scale=1/Math.max(1,range/(1200*AU));this.group.scale.setScalar(scale);this.group.position.set(...sub(this.center,s.pos).map(x=>x/AU*scale));this.star.position.set(...sub(s2Position(s.retarded?s.t-range:s.t,this.center),this.center).map(x=>x/AU));this.star.scale.setScalar(Math.max(1,range/AU*.002));}
+ constructor(scene,center){this.scene=scene;this.center=center;this.group=new T.Group();scene.add(this.group);this.path=new T.Line(new T.BufferGeometry(),new T.LineBasicMaterial({color:0x9cccdf,transparent:true,opacity:.5}));this.group.add(this.path);this.star=new T.Mesh(new T.SphereGeometry(9,12,8),new T.MeshBasicMaterial({color:0xb8dcff}));this.group.add(this.star);
+  // Repères des péricentres : direction du passage courant (or) et du précédent (bleu). Confondus pour Kepler, séparés de Δφ en relativité.
+  this.markers=[0xf0c47a,0x6fa8ff].map(c=>{const l=new T.Line(new T.BufferGeometry().setFromPoints([new T.Vector3(),new T.Vector3()]),new T.LineBasicMaterial({color:c,transparent:true,opacity:.8}));this.group.add(l);return l;});this.key=null;this.rebuild(0);}
+ orbitIndex(t){return Math.floor((t+S2_ORBIT.phase)/S2_ORBIT.P);}
+ rebuild(t){const gr=S2_MODEL.gr,n=this.orbitIndex(t),rel=x=>new T.Vector3(...sub(x,this.center)).divideScalar(AU);this.key=gr+'|'+n;const t0=s2PericentreTime(n),pts=[];
+  for(let i=0;i<=512;i++)pts.push(rel(s2Position(t0+i/512*S2_ORBIT.P,this.center,gr)));this.path.geometry.dispose();this.path.geometry=new T.BufferGeometry().setFromPoints(pts);
+  const reach=2*Math.cbrt(S2_ORBIT.M*S2_ORBIT.P**2)*(1+S2_ORBIT.e);for(const [k,m] of [n,n-1].entries()){const d=rel(s2Position(s2PericentreTime(m),this.center,gr)).normalize().multiplyScalar(reach);this.markers[k].geometry.setFromPoints([new T.Vector3(),d]);}}
+ update(s){const range=norm(sub(s.pos,this.center));this.group.visible=range<2&&s.orbitS2;const t=s.retarded?s.t-range:s.t;if(this.group.visible&&this.key!==S2_MODEL.gr+'|'+this.orbitIndex(t))this.rebuild(t);const scale=1/Math.max(1,range/(1200*AU));this.group.scale.setScalar(scale);this.group.position.set(...sub(this.center,s.pos).map(x=>x/AU*scale));this.star.position.set(...sub(s2Position(t,this.center),this.center).map(x=>x/AU));this.star.scale.setScalar(Math.max(1,range/AU*.002));}
 }
 
 // Selected clouds integrate their volume per screen ray, without a low-resolution capture.

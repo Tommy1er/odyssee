@@ -171,7 +171,7 @@ export class SpaceRenderer{
     const activeGalaxySpectra=this.galaxyLight.status==='ready'&&s.doppler&&(s.relativistic||s.opticalLab)&&(s.band??1)<2.5
       &&!(s.target?.type==='blackhole'&&norm(sub(s.pos,s.target.lightXYZ||s.target.xyz))/radiusLy(s.target)<150)
       &&!(['nebula','pillars'].includes(s.target?.type)&&norm(sub(s.pos,s.target.xyz))/radiusLy(s.target)<120);
-    const captureKey=[s.retarded,s.target?.id,s.band,s.galaxyLight,s.orbitS2,this.localId,activeGalaxySpectra].join("|");if(this.captureKey===null||needsSkyCapture(this.skyCapture,{key:captureKey,pos:s.pos,t:s.t,wall:s.wall,paused:s.paused})){ updateSkyPositions();timings?.mark('Positions des étoiles');const selectedCloud=this.environments.cache.get(s.target?.id);const directCloud=!!selectedCloud?.cloud;if(directCloud)selectedCloud.group.visible=false;
+    const captureKey=[s.retarded,s.target?.id,s.band,s.galaxyLight,s.orbitS2,s.s2gr,this.localId,activeGalaxySpectra].join("|");if(this.captureKey===null||needsSkyCapture(this.skyCapture,{key:captureKey,pos:s.pos,t:s.t,wall:s.wall,paused:s.paused})){ updateSkyPositions();timings?.mark('Positions des étoiles');const selectedCloud=this.environments.cache.get(s.target?.id);const directCloud=!!selectedCloud?.cloud;if(directCloud)selectedCloud.group.visible=false;
     // Hide isolated points in BOTH backdrop and scene cube passes (never sneak into a backdrop texture).
     // Every point sprite layer (stars, ALL cluster populations, point galaxies, unresolved nebulae) goes to the main cube,
     // whose pixels define the photometric scale; non-selected clusters used to be drawn in the 256-pixel backdrop, where

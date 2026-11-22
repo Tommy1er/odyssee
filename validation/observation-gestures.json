@@ -1,5 +1,5 @@
 {
- "passed": 57,
+ "passed": 58,
  "failed": 0,
  "results": [
   {
@@ -41,6 +41,11 @@
    "name": "Échap ferme le devis sans rien engager",
    "ok": true,
    "detail": ""
+  },
+  {
+   "name": "Cygnus X-1 à 7 200 al : statut « non résolu », l'image calculée n'apparaît qu'en approche",
+   "ok": true,
+   "detail": "cygx1 · Non résolu à ce champ : diamètre apparent 0,00000000038″, moins d’un pixel ; l’image calculée (lentille gravitationnelle) n’apparaît qu’en approche"
   },
   {
    "name": "Fenêtre de 529 px : devis sous l'en-tête, bouton « Engager » visible",

@@ -36,7 +36,9 @@ export class CockpitCosmicMap{
   this.label=this.labels.find(x=>x.o.id==='local-group').l;
   // Bassins d'attraction et lignes de courant CF4 2023 (niveaux 3 et 4, comme cosmos.html) : reconstruction, pas une observation directe.
   // Données partagées avec le cockpit en vol (loadBasinData garde une seule promesse de téléchargement).
-  this.basins=new BasinLayer(this.root);this.showBasins=true;this.showLines=true;this.showSDSS=false;
+  // Décision du propriétaire du 22 novembre (mesures Iris Xe) : enveloppes et lignes de courant masquées par défaut, commandes séparées,
+  // animation facultative. Les lignes décrivent le champ de vitesses reconstruit à l'époque actuelle, pas un film des trajectoires.
+  this.basins=new BasinLayer(this.root);this.showBasins=false;this.showLines=false;this.animateLines=false;this.showSDSS=false;
   // Trois grands cercles de la sphère comobile autour du Soleil (même tracé que cosmos.html), au-delà de tout catalogue chargé.
   this.showHorizon=true;this.horizon=new T.Group();{const pts=[];for(let a=0;a<3;a++)for(let i=0;i<256;i++)for(const j of [i,i+1]){const t=j*Math.PI/128,c=Math.cos(t)*HORIZON_MLY,s=Math.sin(t)*HORIZON_MLY;pts.push(a===0?new T.Vector3(c,s,0):a===1?new T.Vector3(c,0,s):new T.Vector3(0,c,s));}
    this.horizon.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(pts),new T.LineBasicMaterial({color:0xd8a070,transparent:true,opacity:.45,depthWrite:false})));this.horizon.visible=false;this.root.add(this.horizon);}
@@ -70,7 +72,7 @@ export class CockpitCosmicMap{
  update({map,mapScale,spanLy,heightPx,dpr=1}){
   const on=this.enabled&&!!map;this.root.visible=on;if(!on){for(const x of this.labels)x.l.visible=false;return;}
   const wantBasins=this.level>=2&&(this.showBasins||this.showLines);if(wantBasins&&this.basins.status==='idle')this.basins.load('./').catch(()=>{});
-  this.basins.root.visible=wantBasins&&this.basins.status==='ready';if(this.basins.root.visible)this.basins.update(performance.now()/1000,{shells:this.showBasins,lines:this.showLines,sdss:this.showSDSS});
+  this.basins.root.visible=wantBasins&&this.basins.status==='ready';if(this.basins.root.visible)this.basins.update(this.animateLines?performance.now()/1000:0,{shells:this.showBasins,lines:this.showLines,sdss:this.showSDSS}); // temps figé : lignes fixes
   this.horizon.visible=this.showHorizon&&spanLy/MLY>HORIZON_MLY*.04; // comme cosmos.html : seulement aux grandes échelles
   // Mêmes réglages par défaut que cosmos.html : enveloppes affichées, connexions schématiques et populations illustratives masquées.
   this.cosmic.update(this.level,this.focus,spanLy/MLY,{envelopes:true,filaments:false,boost:6,synthetic:false});

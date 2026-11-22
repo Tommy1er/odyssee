@@ -1,5 +1,5 @@
 {
- "passed": 36,
+ "passed": 39,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 123.2,
-   "frameP50": 233.3,
-   "frameP95": 450,
-   "frames": 26
+   "heapMB": 122.3,
+   "frameP50": 183.4,
+   "frameP95": 416.6,
+   "frames": 29
   },
   "carte Groupe local · couche allumée": {
    "geometries": 73,
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 10101,
-   "heapMB": 136.9,
-   "frameP50": 199.9,
-   "frameP95": 383.4,
-   "frames": 31
+   "heapMB": 123.3,
+   "frameP50": 200,
+   "frameP95": 383.3,
+   "frames": 33
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 10197,
-   "heapMB": 126.6,
-   "frameP50": 249.9,
-   "frameP95": 516.7,
-   "frames": 23
+   "heapMB": 132.8,
+   "frameP50": 216.7,
+   "frameP95": 433.3,
+   "frames": 27
   },
   "doublons": {
    "pairs": 96,
@@ -62,10 +62,10 @@
    "triangles": 2280,
    "points": 143898,
    "lines": 10581,
-   "heapMB": 144.3,
+   "heapMB": 126,
    "frameP50": 266.6,
-   "frameP95": 466.7,
-   "frames": 22
+   "frameP95": 450,
+   "frames": 20
   },
   "carte Vierge · Cosmicflows-4": {
    "geometries": 103,
@@ -75,10 +75,10 @@
    "triangles": 2280,
    "points": 198907,
    "lines": 10581,
-   "heapMB": 189.9,
-   "frameP50": 250,
-   "frameP95": 300,
-   "frames": 29
+   "heapMB": 168.2,
+   "frameP50": 266.6,
+   "frameP95": 416.7,
+   "frames": 23
   },
   "carte Laniakea · CF4 + bassins": {
    "geometries": 123,
@@ -88,10 +88,10 @@
    "triangles": 61588,
    "points": 198907,
    "lines": 128851,
-   "heapMB": 211.7,
-   "frameP50": 466.6,
-   "frameP95": 849.9,
-   "frames": 11
+   "heapMB": 207.4,
+   "frameP50": 683.3,
+   "frameP95": 883.4,
+   "frames": 9
   },
   "carte toile cosmique · CF4 + bassins": {
    "geometries": 135,
@@ -101,9 +101,9 @@
    "triangles": 61594,
    "points": 198907,
    "lines": 129811,
-   "heapMB": 172.2,
-   "frameP50": 733.3,
-   "frameP95": 1283.3,
+   "heapMB": 170.7,
+   "frameP50": 950,
+   "frameP95": 1433.2,
    "frames": 7
   },
   "carte univers observable · horizon": {
@@ -114,9 +114,9 @@
    "triangles": 61580,
    "points": 198907,
    "lines": 130579,
-   "heapMB": 172.8,
-   "frameP50": 666.7,
-   "frameP95": 949.9,
+   "heapMB": 165.8,
+   "frameP50": 666.6,
+   "frameP95": 816.7,
    "frames": 9
   }
  },
@@ -212,9 +212,24 @@
    "detail": "PGC 40985 → cf4:40985"
   },
   {
-   "name": "Laniakea : niveau 3, Cosmicflows-4 selon l'échelle, bassins CF4 chargés et affichés",
+   "name": "Laniakea : niveau 3, Cosmicflows-4 selon l'échelle ; bassins et flux CF4 masqués par défaut, non téléchargés",
    "ok": true,
-   "detail": "6 bassins affichés · bassins ready"
+   "detail": "bassins idle"
+  },
+  {
+   "name": "Bassins seuls : enveloppes affichées, lignes de courant masquées",
+   "ok": true,
+   "detail": "6 bassins"
+  },
+  {
+   "name": "Flux reconstruits : lignes affichées et fixes par défaut, présentées comme champ de vitesses reconstruit et non comme trajectoires",
+   "ok": true,
+   "detail": "temps 0 → 0"
+  },
+  {
+   "name": "Animation facultative : le temps des lignes avance, aucune galaxie du catalogue ne bouge, la note précise le sens du courant",
+   "ok": true,
+   "detail": "temps 121.17 → 122.84"
   },
   {
    "name": "Laniakea : étiquettes Laniakea, Persée–Poissons et Grand Attracteur visibles",
@@ -252,7 +267,7 @@
    "detail": ""
   },
   {
-   "name": "Bassins : la case les masque",
+   "name": "Bassins et flux : les deux cases décochées masquent la couche",
    "ok": true,
    "detail": ""
   },
@@ -269,7 +284,7 @@
   {
    "name": "Plan supergalactique vu du dessus : caméra sur l'axe SGZ, SGY vers le haut",
    "ok": true,
-   "detail": "{\"look\":-0.9999999999999997,\"up\":1.0000000000000004}"
+   "detail": "{\"look\":-0.9999999999999999,\"up\":1.0000000000000004}"
   },
   {
    "name": "Univers observable : horizon tracé, structures du niveau 4 et CF4, notification avec la distance comobile",

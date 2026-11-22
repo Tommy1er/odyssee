@@ -93,12 +93,26 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   await page.evaluate(()=>{const s=document.getElementById('map-cosmic-catalogue');s.value='auto';s.dispatchEvent(new Event('change'));});
   // Niveaux 3 et 4 de cosmos.html : Laniakea et voisins (650 millions d'al), Superamas et grands vides (1,8 milliard d'al) ; CF4 selon l'échelle ; bassins CF4 2023.
   const level=async i=>{await page.evaluate(i=>{const s=document.getElementById('map-cosmic-level');s.value=String(i);s.dispatchEvent(new Event('change'));},i);
-   await page.waitForFunction(i=>window.cosmicMapLayer.level===i&&window.cosmicMapLayer.status==='ready'&&['ready','error'].includes(window.cosmicMapLayer.basins.status),i,{timeout:240000}).catch(()=>{});await page.waitForTimeout(2500);
+   await page.waitForFunction(i=>window.cosmicMapLayer.level===i&&window.cosmicMapLayer.status==='ready'&&(!(window.cosmicMapLayer.showBasins||window.cosmicMapLayer.showLines)||['ready','error'].includes(window.cosmicMapLayer.basins.status)),i,{timeout:240000}).catch(()=>{});await page.waitForTimeout(2500);
    return page.evaluate(()=>({level:window.cosmicMapLayer.level,cats:[...window.cosmicMapLayer.catalogues],basins:window.cosmicMapLayer.basins.status,basinsVisible:window.cosmicMapLayer.basins.root.visible,shells:window.cosmicMapLayer.basins.entries.filter(e=>e.mesh.visible).length,labels:Object.fromEntries(window.cosmicMapLabels().map(l=>[l.id,l.visible&&l.inside])),note:document.getElementById('map-cosmic-note').textContent,box:!document.getElementById('map-basins').closest('label').hidden}));};
   const lan=await level(2);
-  check('Laniakea : niveau 3, Cosmicflows-4 selon l\'échelle, bassins CF4 chargés et affichés',lan.level===2&&lan.cats.join()==='cf4'&&lan.basins==='ready'&&lan.basinsVisible&&lan.shells>0&&lan.box,`${lan.shells} bassins affichés · bassins ${lan.basins}`);
+  // Décision du 22 novembre (Iris Xe) : bassins et flux masqués par défaut, pas téléchargés tant qu'on ne les demande pas.
+  check('Laniakea : niveau 3, Cosmicflows-4 selon l\'échelle ; bassins et flux CF4 masqués par défaut, non téléchargés',lan.level===2&&lan.cats.join()==='cf4'&&lan.basins==='idle'&&!lan.basinsVisible&&lan.box&&await page.evaluate(()=>['map-basins','map-flows','map-flows-animate'].every(id=>!document.getElementById(id).checked&&!document.getElementById(id).closest('label').hidden)),`bassins ${lan.basins}`);
+  await page.evaluate(()=>document.getElementById('map-basins').click());
+  await page.waitForFunction(()=>['ready','error'].includes(window.cosmicMapLayer.basins.status),null,{timeout:240000}).catch(()=>{});await page.waitForTimeout(2000);
+  const bz=await page.evaluate(()=>{const B=window.cosmicMapLayer.basins;return {status:B.status,shells:B.entries.filter(e=>e.mesh.visible).length,lines:B.lines?.visible,note:document.getElementById('map-cosmic-note').textContent};});
+  check('Bassins seuls : enveloppes affichées, lignes de courant masquées',bz.status==='ready'&&bz.shells>0&&bz.lines===false&&/Dupuy & Courtois 2023/.test(bz.note),`${bz.shells} bassins`);
+  await page.evaluate(()=>document.getElementById('map-flows').click());await page.waitForTimeout(1500);
+  const tFix=async()=>page.evaluate(()=>window.cosmicMapLayer.basins.lines.material.uniforms.time.value);
+  const fl=await page.evaluate(()=>({lines:window.cosmicMapLayer.basins.lines.visible,note:document.getElementById('map-cosmic-note').textContent}));const f0=await tFix();await page.waitForTimeout(1200);const f1=await tFix();
+  check('Flux reconstruits : lignes affichées et fixes par défaut, présentées comme champ de vitesses reconstruit et non comme trajectoires',fl.lines&&f0===f1&&/champ de vitesses reconstruit à l’époque actuelle, pas les trajectoires futures/.test(fl.note),`temps ${f0} → ${f1}`);
+  const pBefore=await page.evaluate(()=>JSON.stringify(window.cosmicMapLayer.rows.slice(0,50).map(r=>r.p)));
+  await page.evaluate(()=>document.getElementById('map-flows-animate').click());await page.waitForTimeout(800);const a0=await tFix();await page.waitForTimeout(1200);const a1=await tFix();
+  const pAfter=await page.evaluate(()=>({p:JSON.stringify(window.cosmicMapLayer.rows.slice(0,50).map(r=>r.p)),note:document.getElementById('map-cosmic-note').textContent}));
+  check('Animation facultative : le temps des lignes avance, aucune galaxie du catalogue ne bouge, la note précise le sens du courant',a1>a0&&pAfter.p===pBefore&&/sens du courant/.test(pAfter.note),`temps ${a0.toFixed(2)} → ${a1.toFixed(2)}`);
+  await page.evaluate(()=>document.getElementById('map-flows-animate').click());
   check('Laniakea : étiquettes Laniakea, Persée–Poissons et Grand Attracteur visibles',lan.labels.laniakea&&lan.labels['perseus-pisces']&&lan.labels['great-attractor'],JSON.stringify(Object.entries(lan.labels).filter(([,v])=>v).map(([k])=>k)));
-  check('Laniakea : la note cite la source des bassins et précise que c\'est un modèle',/Dupuy & Courtois 2023/.test(lan.note)&&/pas des vitesses 3D mesurées/.test(lan.note),lan.note.slice(-160));
+  check('Laniakea : la note cite la source des bassins et précise que c\'est un modèle',/Dupuy & Courtois 2023/.test(bz.note)&&/pas des vitesses 3D mesurées/.test(bz.note),bz.note.slice(-160));
   await sample('carte Laniakea · CF4 + bassins');
   {const c2=await page.context().newCDPSession(page);const s2=await c2.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-laniakea.jpg'),Buffer.from(s2.data,'base64'));}
   const leg=await page.evaluate(()=>[...document.querySelectorAll('#map-basins-legend button')].map(b=>b.textContent));
@@ -118,9 +132,9 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   const pl=await page.evaluate(()=>{const L=window.cosmicMapLayer,on=L.layers.cf4.layer.plane.visible;document.getElementById('map-sg-plane').click();return {on};});await page.waitForTimeout(2500);
   check('Plan supergalactique affiché par défaut, masquable',pl.on&&await page.evaluate(()=>!window.cosmicMapLayer.layers.cf4.layer.plane.visible));
   await page.evaluate(()=>document.getElementById('map-sg-plane').click());
-  await page.evaluate(()=>{const b=document.getElementById('map-basins');b.checked=false;b.dispatchEvent(new Event('change'));});await page.waitForTimeout(800);
-  check('Bassins : la case les masque',await page.evaluate(()=>!window.cosmicMapLayer.basins.root.visible));
-  await page.evaluate(()=>{const b=document.getElementById('map-basins');b.checked=true;b.dispatchEvent(new Event('change'));});
+  await page.evaluate(()=>{for(const id of ['map-basins','map-flows']){const b=document.getElementById(id);b.checked=false;b.dispatchEvent(new Event('change'));}});await page.waitForTimeout(800);
+  check('Bassins et flux : les deux cases décochées masquent la couche',await page.evaluate(()=>!window.cosmicMapLayer.basins.root.visible));
+  await page.evaluate(()=>{for(const id of ['map-basins','map-flows']){const b=document.getElementById(id);b.checked=true;b.dispatchEvent(new Event('change'));}});
   const web=await level(3);
   check('Toile cosmique : niveau 4, étiquettes Shapley, Coma, Hercule et vide du Bouvier visibles',web.level===3&&web.labels.shapley&&web.labels['coma-supercluster']&&web.labels['hercules-supercluster']&&web.labels['bootes-void'],JSON.stringify(Object.entries(web.labels).filter(([,v])=>v).map(([k])=>k)));
   await sample('carte toile cosmique · CF4 + bassins');

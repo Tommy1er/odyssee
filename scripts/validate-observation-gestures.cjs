@@ -43,6 +43,14 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   check('Préparer : rien de physique ne change',PHYS(await snap())===PHYS(q0));
   await page.keyboard.press('Escape');await page.waitForTimeout(300);
   check('Échap ferme le devis sans rien engager',await page.evaluate(()=>document.getElementById('trip-quote').hidden)&&PHYS(await snap())===PHYS(q0));
+  // Trou noir lointain (Cygnus X-1, 7 200 al) : moins d'un pixel, donc « non résolu », pas « image calculée » (relevé sur Iris Xe le 22 novembre).
+  {await page.evaluate(()=>{const s=document.getElementById('destination-search');s.value='Cygnus X-1';s.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-id="cygx1"]').click();});await page.waitForTimeout(800);
+   await page.evaluate(()=>document.getElementById('view-target').click());await page.waitForTimeout(800);
+   await page.mouse.move(640,300);for(let i=0;i<6;i++){await page.mouse.wheel(0,-300);await page.waitForTimeout(60);}await page.waitForTimeout(800);
+   const bh=await page.evaluate(()=>window.flightSnapshot().target+' · '+document.getElementById('resolution-status').textContent);
+   check('Cygnus X-1 à 7 200 al : statut « non résolu », l\'image calculée n\'apparaît qu\'en approche',/^cygx1 · Non résolu/.test(bh)&&/en approche/.test(bh),bh);
+   await page.evaluate(()=>document.getElementById('view-reset').click());await page.waitForTimeout(500);
+   await page.evaluate(()=>{const s=document.getElementById('destination-search');s.value='Mars';s.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-id="solar:Mars"]').click();});await page.waitForTimeout(800);}
   // Fenêtre basse (1280 × 529, relevée sur le Chrome du propriétaire) : le devis ne recouvre pas l'en-tête et « Engager » reste visible.
   {const vp=page.viewportSize();await page.setViewportSize({width:1280,height:529});await page.waitForTimeout(500);await page.evaluate(()=>document.getElementById('hud-engage').click());await page.waitForTimeout(400);
    const r=await page.evaluate(()=>{const q=document.getElementById('trip-quote').getBoundingClientRect(),h=document.querySelector('.flight-header').getBoundingClientRect(),b=document.getElementById('quote-engage').getBoundingClientRect();return {top:Math.round(q.top),header:Math.round(h.bottom),btnTop:Math.round(b.top),btnBottom:Math.round(b.bottom),quoteBottom:Math.round(q.bottom)};});

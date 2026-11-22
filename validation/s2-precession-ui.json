@@ -1,0 +1,34 @@
+{
+ "checks": [
+  {
+   "label": "Essai : case « S2 : précession relativiste » visible, décochée (Kepler par défaut)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "label": "Kepler (témoin) : les deux repères de péricentre sont confondus",
+   "ok": true,
+   "detail": "{\"gr\":false,\"visible\":true,\"key\":\"false|0\",\"markerArcmin\":0}"
+  },
+  {
+   "label": "Relativité : repères séparés de 12,2′ (prédiction de Schwarzschild ; GRAVITY 2020 : 12′)",
+   "ok": true,
+   "detail": "12.183′"
+  },
+  {
+   "label": "La case ne modifie pas la simulation (position, impulsion, horloges, moteur)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "label": "Hors essai : case absente, Kepler seul",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "label": "Aucune erreur de page",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

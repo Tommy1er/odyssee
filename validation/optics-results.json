@@ -1,5 +1,5 @@
 {
-  "passed": 21,
+  "passed": 25,
   "checks": [
     "Schwarzschild impact 2 Rs: capture",
     "Schwarzschild impact 2.4 Rs: capture",
@@ -19,6 +19,10 @@
     "Retarded emission is past 0.99",
     "S2 Kepler periapsis",
     "S2 periodic closure",
+    "S2 : précession de Schwarzschild prédite entre 11′ et 13′ par révolution (GRAVITY 2020 : 12′, f_SP = 1,10 ± 0,19)",
+    "S2 Kepler (témoin) : même direction du péricentre à deux passages",
+    "S2 relativiste : le péricentre avance de Δφ en une révolution",
+    "S2 relativiste : même distance au péricentre que Kepler",
     "CIE derived thermal table finite",
     "Observed expansion coordinate integrity",
     "Internal IDs unique"
