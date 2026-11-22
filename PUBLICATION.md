@@ -6,7 +6,9 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
-Aucun lot en attente.
+| Commit | Contenu | Poussé le | Vérifications |
+|---|---|---|---|
+| `358a034` | Essai immersif seulement : le devis du trajet défile dans une fenêtre basse au lieu de recouvrir les onglets. Relais des mesures v59 sur Iris Xe. | 22 nov. 2026 | Local : observation 57/57. CI : à relever |
 
 ## Dernière version servie
 
@@ -14,7 +16,7 @@ Aucun lot en attente.
 |---|---|---|---|---|
 | **v59** | `874d4d357a1d73490a0fceef336a55e4e369b077` (commit Sites `3e1b5eb8ed7c11c65932834326297756b13e0ff2`, même arborescence) | 22 nov. 2026 à 19:10 UTC | Codex | Carte cosmique en session d’essai, Préparer/Situer, vaisseau Odyssée-02 en essai et notes de conception de ChatGPT. |
 
-Vérifié après publication dans Chrome : accueil et `cosmos.html` accessibles, Odyssée-01 affiché dans le cockpit classique, badge « Essai · sauvegarde isolée » visible avec `?essai=1`. L’essai immersif et les mesures Iris Xe restent à vérifier sur le poste de référence.
+Vérifié après publication dans Chrome : accueil et `cosmos.html` accessibles, Odyssée-01 affiché dans le cockpit classique, badge « Essai · sauvegarde isolée » visible avec `?essai=1`. Puis par Claude le 22 novembre sur le Chrome de bureau du propriétaire (Iris Xe) : essai immersif, Odyssée-02, devis, Carte aux cinq niveaux ; mesures dans `docs/RELAIS-CLAUDE-2026-11-22-V59-IRIS-XE.md`.
 
 Commits publiés en v59 :
 
