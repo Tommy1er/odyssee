@@ -17,7 +17,9 @@ const server=http.createServer((req,res)=>{const file=path.join(root,decodeURICo
   const k=await page.evaluate(()=>window.s2Demonstrator());
   check('Kepler (témoin) : les deux repères de péricentre sont confondus',k.visible&&!k.gr&&k.markerArcmin<1e-3,JSON.stringify(k));
   const s0=await snap();
-  await page.evaluate(()=>document.getElementById('orbit-s2-gr').click());await page.waitForTimeout(1500);
+  await page.evaluate(()=>document.getElementById('orbit-s2-gr').click());
+  // Les repères sont reconstruits à la prochaine image dessinée : attendre la condition plutôt qu'un délai fixe (runners lents).
+  await page.waitForFunction(()=>window.s2Demonstrator().key.startsWith('true'),null,{timeout:120000}).catch(()=>{});
   const g=await page.evaluate(()=>window.s2Demonstrator());
   check('Relativité : repères séparés de 12,2′ (prédiction de Schwarzschild ; GRAVITY 2020 : 12′)',g.gr&&Math.abs(g.markerArcmin-12.18)<.05,`${g.markerArcmin.toFixed(3)}′`);
   check('La case ne modifie pas la simulation (position, impulsion, horloges, moteur)',PHYS(await snap())===PHYS(s0));
