@@ -46,6 +46,7 @@ Dans la conversation Codex de l'éditeur, j'ai par mégarde fait passer le nivea
 - **Carte : parité des quatre niveaux complète en essai** (Univers observable et horizon, bassins SDSS, plan supergalactique du dessus) : § 7 de `docs/RELAIS-CLAUDE-2026-11-21-CARTE-NIVEAUX-3-4.md`. Restent à trancher : coût Iris Xe, saturation CF4, UNGC au niveau Vierge.
 - **Odyssée-02** : allure validée par le propriétaire (« c'est parfait »). L'ouverture au public n'est pas encore décidée.
 - **v59 vérifiée sur Iris Xe** (essai immersif, devis, Carte, Odyssée-02) : `docs/RELAIS-CLAUDE-2026-11-22-V59-IRIS-XE.md`. **Pour ChatGPT** : les bassins CF4 coûtent environ un quart des images sur Iris Xe ; choisir entre lignes de courant fixes ou bassins masqués par défaut.
+- **Bassins CF4 masqués par défaut, coût par couche sur Iris Xe, démonstrateur S2** : `docs/RELAIS-CLAUDE-2026-11-22-BASSINS-S2.md`. **Pour ChatGPT** : valider la vue caméra proposée pour observer l'orbite de S2 (§ 4), qui ne déplace pas le vaisseau.
 
 ## 4. Ce que Claude fait ensuite
 

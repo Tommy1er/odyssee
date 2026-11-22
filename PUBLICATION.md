@@ -9,6 +9,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `358a034` | Essai immersif seulement : le devis du trajet défile dans une fenêtre basse au lieu de recouvrir les onglets. Relais des mesures v59 sur Iris Xe. | 22 nov. 2026 | Local : observation 57/57. CI sur `71379b9` (même code) : 4 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45061101554) et « Cockpit layout and observation instruments » |
+| `db4867f` | Session d'essai seulement : bassins et flux CF4 en deux cases, **masqués par défaut** (décision du propriétaire), animation facultative ; démonstrateur S2 (précession relativiste 12,2′/révolution) ; `?vaisseau=01` pour comparer les vaisseaux. Statut « non résolu » pour un trou noir de moins d'un pixel (texte affiché seulement dans l'interface immersive, en zoom ; l'interface classique ne change pas). | 22 nov. 2026 | Local : Carte 39/39, observation 58/58, S2 6/6, optique 25/25, inventaire 30/30 ; `validate-physics-ui.cjs` échoue localement sur une capture, aussi sur HEAD. CI : à relever |
 
 ## Dernière version servie
 
