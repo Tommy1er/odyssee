@@ -43,6 +43,11 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   check('Préparer : rien de physique ne change',PHYS(await snap())===PHYS(q0));
   await page.keyboard.press('Escape');await page.waitForTimeout(300);
   check('Échap ferme le devis sans rien engager',await page.evaluate(()=>document.getElementById('trip-quote').hidden)&&PHYS(await snap())===PHYS(q0));
+  // Fenêtre basse (1280 × 529, relevée sur le Chrome du propriétaire) : le devis ne recouvre pas l'en-tête et « Engager » reste visible.
+  {const vp=page.viewportSize();await page.setViewportSize({width:1280,height:529});await page.waitForTimeout(500);await page.evaluate(()=>document.getElementById('hud-engage').click());await page.waitForTimeout(400);
+   const r=await page.evaluate(()=>{const q=document.getElementById('trip-quote').getBoundingClientRect(),h=document.querySelector('.flight-header').getBoundingClientRect(),b=document.getElementById('quote-engage').getBoundingClientRect();return {top:Math.round(q.top),header:Math.round(h.bottom),btnTop:Math.round(b.top),btnBottom:Math.round(b.bottom),quoteBottom:Math.round(q.bottom)};});
+   check('Fenêtre de 529 px : devis sous l\'en-tête, bouton « Engager » visible',r.top>=r.header&&r.btnTop>=r.top&&r.btnBottom<=r.quoteBottom+1,JSON.stringify(r));
+   await page.keyboard.press('Escape');await page.setViewportSize(vp);await page.waitForTimeout(500);}
   // Situer : la Carte centrée sur la cible, sans effet physique.
   await page.evaluate(()=>document.getElementById('hud-situate').click());await page.waitForTimeout(1500);
   const sit=await page.evaluate(()=>({map:document.getElementById('map-view').classList.contains('active'),c:window.cosmicMapTargetScreen()}));

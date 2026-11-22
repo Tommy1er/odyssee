@@ -1,5 +1,5 @@
 {
- "passed": 56,
+ "passed": 57,
  "failed": 0,
  "results": [
   {
@@ -41,6 +41,11 @@
    "name": "Échap ferme le devis sans rien engager",
    "ok": true,
    "detail": ""
+  },
+  {
+   "name": "Fenêtre de 529 px : devis sous l'en-tête, bouton « Engager » visible",
+   "ok": true,
+   "detail": "{\"top\":60,\"header\":46,\"btnTop\":355,\"btnBottom\":398,\"quoteBottom\":409}"
   },
   {
    "name": "Situer : la Carte s'ouvre centrée sur la cible",
