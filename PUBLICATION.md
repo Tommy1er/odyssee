@@ -8,7 +8,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
-| `130ba83` | Session d'essai seulement : démonstrateur pulsar dans la fiche (courbe de lumière calculée, Vela 89,3 ms) ; contrôle du sens des lignes de courant CF4. Partout, sans effet visible attendu : géométrie du faisceau des pulsars partagée par le rendu (mêmes valeurs qu'avant) ; `cosmos.js` reconstruit. | 23 nov. 2026 | Local : optique 31/31, observation 61/61, Carte 40/40. CI : à relever |
+| `130ba83` | Session d'essai seulement : démonstrateur pulsar dans la fiche (courbe de lumière calculée, Vela 89,3 ms) ; contrôle du sens des lignes de courant CF4. Partout, sans effet visible attendu : géométrie du faisceau des pulsars partagée par le rendu (mêmes valeurs qu'avant) ; `cosmos.js` reconstruit. | 23 nov. 2026 | Local : optique 31/31, observation 61/61, Carte 40/40. CI sur `106fd12` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45163679596) et par le push (run 45163676968) |
 
 ## Dernière version servie
 
