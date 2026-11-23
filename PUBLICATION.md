@@ -6,7 +6,9 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
-Aucun lot en attente.
+| Commit | Contenu | Poussé le | Vérifications |
+|---|---|---|---|
+| `797a8c0` | Session d'essai seulement : réglage de la représentation adaptative CF4 (le cœur de Laniakea ne sature plus sur Iris Xe). | 23 nov. 2026 | Local : Carte 44/44. CI : à relever |
 
 ## Dernière version servie
 
