@@ -8,7 +8,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
-| `356f7fe` | Session d'essai seulement : symboles CF4 adaptés aux grandes échelles (fin de la saturation), Cosmicflows-4 par défaut au niveau Vierge (chargé à l'ouverture du niveau). Sans effet visible pour les visiteurs. Documentation : état canonique V3.0, note temporaire supprimée. **À vérifier sur Iris Xe après publication.** | 23 nov. 2026 | Local : Carte 44/44, observation 61/61, recherche 24/24, contexte cosmos. CI : à relever |
+| `356f7fe` | Session d'essai seulement : symboles CF4 adaptés aux grandes échelles (fin de la saturation), Cosmicflows-4 par défaut au niveau Vierge (chargé à l'ouverture du niveau). Sans effet visible pour les visiteurs. Documentation : état canonique V3.0, note temporaire supprimée. **À vérifier sur Iris Xe après publication.** | 23 nov. 2026 | Local : Carte 44/44, observation 61/61, recherche 24/24, contexte cosmos. CI sur `d7f4ef3` (même code) : 6 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45198128381) et par le push (run 45198129602) |
 
 ## Dernière version servie
 
