@@ -3,7 +3,7 @@ import {sub,norm,unit,YEAR} from './physics.js';
 import {radiusLy,hash} from './body-data.js';
 import {temperature} from './stellar-light.js';
 import {limbDarkening,blackbodyRGB} from './stellar-physics.js';
-import {beamBlend} from './compact-objects.js';
+import {beamBlend,PULSAR_MAGNETIC_AXIS_BODY,PULSAR_SPIN_AXIS} from './compact-objects.js';
 import {EPOCH} from './ephemeris.js';
 import {yearToJD} from './solar-ephemeris.js';
 import {bodyFrame,hasIAU} from './iau-rotation.js';
@@ -68,7 +68,7 @@ vec3 localRadiance(vec3 ray,vec3 background){if(bodyKind<.5)return background;
   if(bodyKind>=3.){
    // Radio beams along the magnetic axis, inclined ≈40° to the spin axis: false colour, invisible to the eye.
    // A rotation faster than ≈0.2 s of screen time is shown averaged over the exposure, as a swept hollow cone.
-   vec3 axis=transpose(bodyRotation)*normalize(vec3(.58,.76,.28)),spin=transpose(bodyRotation)*vec3(0.,1.,0.);
+   vec3 axis=transpose(bodyRotation)*vec3(${PULSAR_MAGNETIC_AXIS_BODY.map(x=>x.toFixed(6)).join(',')}),spin=transpose(bodyRotation)*vec3(0.,1.,0.);
    if(bodyBeamBlend>.001){float ar=dot(axis,ray),ac=dot(axis,center);float t=(b-ar*ac)/max(.0001,1.-ar*ar);vec3 closest=ray*t-center;float h=dot(closest,axis),distance=length(closest-axis*h);float width=.025+.045*abs(h);float beam=exp(-distance*distance/(width*width))*smoothstep(1.,1.3,abs(h))*(1.-smoothstep(4.,8.,abs(h)));if(t>0.&&t<surfaceT)col+=vec3(.12,.44,.9)*beam*.6*bodyBeamBlend;}
    float thetaM=acos(clamp(abs(dot(axis,spin)),0.,1.));vec3 swept=vec3(0.),lines=vec3(0.);float t0=max(0.,b-8.),dt=16./24.;
    for(int k=0;k<24;k++){float tt=t0+(float(k)+.5)*dt;if(tt>surfaceT)break;vec3 pp=ray*tt-center;float rr=length(pp);if(rr<1.05||rr>8.)continue;
@@ -106,7 +106,7 @@ export class CloseupModel{
  // adds pedagogical spin only to the surface, never to the body centre. Other bodies: illustrative axes.
  const name=textureNames[o.id],seconds=s.animateBodies?s.observationTime:s.t*YEAR,key=o.ephemeris||(o.id==='h0'?'Soleil':null);let phase;
  if(key&&hasIAU(key)){const jd=yearToJD(EPOCH+s.t)+(s.animateBodies?s.observationTime/86400:0),earth=key==='Lune'&&this.objects.find(x=>x.id==='solar:Terre'),f=bodyFrame(key,jd,earth?sub(earth.xyz,o.xyz):null);u.bodyRotation.value.set(...f[0],...f[1],...f[2]);phase=Math.atan2(f[0][1],f[0][0]);}
- else{phase=o.type==='pulsar'?seconds*2*Math.PI/(o.periodSeconds||1):seconds*2*Math.PI/(star?2160000:86400);const north=new T.Vector3(0,-.39778,.91748);const q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),north);q.multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),phase));u.bodyRotation.value.setFromMatrix4(new T.Matrix4().makeRotationFromQuaternion(q)).transpose();}
+ else{phase=o.type==='pulsar'?seconds*2*Math.PI/(o.periodSeconds||1):seconds*2*Math.PI/(star?2160000:86400);const north=new T.Vector3(...PULSAR_SPIN_AXIS);const q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),north);q.multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),phase));u.bodyRotation.value.setFromMatrix4(new T.Matrix4().makeRotationFromQuaternion(q)).transpose();}
  this.phase=phase;
  // Illumination comes from the star of the system: climb the parent chain (moon → planet → star).
  let host=this.objects.find(x=>x.id===o.parent);for(let k=0;host&&host.type!=='star'&&k<4;k++)host=this.objects.find(x=>x.id===host.parent);host=host||this.objects.find(x=>x.id==='h0');let light=host?sub(host.xyz,o.xyz):[-.8,.4,1];if(star||norm(light)<1e-15)light=[-.8,.4,1];u.bodyLight.value.set(...unit(light));

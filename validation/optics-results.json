@@ -1,5 +1,5 @@
 {
-  "passed": 25,
+  "passed": 31,
   "checks": [
     "Schwarzschild impact 2 Rs: capture",
     "Schwarzschild impact 2.4 Rs: capture",
@@ -18,6 +18,12 @@
     "Retarded photon light cone 0.99",
     "Retarded emission is past 0.99",
     "S2 Kepler periapsis",
+    "Pulsar vela : l'observateur balayé reçoit une impulsion par rotation, intervalle = période (89.3 ms)",
+    "Pulsar vela : l'observateur à 5° de l'axe de rotation, hors du cône balayé, ne reçoit pas d'impulsion",
+    "Pulsar crab-pulsar : l'observateur balayé reçoit une impulsion par rotation, intervalle = période (33.7 ms)",
+    "Pulsar crab-pulsar : l'observateur à 5° de l'axe de rotation, hors du cône balayé, ne reçoit pas d'impulsion",
+    "Pulsar : axe magnétique incliné d'environ 40° sur l'axe de rotation",
+    "Pulsar : l'axe magnétique revient à l'identique après une rotation",
     "S2 periodic closure",
     "S2 : précession de Schwarzschild prédite entre 11′ et 13′ par révolution (GRAVITY 2020 : 12′, f_SP = 1,10 ± 0,19)",
     "S2 Kepler (témoin) : même direction du péricentre à deux passages",

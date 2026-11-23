@@ -51,6 +51,14 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
    check('Cygnus X-1 à 7 200 al : statut « non résolu », l\'image calculée n\'apparaît qu\'en approche',/^cygx1 · Non résolu/.test(bh)&&/en approche/.test(bh),bh);
    await page.evaluate(()=>document.getElementById('view-reset').click());await page.waitForTimeout(500);
    await page.evaluate(()=>{const s=document.getElementById('destination-search');s.value='Mars';s.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-id="solar:Mars"]').click();});await page.waitForTimeout(800);}
+  // Démonstrateur pulsar (essai) : la fiche de Vela montre la courbe de lumière calculée et l'intervalle entre impulsions = 89,3 ms.
+  {await page.evaluate(()=>{const s=document.getElementById('destination-search');s.value='Pulsar de Vela';s.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-id="vela"]').click();});await page.waitForTimeout(600);
+   const p0=await page.evaluate(()=>JSON.stringify(window.flightSnapshot().pos));
+   await page.evaluate(()=>document.getElementById('hud-info').click());await page.waitForSelector('#pulsar-signal',{timeout:30000}).catch(()=>{});
+   const ps=await page.evaluate(()=>({text:document.getElementById('pulsar-readout')?.textContent||'',canvas:!!document.getElementById('pulsar-plot')}));
+   check('Pulsar de Vela (essai) : courbe de lumière calculée, intervalle mesuré 89,3 ms, aucune impulsion hors du cône',ps.canvas&&/intervalle mesuré 89,3 ms/.test(ps.text)&&/aucune impulsion/.test(ps.text),ps.text.slice(0,200));
+   await page.evaluate(()=>document.getElementById('flight-dialog').close());check('Fiche du pulsar : la position du vaisseau ne change pas',p0===await page.evaluate(()=>JSON.stringify(window.flightSnapshot().pos)));
+   await page.evaluate(()=>{const s=document.getElementById('destination-search');s.value='Mars';s.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-id="solar:Mars"]').click();});await page.waitForTimeout(600);}
   // Fenêtre basse (1280 × 529, relevée sur le Chrome du propriétaire) : le devis ne recouvre pas l'en-tête et « Engager » reste visible.
   {const vp=page.viewportSize();await page.setViewportSize({width:1280,height:529});await page.waitForTimeout(500);await page.evaluate(()=>document.getElementById('hud-engage').click());await page.waitForTimeout(400);
    const r=await page.evaluate(()=>{const q=document.getElementById('trip-quote').getBoundingClientRect(),h=document.querySelector('.flight-header').getBoundingClientRect(),b=document.getElementById('quote-engage').getBoundingClientRect();return {top:Math.round(q.top),header:Math.round(h.bottom),btnTop:Math.round(b.top),btnBottom:Math.round(b.bottom),quoteBottom:Math.round(q.bottom)};});

@@ -88,14 +88,15 @@ export class BasinLayer {
     }
     // Streamlines as line segments; phase = distance along the line (Mly), animated toward the sink.
     const L = meta.streamlines, M = view(buffer, L.meta), P = view(buffer, L.points), pos = [], col = [], phase = [];
-    let k = 0;
+    let k = 0; this.lineEnds = []; // début et fin de chaque ligne (contrôle du sens : vers l'attracteur de son bassin)
     for (let i = 0; i < L.count; i++) {
-      const n = M[2 * i], lab = M[2 * i + 1], color = new T.Color(BASIN_COLORS[lab] || 0x9aa3ad); let prev = null, s = 0;
+      const n = M[2 * i], lab = M[2 * i + 1], color = new T.Color(BASIN_COLORS[lab] || 0x9aa3ad); let prev = null, s = 0, first = null;
       for (let j = 0; j < n; j++, k++) {
-        const p = sgToEq([P[3 * k] / 10, P[3 * k + 1] / 10, P[3 * k + 2] / 10], h);
+        const p = sgToEq([P[3 * k] / 10, P[3 * k + 1] / 10, P[3 * k + 2] / 10], h); if (!first) first = p;
         if (prev) { pos.push(...prev, ...p); const ds = Math.hypot(p[0] - prev[0], p[1] - prev[1], p[2] - prev[2]); col.push(color.r, color.g, color.b, color.r, color.g, color.b); phase.push(s, s + ds); s += ds; }
         prev = p;
       }
+      if (first && prev) this.lineEnds.push({ label: lab, first, last: prev });
     }
     const g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); g.setAttribute("color", new T.Float32BufferAttribute(col, 3)); g.setAttribute("phase", new T.Float32BufferAttribute(phase, 1));
     this.lines = new T.LineSegments(g, new T.ShaderMaterial({ vertexShader: lineVertex, fragmentShader: lineFragment, uniforms: { time: { value: 0 }, opacity: { value: 0.4 } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending }));

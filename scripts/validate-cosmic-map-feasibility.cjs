@@ -106,6 +106,10 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   const tFix=async()=>page.evaluate(()=>window.cosmicMapLayer.basins.lines.material.uniforms.time.value);
   const fl=await page.evaluate(()=>({lines:window.cosmicMapLayer.basins.lines.visible,note:document.getElementById('map-cosmic-note').textContent}));const f0=await tFix();await page.waitForTimeout(1200);const f1=await tFix();
   check('Flux reconstruits : lignes affichées et fixes par défaut, présentées comme champ de vitesses reconstruit et non comme trajectoires',fl.lines&&f0===f1&&/champ de vitesses reconstruit à l’époque actuelle, pas les trajectoires futures/.test(fl.note),`temps ${f0} → ${f1}`);
+  // Sens du courant : chaque ligne est parcourue (et animée) de son début vers sa fin ; la fin doit être plus près de l'attracteur de son bassin.
+  const dirn=await page.evaluate(()=>{const B=window.cosmicMapLayer.basins,att=new Map(B.entries.map(e=>[e.basin.label,e.attractor]));let n=0,ok=0;const d=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+   for(const l of B.lineEnds||[]){const a=att.get(l.label);if(!a)continue;n++;if(d(l.last,a)<d(l.first,a))ok++;}return {n,ok};});
+  check('Sens de l\'animation : les lignes vont vers l\'attracteur de leur bassin (champ reconstruit)',dirn.n>100&&dirn.ok/dirn.n>.9,`${dirn.ok}/${dirn.n} lignes`);
   const pBefore=await page.evaluate(()=>JSON.stringify(window.cosmicMapLayer.rows.slice(0,50).map(r=>r.p)));
   await page.evaluate(()=>document.getElementById('map-flows-animate').click());await page.waitForTimeout(800);const a0=await tFix();await page.waitForTimeout(1200);const a1=await tFix();
   const pAfter=await page.evaluate(()=>({p:JSON.stringify(window.cosmicMapLayer.rows.slice(0,50).map(r=>r.p)),note:document.getElementById('map-cosmic-note').textContent}));

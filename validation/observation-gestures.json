@@ -1,5 +1,5 @@
 {
- "passed": 59,
+ "passed": 61,
  "failed": 0,
  "results": [
   {
@@ -48,6 +48,16 @@
    "detail": "cygx1 · Non résolu à ce champ : diamètre apparent 0,00000000038″, moins d’un pixel ; l’image calculée (lentille gravitationnelle) n’apparaît qu’en approche"
   },
   {
+   "name": "Pulsar de Vela (essai) : courbe de lumière calculée, intervalle mesuré 89,3 ms, aucune impulsion hors du cône",
+   "ok": true,
+   "detail": "Observateur sur le cône balayé par le faisceau (axe magnétique incliné de 40° sur l’axe de rotation) : 3 impulsions en 357,2 ms, intervalle mesuré 89,3 ms = période de rotation (89,3 ms). Observateur "
+  },
+  {
+   "name": "Fiche du pulsar : la position du vaisseau ne change pas",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "Fenêtre de 529 px : devis sous l'en-tête, bouton « Engager » visible",
    "ok": true,
    "detail": "{\"top\":60,\"header\":46,\"btnTop\":355,\"btnBottom\":398,\"quoteBottom\":409}"
@@ -65,7 +75,7 @@
   {
    "name": "Étiquette de la cible : ne passe ni sous la télémétrie ni sous la fiche",
    "ok": true,
-   "detail": "{\"off\":false,\"telemetry\":false,\"hud\":false}"
+   "detail": "{\"off\":true,\"telemetry\":false,\"hud\":false}"
   },
   {
    "name": "Cadrer : suivi de la cible par la caméra seule (viewOnly)",
@@ -95,7 +105,7 @@
   {
    "name": "Télémétrie : écart regard / nez affiché si la cible n'est pas devant le nez",
    "ok": true,
-   "detail": "{\"hidden\":false,\"text\":\"regard ≠ nez · 117°\"}"
+   "detail": "{\"hidden\":false,\"text\":\"regard ≠ nez · 67°\"}"
   },
   {
    "name": "Libellé immersif : « Cadrée · Échap pour revenir »",
@@ -210,7 +220,7 @@
   {
    "name": "Session d'essai : la mission d'essai est écrite à part",
    "ok": true,
-   "detail": "1030 caractères"
+   "detail": "1031 caractères"
   },
   {
    "name": "Rangée basse A : trois groupes visibles (Mission, Temps, Propulsion)",
@@ -270,7 +280,7 @@
   {
    "name": "Banc de comparaison : deux vaisseaux mesurés en alternance, Odyssée-02 remis ensuite",
    "ok": true,
-   "detail": "{\"Odyssée-01\":{\"fps\":0,\"p95\":null},\"Odyssée-02\":{\"fps\":0,\"p95\":null}}"
+   "detail": "{\"Odyssée-01\":{\"fps\":0,\"p95\":null},\"Odyssée-02\":{\"fps\":0.625,\"p95\":null}}"
   },
   {
    "name": "Aucune erreur de page",

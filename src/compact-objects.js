@@ -45,6 +45,44 @@ export const visibleFraction = (u) => (1 - Math.max(-1, cosPsiFromAlpha(0, u))) 
 export const apparentRadius = (u) => 1 / Math.sqrt(1 - u);
 // Rotation periods for editorial pulsars without a catalogue period (ATNF catalogue values).
 export const PULSAR_PERIODS = { vela: 0.0893, "crab-pulsar": 0.0337 };
+// Géométrie du faisceau, partagée par le rendu (closeup.js) et le démonstrateur du signal reçu : axe de rotation
+// illustratif (pôle de l'écliptique, repère équatorial) et axe magnétique incliné d'environ 40° sur l'axe de rotation.
+export const PULSAR_SPIN_AXIS = [0, -0.39778, 0.91748];
+const MB = [0.58, 0.76, 0.28], MBN = Math.hypot(...MB);
+export const PULSAR_MAGNETIC_AXIS_BODY = MB.map((x) => x / MBN);
+// Axe magnétique dans le repère du ciel à la phase de rotation φ : R = Q(y → axe de rotation) · Rot_y(φ), comme le rendu.
+export function pulsarMagneticAxis(phase) {
+  const [x, y, z] = PULSAR_MAGNETIC_AXIS_BODY, c = Math.cos(phase), s = Math.sin(phase);
+  const v = [x * c + z * s, y, -x * s + z * c], n = PULSAR_SPIN_AXIS;
+  const k = [n[2], 0, -n[0]], kn = Math.hypot(...k), cosT = n[1], sinT = kn; // axe y × n, angle (y, n)
+  if (kn < 1e-12) return v;
+  const u = k.map((a) => a / kn), d = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+  const cr = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+  return v.map((vi, i) => vi * cosT + cr[i] * sinT + u[i] * d * (1 - cosT));
+}
+// Intensité reçue par un observateur lointain dans la direction `observer` (vecteur unitaire, du pulsar vers l'observateur) :
+// deux faisceaux opposés le long de l'axe magnétique, profil gaussien de demi-largeur angulaire `width` (illustrative).
+export function pulsarIntensity(t, period, observer, width = (6 * Math.PI) / 180) {
+  const m = pulsarMagneticAxis((2 * Math.PI * t) / period), c = m[0] * observer[0] + m[1] * observer[1] + m[2] * observer[2];
+  const a = Math.min(Math.acos(Math.max(-1, Math.min(1, c))), Math.acos(Math.max(-1, Math.min(1, -c))));
+  return Math.exp((-a * a) / (2 * width * width));
+}
+// Courbe de lumière échantillonnée et instants des impulsions (maxima locaux au-dessus de la moitié du maximum).
+export function pulsarLightCurve(period, observer, { periods = 4, samples = 4000, width } = {}) {
+  const dt = (period * periods) / samples, I = [];
+  for (let i = 0; i <= samples; i++) I.push(pulsarIntensity(i * dt, period, observer, width));
+  const peak = Math.max(...I), pulses = [];
+  for (let i = 1; i < samples; i++) if (I[i] >= I[i - 1] && I[i] > I[i + 1] && I[i] > 0.5 * peak && peak > 1e-3) pulses.push(i * dt);
+  const intervals = pulses.slice(1).map((t, i) => t - pulses[i]);
+  return { dt, intensity: I, peak, pulses, interval: intervals.length ? intervals.reduce((a, b) => a + b, 0) / intervals.length : null };
+}
+// Deux observateurs de démonstration : l'un sur le cône balayé par le faisceau, l'autre à 5° de l'axe de rotation (hors du cône).
+export function pulsarObservers() {
+  const swept = pulsarMagneticAxis(0), n = PULSAR_SPIN_AXIS, d = swept.map((x, i) => x - n[i] * (swept[0] * n[0] + swept[1] * n[1] + swept[2] * n[2])), dn = Math.hypot(...d);
+  const e = d.map((x) => x / dn), a = (5 * Math.PI) / 180, off = n.map((x, i) => x * Math.cos(a) + e[i] * Math.sin(a));
+  const incl = (Math.acos(swept[0] * n[0] + swept[1] * n[1] + swept[2] * n[2]) * 180) / Math.PI;
+  return { swept, off, inclinationDeg: incl };
+}
 // Display of a rotating beam: a period shorter than ~0.2 s of screen time is averaged into its swept cone
 // (an eye or a camera integrates the pulses), instead of strobing.
 export function beamBlend(periodSeconds, missionSecondsPerScreenSecond) {

@@ -1,5 +1,5 @@
 {
- "passed": 39,
+ "passed": 40,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 122.3,
-   "frameP50": 183.4,
-   "frameP95": 416.6,
-   "frames": 29
+   "heapMB": 125.5,
+   "frameP50": 199.9,
+   "frameP95": 366.6,
+   "frames": 32
   },
   "carte Groupe local · couche allumée": {
    "geometries": 73,
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 10101,
-   "heapMB": 123.3,
-   "frameP50": 200,
-   "frameP95": 383.3,
-   "frames": 33
+   "heapMB": 123,
+   "frameP50": 199.9,
+   "frameP95": 350,
+   "frames": 30
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 10197,
-   "heapMB": 132.8,
-   "frameP50": 216.7,
-   "frameP95": 433.3,
-   "frames": 27
+   "heapMB": 145.3,
+   "frameP50": 183.4,
+   "frameP95": 383.3,
+   "frames": 30
   },
   "doublons": {
    "pairs": 96,
@@ -62,10 +62,10 @@
    "triangles": 2280,
    "points": 143898,
    "lines": 10581,
-   "heapMB": 126,
-   "frameP50": 266.6,
-   "frameP95": 450,
-   "frames": 20
+   "heapMB": 129.7,
+   "frameP50": 183.4,
+   "frameP95": 333.3,
+   "frames": 32
   },
   "carte Vierge · Cosmicflows-4": {
    "geometries": 103,
@@ -75,10 +75,10 @@
    "triangles": 2280,
    "points": 198907,
    "lines": 10581,
-   "heapMB": 168.2,
-   "frameP50": 266.6,
-   "frameP95": 416.7,
-   "frames": 23
+   "heapMB": 192.7,
+   "frameP50": 233.2,
+   "frameP95": 449.9,
+   "frames": 25
   },
   "carte Laniakea · CF4 + bassins": {
    "geometries": 123,
@@ -88,10 +88,10 @@
    "triangles": 61588,
    "points": 198907,
    "lines": 128851,
-   "heapMB": 207.4,
-   "frameP50": 683.3,
-   "frameP95": 883.4,
-   "frames": 9
+   "heapMB": 183.9,
+   "frameP50": 583.3,
+   "frameP95": 749.9,
+   "frames": 10
   },
   "carte toile cosmique · CF4 + bassins": {
    "geometries": 135,
@@ -101,10 +101,10 @@
    "triangles": 61594,
    "points": 198907,
    "lines": 129811,
-   "heapMB": 170.7,
-   "frameP50": 950,
-   "frameP95": 1433.2,
-   "frames": 7
+   "heapMB": 172.1,
+   "frameP50": 616.6,
+   "frameP95": 1083.3,
+   "frames": 9
   },
   "carte univers observable · horizon": {
    "geometries": 139,
@@ -114,10 +114,10 @@
    "triangles": 61580,
    "points": 198907,
    "lines": 130579,
-   "heapMB": 165.8,
-   "frameP50": 666.6,
-   "frameP95": 816.7,
-   "frames": 9
+   "heapMB": 166.7,
+   "frameP50": 650,
+   "frameP95": 1033.3,
+   "frames": 8
   }
  },
  "results": [
@@ -227,9 +227,14 @@
    "detail": "temps 0 → 0"
   },
   {
+   "name": "Sens de l'animation : les lignes vont vers l'attracteur de leur bassin (champ reconstruit)",
+   "ok": true,
+   "detail": "2833/2992 lignes"
+  },
+  {
    "name": "Animation facultative : le temps des lignes avance, aucune galaxie du catalogue ne bouge, la note précise le sens du courant",
    "ok": true,
-   "detail": "temps 121.17 → 122.84"
+   "detail": "temps 113.39 → 114.24"
   },
   {
    "name": "Laniakea : étiquettes Laniakea, Persée–Poissons et Grand Attracteur visibles",
@@ -284,7 +289,7 @@
   {
    "name": "Plan supergalactique vu du dessus : caméra sur l'axe SGZ, SGY vers le haut",
    "ok": true,
-   "detail": "{\"look\":-0.9999999999999999,\"up\":1.0000000000000004}"
+   "detail": "{\"look\":-1,\"up\":1.0000000000000004}"
   },
   {
    "name": "Univers observable : horizon tracé, structures du niveau 4 et CF4, notification avec la distance comobile",
