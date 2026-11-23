@@ -6,11 +6,23 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
+Aucun lot en attente.
+
+## Dernière version servie
+
+| Version | Commit de `main` | Publié le | Par | Contenu |
+|---|---|---|---|---|
+| **v62** | `1431ea094ea507a514b708a5468ec0097198e2e0` (commit Sites `2022b39fdecd22105def3323f95ae5f75bd2a529`, même arborescence) | 23 nov. 2026 à 12:00 UTC | Codex | Démonstrateur de pulsar en session d’essai et contrôle du sens des lignes de courant Cosmicflows-4. |
+
+Vérifié après publication dans Chrome : accueil, `cosmos.html`, badge de sauvegarde isolée et fiche de Vela (intervalle de 89,3 ms sur le cône, aucune impulsion hors du cône). Les fichiers `cockpit.js` et `cosmos.js` servis correspondent au build. Le contrôle géométrique CF4 est couvert par les tests du lot.
+
+Lot publié en v62 :
+
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `130ba83` | Session d'essai seulement : démonstrateur pulsar dans la fiche (courbe de lumière calculée, Vela 89,3 ms) ; contrôle du sens des lignes de courant CF4. Partout, sans effet visible attendu : géométrie du faisceau des pulsars partagée par le rendu (mêmes valeurs qu'avant) ; `cosmos.js` reconstruit. | 23 nov. 2026 | Local : optique 31/31, observation 61/61, Carte 40/40. CI sur `106fd12` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45163679596) et par le push (run 45163676968) |
 
-## Dernière version servie
+## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
@@ -23,8 +35,6 @@ Lot publié en v61 :
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `700de2e` | Session d'essai seulement : banc `shipBenchmark()` pour comparer Odyssée-01 et Odyssée-02 dans la même page ; relais v60 (parcours S2 vérifié en ligne). Partout, sans effet visible : la préparation du modèle du vaisseau est factorisée (`SpacecraftView.prepare`). | 23 nov. 2026 | Local : observation 59/59. CI sur `a8f561e` (même code) : 6 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45152378408) et par le push (run 45152376590) |
-
-## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
