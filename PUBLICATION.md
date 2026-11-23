@@ -6,13 +6,25 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
+Aucun lot en attente.
+
+## Dernière version servie
+
+| Version | Commit de `main` | Publié le | Par | Contenu |
+|---|---|---|---|---|
+| **v60** | `e65d8376969a7eb6c8b906add0a2df9c26295704` (commit Sites `d954c7207385dc4b772d9f4edf1f47b787ea6c11`, même arborescence) | 23 nov. 2026 à 08:58 UTC | Codex | Session d’essai : devis en fenêtre basse, couches CF4 masquées par défaut, précession relativiste et caméra dédiée de S2, comparaison des vaisseaux et statut des trous noirs non résolus. |
+
+Vérifié après publication dans Chrome : accueil et `cosmos.html` accessibles, cockpit classique actif avec Odyssée-01, badge « Essai · sauvegarde isolée » visible avec `?essai=1`. Le parcours interactif S2 sur Iris Xe reste à vérifier.
+
+Lots publiés en v60 :
+
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `358a034` | Essai immersif seulement : le devis du trajet défile dans une fenêtre basse au lieu de recouvrir les onglets. Relais des mesures v59 sur Iris Xe. | 22 nov. 2026 | Local : observation 57/57. CI sur `71379b9` (même code) : 4 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45061101554) et « Cockpit layout and observation instruments » |
 | `db4867f` | Session d'essai seulement : bassins et flux CF4 en deux cases, **masqués par défaut** (décision du propriétaire), animation facultative ; démonstrateur S2 (précession relativiste 12,2′/révolution) ; `?vaisseau=01` pour comparer les vaisseaux. Statut « non résolu » pour un trou noir de moins d'un pixel (texte affiché seulement dans l'interface immersive, en zoom ; l'interface classique ne change pas). | 22 nov. 2026 | Local : Carte 39/39, observation 58/58, S2 6/6, optique 25/25, inventaire 30/30 ; `validate-physics-ui.cjs` échoue localement sur une capture, aussi sur HEAD. CI sur `226696f` : 7 exécutions réussies au push, dont « Reproducible validation » (job cockpit vert) ; le job s2 lancé à la main a d'abord échoué (lecture avant la première image), corrigé en `275755e`, puis « Reproducible validation » vert sur `275755e` (run 45073444170, 10 jobs) |
 | `1243241` | Session d'essai seulement : vue d'observation de S2 (bouton « Observer l'orbite de S2 ») : orbite entière à 3 000 ua et péricentre ; avec la relativité, les deux passages sont séparés de 12,18′, soit 0,42 ua, visibles au zoom sans amplification. Caméra seule, vaisseau intact. | 22 nov. 2026 | Local : S2 11/11, observation 58/58, inventaire 30/30, mise en page, physique mobile, stockage, optique 25/25. CI sur `2ead424` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45080758582, 10 jobs dont s2) et par le push (run 45080758933) |
 
-## Dernière version servie
+## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
@@ -29,8 +41,6 @@ Commits publiés en v59 :
 | `c1556c7` | Session d'essai seulement : panneau « Carte cosmique · essai », filtres de distance et d'incertitude, plan supergalactique, légende des bassins. | 21 nov. 2026 | Local : Carte 31/31 + 9 suites ; CI reproductible verte (9 jobs) |
 | `8ebd712` | Essai immersif : « Préparer le trajet » ouvre un devis (rendezvousEstimate) au lieu d'engager ; « Situer » cadre la Carte sur la cible. Session d'essai : vaisseau **Odyssée-02** (conception fictive d'après la physique). Visiteurs : Odyssée-01 et interface classique inchangés. **Allure du vaisseau à valider par le propriétaire.** | 21 nov. 2026 | Local : observation 56/56 + 9 suites (inventaire, recherche, rendez-vous, mise en page, contexte cosmos, physique mobile, Carte 31/31, stockage). `validate-v2.cjs` : contrôle « Odyssée-01 hors essai » réussi, puis échec de capture d'écran (délai des polices) identique sur `49b5a28`, donc antérieur ; ce script n'est pas dans la CI. CI sur `0a6acaa` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 44948996610) et par le push (run 44948994133), 9 jobs chacun |
 | `7538bde` | Session d'essai seulement : niveau « Univers observable » (horizon comobile), bassins SDSS coupés, plan supergalactique vu du dessus sur la Carte du cockpit ; radiateurs d'Odyssée-02 assombris. **Odyssée-02 : allure validée par le propriétaire ; ouverture au public encore à confirmer.** | 21 nov. 2026 | Local : Carte 36/36 + 7 suites (observation, inventaire, recherche, mise en page, contexte cosmos, physique mobile, stockage). CI sur `8e94f2a` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 44954894429) et par le push (run 44954894495) |
-
-## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
