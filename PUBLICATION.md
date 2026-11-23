@@ -6,7 +6,9 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
-Aucun lot en attente.
+| Commit | Contenu | Poussé le | Vérifications |
+|---|---|---|---|
+| `7ea67ba` | Session d'essai seulement : symboles CF4 adaptés aux grandes échelles (fin de la saturation), Cosmicflows-4 par défaut au niveau Vierge (chargé à l'ouverture du niveau). Sans effet visible pour les visiteurs. Documentation : état canonique V3.0, note temporaire supprimée. **À vérifier sur Iris Xe après publication.** | 23 nov. 2026 | Local : Carte 44/44, observation 61/61, recherche 24/24, contexte cosmos. CI : à relever |
 
 ## Dernière version servie
 
