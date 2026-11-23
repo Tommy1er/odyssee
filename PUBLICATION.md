@@ -6,7 +6,9 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
-Aucun lot en attente.
+| Commit | Contenu | Poussé le | Vérifications |
+|---|---|---|---|
+| `700de2e` | Session d'essai seulement : banc `shipBenchmark()` pour comparer Odyssée-01 et Odyssée-02 dans la même page ; relais v60 (parcours S2 vérifié en ligne). Partout, sans effet visible : la préparation du modèle du vaisseau est factorisée (`SpacecraftView.prepare`). | 23 nov. 2026 | Local : observation 59/59. CI : à relever |
 
 ## Dernière version servie
 
