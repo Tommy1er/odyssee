@@ -8,7 +8,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
-| `797a8c0` | Session d'essai seulement : réglage de la représentation adaptative CF4 (le cœur de Laniakea ne sature plus sur Iris Xe). | 23 nov. 2026 | Local : Carte 44/44. CI : à relever |
+| `797a8c0` | Session d'essai seulement : réglage de la représentation adaptative CF4 (le cœur de Laniakea ne sature plus sur Iris Xe). | 23 nov. 2026 | Local : Carte 44/44. CI sur `555781d` (même code) : 3 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45204741333) et par le push (run 45204741417) |
 
 ## Dernière version servie
 
