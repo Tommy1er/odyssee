@@ -52,3 +52,14 @@ Rien à changer dans le code : la position vient de McConnachie (0,805 Mpc), et 
 Un premier passage a échoué sur deux contrôles de minutage : l'horizon était lu avant l'image suivante, et le Groupe local avant le recalcul. Les deux attendent maintenant la condition.
 
 Autres suites : voir `PUBLICATION.md`. Non vérifié : Iris Xe, qui demande d'abord une publication.
+
+## 6. Suite : contrôle en ligne sur Iris Xe (v63) et réglage
+
+Vérifié en ligne (v63, Chrome du propriétaire, fenêtre de 1280 × 529, densité de pixels 1,5) :
+- **Vierge** : Cosmicflows-4 par défaut (55 877 galaxies), chargé à l'ouverture du niveau.
+- **Laniakea** : bassins non téléchargés tant qu'ils ne sont pas demandés. Symboles adaptés à 4,9 px, intensité 100 % (ω = 2,0).
+- **Univers observable** : intensité au plancher, horizon affiché.
+
+Sur l'écran du propriétaire, le **cœur de Laniakea restait blanc**. La mesure par moyenne pondérée (Σn²/Σn) visait la galaxie typique, et les cellules du cœur, plus denses, saturaient encore. La foule est désormais mesurée au **75e centile pondéré** des cellules : 75 % des galaxies sont dans des cellules moins denses. En local (toile cosmique), l'intensité passe de 61 % à 49 %. La structure du cœur reste lisible (`validation/ui/cockpit-carte-laniakea.jpg`). `validate-cosmic-map-feasibility.cjs` : 44/44.
+
+**Cadence non mesurable ce jour-là** : dans les trois vues (cockpit, Carte, Groupe local), toutes les images duraient exactement 1 016 ms, alors que le fil principal était libre. Le navigateur cadençait donc la page à une image par seconde : fenêtre Chrome hors du premier plan ou couverte, même si la page se déclare « visible ». Ce chiffre ne mesure pas Odyssée. La mesure est à refaire avec la fenêtre Chrome au premier plan.

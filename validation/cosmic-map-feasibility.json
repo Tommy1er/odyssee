@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 124.9,
-   "frameP50": 200,
-   "frameP95": 450,
-   "frames": 30
+   "heapMB": 139.4,
+   "frameP50": 233.3,
+   "frameP95": 416.6,
+   "frames": 24
   },
   "carte Groupe local · couche allumée": {
    "geometries": 73,
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 10101,
-   "heapMB": 122.9,
-   "frameP50": 250,
-   "frameP95": 433.3,
-   "frames": 24
+   "heapMB": 122.6,
+   "frameP50": 233.2,
+   "frameP95": 416.7,
+   "frames": 29
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 10197,
-   "heapMB": 127.7,
+   "heapMB": 126.8,
    "frameP50": 233.4,
-   "frameP95": 516.6,
-   "frames": 22
+   "frameP95": 449.9,
+   "frames": 25
   },
   "doublons": {
    "pairs": 96,
@@ -62,10 +62,10 @@
    "triangles": 2280,
    "points": 143898,
    "lines": 10581,
-   "heapMB": 167.9,
-   "frameP50": 250,
-   "frameP95": 516.7,
-   "frames": 22
+   "heapMB": 172.7,
+   "frameP50": 266.7,
+   "frameP95": 566.6,
+   "frames": 21
   },
   "carte Vierge · Cosmicflows-4": {
    "geometries": 103,
@@ -75,10 +75,10 @@
    "triangles": 2280,
    "points": 198907,
    "lines": 10581,
-   "heapMB": 187.2,
-   "frameP50": 300,
+   "heapMB": 187.8,
+   "frameP50": 283.3,
    "frameP95": 550.1,
-   "frames": 19
+   "frames": 20
   },
   "carte Laniakea · CF4 + bassins": {
    "geometries": 123,
@@ -88,10 +88,10 @@
    "triangles": 61588,
    "points": 198907,
    "lines": 128851,
-   "heapMB": 201.7,
-   "frameP50": 433.3,
-   "frameP95": 1100,
-   "frames": 10
+   "heapMB": 202.3,
+   "frameP50": 700,
+   "frameP95": 966.6,
+   "frames": 7
   },
   "carte toile cosmique · CF4 + bassins": {
    "geometries": 135,
@@ -101,10 +101,10 @@
    "triangles": 61594,
    "points": 198907,
    "lines": 129811,
-   "heapMB": 170.9,
-   "frameP50": 850,
-   "frameP95": 1300,
-   "frames": 9
+   "heapMB": 172.9,
+   "frameP50": 716.6,
+   "frameP95": 783.3,
+   "frames": 8
   },
   "carte univers observable · horizon": {
    "geometries": 139,
@@ -114,10 +114,10 @@
    "triangles": 61580,
    "points": 198907,
    "lines": 130579,
-   "heapMB": 168.5,
-   "frameP50": 833.3,
-   "frameP95": 949.9,
-   "frames": 7
+   "heapMB": 168.8,
+   "frameP50": 850,
+   "frameP95": 1466.6,
+   "frames": 6
   }
  },
  "results": [
@@ -239,7 +239,7 @@
   {
    "name": "Animation facultative : le temps des lignes avance, aucune galaxie du catalogue ne bouge, la note précise le sens du courant",
    "ok": true,
-   "detail": "temps 129.57 → 130.19"
+   "detail": "temps 124.63 → 125.80"
   },
   {
    "name": "Laniakea : étiquettes Laniakea, Persée–Poissons et Grand Attracteur visibles",
@@ -289,7 +289,7 @@
   {
    "name": "Toile cosmique : représentation CF4 adaptée à l'échelle",
    "ok": true,
-   "detail": "{\"inFrame\":55739,\"crowd\":265.59438566204375,\"overlap\":3.2593334798069176,\"load\":0.9999999999999999,\"size\":2,\"intensity\":0.6136223900962965}"
+   "detail": "{\"inFrame\":55739,\"crowd\":329.99409427681735,\"overlap\":4.049636805890887,\"load\":1,\"size\":2,\"intensity\":0.49387144967930435}"
   },
   {
    "name": "Bassins SDSS coupés : option affichée aux niveaux 3–4, ajoute des bassins et des entrées de légende",
@@ -299,7 +299,7 @@
   {
    "name": "Plan supergalactique vu du dessus : caméra sur l'axe SGZ, SGY vers le haut",
    "ok": true,
-   "detail": "{\"look\":-0.9999999999999998,\"up\":1.0000000000000004}"
+   "detail": "{\"look\":-1,\"up\":1.0000000000000004}"
   },
   {
    "name": "Univers observable : horizon tracé, structures du niveau 4 et CF4, notification avec la distance comobile",
@@ -309,7 +309,7 @@
   {
    "name": "CF4 aux grandes échelles : symboles réduits puis atténués, charge additive locale ≤ 1 ou intensité au plancher",
    "ok": true,
-   "detail": "{\"inFrame\":55877,\"crowd\":26761.122058753215,\"overlap\":328.4083768031206,\"load\":16.420418840156028,\"size\":2,\"intensity\":0.1}"
+   "detail": "{\"inFrame\":55877,\"crowd\":29123.478793084934,\"overlap\":357.3988555598975,\"load\":17.869942777994876,\"size\":2,\"intensity\":0.1}"
   },
   {
    "name": "Horizon : la case le masque",
@@ -319,7 +319,7 @@
   {
    "name": "Groupe local : symboles McConnachie peu ou pas atténués (101 galaxies)",
    "ok": true,
-   "detail": "{\"size\":4,\"intensity\":1,\"a\":{\"inFrame\":83,\"crowd\":2.783132530120482,\"overlap\":0.13661669860302,\"load\":0.06830834930151,\"size\":4,\"intensity\":1}}"
+   "detail": "{\"size\":4,\"intensity\":1,\"a\":{\"inFrame\":83,\"crowd\":5,\"overlap\":0.2454369260617026,\"load\":0.1227184630308513,\"size\":4,\"intensity\":1}}"
   },
   {
    "name": "Groupe local : horizon et option SDSS masqués à cette échelle",

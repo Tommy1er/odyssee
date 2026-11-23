@@ -88,15 +88,16 @@ export class CockpitCosmicMap{
   const span=spanLy/MLY;for(const {o,l} of this.labels){l.visible=o.level<=this.level&&span<o.r*40&&span>o.r*.4;if(mapScale)l.position.set(o.p[0]*MLY*mapScale,(o.p[1]+o.r*.55)*MLY*mapScale,o.p[2]*MLY*mapScale);}
  }
  // Représentation adaptative (décision du 23 novembre) : les symboles additifs saturaient en tache blanche aux grandes échelles.
- // On mesure la superposition LOCALE : grille de 16 px sur l'écran, superposition typique ω = Σ n² / Σ n × π(taille/2)² / 16²
- // (nombre moyen de voisins sous le symbole d'une galaxie). Chaque symbole ajoute 0,5 × intensité ; on garde ω × 0,5 × intensité ≤ 1 :
+ // On mesure la superposition LOCALE : grille de 16 px sur l'écran ; ω = n₇₅ × π(taille/2)² / 16², où n₇₅ est la densité de cellule
+ // telle que 75 % des galaxies sont dans des cellules moins denses (voisines sous le symbole d'une galaxie des régions denses). Chaque symbole ajoute 0,5 × intensité ; on garde ω × 0,5 × intensité ≤ 1 :
  // la taille descend d'abord jusqu'à la moitié, puis l'intensité, jusqu'à 10 %. Même facteur pour toutes les galaxies.
  adapt(k,camera,heightPx,dpr){const L=this.layers[k],u=L.layer.material.uniforms,base=Math.min(dpr,2)*4;if(!camera||!L.rows.length||!heightPx){u.size.value=base;u.intensity.value=1;return;}
   const now=performance.now();if(L.adaptAt&&now-L.adaptAt<400)return;L.adaptAt=now;
   this.root.updateMatrixWorld();camera.updateMatrixWorld();const W=heightPx*(camera.aspect||1.6),H=heightPx,cell=16*Math.min(dpr,2),gx=Math.ceil(W/cell),grid=new Map(),step=Math.max(1,Math.floor(L.rows.length/8000));let n=0,inside=0;
   for(let i=0;i<L.rows.length;i+=step){n++;const v=this._v.set(...L.rows[i].p).applyMatrix4(this.root.matrixWorld).project(camera);if(!(v.z<1&&v.z>-1&&Math.abs(v.x)<=1&&Math.abs(v.y)<=1))continue;inside++;
    const c=Math.floor((v.x+1)/2*W/cell)+gx*Math.floor((1-v.y)/2*H/cell);grid.set(c,(grid.get(c)||0)+1);}
-  const scale=L.rows.length/n;let s1=0,s2=0;for(const c of grid.values()){s1+=c;s2+=c*c;}const crowd=s1?s2/s1*scale:0; // galaxies par cellule, vues depuis une galaxie typique
+  // Foule vue depuis les régions denses : 75e centile des cellules, pondéré par le nombre de galaxies (la moyenne Σn²/Σn laissait le cœur saturer sur Iris Xe).
+  const scale=L.rows.length/n,cells=[...grid.values()].sort((a,b)=>a-b),tot=cells.reduce((a,b)=>a+b,0);let acc=0,p75=0;for(const c of cells){acc+=c;if(acc>=.75*tot){p75=c;break;}}const crowd=p75*scale;
   const omega=r=>crowd*Math.PI*r*r/4/(cell*cell);let size=base;if(omega(size)*.5>1)size=Math.max(base/2,base*Math.sqrt(2/omega(base)));const intensity=Math.max(.1,Math.min(1,2/Math.max(1e-9,omega(size))));
   u.size.value=size;u.intensity.value=intensity;L.adaptive={inFrame:Math.round(inside*scale),crowd,overlap:omega(size),load:omega(size)*.5*intensity,size,intensity};}
  // Galaxie cataloguée la plus proche du pointeur (en pixels), ou null.
