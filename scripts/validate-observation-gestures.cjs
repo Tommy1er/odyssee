@@ -169,6 +169,11 @@ const SENTINEL='{"sentinelle":"sauvegarde personnelle, ne pas modifier"}';
   // Vaisseau Odyssée-02 (conception fictive d'après la physique) : session d'essai seulement.
   const ship=await page.evaluate(()=>({name:window.flightSnapshot().shipName,credit:document.getElementById('ship-credit').textContent}));
   check('Essai : vaisseau Odyssée-02, signalé comme conception fictive',ship.name==='Odyssée-02',JSON.stringify(ship));
+  // Banc de comparaison des vaisseaux (essai) : alterne Odyssée-01 et Odyssée-02 dans la même page, puis remet le vaisseau d'origine.
+  await page.evaluate(()=>document.getElementById('external-view').click());await page.waitForTimeout(800);
+  const bench=await page.evaluate(()=>window.shipBenchmark({rounds:2,ms:800,settle:200}));
+  check('Banc de comparaison : deux vaisseaux mesurés en alternance, Odyssée-02 remis ensuite',bench.samples.length===4&&bench.samples.map(x=>x.name).join()==='Odyssée-01,Odyssée-02,Odyssée-02,Odyssée-01'&&bench.samples.every(x=>Number.isFinite(x.fps))&&await page.evaluate(()=>window.flightSnapshot().shipName==='Odyssée-02'),JSON.stringify(bench.mean));
+  await page.evaluate(()=>document.getElementById('cockpit-view').click());await page.waitForTimeout(500);
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));
   await page.close();
 

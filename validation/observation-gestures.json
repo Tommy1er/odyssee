@@ -1,5 +1,5 @@
 {
- "passed": 58,
+ "passed": 59,
  "failed": 0,
  "results": [
   {
@@ -266,6 +266,11 @@
    "name": "Essai : vaisseau Odyssée-02, signalé comme conception fictive",
    "ok": true,
    "detail": "{\"name\":\"Odyssée-02\",\"credit\":\"Odyssée-02 · aucune source stellaire connue : coque dans l’ombre\"}"
+  },
+  {
+   "name": "Banc de comparaison : deux vaisseaux mesurés en alternance, Odyssée-02 remis ensuite",
+   "ok": true,
+   "detail": "{\"Odyssée-01\":{\"fps\":0,\"p95\":null},\"Odyssée-02\":{\"fps\":0,\"p95\":null}}"
   },
   {
    "name": "Aucune erreur de page",

@@ -31,6 +31,7 @@ import {approachSchedule,approachRate,rendezvousEstimate,flightLeg,flightState,b
 import {initEphemeris,updateEphemeris,received,positionAt,velocityAt,intercept,EPOCH,invalidateEphemeris} from './ephemeris.js';
 import {galactocentric,fromGalactocentric,region,GAL_CENTER} from './galaxy.js';
 import {s2Position,S2_MODEL} from './environments.js';
+import {odysseyModel,odysseyModelV2} from './spacecraft.js';
 import {catalogObjects,radiusLy} from './body-data.js';
 const norm3=v=>v?Math.hypot(...v):0,$=id=>document.getElementById(id),$$=s=>[...document.querySelectorAll(s)],fmt=(n,p=2)=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:p}).format(n);
 // Écran court (voir cockpit.css) : le suivi du trajet s'ouvre replié à l'arrivée pour laisser la vue libre.
@@ -564,7 +565,12 @@ function setup(){
  $('insert-orbit').onclick=()=>{const body=nearbyGravity();cancel();state.localGravity=true;$('local-gravity').checked=true;if(enterOrbit(body,true)){state.paused=false;state.trackTarget=true;state.arrival=null;}syncButtons();ui();};$('orbit-map').onclick=()=>{switchView(true);renderer.fit('orbital',state);};
  $('gravity-fall').onclick=()=>startGravity('fall');$('gravity-hover').onclick=()=>startGravity('hover');
  $('gravity-exit').onclick=()=>{leaveGravity();state.paused=true;syncButtons();ui();};
- $('ship-focus').onclick=()=>{state.trackTarget=false;renderer.spacecraft.focus(state.shipLighting==='astro'?renderer.shipLight?.[0]?.dir:null);};if(TRIAL_SESSION)window.shipCameraForTests=p=>{const v=renderer.spacecraft;state.trackTarget=false;v.camera.position.set(...p).applyQuaternion(v.model.quaternion);v.camera.up.set(0,1,0).applyQuaternion(v.model.quaternion);v.controls.target.set(0,0,0);v.camera.lookAt(0,0,0);v.controls.update();return v.model.userData.name;}; // essai : vues de contrôle du vaisseau
+ $('ship-focus').onclick=()=>{state.trackTarget=false;renderer.spacecraft.focus(state.shipLighting==='astro'?renderer.shipLight?.[0]?.dir:null);};if(TRIAL_SESSION)window.shipBenchmark=async({rounds=3,ms=3000,settle=1500}={})=>{ // essai : Odyssée-01 et Odyssée-02 alternés dans la même page, même scène, même caméra
+  const v=renderer.spacecraft,first=v.model,models={'Odyssée-01':v.model.userData.name==='Odyssée-01'?v.model:odysseyModel(),'Odyssée-02':v.model.userData.name==='Odyssée-02'?v.model:odysseyModelV2()},out=[];
+  const sample=()=>new Promise(r=>{const d=[];let last=performance.now();const end=last+ms;const f=t=>{d.push(t-last);last=t;if(t<end)requestAnimationFrame(f);else{d.shift();d.sort((a,b)=>a-b);r({fps:d.length/ms*1000,median:d[d.length>>1],p95:d[Math.floor(.95*(d.length-1))]});}};requestAnimationFrame(f);});
+  for(let i=0;i<rounds;i++)for(const name of i%2?['Odyssée-02','Odyssée-01']:['Odyssée-01','Odyssée-02']){v.setModel(models[name]);await new Promise(r=>setTimeout(r,settle));out.push({round:i,name,...await sample()});}
+  v.setModel(first);const avg=n=>{const x=out.filter(o=>o.name===n);return {fps:x.reduce((s,o)=>s+o.fps,0)/x.length,p95:x.reduce((s,o)=>s+o.p95,0)/x.length};};return {samples:out,mean:{'Odyssée-01':avg('Odyssée-01'),'Odyssée-02':avg('Odyssée-02')}};};
+ if(TRIAL_SESSION)window.shipCameraForTests=p=>{const v=renderer.spacecraft;state.trackTarget=false;v.camera.position.set(...p).applyQuaternion(v.model.quaternion);v.camera.up.set(0,1,0).applyQuaternion(v.model.quaternion);v.controls.target.set(0,0,0);v.camera.lookAt(0,0,0);v.controls.update();return v.model.userData.name;}; // essai : vues de contrôle du vaisseau
 
  const canvas=$('flight-canvas');canvas.addEventListener('pointerdown',e=>{if(state.map||state.external)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);});canvas.addEventListener('pointermove',e=>{if(pointer&&!state.map&&!state.external){const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(Math.abs(dx)+Math.abs(dy)>0)steer(-dx*.003,-dy*.003);pointer.x=e.clientX;pointer.y=e.clientY;}});canvas.addEventListener('pointerup',()=>pointer=null);canvas.addEventListener('pointercancel',()=>pointer=null);
  $$('[data-steer]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();keys.add('touch:'+b.dataset.steer);b.setPointerCapture(e.pointerId);};b.onpointerup=b.onpointercancel=()=>keys.delete('touch:'+b.dataset.steer);});
