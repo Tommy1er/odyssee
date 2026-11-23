@@ -6,11 +6,23 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
+Aucun lot en attente.
+
+## Dernière version servie
+
+| Version | Commit de `main` | Publié le | Par | Contenu |
+|---|---|---|---|---|
+| **v61** | `435083a3e4cbbb1a5660a2fa00fa3e6faba15d03` (commit Sites `2c1da2e533156d95991fcf83993282aad247b1ac`, même arborescence) | 23 nov. 2026 à 10:49 UTC | Codex | Session d’essai : banc de mesure `shipBenchmark()` pour comparer Odyssée-01 et Odyssée-02 dans la même page. |
+
+Vérifié après publication dans Chrome : accueil et `cosmos.html` accessibles, cockpit classique actif avec Odyssée-01, badge « Essai · sauvegarde isolée » visible avec `?essai=1`. Le fichier `cockpit.js` servi est identique au fichier construit. La mesure comparative sur Iris Xe reste à faire.
+
+Lot publié en v61 :
+
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `700de2e` | Session d'essai seulement : banc `shipBenchmark()` pour comparer Odyssée-01 et Odyssée-02 dans la même page ; relais v60 (parcours S2 vérifié en ligne). Partout, sans effet visible : la préparation du modèle du vaisseau est factorisée (`SpacecraftView.prepare`). | 23 nov. 2026 | Local : observation 59/59. CI sur `a8f561e` (même code) : 6 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45152378408) et par le push (run 45152376590) |
 
-## Dernière version servie
+## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
@@ -25,8 +37,6 @@ Lots publiés en v60 :
 | `358a034` | Essai immersif seulement : le devis du trajet défile dans une fenêtre basse au lieu de recouvrir les onglets. Relais des mesures v59 sur Iris Xe. | 22 nov. 2026 | Local : observation 57/57. CI sur `71379b9` (même code) : 4 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45061101554) et « Cockpit layout and observation instruments » |
 | `db4867f` | Session d'essai seulement : bassins et flux CF4 en deux cases, **masqués par défaut** (décision du propriétaire), animation facultative ; démonstrateur S2 (précession relativiste 12,2′/révolution) ; `?vaisseau=01` pour comparer les vaisseaux. Statut « non résolu » pour un trou noir de moins d'un pixel (texte affiché seulement dans l'interface immersive, en zoom ; l'interface classique ne change pas). | 22 nov. 2026 | Local : Carte 39/39, observation 58/58, S2 6/6, optique 25/25, inventaire 30/30 ; `validate-physics-ui.cjs` échoue localement sur une capture, aussi sur HEAD. CI sur `226696f` : 7 exécutions réussies au push, dont « Reproducible validation » (job cockpit vert) ; le job s2 lancé à la main a d'abord échoué (lecture avant la première image), corrigé en `275755e`, puis « Reproducible validation » vert sur `275755e` (run 45073444170, 10 jobs) |
 | `1243241` | Session d'essai seulement : vue d'observation de S2 (bouton « Observer l'orbite de S2 ») : orbite entière à 3 000 ua et péricentre ; avec la relativité, les deux passages sont séparés de 12,18′, soit 0,42 ua, visibles au zoom sans amplification. Caméra seule, vaisseau intact. | 22 nov. 2026 | Local : S2 11/11, observation 58/58, inventaire 30/30, mise en page, physique mobile, stockage, optique 25/25. CI sur `2ead424` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45080758582, 10 jobs dont s2) et par le push (run 45080758933) |
-
-## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
