@@ -6,11 +6,23 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
+Aucun lot en attente.
+
+## Dernière version servie
+
+| Version | Commit de `main` | Publié le | Par | Contenu |
+|---|---|---|---|---|
+| **v63** | `7c37c63a5a99055e7106580a5e855fe215330977` (commit Sites `9adb9434ba1e4b866cd9f2a55e882eecf62e4ca6`, même arborescence) | 23 nov. 2026 à 15:11 UTC | Codex | Carte d’essai : symboles galactiques adaptés aux grandes échelles et Cosmicflows-4 par défaut à la Vierge. Documentation : état V3.0 et retrait de la note temporaire. |
+
+Vérifié après publication : les fichiers de l’accueil, de Cosmos et du cockpit correspondent au build. Dans Chrome, le cockpit affiche « Essai · sauvegarde isolée » et la Carte charge Cosmicflows-4 (55 877 galaxies) au niveau « Voisinage de la Vierge » avec le réglage « Selon l’échelle ». Le rendu aux grandes échelles et les mesures sur Iris Xe restent à vérifier.
+
+Lot publié en v63 :
+
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `356f7fe` | Session d'essai seulement : symboles CF4 adaptés aux grandes échelles (fin de la saturation), Cosmicflows-4 par défaut au niveau Vierge (chargé à l'ouverture du niveau). Sans effet visible pour les visiteurs. Documentation : état canonique V3.0, note temporaire supprimée. **À vérifier sur Iris Xe après publication.** | 23 nov. 2026 | Local : Carte 44/44, observation 61/61, recherche 24/24, contexte cosmos. CI sur `d7f4ef3` (même code) : 6 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45198128381) et par le push (run 45198129602) |
 
-## Dernière version servie
+## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
@@ -23,8 +35,6 @@ Lot publié en v62 :
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `130ba83` | Session d'essai seulement : démonstrateur pulsar dans la fiche (courbe de lumière calculée, Vela 89,3 ms) ; contrôle du sens des lignes de courant CF4. Partout, sans effet visible attendu : géométrie du faisceau des pulsars partagée par le rendu (mêmes valeurs qu'avant) ; `cosmos.js` reconstruit. | 23 nov. 2026 | Local : optique 31/31, observation 61/61, Carte 40/40. CI sur `106fd12` (même code) : 7 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45163679596) et par le push (run 45163676968) |
-
-## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
