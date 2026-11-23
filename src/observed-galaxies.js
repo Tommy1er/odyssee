@@ -6,9 +6,9 @@ export class ObservedGalaxies {
   this.rows=[];this.selected=null;this.root=new T.Group();scene.add(this.root);
   // Additive, semi-transparent symbols: overlapping entries add up, so dense regions (Virgo, Perseus–Pisces, Coma) stand
   // out instead of saturating into a uniform carpet. Brightness here only counts catalogue entries, not light.
-  this.material=new T.ShaderMaterial({uniforms:{tint:{value:new T.Color()},size:{value:3},hiddenIndex:{value:-1}},transparent:true,depthWrite:false,blending:T.AdditiveBlending,
+  this.material=new T.ShaderMaterial({uniforms:{tint:{value:new T.Color()},size:{value:3},intensity:{value:1},hiddenIndex:{value:-1}},transparent:true,depthWrite:false,blending:T.AdditiveBlending,
    vertexShader:'uniform float size,hiddenIndex;attribute float entryIndex;varying float hidden;void main(){hidden=abs(entryIndex-hiddenIndex)<.1?1.:0.;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);gl_PointSize=size;}',
-   fragmentShader:'uniform vec3 tint;varying float hidden;void main(){if(hidden>.5)discard;float r=length(gl_PointCoord-vec2(.5));float a=1.-smoothstep(.22,.5,r);if(a<.01)discard;gl_FragColor=vec4(tint,a*.5);}' });
+   fragmentShader:'uniform vec3 tint;uniform float intensity;varying float hidden;void main(){if(hidden>.5)discard;float r=length(gl_PointCoord-vec2(.5));float a=1.-smoothstep(.22,.5,r);if(a<.01)discard;gl_FragColor=vec4(tint,a*.5*intensity);}' });
   this.points=new T.Points(new T.BufferGeometry(),this.material);this.points.frustumCulled=false;this.root.add(this.points);
   this.errorLine=new T.Line(new T.BufferGeometry(),new T.LineBasicMaterial({color:0xffb878,transparent:true,opacity:.75}));scene.add(this.errorLine);this.errorLine.visible=false;
   this.plane=new T.Group();scene.add(this.plane);const [x,y,z]=SG_AXES.map(a=>new T.Vector3(...a));

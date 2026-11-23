@@ -69,11 +69,15 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   // Niveau 2 de cosmos.html : « Voisinage de la Vierge » (150 millions d'al), catalogue selon l'échelle (UNGC 2013).
   await page.evaluate(()=>{const s=document.getElementById('map-cosmic-catalogue');s.value='auto';s.dispatchEvent(new Event('change'));});
   await page.evaluate(()=>{const s=document.getElementById('map-cosmic-level');s.value='1';s.dispatchEvent(new Event('change'));});
-  await page.waitForFunction(()=>window.cosmicMapLayer.status==='ready'&&window.cosmicMapLayer.level===1,{},{timeout:120000}).catch(()=>{});await page.waitForTimeout(2000);
+  await page.waitForFunction(()=>window.cosmicMapLayer.status==='ready'&&window.cosmicMapLayer.level===1,{},{timeout:240000}).catch(()=>{});await page.waitForTimeout(2000);
   const vir=await page.evaluate(()=>({level:window.cosmicMapLayer.level,focus:window.cosmicMapLayer.focus,cats:[...window.cosmicMapLayer.catalogues],rows:window.cosmicMapLayer.rows.length,labels:window.cosmicMapLabels(),note:document.getElementById('map-cosmic-note').textContent}));
-  check('Vierge : niveau 2 actif, catalogue selon l\'échelle = UNGC 2013',vir.level===1&&vir.focus==='virgo-supercluster'&&vir.cats.join()==='ungc'&&vir.rows>800,`${vir.rows} galaxies · « ${vir.note} »`);
+  // Décision du 23 novembre : Cosmicflows-4 par défaut dès la Vierge (UNGC n'atteint pas l'amas), chargé à l'ouverture du niveau.
+  check('Vierge : niveau 2 actif, catalogue selon l\'échelle = Cosmicflows-4 (chargé à l\'ouverture du niveau)',vir.level===1&&vir.focus==='virgo-supercluster'&&vir.cats.join()==='cf4'&&vir.rows>50000,`${vir.rows} galaxies · « ${vir.note.slice(0,90)}… »`);
   const lv=Object.fromEntries(vir.labels.map(l=>[l.id,l]));
   check('Vierge : étiquettes « Amas de la Vierge » et « Superamas de la Vierge » visibles, « Groupe local » masquée à cette échelle',lv['virgo-cluster']?.visible&&lv['virgo-cluster']?.inside&&lv['virgo-supercluster']?.visible&&lv['virgo-supercluster']?.inside&&!lv['local-group']?.visible,JSON.stringify(vir.labels.map(l=>`${l.name}:${l.visible?'visible':'masquée'}${l.inside?'':' (hors cadre)'}`)));
+  // UNGC reste sélectionnable.
+  await page.evaluate(()=>{const s=document.getElementById('map-cosmic-catalogue');s.value='ungc';s.dispatchEvent(new Event('change'));});await page.waitForFunction(()=>window.cosmicMapLayer.layers.ungc.status==='ready',{},{timeout:120000}).catch(()=>{});await page.waitForTimeout(1500);
+  check('Vierge : UNGC 2013 reste sélectionnable',await page.evaluate(()=>[...window.cosmicMapLayer.catalogues].join()==='ungc'&&window.cosmicMapLayer.rows.length>800));
   await sample('carte Vierge · UNGC');
   const shotV=await page.context().newCDPSession(page);const sv=await shotV.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-vierge-faisabilite.jpg'),Buffer.from(sv.data,'base64'));
   const pv=await page.evaluate(()=>window.cosmicMapPickable());
@@ -142,6 +146,7 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   const web=await level(3);
   check('Toile cosmique : niveau 4, étiquettes Shapley, Coma, Hercule et vide du Bouvier visibles',web.level===3&&web.labels.shapley&&web.labels['coma-supercluster']&&web.labels['hercules-supercluster']&&web.labels['bootes-void'],JSON.stringify(Object.entries(web.labels).filter(([,v])=>v).map(([k])=>k)));
   await sample('carte toile cosmique · CF4 + bassins');
+  {const t=await page.evaluate(()=>window.cosmicMapLayer.layers.cf4.adaptive);check('Toile cosmique : représentation CF4 adaptée à l\'échelle',t&&(t.size<4||t.intensity<1),JSON.stringify(t));}
   {const c3=await page.context().newCDPSession(page);const s3=await c3.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-toile-cosmique.jpg'),Buffer.from(s3.data,'base64'));}
   // Bassins SDSS coupés par le bord du modèle (option de cosmos.html) : plus de bassins et une légende plus longue.
   const sd0=await page.evaluate(()=>({shells:window.cosmicMapLayer.basins.entries.filter(e=>e.mesh.visible).length,legend:document.querySelectorAll('#map-basins-legend button').length,box:!document.getElementById('map-basins-sdss').closest('label').hidden}));
@@ -158,11 +163,16 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   const uni=await page.evaluate(()=>({level:window.cosmicMapLayer.level,select:document.getElementById('map-cosmic-level').value,horizon:window.cosmicMapLayer.horizon.visible,toast:document.getElementById('flight-toast').textContent,cats:[...window.cosmicMapLayer.catalogues].join()}));
   check('Univers observable : horizon tracé, structures du niveau 4 et CF4, notification avec la distance comobile',uni.select==='4'&&uni.level===3&&uni.horizon&&uni.cats==='cf4'&&/46,5 milliards/.test(uni.toast)&&/comobile/.test(uni.toast),JSON.stringify(uni).slice(0,240));
   await sample('carte univers observable · horizon');
+  // Représentation adaptative de CF4 : taille et intensité réduites aux grandes échelles, même facteur pour toutes les galaxies.
+  const ad=await page.evaluate(()=>window.cosmicMapLayer.layers.cf4.adaptive);
+  check('CF4 aux grandes échelles : symboles réduits puis atténués, charge additive locale ≤ 1 ou intensité au plancher',ad&&(ad.size<4||ad.intensity<1)&&(ad.load<=1.001||ad.intensity<=.1001),JSON.stringify(ad));
   {const c4=await page.context().newCDPSession(page);const s4=await c4.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-univers-observable.jpg'),Buffer.from(s4.data,'base64'));}
-  await page.evaluate(()=>document.getElementById('map-horizon').click());await page.waitForTimeout(800);
+  await page.evaluate(()=>document.getElementById('map-horizon').click());await page.waitForFunction(()=>!window.cosmicMapLayer.horizon.visible,null,{timeout:30000}).catch(()=>{});
   check('Horizon : la case le masque',await page.evaluate(()=>!window.cosmicMapLayer.horizon.visible));
   await page.evaluate(()=>document.getElementById('map-horizon').click());
   await page.evaluate(()=>document.getElementById('map-local-group').click());await page.waitForFunction(()=>window.cosmicMapLayer.level===0&&window.cosmicMapLayer.status==='ready',{},{timeout:60000}).catch(()=>{});await page.waitForTimeout(800);
+  {await page.waitForTimeout(1500);const g=await page.evaluate(()=>{const L=window.cosmicMapLayer.layers.mcconnachie,u=L.layer.material.uniforms;return {size:u.size.value,intensity:u.intensity.value,a:L.adaptive};});
+   check('Groupe local : symboles McConnachie peu ou pas atténués (101 galaxies)',g.intensity>=.5,JSON.stringify(g));}
   check('Groupe local : horizon et option SDSS masqués à cette échelle',await page.evaluate(()=>!window.cosmicMapLayer.horizon.visible&&document.getElementById('map-basins-sdss').closest('label').hidden));
   check('Retour « Groupe local » : niveau 1 et McConnachie 2012 selon l\'échelle',await page.evaluate(()=>window.cosmicMapLayer.level===0&&[...window.cosmicMapLayer.catalogues].join()==='mcconnachie'));
   const c=await page.context().newCDPSession(page);const s=await c.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-groupe-local-faisabilite.jpg'),Buffer.from(s.data,'base64'));

@@ -57,8 +57,9 @@ export class CockpitCosmicMap{
  // Niveau 4 du cockpit = « Univers observable » de cosmos.html : structures du niveau « Superamas et grands vides », cadre centré sur le Soleil.
  setLevel(i){if(i===4){this.level=3;this.focus=LEVELS[3].focus;return {span:HORIZON_MLY*2.4*MLY,center:[0,0,0],name:'Univers observable',text:'horizon des particules à ≈ 46,5 milliards d’al en distance comobile (14,3 Gpc, ΛCDM Planck 2018) ; la lumière la plus ancienne a voyagé 13,8 milliards d’années. Aucun catalogue de galaxies ne l’atteint.'};}
   const L=LEVELS[i];this.level=i;this.focus=L.focus;const f=STRUCTURES.find(o=>o.id===L.focus);return {span:L.span*MLY,center:f.p.map(x=>x*MLY),name:L.name,text:L.text};}
- // Catalogue « selon l'échelle », comme cosmos.html : McConnachie 2012, puis UNGC 2013 (Vierge), puis Cosmicflows-4.
- autoCatalogue(){return this.level===0?'mcconnachie':this.level===1?'ungc':'cf4';}
+// Catalogue « selon l'échelle » : McConnachie 2012 au Groupe local, puis Cosmicflows-4 (cosmos.html garde UNGC à la Vierge).
+ // Décision du 23 novembre : CF4 dès la Vierge (UNGC s'arrête vers 36 millions d'al, l'amas est à ≈ 54) ; chargé à l'ouverture du niveau.
+ autoCatalogue(){return this.level===0?'mcconnachie':'cf4';}
  // Doublons entre catalogues (même galaxie, deux mesures de distance) : un trait relie les deux points quand les deux catalogues sont affichés.
  setPairs(pairs){if(this.pairLines){this.root.remove(this.pairLines);this.pairLines.geometry.dispose();}
   this.pairs=pairs;const pos=new Float32Array(pairs.length*6);pairs.forEach(([a,b],i)=>pos.set([...a.p,...b.p],i*6));
@@ -69,7 +70,7 @@ export class CockpitCosmicMap{
  applyFilter(k){const L=this.layers[k];if(!L.all)return;L.rows=filterCatalogue(L.all,this.filter);L.layer.setRows(L.rows,k);}
  setFilter(f){Object.assign(this.filter,f);for(const k of KEYS)this.applyFilter(k);}
  // spanLy : largeur cadrée par la Carte du cockpit ; mapScale : unités de carte par année-lumière ; heightPx : hauteur du tampon de dessin.
- update({map,mapScale,spanLy,heightPx,dpr=1}){
+ update({map,camera,mapScale,spanLy,heightPx,dpr=1}){
   const on=this.enabled&&!!map;this.root.visible=on;if(!on){for(const x of this.labels)x.l.visible=false;return;}
   const wantBasins=this.level>=2&&(this.showBasins||this.showLines);if(wantBasins&&this.basins.status==='idle')this.basins.load('./').catch(()=>{});
   this.basins.root.visible=wantBasins&&this.basins.status==='ready';if(this.basins.root.visible)this.basins.update(this.animateLines?performance.now()/1000:0,{shells:this.showBasins,lines:this.showLines,sdss:this.showSDSS}); // temps figé : lignes fixes
@@ -81,11 +82,23 @@ export class CockpitCosmicMap{
   this.cosmic.material.uniforms.screenHeight.value=heightPx;
   if(this.pairLines)this.pairLines.visible=this.catalogues.has('mcconnachie')&&this.catalogues.has('ungc');
   const first=KEYS.find(k=>this.catalogues.has(k));for(const k of KEYS)this.layers[k].layer.plane.visible=this.showPlane&&k===first;
-  for(const k of KEYS){this.layers[k].layer.root.visible=this.catalogues.has(k);this.layers[k].layer.material.uniforms.size.value=Math.min(dpr,2)*4;}
+  for(const k of KEYS){this.layers[k].layer.root.visible=this.catalogues.has(k);this.adapt(k,camera,heightPx,dpr);}
   // Étiquettes posées sur le bord supérieur de chaque enveloppe (rayon de repérage de cosmic-data) : visibles si la structure
   // appartient au niveau affiché, reste repérable (cadre de moins de 40 fois son rayon) et n'en remplit pas tout l'écran.
   const span=spanLy/MLY;for(const {o,l} of this.labels){l.visible=o.level<=this.level&&span<o.r*40&&span>o.r*.4;if(mapScale)l.position.set(o.p[0]*MLY*mapScale,(o.p[1]+o.r*.55)*MLY*mapScale,o.p[2]*MLY*mapScale);}
  }
+ // Représentation adaptative (décision du 23 novembre) : les symboles additifs saturaient en tache blanche aux grandes échelles.
+ // On mesure la superposition LOCALE : grille de 16 px sur l'écran, superposition typique ω = Σ n² / Σ n × π(taille/2)² / 16²
+ // (nombre moyen de voisins sous le symbole d'une galaxie). Chaque symbole ajoute 0,5 × intensité ; on garde ω × 0,5 × intensité ≤ 1 :
+ // la taille descend d'abord jusqu'à la moitié, puis l'intensité, jusqu'à 10 %. Même facteur pour toutes les galaxies.
+ adapt(k,camera,heightPx,dpr){const L=this.layers[k],u=L.layer.material.uniforms,base=Math.min(dpr,2)*4;if(!camera||!L.rows.length||!heightPx){u.size.value=base;u.intensity.value=1;return;}
+  const now=performance.now();if(L.adaptAt&&now-L.adaptAt<400)return;L.adaptAt=now;
+  this.root.updateMatrixWorld();camera.updateMatrixWorld();const W=heightPx*(camera.aspect||1.6),H=heightPx,cell=16*Math.min(dpr,2),gx=Math.ceil(W/cell),grid=new Map(),step=Math.max(1,Math.floor(L.rows.length/8000));let n=0,inside=0;
+  for(let i=0;i<L.rows.length;i+=step){n++;const v=this._v.set(...L.rows[i].p).applyMatrix4(this.root.matrixWorld).project(camera);if(!(v.z<1&&v.z>-1&&Math.abs(v.x)<=1&&Math.abs(v.y)<=1))continue;inside++;
+   const c=Math.floor((v.x+1)/2*W/cell)+gx*Math.floor((1-v.y)/2*H/cell);grid.set(c,(grid.get(c)||0)+1);}
+  const scale=L.rows.length/n;let s1=0,s2=0;for(const c of grid.values()){s1+=c;s2+=c*c;}const crowd=s1?s2/s1*scale:0; // galaxies par cellule, vues depuis une galaxie typique
+  const omega=r=>crowd*Math.PI*r*r/4/(cell*cell);let size=base;if(omega(size)*.5>1)size=Math.max(base/2,base*Math.sqrt(2/omega(base)));const intensity=Math.max(.1,Math.min(1,2/Math.max(1e-9,omega(size))));
+  u.size.value=size;u.intensity.value=intensity;L.adaptive={inFrame:Math.round(inside*scale),crowd,overlap:omega(size),load:omega(size)*.5*intensity,size,intensity};}
  // Galaxie cataloguée la plus proche du pointeur (en pixels), ou null.
  pick(clientX,clientY,camera,rect,maxPx=10){
   if(!this.root.visible)return null;this.root.updateMatrixWorld();

@@ -1,5 +1,5 @@
 {
- "passed": 40,
+ "passed": 44,
  "failed": 0,
  "measures": {
   "carte Groupe local · couche éteinte": {
@@ -10,10 +10,10 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 125.5,
-   "frameP50": 199.9,
-   "frameP95": 366.6,
-   "frames": 32
+   "heapMB": 124.9,
+   "frameP50": 200,
+   "frameP95": 450,
+   "frames": 30
   },
   "carte Groupe local · couche allumée": {
    "geometries": 73,
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 10101,
-   "heapMB": 123,
-   "frameP50": 199.9,
-   "frameP95": 350,
-   "frames": 30
+   "heapMB": 122.9,
+   "frameP50": 250,
+   "frameP95": 433.3,
+   "frames": 24
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 10197,
-   "heapMB": 145.3,
-   "frameP50": 183.4,
-   "frameP95": 383.3,
-   "frames": 30
+   "heapMB": 127.7,
+   "frameP50": 233.4,
+   "frameP95": 516.6,
+   "frames": 22
   },
   "doublons": {
    "pairs": 96,
@@ -55,17 +55,17 @@
    "lines": true
   },
   "carte Vierge · UNGC": {
-   "geometries": 100,
+   "geometries": 103,
    "textures": 36,
    "programs": 18,
    "calls": 58,
    "triangles": 2280,
    "points": 143898,
    "lines": 10581,
-   "heapMB": 129.7,
-   "frameP50": 183.4,
-   "frameP95": 333.3,
-   "frames": 32
+   "heapMB": 167.9,
+   "frameP50": 250,
+   "frameP95": 516.7,
+   "frames": 22
   },
   "carte Vierge · Cosmicflows-4": {
    "geometries": 103,
@@ -75,10 +75,10 @@
    "triangles": 2280,
    "points": 198907,
    "lines": 10581,
-   "heapMB": 192.7,
-   "frameP50": 233.2,
-   "frameP95": 449.9,
-   "frames": 25
+   "heapMB": 187.2,
+   "frameP50": 300,
+   "frameP95": 550.1,
+   "frames": 19
   },
   "carte Laniakea · CF4 + bassins": {
    "geometries": 123,
@@ -88,9 +88,9 @@
    "triangles": 61588,
    "points": 198907,
    "lines": 128851,
-   "heapMB": 183.9,
-   "frameP50": 583.3,
-   "frameP95": 749.9,
+   "heapMB": 201.7,
+   "frameP50": 433.3,
+   "frameP95": 1100,
    "frames": 10
   },
   "carte toile cosmique · CF4 + bassins": {
@@ -101,9 +101,9 @@
    "triangles": 61594,
    "points": 198907,
    "lines": 129811,
-   "heapMB": 172.1,
-   "frameP50": 616.6,
-   "frameP95": 1083.3,
+   "heapMB": 170.9,
+   "frameP50": 850,
+   "frameP95": 1300,
    "frames": 9
   },
   "carte univers observable · horizon": {
@@ -114,10 +114,10 @@
    "triangles": 61580,
    "points": 198907,
    "lines": 130579,
-   "heapMB": 166.7,
-   "frameP50": 650,
-   "frameP95": 1033.3,
-   "frames": 8
+   "heapMB": 168.5,
+   "frameP50": 833.3,
+   "frameP95": 949.9,
+   "frames": 7
   }
  },
  "results": [
@@ -139,7 +139,7 @@
   {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "{\"visible\":true,\"x\":706.0141685145658,\"y\":311.4983175533298,\"inside\":true}"
+   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533296,\"inside\":true}"
   },
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
@@ -187,14 +187,19 @@
    "detail": "And XXVIII (ungc) → ungc:And XXVIII"
   },
   {
-   "name": "Vierge : niveau 2 actif, catalogue selon l'échelle = UNGC 2013",
+   "name": "Vierge : niveau 2 actif, catalogue selon l'échelle = Cosmicflows-4 (chargé à l'ouverture du niveau)",
    "ok": true,
-   "detail": "868 galaxies · « 868 galaxies · UNGC 2013 (Karachentsev et al.), Volume local jusqu’à ≈ 36 millions d’al : l’amas de la Vierge (≈ 54 millions d’al) est au-delà, choisir Cosmicflows-4 · catalogue choisi selon l’échelle. »"
+   "detail": "55877 galaxies · « 55 877 galaxies · Cosmicflows-4 (Tully et al. 2023), distances individuelles avec leur inc… »"
   },
   {
    "name": "Vierge : étiquettes « Amas de la Vierge » et « Superamas de la Vierge » visibles, « Groupe local » masquée à cette échelle",
    "ok": true,
    "detail": "[\"Groupe local:masquée\",\"Amas de la Vierge:visible\",\"Superamas de la Vierge:visible\",\"Amas du Centaure:masquée\",\"Amas de Norma:masquée\",\"Grand Attracteur:masquée\",\"Laniakea:masquée\",\"Amas de Persée:masquée (hors cadre)\",\"Persée–Poissons:masquée (hors cadre)\",\"Amas de Coma:masquée (hors cadre)\",\"Superamas de Coma:masquée (hors cadre)\",\"Amas d’Hercule:masquée (hors cadre)\",\"Superamas d’Hercule:masquée (hors cadre)\",\"Concentration de Shapley:masquée\",\"Vide du Bouvier:masquée (hors cadre)\"]"
+  },
+  {
+   "name": "Vierge : UNGC 2013 reste sélectionnable",
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "Vierge : clic sur une galaxie UNGC → cible du cockpit, sans piloter",
@@ -234,7 +239,7 @@
   {
    "name": "Animation facultative : le temps des lignes avance, aucune galaxie du catalogue ne bouge, la note précise le sens du courant",
    "ok": true,
-   "detail": "temps 113.39 → 114.24"
+   "detail": "temps 129.57 → 130.19"
   },
   {
    "name": "Laniakea : étiquettes Laniakea, Persée–Poissons et Grand Attracteur visibles",
@@ -282,6 +287,11 @@
    "detail": "[\"virgo-supercluster\",\"laniakea\",\"perseus-pisces\",\"coma-supercluster\",\"hercules-supercluster\",\"shapley\",\"bootes-void\"]"
   },
   {
+   "name": "Toile cosmique : représentation CF4 adaptée à l'échelle",
+   "ok": true,
+   "detail": "{\"inFrame\":55739,\"crowd\":265.59438566204375,\"overlap\":3.2593334798069176,\"load\":0.9999999999999999,\"size\":2,\"intensity\":0.6136223900962965}"
+  },
+  {
    "name": "Bassins SDSS coupés : option affichée aux niveaux 3–4, ajoute des bassins et des entrées de légende",
    "ok": true,
    "detail": "6 → 9 bassins, légende 6 → 9, dont « coupé »"
@@ -289,7 +299,7 @@
   {
    "name": "Plan supergalactique vu du dessus : caméra sur l'axe SGZ, SGY vers le haut",
    "ok": true,
-   "detail": "{\"look\":-1,\"up\":1.0000000000000004}"
+   "detail": "{\"look\":-0.9999999999999998,\"up\":1.0000000000000004}"
   },
   {
    "name": "Univers observable : horizon tracé, structures du niveau 4 et CF4, notification avec la distance comobile",
@@ -297,9 +307,19 @@
    "detail": "{\"level\":3,\"select\":\"4\",\"horizon\":true,\"toast\":\"Univers observable · horizon des particules à ≈ 46,5 milliards d’al en distance comobile (14,3 Gpc, ΛCDM Planck 2018) ; la lumière la plus ancienne a voyagé 13,8 milliards d’années. Aucun cata"
   },
   {
+   "name": "CF4 aux grandes échelles : symboles réduits puis atténués, charge additive locale ≤ 1 ou intensité au plancher",
+   "ok": true,
+   "detail": "{\"inFrame\":55877,\"crowd\":26761.122058753215,\"overlap\":328.4083768031206,\"load\":16.420418840156028,\"size\":2,\"intensity\":0.1}"
+  },
+  {
    "name": "Horizon : la case le masque",
    "ok": true,
    "detail": ""
+  },
+  {
+   "name": "Groupe local : symboles McConnachie peu ou pas atténués (101 galaxies)",
+   "ok": true,
+   "detail": "{\"size\":4,\"intensity\":1,\"a\":{\"inFrame\":83,\"crowd\":2.783132530120482,\"overlap\":0.13661669860302,\"load\":0.06830834930151,\"size\":4,\"intensity\":1}}"
   },
   {
    "name": "Groupe local : horizon et option SDSS masqués à cette échelle",
