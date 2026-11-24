@@ -8,7 +8,7 @@ Sources : `docs/conception/ODYSSEE-V3-DIRECTIVE.md`, `PUBLICATION.md`, les relai
 
 - **Site** : ChatGPT Sites, version servie et commit : voir `PUBLICATION.md` (v62 au 23 novembre).
 - **Interface classique** pour tous les visiteurs. **Interface immersive** sur ordinateur via `?ui=immersive`. **Session d'essai** isolée via `?essai=1` : sauvegarde séparée, nouveautés réservées.
-- **Vaisseau public** : Odyssée-01. Odyssée-02 en essai seulement.
+- **V3.0 publique depuis la v65 (24 novembre, 14 h 03 UTC)** : interface immersive par défaut sur ordinateur, Classique accessible et mémorisé, Odyssée-02, Carte cosmique, S2 et pulsar pour tous. Démarrage mesuré sur Iris Xe : `docs/RELAIS-CLAUDE-2026-11-24-DEMARRAGE-V65.md`.
 
 ## 2. Décisions en vigueur (propriétaire, 23 novembre)
 
