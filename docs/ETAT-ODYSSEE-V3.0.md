@@ -73,9 +73,9 @@ Sources : `docs/conception/ODYSSEE-V3-DIRECTIVE.md`, `PUBLICATION.md`, les relai
 
 ## 4. Étapes restantes pour clore la V3.0
 
-1. Carte : saturation CF4 et CF4 par défaut à la Vierge, en essai, puis contrôle sur Iris Xe après publication.
+1. ~~Carte : saturation CF4 et CF4 par défaut à la Vierge, puis contrôle sur Iris Xe~~ : fait (v64 ; 58 à 59 images/s à tous les niveaux, bassins éteints).
 2. Lot d'ouverture publique : retirer la limitation à l'essai pour la fiche, le zoom, Préparer/Situer, le devis, la Carte et les démonstrateurs, avec le manuel mis à jour dans le même lot. Résultats des contrôles présentés **avant** publication générale.
 3. Interface immersive par défaut sur ordinateur, après validation du lot public.
-4. Odyssée-02 : décision après `shipBenchmark()` sur Iris Xe au repos.
+4. Odyssée-02 : banc exécuté sur Iris Xe le 24 novembre (40,7 contre 37,8 images/s, −7 %), voir `docs/RELAIS-CLAUDE-2026-11-24-MESURES-IRIS-XE-V64.md`. **Décision du propriétaire attendue.**
 5. Audit des lignes « À auditer » de la matrice.
 6. M32 : rapprochement avec la table originale UNGC (CDS).
