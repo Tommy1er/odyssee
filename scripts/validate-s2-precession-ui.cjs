@@ -8,7 +8,7 @@ const server=http.createServer((req,res)=>{const file=path.join(root,decodeURICo
 (async()=>{await new Promise(r=>server.listen(3023,'127.0.0.1',r));const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH,headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  try{const page=await browser.newPage({viewport:{width:1280,height:720}});page.setDefaultTimeout(240000);page.on('pageerror',e=>errors.push(e.message));
   const snap=()=>page.evaluate(()=>window.flightSnapshot());const PHYS=s=>JSON.stringify({pos:s.pos,u:s.u,t:s.t,tau:s.tau,engine:s.engine,autopilot:s.autopilot,paused:s.paused});
-  await page.goto('http://127.0.0.1:3023/cockpit.html?essai=1');await page.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
+  await page.goto('http://127.0.0.1:3023/cockpit.html?ui=classic&essai=1');await page.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
   await openObservationTools(page);
   await page.locator('#wormhole-enabled').check();await page.selectOption('#wormhole-mode','stable');
   await page.fill('#destination-search','Sagittarius A');await page.click('[data-id="sgr-a"]');await page.click('#wormhole-jump');
@@ -38,8 +38,8 @@ const server=http.createServer((req,res)=>{const file=path.join(root,decodeURICo
   await shoot('cockpit-s2-vue-pericentre.jpg');
   await page.keyboard.press('Escape');await page.waitForTimeout(500);
   check('Échap quitte la vue S2 ; position, vitesse et horloges intactes',await page.evaluate(()=>document.getElementById('s2-view').hidden&&!window.s2Demonstrator().view)&&PHYS(await snap())===PHYS(s0));
-  await page.goto('http://127.0.0.1:3023/cockpit.html');await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
-  check('Hors essai : case et vue S2 absentes, Kepler seul',await page.evaluate(()=>document.getElementById('orbit-s2-gr-label').hidden&&document.getElementById('s2-observe').hidden&&typeof window.s2Demonstrator!=='function'));
+  await page.goto('http://127.0.0.1:3023/cockpit.html?ui=classic');await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
+  check('Hors essai (V3.0) : case et vue S2 disponibles, Kepler par défaut',await page.evaluate(()=>!document.getElementById('orbit-s2-gr-label').hidden&&!document.getElementById('s2-observe').hidden&&!document.getElementById('orbit-s2-gr').checked&&!window.s2Demonstrator().gr));
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));
  }catch(e){failed++;console.log('FAIL exception · '+e.message);}
  finally{await browser.close();server.close();fs.writeFileSync(path.join(out,'s2-precession-ui.json'),JSON.stringify({checks},null,1));console.log(`${checks.length-failed} contrôles réussis`);process.exit(failed?1:0);}})();

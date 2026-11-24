@@ -12,7 +12,7 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
  const page=await browser.newPage({viewport:{width:1100,height:760}});page.setDefaultTimeout(180000);
  page.on('pageerror',e=>errors.push(e.message));page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
  try{
-  await page.goto('http://127.0.0.1:3044/cockpit.html');await page.waitForFunction(()=>window.flightSnapshot?.().system);
+  await page.goto('http://127.0.0.1:3044/cockpit.html?ui=classic');await page.waitForFunction(()=>window.flightSnapshot?.().system);
   await page.locator('#wormhole-enabled').check();
   for(const [id,needle,filename] of [['tarantula','Tarentule','nurserie-tarentule.png'],['ngc604','NGC 604','nurserie-ngc604.png']]){
     await page.click('.type-filters button[data-type="all"]');await page.fill('#destination-search',needle);

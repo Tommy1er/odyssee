@@ -178,10 +178,10 @@ const results=[],measures={};const check=(name,ok,detail='')=>{results.push({nam
   const c=await page.context().newCDPSession(page);const s=await c.send('Page.captureScreenshot',{format:'jpeg',quality:72});fs.writeFileSync(path.join(OUT,'ui/cockpit-carte-groupe-local-faisabilite.jpg'),Buffer.from(s.data,'base64'));
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));
   await page.close();
-  // Hors session d'essai : rien ne change pour les visiteurs.
-  const pub=await ctx.newPage();pub.setDefaultTimeout(400000);await pub.goto(`http://127.0.0.1:${PORT}/cockpit.html`);
+  // V3.0 : la Carte cosmique est ouverte à tous (hors session d'essai), interface classique comprise ; sauvegarde personnelle non suffixée.
+  const pub=await ctx.newPage();pub.setDefaultTimeout(400000);await pub.goto(`http://127.0.0.1:${PORT}/cockpit.html?ui=classic`);
   await pub.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
-  check('Cockpit public : couche absente et réglages masqués',await pub.evaluate(()=>window.cosmicMapLayer===undefined&&document.getElementById('map-cosmic-panel').hidden&&!document.getElementById('map-cosmic-panel').getClientRects().length));
+  check('Cockpit public (V3.0) : Carte cosmique disponible, bassins et flux décochés par défaut, pas de badge d\'essai',await pub.evaluate(()=>!!window.cosmicMapLayer&&!document.getElementById('map-cosmic-panel').hidden&&!document.getElementById('map-basins').checked&&!document.getElementById('map-flows').checked&&!document.getElementById('trial-badge')));
   await pub.close();
  }finally{await browser.close();server.close();}
  const failed=results.filter(r=>!r.ok);

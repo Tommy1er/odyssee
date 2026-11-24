@@ -13,7 +13,7 @@ const setPaused=async paused=>{if((await snap()).paused!==paused)await page.clic
 const choose=async(name,id)=>{await page.fill('#destination-search',name);await page.click('[data-id="'+id+'"]');};
 const fly=async()=>{await page.click('#engage');await page.selectOption('#time-rate','10000');await page.waitForFunction(()=>!!window.flightSnapshot().arrival,{},long);};
 try{
- await page.goto('http://127.0.0.1:3031/cockpit.html');await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},{timeout:120000});
+ await page.goto('http://127.0.0.1:3031/cockpit.html?ui=classic');await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},{timeout:120000});
  await choose('Terre','solar:Terre');let s=await snap();const v0=s.speed;check('Sélectionner ne lance pas le vaisseau',!s.autopilot&&s.paused,'vitesse initiale '+(v0*299792.458).toFixed(2)+' km/s (orbite héliocentrique de départ)');
  s=await page.evaluate(()=>{document.getElementById('engage').click();return window.flightSnapshot();});
  check('Engager : la vitesse de départ est conservée (pas de remise à zéro)',Math.abs(s.speed-v0)*299792458<0.01&&s.navigationStage==='brake');
@@ -35,7 +35,7 @@ try{
  const localSave=await page.evaluate(()=>JSON.stringify(JSON.parse(localStorage.getItem('odyssee.mission.v1')).mission));
  await page.click('#cosmic-flight-link');await page.waitForFunction(()=>typeof window.cosmicFlightSnapshot==='function',{},long);await page.click('#cosmic-plan');await page.waitForFunction(()=>window.cosmicFlightSnapshot().sample!==null,{},long);
  check('Voyage cosmologique distinct : sauvegarde locale conservée',await page.evaluate(()=>JSON.stringify(JSON.parse(localStorage.getItem('odyssee.mission.v1')).mission))===localSave);
- await page.click('a[href="./cockpit.html"]');await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},long);await page.click('#resume-mission');await page.waitForFunction(()=>window.flightSnapshot().arrival?.id==='solar:Terre',{},long);s=await snap();
+ await page.evaluate(()=>{try{localStorage.setItem('odyssee-ui-mode','classic');}catch{}});await page.click('a[href="./cockpit.html"]'); /* V3.0 : le lien ouvre l'immersif par défaut ; ce test parcourt l'interface classique */await page.waitForFunction(()=>typeof window.flightSnapshot==='function',{},long);await page.click('#resume-mission');await page.waitForFunction(()=>window.flightSnapshot().arrival?.id==='solar:Terre',{},long);s=await snap();
  check('Retour du mode cosmologique : mission locale inchangée en pause',s.paused&&s.t===savedEarth.t&&s.tau===savedEarth.tau&&JSON.stringify(s.pos)===JSON.stringify(savedEarth.pos)&&JSON.stringify(s.u)===JSON.stringify(savedEarth.u));
  await page.click('#prepare-moon');s=await snap();check('Préparer la Lune conserve le maintien terrestre',s.target==='moon:Lune'&&!s.autopilot&&s.hold?.active&&s.orbital.id==='solar:Terre');
  await choose('Terre','solar:Terre');

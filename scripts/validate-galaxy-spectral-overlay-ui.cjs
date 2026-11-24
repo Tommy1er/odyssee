@@ -15,7 +15,7 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
  page.on('pageerror',e=>errors.push(e.message));page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
  const snapshot=()=>page.evaluate(()=>window.flightSnapshot());
  try{
-  await page.goto('http://127.0.0.1:3045/cockpit.html');
+  await page.goto('http://127.0.0.1:3045/cockpit.html?ui=classic');
   await page.waitForFunction(()=>window.flightSnapshot?.().galaxyLight?.status==='ready');
   await page.waitForFunction(()=>window.flightSnapshot().galaxyLight.spectralPoints===true);
   check('Default relativistic sky isolates galaxy spectral HDR points',(await snapshot()).galaxyLight.spectralPoints);

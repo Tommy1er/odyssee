@@ -19,7 +19,7 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
  const shot=async name=>{await page.evaluate(()=>document.getElementById('clean-view').click());await page.waitForTimeout(5000);await page.screenshot({path:path.join(out,name),timeout:400000});await page.evaluate(()=>document.getElementById('restore-view').click());};
  const sheet=async()=>{await page.click('#object-info');const t=await page.locator('#flight-dialog-body').textContent();await page.click('#close-flight-dialog');return t;};
  try{
-  await page.goto('http://127.0.0.1:3034/cockpit.html');await page.waitForFunction(()=>window.flightSnapshot?.().galaxies?.catalogue>800);
+  await page.goto('http://127.0.0.1:3034/cockpit.html?ui=classic');await page.waitForFunction(()=>window.flightSnapshot?.().galaxies?.catalogue>800);
   let s=await snap();check('UNGC and McConnachie galaxies loaded after start-up, duplicates merged',s.galaxies.catalogue===865);
   await page.click('.type-filters button[data-type="all"]');await page.fill('#destination-search','M81');
   const names=await page.$$eval('#destinations .destination',e=>e.map(x=>x.dataset.id+'|'+x.querySelector('b').textContent));
@@ -28,9 +28,9 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
   check('M81 group rendered in the catalogue slots (M81, M82)',s.galaxies.slots[0]==='ungc:MESSIER081'&&s.galaxies.slots.includes('ungc:MESSIER082'));
   const m81=await sheet();check('Info sheet: Hubble type and UNGC diameter, illustrative orientation',m81.includes('type de Hubble T = 3')&&m81.includes('diamètre UNGC 31,35 kpc')&&m81.includes('illustrative'));
   await shot('galaxy-m81.png');
-  await page.waitForFunction(()=>window.flightSnapshot().shipReady);await page.goto('http://127.0.0.1:3034/cockpit.html?target=mcconnachie%3AAndromeda');await page.waitForFunction(()=>window.flightSnapshot?.().target==='m31');
+  await page.waitForFunction(()=>window.flightSnapshot().shipReady);await page.goto('http://127.0.0.1:3034/cockpit.html?ui=classic&target=mcconnachie%3AAndromeda');await page.waitForFunction(()=>window.flightSnapshot?.().target==='m31');
   check('Map link to a McConnachie duplicate lands on the existing M31',(await snap()).target==='m31');
-  await page.waitForFunction(()=>window.flightSnapshot().shipReady);await page.goto('http://127.0.0.1:3034/cockpit.html?target=cf4%3A41361');await page.waitForFunction(()=>window.flightSnapshot?.().target==='cf4:41361');
+  await page.waitForFunction(()=>window.flightSnapshot().shipReady);await page.goto('http://127.0.0.1:3034/cockpit.html?ui=classic&target=cf4%3A41361');await page.waitForFunction(()=>window.flightSnapshot?.().target==='cf4:41361');
   check('Map link to a CF4 entry loads Cosmicflows-4 on demand',(await snap()).galaxies.cf4);
   await page.waitForFunction(()=>window.flightSnapshot().galaxyLight.status==='ready');const m87=await sheet();check('CF4 sheet: distance modulus, 2MRS morphological type and size, V magnitude with its provenance (15 Oct: replaces the class guessed from the distance method)',m87.includes('μ = 31,134')&&m87.includes('type morphologique T = -4 (2MRS')&&m87.includes('rayon isophotal 2MASS')&&m87.includes('K totale 2MRS'));
   check('M87 sheet: relativistic source/observer Doppler and spectral coverage disclosed',m87.includes('Diagnostic spectral du vaisseau')&&m87.includes('Photons visibles')&&m87.includes('Kinney')&&m87.includes('approximation thermique'));

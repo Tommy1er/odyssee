@@ -23,7 +23,7 @@ const results=[];const check=(name,ok,detail='')=>{results.push({name,ok,detail}
   // 2. Recherche du cockpit, sur le vrai catalogue.
   const page=await browser.newPage({viewport:{width:1440,height:900}});page.setDefaultTimeout(180000);
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
+  await page.goto(`http://127.0.0.1:${PORT}/cockpit.html?ui=classic`);await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
   const search=async q=>{await page.fill('#destination-search',q);await page.waitForTimeout(150);return page.$$eval('#destinations [data-id]',b=>b.map(x=>x.dataset.id));};
   let ids=await search('Mars');check('« Mars » : la planète Mars en premier',ids[0]==='solar:Mars',ids.slice(0,4).join(', '));
   check('« Mars » : Marsic toujours proposé, après Mars',ids.includes('h78804')&&ids.indexOf('h78804')>ids.indexOf('solar:Mars'));

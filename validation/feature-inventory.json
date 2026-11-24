@@ -1,5 +1,5 @@
 {
- "passed": 30,
+ "passed": 31,
  "failed": 0,
  "results": [
   {
@@ -133,7 +133,12 @@
    "detail": ""
   },
   {
-   "name": "Classique par défaut, bascule d'essai invisible sans ?ui= ni choix mémorisé",
+   "name": "Ordinateur : immersif par défaut sans ?ui= ni choix mémorisé, bascule vers le Classique visible",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Choix du Classique mémorisé au rechargement",
    "ok": true,
    "detail": ""
   },
@@ -179,10 +184,10 @@
      780,
      470
     ],
-    "unoccludedPercent": 37.8,
+    "unoccludedPercent": 35.8,
     "method": "union de rectangles, grille 4 px"
    },
-   "smallText": 20
+   "smallText": 21
   },
   "Immersive 1280 × 585 · vol libre au démarrage": {
    "sky": {

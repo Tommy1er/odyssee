@@ -32,7 +32,7 @@ function measure(){
    await p.evaluate(()=>[...document.querySelectorAll('*')].find(e=>/PROTOTYPE v2/.test(e.textContent)&&e.children.length===0)?.click());await p.waitForTimeout(300);
    out.push(['Prototype Qwen V2 · Immersion',await p.evaluate(measure)]);
    for(const n of ['Travail','Cinéma']){await p.getByRole('button',{name:n,exact:true}).click();await p.waitForTimeout(500);out.push(['Prototype Qwen V2 · '+n,await p.evaluate(measure)]);}await p.close();}
-  {const p=await page();await p.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await p.waitForFunction(()=>typeof window.flightSnapshot==='function'&&!document.getElementById('flight-app').inert);await p.waitForTimeout(1500);
+  {const p=await page();await p.goto(`http://127.0.0.1:${PORT}/cockpit.html?ui=classic`);await p.waitForFunction(()=>typeof window.flightSnapshot==='function'&&!document.getElementById('flight-app').inert);await p.waitForTimeout(1500);
    out.push(['Cockpit construit · vol libre',await p.evaluate(measure)]);await p.click('#clean-view');await p.waitForTimeout(800);out.push(['Cockpit construit · vue dégagée',await p.evaluate(measure)]);await p.close();}
  }finally{await b.close();server.close();}
  console.log(`Ciel non occulté, fenêtre ${W} × ${H}`);for(const [k,v] of out)console.log(`${v.toFixed(1).padStart(5)} %  ${k}`);

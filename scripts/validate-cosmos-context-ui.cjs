@@ -5,7 +5,7 @@ const server=http.createServer((req,res)=>{try{const f=path.join(root,decodeURIC
 (async()=>{await new Promise(r=>server.listen(3039,'127.0.0.1',r));const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try{for(const target of ['', '?target=m31', '?gpuTrace=1&perf=1']){
  const page=await browser.newPage({viewport:{width:800,height:600}});page.setDefaultTimeout(240000);page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:3039/cockpit.html'+target);await page.waitForFunction(()=>typeof flightSnapshot==='function');
+ await page.goto('http://127.0.0.1:3039/cockpit.html'+(target?target+'&':'?')+'ui=classic');await page.waitForFunction(()=>typeof flightSnapshot==='function');
  await page.screenshot({path:out+'/cosmos-context-'+(target.includes('gpuTrace')?'sync':target?'m31':'direct')+'.png'});
  if(target.includes('perf')){await page.waitForFunction(()=>window.flightPerformance?.().frame?.n>=12);const p=await page.evaluate(()=>flightPerformance());assert(p.frame.meanMs>0);assert(Object.values(p.passes).some(x=>x.calls>0));fs.writeFileSync(out+'/cosmos-performance.json',JSON.stringify(p,null,2));}
  const s=await page.evaluate(()=>flightSnapshot());assert(!target.includes('m31')||s.target==='m31');assert(s.renderPixels[0]*s.renderPixels[1]<=1920*1080);assert(await page.locator('#render-error').isHidden());checks.push('Cockpit starts and draws '+(target||'direct'));

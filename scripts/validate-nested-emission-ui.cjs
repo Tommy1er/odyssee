@@ -15,7 +15,7 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
  page.on('pageerror',e=>errors.push(e.message));page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
  const snapshot=()=>page.evaluate(()=>window.flightSnapshot());
  try{
-  await page.goto('http://127.0.0.1:3046/cockpit.html?target=tarantula&emissionBudget=reference');
+  await page.goto('http://127.0.0.1:3046/cockpit.html?ui=classic&target=tarantula&emissionBudget=reference');
   await page.waitForFunction(()=>window.flightSnapshot?.().emissionBudget?.hosts?.lmc<1);
   let state=await snapshot();
   check('Reference V budget active for represented Tarantula',state.emissionBudget.enabled&&state.emissionBudget.strength===1);
@@ -29,7 +29,7 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
   await page.waitForFunction(()=>window.flightSnapshot().emissionBudget.hosts.lmc<1);
   // Select NGC604 by URL: at 640×480 the navigation panel (filters, search) is collapsed and not clickable.
   await page.waitForFunction(()=>window.flightSnapshot?.().shipReady&&window.flightSnapshot().voyagerReady);await page.waitForTimeout(3000);// GLTF textures (blob URLs) must finish before navigating, or the unload reports them as load errors
-  await page.goto('http://127.0.0.1:3046/cockpit.html?target=ngc604&emissionBudget=reference');
+  await page.goto('http://127.0.0.1:3046/cockpit.html?ui=classic&target=ngc604&emissionBudget=reference');
   await page.waitForFunction(()=>window.flightSnapshot?.().target==='ngc604');
   // Since 21 Oct 2026 an unresolved cloud is drawn as a calibrated point sprite at any distance (nebula-points.js):
   // NGC604 beyond the cube range is represented, so its V share is debited from M33.
@@ -37,7 +37,7 @@ const server=http.createServer((req,res)=>{const p=path.resolve(root,decodeURICo
   state=await snapshot();
   check('NGC604 drawn as calibrated point beyond cube range, debited from M33',state.nebulaHandoff.ngc604.point===1&&Math.abs(state.emissionBudget.hosts.m33-(1-Math.pow(10,-.4*(11.5-5.72))))<1e-6);
   await page.waitForFunction(()=>window.flightSnapshot?.().shipReady&&window.flightSnapshot().voyagerReady);await page.waitForTimeout(3000);
-  await page.goto('http://127.0.0.1:3046/cockpit.html?target=tarantula');
+  await page.goto('http://127.0.0.1:3046/cockpit.html?ui=classic&target=tarantula');
   await page.waitForFunction(()=>window.flightSnapshot?.().emissionBudget);
   state=await snapshot();
   check('Normal cockpit keeps experimental budget disabled',!state.emissionBudget.enabled&&state.emissionBudget.strength===0);

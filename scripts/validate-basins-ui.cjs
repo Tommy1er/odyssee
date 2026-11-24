@@ -25,7 +25,7 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
   await page.goto('http://127.0.0.1:3035/cosmos.html?level=0');await page.waitForFunction(()=>window.cosmicSnapshot?.());await page.waitForTimeout(2000);
   check('Not loaded at the Local Group scale',(await cosmos()).status==='idle');
   for(const [id,name] of [['cosmic:great-attractor','Laniakea'],['cosmic:shapley','Shapley']]){
-   await page.goto('http://127.0.0.1:3035/cockpit.html?target='+encodeURIComponent(id));await page.waitForFunction(i=>window.flightSnapshot?.().target===i,id);
+   await page.goto('http://127.0.0.1:3035/cockpit.html?ui=classic&target='+encodeURIComponent(id));await page.waitForFunction(i=>window.flightSnapshot?.().target===i,id);
    await page.locator('#wormhole-enabled').check();await page.click('#wormhole-jump');await page.waitForFunction(()=>!window.flightSnapshot().passage);
    await page.waitForFunction(()=>{const s=window.flightSnapshot();return s.basin&&Math.hypot(...s.basin.at.map((x,k)=>x-s.pos[k]))<1e5;});const s=await snap(),hud=await page.locator('#environment-name').textContent();
    check(`Cockpit at ${id}: basin ${name} and reconstructed flow in the HUD`,s.basin.name===name&&s.basin.speed>50&&hud.includes('bassin de '+name)&&hud.includes('km/s'));

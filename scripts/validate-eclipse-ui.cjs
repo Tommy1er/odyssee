@@ -15,7 +15,7 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
  const snap=()=>page.evaluate(()=>window.flightSnapshot());
  const jump=async date=>{const i=await page.evaluate(d=>[...document.querySelectorAll('#eclipse-list option')].findIndex(o=>o.textContent.includes(d)),date);await page.evaluate(i=>{document.getElementById('eclipse-list').value=String(i);document.getElementById('eclipse-jump').click();},i);};
  try{
-  await page.goto('http://127.0.0.1:3031/cockpit.html');await page.waitForFunction(()=>window.flightSnapshot?.().system);
+  await page.goto('http://127.0.0.1:3031/cockpit.html?ui=classic');await page.waitForFunction(()=>window.flightSnapshot?.().system);
   const options=await page.evaluate(()=>[...document.querySelectorAll('#eclipse-list option')].map(o=>o.textContent));
   check('Upcoming eclipses listed from the mission date',options.length>=9&&options[0].includes('2027-02-06')&&options.some(o=>o.includes('Éclipse totale de Soleil · 2027-08-02')));
   let s=await snap();const before={t:s.t,tau:s.tau};

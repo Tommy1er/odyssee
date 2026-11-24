@@ -19,7 +19,7 @@ const server=http.createServer((req,res)=>{
   page.on('pageerror',e=>errors.push(e.message));
   page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   try{
-    await page.goto('http://127.0.0.1:3025/cockpit.html');
+    await page.goto('http://127.0.0.1:3025/cockpit.html?ui=classic');
     await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
     const snap=()=>page.evaluate(()=>window.flightSnapshot());
     await page.click('#external-view');

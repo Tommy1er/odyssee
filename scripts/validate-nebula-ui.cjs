@@ -26,7 +26,7 @@ const ring=(img,cx,cy,r0,r1)=>{let s=[0,0,0],n=0;for(let y=cy-r1;y<=cy+r1;y+=2)f
  const go=async(query,id)=>{await page.click('.type-filters button[data-type="all"]');await page.fill('#destination-search',query);await page.click('[data-id="'+id+'"]');await page.click('#wormhole-jump');await page.waitForFunction(()=>!window.flightSnapshot().passage);await page.waitForFunction(i=>window.flightSnapshot().arrival?.id===i,id);};
  const shot=async name=>{await page.evaluate(()=>document.getElementById('clean-view').click());await page.waitForTimeout(4000);const file=path.join(out,name);await page.screenshot({path:file,timeout:200000});await page.evaluate(()=>document.getElementById('restore-view').click());return decodePNG(fs.readFileSync(file));};
  try{
-  await page.goto('http://127.0.0.1:3033/cockpit.html');await page.waitForFunction(()=>window.flightSnapshot?.().system);
+  await page.goto('http://127.0.0.1:3033/cockpit.html?ui=classic');await page.waitForFunction(()=>window.flightSnapshot?.().system);
   await page.locator('#wormhole-enabled').check();
   await go('Orion','orion');
   await page.waitForFunction(()=>window.flightSnapshot().nebula);let s=await snap();

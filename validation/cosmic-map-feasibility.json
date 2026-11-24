@@ -10,9 +10,9 @@
    "triangles": 1068,
    "points": 143030,
    "lines": 8978,
-   "heapMB": 139.4,
-   "frameP50": 233.3,
-   "frameP95": 416.6,
+   "heapMB": 122.9,
+   "frameP50": 200,
+   "frameP95": 383.3,
    "frames": 24
   },
   "carte Groupe local · couche allumée": {
@@ -23,10 +23,10 @@
    "triangles": 1070,
    "points": 143131,
    "lines": 10101,
-   "heapMB": 122.6,
-   "frameP50": 233.2,
-   "frameP95": 416.7,
-   "frames": 29
+   "heapMB": 139.3,
+   "frameP50": 233.4,
+   "frameP95": 450,
+   "frames": 27
   },
   "ecartDoublon": {
    "catalogue": "mcconnachie",
@@ -42,10 +42,10 @@
    "triangles": 1070,
    "points": 143999,
    "lines": 10197,
-   "heapMB": 126.8,
-   "frameP50": 233.4,
-   "frameP95": 449.9,
-   "frames": 25
+   "heapMB": 128.2,
+   "frameP50": 183.4,
+   "frameP95": 400,
+   "frames": 30
   },
   "doublons": {
    "pairs": 96,
@@ -62,10 +62,10 @@
    "triangles": 2280,
    "points": 143898,
    "lines": 10581,
-   "heapMB": 172.7,
-   "frameP50": 266.7,
-   "frameP95": 566.6,
-   "frames": 21
+   "heapMB": 169.5,
+   "frameP50": 183.3,
+   "frameP95": 499.9,
+   "frames": 28
   },
   "carte Vierge · Cosmicflows-4": {
    "geometries": 103,
@@ -75,10 +75,10 @@
    "triangles": 2280,
    "points": 198907,
    "lines": 10581,
-   "heapMB": 187.8,
-   "frameP50": 283.3,
-   "frameP95": 550.1,
-   "frames": 20
+   "heapMB": 190.8,
+   "frameP50": 249.9,
+   "frameP95": 516.6,
+   "frames": 23
   },
   "carte Laniakea · CF4 + bassins": {
    "geometries": 123,
@@ -88,10 +88,10 @@
    "triangles": 61588,
    "points": 198907,
    "lines": 128851,
-   "heapMB": 202.3,
-   "frameP50": 700,
-   "frameP95": 966.6,
-   "frames": 7
+   "heapMB": 172.1,
+   "frameP50": 833.3,
+   "frameP95": 1083.3,
+   "frames": 6
   },
   "carte toile cosmique · CF4 + bassins": {
    "geometries": 135,
@@ -101,10 +101,10 @@
    "triangles": 61594,
    "points": 198907,
    "lines": 129811,
-   "heapMB": 172.9,
-   "frameP50": 716.6,
-   "frameP95": 783.3,
-   "frames": 8
+   "heapMB": 173,
+   "frameP50": 583.3,
+   "frameP95": 1016.6,
+   "frames": 9
   },
   "carte univers observable · horizon": {
    "geometries": 139,
@@ -114,10 +114,10 @@
    "triangles": 61580,
    "points": 198907,
    "lines": 130579,
-   "heapMB": 168.8,
-   "frameP50": 850,
-   "frameP95": 1466.6,
-   "frames": 6
+   "heapMB": 166.6,
+   "frameP50": 450,
+   "frameP95": 850,
+   "frames": 15
   }
  },
  "results": [
@@ -139,7 +139,7 @@
   {
    "name": "Étiquette « Groupe local » posée sur l'enveloppe et visible",
    "ok": true,
-   "detail": "{\"visible\":true,\"x\":706.0141685145659,\"y\":311.4983175533296,\"inside\":true}"
+   "detail": "{\"visible\":true,\"x\":706.0141685145658,\"y\":311.49831755333,\"inside\":true}"
   },
   {
    "name": "Ressources : la couche ajoute des appels de dessin et des points, au plus une texture (étiquette)",
@@ -239,7 +239,7 @@
   {
    "name": "Animation facultative : le temps des lignes avance, aucune galaxie du catalogue ne bouge, la note précise le sens du courant",
    "ok": true,
-   "detail": "temps 124.63 → 125.80"
+   "detail": "temps 120.94 → 121.65"
   },
   {
    "name": "Laniakea : étiquettes Laniakea, Persée–Poissons et Grand Attracteur visibles",
@@ -299,7 +299,7 @@
   {
    "name": "Plan supergalactique vu du dessus : caméra sur l'axe SGZ, SGY vers le haut",
    "ok": true,
-   "detail": "{\"look\":-1,\"up\":1.0000000000000004}"
+   "detail": "{\"look\":-0.9999999999999998,\"up\":1.0000000000000004}"
   },
   {
    "name": "Univers observable : horizon tracé, structures du niveau 4 et CF4, notification avec la distance comobile",
@@ -337,7 +337,7 @@
    "detail": ""
   },
   {
-   "name": "Cockpit public : couche absente et réglages masqués",
+   "name": "Cockpit public (V3.0) : Carte cosmique disponible, bassins et flux décochés par défaut, pas de badge d'essai",
    "ok": true,
    "detail": ""
   }

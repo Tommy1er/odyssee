@@ -65,7 +65,7 @@
   {
    "name": "Situer : la Carte s'ouvre centrée sur la cible",
    "ok": true,
-   "detail": "{\"map\":true,\"c\":{\"x\":640,\"y\":292.5000000000001,\"cx\":640,\"cy\":292.5}}"
+   "detail": "{\"map\":true,\"c\":{\"x\":639.9999999999999,\"y\":292.50000000000017,\"cx\":640,\"cy\":292.5}}"
   },
   {
    "name": "Situer : rien de physique ne change",
@@ -75,7 +75,7 @@
   {
    "name": "Étiquette de la cible : ne passe ni sous la télémétrie ni sous la fiche",
    "ok": true,
-   "detail": "{\"off\":false,\"telemetry\":false,\"hud\":false}"
+   "detail": "{\"off\":true,\"telemetry\":false,\"hud\":false}"
   },
   {
    "name": "Cadrer : suivi de la cible par la caméra seule (viewOnly)",
@@ -105,7 +105,7 @@
   {
    "name": "Télémétrie : écart regard / nez affiché si la cible n'est pas devant le nez",
    "ok": true,
-   "detail": "{\"hidden\":true,\"text\":\"regard ≠ nez · 117°\"}"
+   "detail": "{\"hidden\":false,\"text\":\"regard ≠ nez · 67°\"}"
   },
   {
    "name": "Libellé immersif : « Cadrée · Échap pour revenir »",
@@ -130,7 +130,7 @@
   {
    "name": "Optique : zoomer ne change pas l'observateur radiatif, seulement le champ de projection",
    "ok": true,
-   "detail": "tan(champ/2) 0.700 → 0.064"
+   "detail": "tan(champ/2) 0.700 → 0.041"
   },
   {
    "name": "Zoom : statut de résolution affiché près du champ",
@@ -280,7 +280,7 @@
   {
    "name": "Banc de comparaison : deux vaisseaux mesurés en alternance, Odyssée-02 remis ensuite",
    "ok": true,
-   "detail": "{\"Odyssée-01\":{\"fps\":0,\"p95\":null},\"Odyssée-02\":{\"fps\":1.25,\"p95\":null}}"
+   "detail": "{\"Odyssée-01\":{\"fps\":0,\"p95\":null},\"Odyssée-02\":{\"fps\":0.625,\"p95\":null}}"
   },
   {
    "name": "Aucune erreur de page",

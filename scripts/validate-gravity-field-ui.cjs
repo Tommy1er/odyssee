@@ -13,7 +13,7 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const snap=()=>page.evaluate(()=>window.flightSnapshot()),norm=v=>Math.hypot(...v),delta=(a,b)=>a.map((x,i)=>x-b[i]);
  try{
-  await page.goto('http://127.0.0.1:3026/cockpit.html');await page.waitForFunction(()=>window.flightSnapshot?.().gravityField);
+  await page.goto('http://127.0.0.1:3026/cockpit.html?ui=classic');await page.waitForFunction(()=>window.flightSnapshot?.().gravityField);
   let s=await snap();const r0=norm(s.pos);
   check('Continuous gravity on; solar source; initial orbital speed',s.continuousGravity&&s.gravityField.dominant==='h0'&&s.speed*299792.458>20&&s.speed*299792.458<22);
   check('Readout describes hovering, not felt free-fall acceleration',(await page.locator('#gravity-field-status').textContent()).includes('Maintien statique'));

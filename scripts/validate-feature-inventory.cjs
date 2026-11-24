@@ -37,7 +37,7 @@ const results=[];const check=(name,ok,detail='')=>{results.push({name,ok,detail}
  const browser=await chromium.launch({args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const info={};
  try{
   const page=await browser.newPage({viewport:{width:1440,height:900}});page.setDefaultTimeout(400000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await page.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
+  await page.goto(`http://127.0.0.1:${PORT}/cockpit.html?ui=classic`);await page.waitForFunction(()=>window.gpuStartupDiagnostic?.().ready&&!document.getElementById('flight-app').inert);
   const all=Object.values(MATRIX).flat();
   const facts=await page.evaluate(ids=>Object.fromEntries(ids.map(id=>{const els=document.querySelectorAll('#'+CSS.escape(id)),e=els[0];if(!e)return [id,{count:0}];
    const label=e.getAttribute('aria-label')||(e.labels&&[...e.labels].map(l=>l.textContent).join(' '))||e.closest('label')?.textContent||e.querySelector?.('summary')?.textContent||e.textContent||e.getAttribute('title')||e.getAttribute('placeholder')||'';
@@ -84,14 +84,18 @@ const results=[];const check=(name,ok,detail='')=>{results.push({name,ok,detail}
   check('Immersive · télémétrie en pastille renseignée',await page.evaluate(()=>{const t=document.getElementById('immersive-telemetry');return !t.hidden&&/\d/.test(document.getElementById('it-v').textContent)&&document.getElementById('it-dest').textContent.length>0;}));
   await page.click('#ui-mode-toggle');await page.waitForTimeout(300);
   check('Bascule vers Classique : disposition d\'origine rétablie',await page.evaluate(()=>!document.getElementById('flight-app').classList.contains('ui-immersive')&&document.getElementById('immersive-telemetry').hidden&&!document.getElementById('dest-panel').inert&&getComputedStyle(document.querySelector('.flight-workspace')).display==='grid'));
-  await page.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
+  await page.goto(`http://127.0.0.1:${PORT}/cockpit.html?ui=classic`);await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
+  // V3.0 (décision du 24 novembre) : immersif par défaut sur ordinateur, bascule visible pour revenir au Classique, choix mémorisé.
   await page.evaluate(()=>{try{localStorage.removeItem('odyssee-ui-mode');}catch{}});await page.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
-  check('Classique par défaut, bascule d\'essai invisible sans ?ui= ni choix mémorisé',await page.evaluate(()=>!document.getElementById('flight-app').classList.contains('ui-immersive')&&document.getElementById('ui-mode-toggle').hidden));
+  check('Ordinateur : immersif par défaut sans ?ui= ni choix mémorisé, bascule vers le Classique visible',await page.evaluate(()=>document.getElementById('flight-app').classList.contains('ui-immersive')&&!document.getElementById('ui-mode-toggle').hidden));
+  await page.click('#ui-mode-toggle');await page.waitForTimeout(300);await page.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await page.waitForFunction(()=>typeof window.flightSnapshot==='function');
+  check('Choix du Classique mémorisé au rechargement',await page.evaluate(()=>!document.getElementById('flight-app').classList.contains('ui-immersive')&&localStorage.getItem('odyssee-ui-mode')==='classic'));
+  await page.evaluate(()=>{try{localStorage.removeItem('odyssee-ui-mode');}catch{}});
   check('Fonctions de mesure exposées (skyOcclusion, frameTimingSample, phases de démarrage)',await page.evaluate(()=>typeof window.skyOcclusion==='function'&&typeof window.frameTimingSample==='function'&&!!window.gpuStartupDiagnostic().phases?.engine));
   // Démarrage dans un onglet caché : aucune attente d'image (correctif tranche 1).
   {const hidden=await browser.newPage({viewport:{width:1280,height:585}});hidden.setDefaultTimeout(400000);
    await hidden.addInitScript(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});});
-   await hidden.goto(`http://127.0.0.1:${PORT}/cockpit.html`);await hidden.waitForFunction(()=>window.gpuStartupDiagnostic?.().phases?.frameWait);
+   await hidden.goto(`http://127.0.0.1:${PORT}/cockpit.html?ui=classic`);await hidden.waitForFunction(()=>window.gpuStartupDiagnostic?.().phases?.frameWait);
    const w=await hidden.evaluate(()=>({label:gpuStartupDiagnostic().entries.find(e=>e.label.startsWith('Attente'))?.label,ms:gpuStartupDiagnostic().phases.frameWait.ms}));
    check('Onglet caché au démarrage : pas d\'attente d\'image',/caché/.test(w.label||'')&&w.ms!==null&&w.ms<100,`${w.label} · ${w.ms} ms`);await hidden.close();}
   check('Aucune erreur de page',errors.length===0,errors.join(' | '));

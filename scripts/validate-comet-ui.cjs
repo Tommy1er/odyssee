@@ -17,7 +17,7 @@ const server=http.createServer((req,res)=>{const p=path.join(root,decodeURICompo
  const jump=async label=>{const i=await page.evaluate(d=>[...document.querySelectorAll('#eclipse-list option')].findIndex(o=>o.textContent.includes(d)),label);assert.ok(i>=0,'option '+label);await page.evaluate(i=>{document.getElementById('eclipse-list').value=String(i);document.getElementById('eclipse-jump').click();},i);};
  const shot=async name=>{await page.click('#clean-view');await page.screenshot({path:path.join(out,name),timeout:150000});await page.click('#restore-view');};
  try{
-  await page.goto('http://127.0.0.1:3032/cockpit.html');await page.waitForFunction(()=>window.flightSnapshot?.().system);
+  await page.goto('http://127.0.0.1:3032/cockpit.html?ui=classic');await page.waitForFunction(()=>window.flightSnapshot?.().system);
   await page.click('.type-filters button[data-type="comet"]');
   const names=await page.locator('#destinations .destination b').allTextContents();
   check('Comets filter lists Halley, Hale-Bopp and 3I/ATLAS',names.length===7&&names.some(n=>n.includes('Halley'))&&names.some(n=>n.includes('Hale-Bopp'))&&names.some(n=>n.includes('3I/ATLAS')));
