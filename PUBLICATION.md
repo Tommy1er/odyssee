@@ -8,7 +8,7 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
-| `5898c44` | ⛔ **NE PAS PUBLIER avant le GO explicite du propriétaire.** Ouverture publique V3.0 : immersif par défaut sur ordinateur (Classique accessible et mémorisé), Carte cosmique, S2, pulsar et Odyssée-02 pour tous, manuel mis à jour. Session d'essai conservée. | 24 nov. 2026 | Local : voir `docs/RELAIS-CLAUDE-2026-11-24-OUVERTURE-V3.0.md` § 3. CI : à relever |
+| `5898c44` | ⛔ **NE PAS PUBLIER avant le GO explicite du propriétaire.** Ouverture publique V3.0 : immersif par défaut sur ordinateur (Classique accessible et mémorisé), Carte cosmique, S2, pulsar et Odyssée-02 pour tous, manuel mis à jour. Session d'essai conservée. | 24 nov. 2026 | Local : voir `docs/RELAIS-CLAUDE-2026-11-24-OUVERTURE-V3.0.md` § 3. CI sur `8b13cb8` (même code) : 8 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45374826094, 10 jobs) et par le push (run 45374826098), « Cockpit layout and observation instruments » et « Independent relativistic rocket benchmarks » |
 
 ## Dernière version servie
 
