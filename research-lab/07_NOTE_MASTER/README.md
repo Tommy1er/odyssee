@@ -1,0 +1,2 @@
+# Note Master V4 — à produire après les deux tours
+Structure : résumé exécutif, référentiel exact, contributions/PR et scores ORB, conclusions corroborées, divergences ouvertes, décisions recommandées, modèles/équations et limites, budgets/performances, risques et dépendances, plan par tranches, matrice réalisé/partiel/absent/différé, critères d'acceptation. Ne pas remplir fictivement. La synthèse distingue faits, inférences et recommandations ; toute décision doit renvoyer aux preuves.

@@ -1,0 +1,2 @@
+# Sources scientifiques
+Références de départ à vérifier : JPL Horizons, NASA Exoplanet Archive, Gaia Archive, SIMBAD/VizieR, ATNF Pulsar Catalogue, publications ESO S2, EHT, Cosmicflows-4 et simulations documentées. Aucun catalogue ou licence n'est présumé validé. Reporter les entrées dans REGISTRE.csv avec DOI/URL, citation précise, version/époque, unités, méthode, incertitude, licence, conditions de redistribution et checksum si fichier. Les PDF sous droits ne sont pas copiés sans autorisation.

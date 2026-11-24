@@ -1,0 +1,2 @@
+# Prototypes de recherche isolés
+Un dossier par ID agent et sujet (ex. TF-04/V4-07-comete). README obligatoire : modèle, entrées, unités, hypothèses, dépendances verrouillées, commande de reproduction, résultats, limites, matériel et licence. Tests automatisés lorsque possible. Ne pas copier le moteur intégral, ni publier d'artefact externe, ni ajouter de workflows privilégiés. Aucun prototype n'est prêt production sans validation. Voir templates/PROTOTYPE.md.

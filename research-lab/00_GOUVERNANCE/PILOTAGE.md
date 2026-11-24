@@ -1,0 +1,4 @@
+# Research Board — configuration à créer dans le dépôt cible
+Pas de GitHub Project actif à ce stade. Créer un Project dédié, lié uniquement à odyssee-research, et importer le programme V4. États : À qualifier → Prêt → Recherche indépendante → Déposé → Revue → Révision → Validé recherche → Arbitrage propriétaire → Transféré / Différé.
+Champs : ID sujet, responsable TF, reviewers, tour, baseline SHA, priorité, statut scientifique, lien PR, preuve, décision, bloqueur. Ne pas transformer les statuts en preuve de qualité.
+Créer une Issue d'admission par agent et une Issue par chantier V4-01 à V4-08. Les Issues de recherche sont créées mais non lancées uniquement après installation du dépôt cible. Réunion de clôture du tour 1 par décision de coordinateur, puis revues indépendantes. Les huit agents ne sont pas des processus autonomes actifs : chaque exécution dépend de leurs outils et du lancement explicite.
