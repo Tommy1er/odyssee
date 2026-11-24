@@ -6,7 +6,9 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
-Aucun lot en attente.
+| Commit | Contenu | Poussé le | Vérifications |
+|---|---|---|---|
+| `5898c44` | ⛔ **NE PAS PUBLIER avant le GO explicite du propriétaire.** Ouverture publique V3.0 : immersif par défaut sur ordinateur (Classique accessible et mémorisé), Carte cosmique, S2, pulsar et Odyssée-02 pour tous, manuel mis à jour. Session d'essai conservée. | 24 nov. 2026 | Local : voir `docs/RELAIS-CLAUDE-2026-11-24-OUVERTURE-V3.0.md` § 3. CI : à relever |
 
 ## Dernière version servie
 
