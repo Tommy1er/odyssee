@@ -6,11 +6,23 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
-| Commit | Contenu | Poussé le | Vérifications |
-|---|---|---|---|
-| `5898c44` | ⛔ **NE PAS PUBLIER avant le GO explicite du propriétaire.** Ouverture publique V3.0 : immersif par défaut sur ordinateur (Classique accessible et mémorisé), Carte cosmique, S2, pulsar et Odyssée-02 pour tous, manuel mis à jour. Session d'essai conservée. | 24 nov. 2026 | Local : voir `docs/RELAIS-CLAUDE-2026-11-24-OUVERTURE-V3.0.md` § 3. CI sur `8b13cb8` (même code) : 8 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45374826094, 10 jobs) et par le push (run 45374826098), « Cockpit layout and observation instruments » et « Independent relativistic rocket benchmarks » |
+Aucun lot en attente.
 
 ## Dernière version servie
+
+| Version | Commit de `main` | Publié le | Par | Contenu |
+|---|---|---|---|---|
+| **v65** | `493a34cd80e7886eefcf3e6a8e6a154c6f12c3f8` (commit Sites `74a48a626852ee3a1028e590a7a7789ab4309a5f`, même arborescence) | 24 nov. 2026 à 14:03 UTC | Codex | Ouverture publique de la V3.0 après GO : interface immersive par défaut sur ordinateur, Carte cosmique, S2, pulsar, Odyssée-02 et manuel V3.0. |
+
+Vérifié après publication : les fichiers de l’accueil, de Cosmos, du cockpit et du manuel correspondent au build. Dans Chrome à 1 280 px, le cockpit public sans paramètres a chargé l’interface immersive et Odyssée-02. Le manuel affiche la section V3.0. La mesure du démarrage à froid sur Iris Xe reste à faire.
+
+Lot publié en v65 :
+
+| Commit | Contenu | Poussé le | Vérifications |
+|---|---|---|---|
+| `5898c44` | Ouverture publique V3.0 : immersif par défaut sur ordinateur (Classique accessible et mémorisé), Carte cosmique, S2, pulsar et Odyssée-02 pour tous, manuel mis à jour. Session d'essai conservée. | 24 nov. 2026 | Local : voir `docs/RELAIS-CLAUDE-2026-11-24-OUVERTURE-V3.0.md` § 3. CI sur `8b13cb8` (même code) : 8 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45374826094, 10 jobs) et par le push (run 45374826098), « Cockpit layout and observation instruments » et « Independent relativistic rocket benchmarks » |
+
+## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
@@ -23,8 +35,6 @@ Lot publié en v64 :
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `797a8c0` | Session d'essai seulement : réglage de la représentation adaptative CF4 (le cœur de Laniakea ne sature plus sur Iris Xe). | 23 nov. 2026 | Local : Carte 44/44. CI sur `555781d` (même code) : 3 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45204741333) et par le push (run 45204741417) |
-
-## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
