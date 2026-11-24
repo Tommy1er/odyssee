@@ -6,11 +6,23 @@ Site : https://atlas-stellaire-abdoulaye.abdoul97.chatgpt.site/ (URL et accès p
 
 ## ⚠️ En attente de publication
 
+Aucun lot en attente.
+
+## Dernière version servie
+
+| Version | Commit de `main` | Publié le | Par | Contenu |
+|---|---|---|---|---|
+| **v64** | `e79f516557bf901f6fdbc0a799cc0db0ab404fa8` (commit Sites `0570e482239a7056314b1df0f8a989b88c4ab34e`, même arborescence) | 23 nov. 2026 à 15:43 UTC | Codex | Carte d’essai : atténuation des points CF4 fondée sur les zones denses pour améliorer la lisibilité du cœur de Laniakea. |
+
+Vérifié après publication : `index.html`, `cosmos.html` et `cockpit.js` servis sont identiques au build. La fluidité aux grandes échelles et la comparaison des vaisseaux sur Iris Xe restent à mesurer, avec Chrome au premier plan.
+
+Lot publié en v64 :
+
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `797a8c0` | Session d'essai seulement : réglage de la représentation adaptative CF4 (le cœur de Laniakea ne sature plus sur Iris Xe). | 23 nov. 2026 | Local : Carte 44/44. CI sur `555781d` (même code) : 3 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45204741333) et par le push (run 45204741417) |
 
-## Dernière version servie
+## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
@@ -23,8 +35,6 @@ Lot publié en v63 :
 | Commit | Contenu | Poussé le | Vérifications |
 |---|---|---|---|
 | `356f7fe` | Session d'essai seulement : symboles CF4 adaptés aux grandes échelles (fin de la saturation), Cosmicflows-4 par défaut au niveau Vierge (chargé à l'ouverture du niveau). Sans effet visible pour les visiteurs. Documentation : état canonique V3.0, note temporaire supprimée. **À vérifier sur Iris Xe après publication.** | 23 nov. 2026 | Local : Carte 44/44, observation 61/61, recherche 24/24, contexte cosmos. CI sur `d7f4ef3` (même code) : 6 exécutions réussies, dont « Reproducible validation from npm ci » lancé à la main (run 45198128381) et par le push (run 45198129602) |
-
-## Historique des versions précédentes
 
 | Version | Commit de `main` | Publié le | Par | Contenu |
 |---|---|---|---|---|
